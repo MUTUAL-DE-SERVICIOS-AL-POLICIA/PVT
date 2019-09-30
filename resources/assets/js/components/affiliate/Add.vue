@@ -238,7 +238,7 @@
             >
               <img  src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg" >
             </v-avatar>
-            <v-card-text class="text-center">
+            <v-card-text @click="dialog=true" class="text-center">
               <v-btn type="file" color="primary">
                 Adicionar Foto
               </v-btn>
@@ -431,13 +431,28 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialog" persistent max-width="1000">
+    <v-card>
+      <v-card-title>FOTOGRAFIA</v-card-title>
+      <v-divider></v-divider>
+        <camara></camara>
+
+      <v-card-actions>
+        <v-btn color="error" @click="dialog=false">CERRAR</v-btn>
+        
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   </v-container>
 </template>
 
 <script>
 import List from '@/components/affiliate/List'
+import Cam from '@/components/webcam/Cam'
   export default {
   data: () => ({
+    dialog:false,
+    cam: null,
     fingerprintCapture: false,
     fingerprintSaved: false,
     fingerprintSucess: null,
@@ -503,6 +518,7 @@ import List from '@/components/affiliate/List'
       }),
   components: {
   List,
+  'camara': Cam
   },
   watch: {
     search: _.debounce(function () {

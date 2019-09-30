@@ -6,8 +6,17 @@ import RoleIndex from '@/components/role/Index'
 import AffiliateIndex from '@/components/affiliate/Index'
 import AffiliateAdd from '@/components/affiliate/Add'
 import RecordIndex from '@/components/record/Index'
+import Camara from '@/components/webcam/Cam'
 
 export const routes = [
+  {
+    name: 'cam',
+    path: '/cam',
+    component: Camara,
+    meta: {
+      requiresAuth: false
+    }
+  },
   {
     name: 'login',
     path: '/login',
