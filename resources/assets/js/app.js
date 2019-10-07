@@ -62,7 +62,7 @@ axios.interceptors.response.use(response => {
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const user = store.state.user
-
+  store.dispatch('refresh')
   if (requiresAuth && !user) {
     next({
       path: '/login'

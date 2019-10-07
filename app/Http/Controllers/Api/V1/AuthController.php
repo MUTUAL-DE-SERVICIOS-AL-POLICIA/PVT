@@ -108,7 +108,11 @@ class AuthController extends Controller
    */
   public function update()
   {
-    return $this->respondWithToken(Auth::refresh());
+    return response()->json([
+      'message' => 'Token refreshed',
+      'token' => Auth::refresh(),
+      'token_type' => 'Bearer'
+    ], 200);
   }
 
   public function guard()

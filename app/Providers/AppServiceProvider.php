@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-// use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Carbon\Carbon;
@@ -24,9 +24,9 @@ class AppServiceProvider extends ServiceProvider
             return preg_match('/^[\pL\s]+$/u', $value);
         });
         Record::observe(RecordObserver::class);
-        // Relation::morphMap([
-        //     'affiliates' => 'App\Affiliate'
-        // ]);
+        Relation::morphMap([
+            'affiliates' => 'App\Affiliate'
+        ]);
     }
 
     /**

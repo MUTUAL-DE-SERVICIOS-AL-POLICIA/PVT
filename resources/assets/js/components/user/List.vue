@@ -16,7 +16,7 @@
         <td @click.stop="expand(props)">{{ props.item.position | uppercase }}</td>
         <td @click.stop="expand(props)">{{ props.item.username | lowercase }}</td>
         <td v-if="active">
-          <v-tooltip top>
+          <v-tooltip top v-if="$store.getters.permissions.includes('update-user')">
             <template v-slot:activator="{ on }">
               <v-btn
                 fab
@@ -33,7 +33,7 @@
           </v-tooltip>
         </td>
         <td v-else>
-          <v-tooltip top>
+          <v-tooltip top v-if="$store.getters.permissions.includes('update-user')">
             <template v-slot:activator="{ on }">
               <v-btn
                 fab
@@ -49,7 +49,7 @@
             </template>
             <span class="caption">Habilitar</span>
           </v-tooltip>
-          <v-tooltip top>
+          <v-tooltip top  v-if="$store.getters.permissions.includes('delete-user')">
             <template v-slot:activator="{ on }">
               <v-btn
                 fab
@@ -171,7 +171,7 @@ export default {
   },
   methods: {
     expand(props) {
-      props.expand(!props.isExpanded && this.active)
+      props.expand(!props.isExpanded && this.active && this.$store.getters.permissions.includes('update-user'))
       if (this.selectedUser != props.item.id) this.selectedUser = props.item.id
     },
     async switchActiveUser(id) {

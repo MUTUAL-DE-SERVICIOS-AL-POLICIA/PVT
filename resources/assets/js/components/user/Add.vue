@@ -6,12 +6,14 @@
           fab
           dark
           x-small
+          v-on="on"
+          color="info"
           @click.stop="dialog = true"
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </template>
-      <span class="caption">Añadir usuario</span>
+      <span>Añadir usuario</span>
     </v-tooltip>
     <v-dialog
       v-model="dialog"
@@ -47,7 +49,7 @@
 import Ldap from '@/components/user/Ldap'
 
 export default {
-  name: 'ldap-list',
+  name: 'ldap-add',
   components: {
     Ldap
   },
@@ -74,14 +76,14 @@ export default {
   methods: {
     clearForm() {
       this.userSelected = null
-      this.$validator.reset()
     },
     close() {
       this.dialog = false
+      this.$emit('closeFab')
     },
     async saveUser() {
       try {
-        if (await this.$validator.validateAll()) {
+        if (this.userSelected) {
           this.loading = true
           let res = await axios.post(`user`, {
             first_name: this.userSelected.givenName,
@@ -94,6 +96,8 @@ export default {
           this.bus.$emit('added', res.data)
           this.clearForm()
           this.close()
+        } else {
+          this.toast('Debe seleccionar un usuario', 'danger')
         }
       } catch (e) {
         console.log(e)
@@ -104,4 +108,3 @@ export default {
   }
 }
 </script>
-

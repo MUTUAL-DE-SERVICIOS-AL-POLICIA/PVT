@@ -5,15 +5,11 @@
     :loading="loading"
     :options.sync="options"
     :server-items-length="totalAffiliates"
-    :footer-props="{ itemsPerPageOptions: [10, 20, 40] }"
-    :fixed-header="true"
-    calculate-widths
+    :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
   >
     <template v-slot:item="props">
     <tr>
-      <td class="text-xs-left">{{ props.item.first_name }} </td>
-      <td class="text-xs-left">{{ props.item.last_name }}</td>
-      <td class="text-xs-left">{{ props.item.mothers_last_name }}</td>
+      <td class="text-xs-left">{{ props.item | fullName(byFirstName = true) }} </td>
       <td class="text-xs-left">{{ props.item.identity_card }}</td>
       <td>
         <v-icon class="mr-1" :color="props.item.picture_saved ? 'success' : 'error'">mdi-camera</v-icon>
@@ -37,9 +33,9 @@
 </template>
 
 <script>
-
 import Add from '@/components/affiliate/Add'
 import List from '@/components/affiliate/List'
+
 export default {
   name: 'affiliates-list',
   components: {
@@ -52,9 +48,9 @@ export default {
     search: '',
     options: {
       page: 1,
-      itemsPerPage: 10,
-      sortBy: null,
-      descending: false
+      itemsPerPage: 8,
+      sortBy: ['first_name'],
+      sortDesc: [false]
     },
     affiliates: [],
     totalAffiliates: 0,
@@ -64,44 +60,33 @@ export default {
         text: 'Nombre',
         value: 'first_name', 
         class: ['normal', 'white--text'],
-        width: '30%',
-        sortable: false 
-      },{ 
-        text: 'Apellido Paterno', 
-        value: 'last_name', 
-        class: ['normal', 'white--text'],
-        width: '25%',
-        sortable: false 
-      },{ text: 'Apellido Materno',
-        value: 'mothers_last_name', 
-        class: ['normal', 'white--text'],
-        width: '25%',
+        width: '40%',
         sortable: false 
       },{ 
         text: 'Nro. de CI',
         value: 'identity_card',
         class: ['normal', 'white--text'],
-        width: '15%',
+        width: '20%',
         sortable: false 
       }, {
         text: 'Biométrico',
         class: ['normal', 'white--text'],
-        width: '5%',
+        width: '20%',
         sortable: false
       },{ 
         text: 'Accion',
         class: ['normal', 'white--text'],
-        width: '5%',
+        width: '20%',
         sortable: false
       }    
     ]
   }),
   watch: {
     options: function(newVal, oldVal) {
-      if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.descending != oldVal.descending) {
+      if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.sortDesc != oldVal.sortDesc) {
         this.getAffiliates()
       }
-    },
+    },  
     search: function(newVal, oldVal) {
       if (newVal != oldVal) {
         this.getAffiliates()
@@ -123,7 +108,7 @@ export default {
             page: this.options.page,
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,
-            direction: this.options.descending ? 'desc' : 'asc',
+            sortDesc: this.options.sortDesc,
             search: this.search
           }
         })

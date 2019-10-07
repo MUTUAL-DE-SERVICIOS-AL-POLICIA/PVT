@@ -1,10 +1,14 @@
 <template>
-  <v-container fluid>
-    <v-toolbar dense flat color="tertiary">
-      <v-toolbar-title>Registro de actividad</v-toolbar-title>
-    </v-toolbar>
-    <List/>
-  </v-container>
+  <v-card flat>
+    <v-card-title>
+      <v-toolbar dense color="tertiary">
+        <v-toolbar-title>Registro de actividad</v-toolbar-title>
+      </v-toolbar>
+    </v-card-title>
+    <v-card-text>
+      <List/>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

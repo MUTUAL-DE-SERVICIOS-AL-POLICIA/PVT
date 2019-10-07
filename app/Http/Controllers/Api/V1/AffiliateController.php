@@ -12,12 +12,15 @@ use App\Hierarchy;
 use App\AffiliateState;
 use App\AffiliateStateType;
 use App\Http\Requests\AffiliateForm;
+use App\Http\Requests\AffiliateEditForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\Events\FingerprintSavedEvent;
+use Illuminate\Support\Facades\Storage;
+
 
 use Illuminate\Support\Facades\Storage;
 
@@ -43,8 +46,10 @@ class AffiliateController extends Controller
             }
         }
         if ($request->has('sortBy')) {
-            if ($request->sortBy != 'null') {
-                $affiliates = $affiliates->orderBy($request->sortBy, $request->input('direction') ?? 'asc');
+            if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
+                foreach ($request->sortBy as $i => $sort) {
+                    $affiliates = $affiliates->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
+                }
             }
         }
         $affiliates = $affiliates->paginate($request->per_page ?? 10);
@@ -60,9 +65,10 @@ class AffiliateController extends Controller
     * @param  \Illuminate\Http\Request  $request
     * @return \Illuminate\Http\Response
     */
-    public function store(Request $request)
+    public function store(AffiliateForm $request)
     {
         return Affiliate::create($request->all());
+        //$affiliate->phone_number = trim(implode(",", $request->phone_number));
     }
 
     /**
@@ -85,9 +91,8 @@ class AffiliateController extends Controller
     * @param  \App\Affiliate  $affiliate
     * @return \Illuminate\Http\Response
     */
-    public function update(Request $request, $id)
+    public function update(AffiliateForm $request, $id)
     {
-        //
         $affiliate = Affiliate::findOrFail($id);
         $affiliate->fill($request->all());
         $affiliate->save();
@@ -143,12 +148,47 @@ class AffiliateController extends Controller
     //$picture=$request->all();
     $affiliate = Affiliate::findOrFail($id);
     $code = $affiliate->id;
-    $image = $request->image;  
-   
+    $image = $request->image;   
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $imageName = $code.'_perfil.'.'jpg';
     Storage::disk('ftp')->put($imageName,base64_decode($image));
 
 }
+    public function PictureImageprint(Request $request, $id)
+    {
+    return response()->json([
+        'files' => [
+        [
+            'name' => $id.'_perfil.png',
+            'content' => base64_encode(Storage::disk('ftp')->get($id.'_perfil.png')),
+            'format' => Storage::disk('ftp')->mimeType($id.'_perfil.png')
+        ]
+        ]
+        ],404);
+    }
+    public function FingerImageprint(Request $request, $id) 
+    {
+    return response()->json([
+        'files' => [
+        [
+            'name' => $id.'_left_four.png',
+            'content' => base64_encode(Storage::disk('ftp')->get($id.'_left_four.png')),
+            'format' => Storage::disk('ftp')->mimeType($id.'_left_four.png')
+        ],
+        [
+            'name' => $id.'_right_four.png',
+            'content' => base64_encode(Storage::disk('ftp')->get($id.'_right_four.png')),
+            'format' => Storage::disk('ftp')->mimeType($id.'_right_four.png')
+        ],
+        [
+            'name' => $id.'_thumbs.png',
+            'content' => base64_encode(Storage::disk('ftp')->get($id.'_thumbs.png')),
+            'format' => Storage::disk('ftp')->mimeType($id.'_thumbs.png')
+        ]
+        ]
+
+        ],404);
+    }
+    
 }

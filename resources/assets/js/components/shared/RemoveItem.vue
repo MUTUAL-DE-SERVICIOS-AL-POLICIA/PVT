@@ -33,7 +33,7 @@ export default {
     async remove() {
       try {
         let res = await axios.delete(this.path)
-        this.toast('Eliminado correctamente', 'error')
+        this.toast('Eliminado correctamente', 'success')
         this.bus.$emit('removed', Number(this.path.split('/').pop()))
         this.close()
       } catch (e) {

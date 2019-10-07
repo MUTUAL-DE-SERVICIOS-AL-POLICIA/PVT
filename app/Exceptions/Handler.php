@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -123,6 +124,11 @@ class Handler extends ExceptionHandler
 						]
 					], $exception->getStatusCode());
 			}
+		} elseif ($exception instanceof ValidationException) {
+			return response()->json([
+				'message' => 'Validation error',
+				'errors' => $exception->errors()
+			], 409);
 		} else {
 			\Log::error('Error inesperado: ' . $exception);
 		}
