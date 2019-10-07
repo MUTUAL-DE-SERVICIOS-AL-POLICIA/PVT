@@ -4,6 +4,7 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'v1',
 ], function () {
+    Route::patch('picture/{id}', 'Api\V1\AffiliateController@picture_save');
     // Login
     Route::resource('auth', 'Api\V1\AuthController')->only(['store']);
     Route::resource('date', 'Api\V1\DateController')->only(['index']);
@@ -24,7 +25,8 @@ Route::group([
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
-
+    // webcam
+    //Route::resource('picture', 'Api\V1\AffiliateController');
     // With credentials
     Route::group([
         'middleware' => 'jwt.auth'
@@ -54,6 +56,7 @@ Route::group([
              // Affiliate
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index', 'store', 'update', 'destroy']);
             Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_updated');
+            
         });
     });
            

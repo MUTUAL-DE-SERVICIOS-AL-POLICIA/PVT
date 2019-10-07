@@ -48,7 +48,8 @@
         <figure class="figure">
           <img :src="img" class="img-responsive" width="90%" height="90%" >
         </figure>
-        <v-btn
+        <v-btn @click="savePicture()"
+                :disabled="errors.any()"
             color="success"
         >GUARDAR FOTOGRAFIA</v-btn>
       </div>
@@ -71,6 +72,7 @@ export default {
       event: null,
       devices: []
     };
+    
   },
   computed: {
     device: function() {
@@ -89,6 +91,12 @@ export default {
         this.deviceId = first.deviceId;
       }
     }
+  },
+  beforeMount(){
+    this.getAffiliate();
+  },
+  mounted(){
+    this.getAffiliate(this.$route.params.id)
   },
   methods: {
     onCapture() {
@@ -118,6 +126,43 @@ export default {
       this.camera = deviceId;
       console.log("On Camera Change Event", deviceId);
     },
+    async savePicture() {
+    try {
+        
+        this.img = this.$refs.webcam.capture();
+        
+        let formData = new FormData();
+        //formData.append("image", this.img);
+        this.$route.params.id
+        console.log(this.img)
+        //let res = await axios.patch(`affiliate/${this.affiliate.id}`, this.img)
+        //console.log(res)
+        let rest = await axios.patch(`picture/${this.affiliate.id}`, {
+          'image': this.img
+        })
+        console.log(rest)      
+        this.toast('Fotografias Adicionada', 'success')
+        
+      
+    } catch (e) {
+      console.log(e)
+    } finally {
+      this.loading = false
+    }
+    },
+    
+    async getAffiliate(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}`)
+        this.affiliate = res.data
+      } catch (e) {      
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    }
+
 
   }
 };
