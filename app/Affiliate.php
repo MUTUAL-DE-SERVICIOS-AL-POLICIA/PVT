@@ -46,19 +46,21 @@ class Affiliate extends Model
         'is_duedate_undefined',
         'due_date'
       ];
- 
+
     public function getPictureSavedAttribute()
     {
         return Storage::disk('ftp')->exists($this->id.'_perfil.png');
     }
+
     public function getFingerprintSavedAttribute()
     {
+        $base_path = 'picture/';
         $fingerprint_pictures = ['_left_four.png', '_right_four.png', '_thumbs.png'];
         $fingerprint_exists = false;
         foreach ($fingerprint_pictures as $picture) {
-          $fingerprint_exists |= Storage::disk('ftp')->exists($this->id.$picture);
+            $fingerprint_exists |= Storage::disk('ftp')->exists($base_path . $this->id . $picture);
         }
-        return $fingerprint_exists;
+        return boolval($fingerprint_exists);
     }
     public function getFullNameAttribute()
     {

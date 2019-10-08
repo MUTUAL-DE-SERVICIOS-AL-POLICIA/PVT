@@ -167,28 +167,21 @@ class AffiliateController extends Controller
         ]
         ],404);
     }
-    public function FingerImageprint(Request $request, $id) 
-    {
-    return response()->json([
-        'files' => [
-        [
-            'name' => $id.'_left_four.png',
-            'content' => base64_encode(Storage::disk('ftp')->get($id.'_left_four.png')),
-            'format' => Storage::disk('ftp')->mimeType($id.'_left_four.png')
-        ],
-        [
-            'name' => $id.'_right_four.png',
-            'content' => base64_encode(Storage::disk('ftp')->get($id.'_right_four.png')),
-            'format' => Storage::disk('ftp')->mimeType($id.'_right_four.png')
-        ],
-        [
-            'name' => $id.'_thumbs.png',
-            'content' => base64_encode(Storage::disk('ftp')->get($id.'_thumbs.png')),
-            'format' => Storage::disk('ftp')->mimeType($id.'_thumbs.png')
-        ]
-        ]
 
-        ],404);
+    public function FingerImageprint($id)
+    {
+        $files = [];
+        $base_path = 'picture/';
+        $fingerprint_files = ['_left_four.png', '_right_four.png', '_thumbs.png'];
+        foreach ($fingerprint_files as $file) {
+            if (Storage::disk('ftp')->exists($base_path . $id . $file)) {
+                array_push($files, [
+                    'name' => $id . $file,
+                    'content' => base64_encode(Storage::disk('ftp')->get($base_path . $id . $file)),
+                    'format' => Storage::disk('ftp')->mimeType($base_path . $id . $file)
+                ]);
+            }
+        }
+        return $files;
     }
-    
 }
