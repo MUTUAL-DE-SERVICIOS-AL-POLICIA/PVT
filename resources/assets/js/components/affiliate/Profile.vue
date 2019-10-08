@@ -259,8 +259,22 @@
                         :error-messages="errors.collect('nro')"
                         data-vv-name="nro"
                       ></v-text-field>
+                      <v-card-text @click="dialog=true" class="text-center">
+                      <v-btn type="file" color="success">
+                        Adicionar Foto
+                      </v-btn>
+                      </v-card-text>
                     </v-col>
                 </v-row>
+                <v-dialog v-model="dialog" persistent max-width="1000">
+                  <v-card>
+                  <v-divider></v-divider>
+                  <camara></camara>
+                  <v-card-actions>
+                  <v-btn color="error" @click="dialog=false">CERRAR</v-btn>
+                  </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </v-container>
         </v-col>
       </v-row>
@@ -268,10 +282,13 @@
 </template>
 
 <script>
+import Cam from '@/components/affiliate/Webcam'
   export default {
   name: "affiliate-profile",
   data: () => ({
-  affiliate: {
+    dialog:false,
+    cam: null,
+    affiliate: {
     first_name: null,
     second_name:null,
     last_name: null,
@@ -315,6 +332,9 @@
         menu1: false,
         menu2: false,
       }),
+    components: {
+    'camara': Cam
+    },
   beforeMount() {
     this.getCities();
   },
