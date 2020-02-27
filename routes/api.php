@@ -4,6 +4,11 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'v1',
 ], function () {
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('store');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('update');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');
+
     // Rutas abiertas
     Route::resource('auth', 'Api\V1\AuthController')->only('store');
     Route::resource('config', 'Api\V1\ConfigController')->only('index');

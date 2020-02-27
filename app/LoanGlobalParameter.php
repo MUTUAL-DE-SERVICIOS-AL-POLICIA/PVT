@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LoanGlobalParameter extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
     public $timestamps = true;
 
     protected $fillable = [

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Tag;
+use Illuminate\Support\Str;
 
 class TagSeeder extends Seeder
 {
@@ -12,13 +13,14 @@ class TagSeeder extends Seeder
      */
     public function run()
     {
+        $shortened[1]='Mora';
+        $shortened[2]='Amortizando';
         $tags = [
-            ['name' => 'Mora', 'shortened' => 'Mora', 'slug' => 'Retraso de la cuota a la fecha establecido'],
-            ['name' => 'Aprobado', 'shortened' => 'Aprobado', 'slug' => 'Solicitud de prestamo Aprobado'],
-            ['name' => 'Amortizando', 'shortened' => 'Amortizando', 'slug' => 'Pagando Cuotas']
+            ['name' => 'Retraso de Pago', 'shortened' => $shortened[1],'slug' => Str::slug($shortened[1],'-')],
+            ['name' => 'Pagando Cuotas', 'shortened' => $shortened[2],'slug' => Str::slug($shortened[2],'-')]
         ];
         foreach ($tags as $tag) {
             Tag::firstOrCreate($tag);
-        }
+        } 
     }
 }

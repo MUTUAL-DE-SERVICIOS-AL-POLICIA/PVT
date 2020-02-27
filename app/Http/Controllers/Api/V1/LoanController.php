@@ -555,11 +555,11 @@ class LoanController extends Controller
     /**
     * Impresión de Contrato
     * Devuelve un pdf del contrato acorde a un ID de préstamo
-    * @queryParam loan_id integer required ID del préstamo. Example: 1
+    * @queryParam loan_id required integer ID del préstamo. Example: 1
     * @authenticated
     * @response
     */
-    
+
     public function print_contract($id)
     {
         $loan = Loan::findOrFail($id);
@@ -616,7 +616,7 @@ class LoanController extends Controller
         return $pdf->stream($file_name);
     }
     /**
-    * Impresión del formulario Anticipo
+    * Impresión de Formulario de Solicitud de Préstamo
     * Devuelve un pdf del Formulario de solicitud
     * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [529]
     * @queryParam procedure_modality_id required integer ID de la modalidad del préstamo. Example: 32
@@ -633,17 +633,15 @@ class LoanController extends Controller
             'disbursement_type_id' => 'required|exists:payment_types,id',
             'procedure_modality_id' => 'required|exists:procedure_modalities,id',
             'amount_requested'=>'required|integer|min:200|max:700000',
-            'lenders'=>'required|array|max:1|exists:affiliates,id',
+            'lenders'=>'required|array|exists:affiliates,id',
             'loan_term'=>'required|integer|min:1|max:240',
             'destination'=>'required|string',
-            'account_number'=>'nullable|integer',
         ]);
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $payment_type = PaymentType::findOrFail($request->disbursement_type_id);
-        
         $lenders = [];
         foreach ($request->lenders as $lender) {
-            array_push($lenders, $this->verify_spouse_disbursable($lender)->disbursable);
+            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
         }
         $date = Carbon::now();
         $data = [
@@ -665,7 +663,7 @@ class LoanController extends Controller
             'account_number' => $request->account_number,
             'payment_type' => $payment_type
         ];
-        $file_name = implode('_', ['solicitud', 'prestamo_anticipo']) . '.pdf';
+        $file_name = implode('_', ['formulario', 'solicitud_préstamo']) . '.pdf';
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = [
             'orientation' => 'portrait',
@@ -679,7 +677,7 @@ class LoanController extends Controller
             'footer-html' => $footerHtml,
             'user-style-sheet' => public_path('css/report-print.min.css')
         ];
-        $pdf = \PDF::loadView('loan.forms.advance_form', $data);
+        $pdf = \PDF::loadView('loan.forms.request_form', $data);
         $pdf->setOptions($options);
         return $pdf->stream($file_name);
         return 0;

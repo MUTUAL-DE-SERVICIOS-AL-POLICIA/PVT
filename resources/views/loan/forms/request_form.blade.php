@@ -22,7 +22,7 @@
     <div>Presente.- </div>
 </div><br><br><br>
 <div style="block" class="">
-    <div class="uppercase font-semibold leading-tight text-right px-100 m-b-10 text-xs">{{ $title }}</div>
+    <div class="uppercase font-semibold leading-tight text-right px-4 text-xs">{{ $title }}</div>
 </div>
 <div class="block text-justify">
     <div>
@@ -40,26 +40,31 @@
         </div>
     </div>
     <div>
-
+        @foreach ($lenders as $lender)
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-xxs text-white">
-                <td class="w-60">Solicitante</td>
+                <td class="w-50">Solicitante</td>
                 <td class="w-20">CI</td>
-                <td class="w-20">Años de Servicio</td>
+                <td class="w-30">Años de Servicio</td>
             </tr>
-            @foreach ($lenders as $lender)
             <tr>
                 <td class="data-row py-5">{{ $lender->title }} {{ $lender->full_name }}</td>
                 <td class="data-row py-5">{{ ($lender->identity_card_ext) }}</td>
-                <td class="data-row py-5">............................</td>
+                <td class="data-row py-5"></td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td colspan = "2" class="w-50">Domilicio actual</td>
-                <td class="w-50">Telefonos</td>
+                <td class="w-50">Teléfonos</td>
             </tr>
             <tr>
                 <td colspan = "2" class="data-row py-5">{{ $lender->address? $lender->address->full_address:"" }}</td>
-                <td class="data-row py-5">{{ $lender->cell_phone_number}}</td>
+                <td class="data-row py-5">
+                @if ($lender->cell_phone_number != "")
+                @foreach(explode(',', $lender->cell_phone_number) as $phone) 
+                    {{ $phone }}<br>
+                @endforeach
+                @endif 
+                </td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td colspan = "2" class="w-50">Destino Actual</td>
@@ -67,16 +72,21 @@
             </tr>
             <tr>
                 <td colspan = "2" class="data-row py-5">{{ $lender->full_unit }}</td>
-                <td colspan="2" class="data-row py-5 normal-case">{{ ($payment_type->name=='Deposito Bancario')? ' Cta. Banco Union: ' .$account_number: $payment_type->name}}</td>
+                <td colspan="2" class="data-row py-5 normal-case">
+                @if($payment_type->name=='Deposito Bancario')
+                    <b>Cuenta Banco Union</b><br>
+                    {{ $account_number }}
+                @else
+                    {{ $payment_type->name}}
+                @endif
+                </td>
             </tr>
-            @endforeach
+            
         </table>
-        <table class="table-info w-100 ">
-            <tr class="bg-grey-darker text-xxs text-white">
-            <td class="data-row py-5"></td>
-            </tr>
-            <tr>
-                <td class="font-semibold leading-tight text-center px-100 m-b-10 text-xs py-10 font-bold">LA PRESENTE SOLICITUD CONSTITUYE DECLARACION JURADA, CONDIGNANDOSE LOS DATOS COMO FIDEDIGNOS POR LOS INTERESADOS.</td>
+        @endforeach
+        <table class="table-info w-100 text-center uppercase my-20 ">
+            <tr class ="bg-grey-lightest text-black">
+                <td class="font-semibold text-center  text-xs py-10">LA PRESENTE SOLICITUD CONSTITUYE DECLARACION JURADA, CONDIGNANDOSE LOS DATOS COMO FIDEDIGNOS POR LOS INTERESADOS.</td>
             </tr>
         
         </table>
@@ -84,20 +94,16 @@
     <div>
         <div>A tal efecto, adjunto los requisito solicitados.</div>
         <div>Sin otro particular, me despido de usted con las consideraciones mas distinguidas.</div>
-    </div><br><br><br>
-</div><br>
-<div class="block">
-        <div class='text-center'>
-            .................................................<br> 
-            FIRMA SOLICITANTE<br>    
-        </div><br>
-        <div class='text-center'>
-        @foreach ($lenders as $lender)
-        <tr>
-            <td>{{ $lender->title }} {{ $lender->full_name }}</td>
-        </tr>
-        @endforeach
-        </div>   
+    </div>
 </div>
+<p class="text-center align-bottom" style= "width: 900px;height: 200px; display: table-cell;">
+    @foreach ($lenders as $lender)
+        .....................................................................<br>
+        {{ $lender->title }} {{ $lender->full_name }}<br>
+        C.I. N° {{ $lender->identity_card_ext }}<br>
+
+    @endforeach
+            
+</p>  
 </body>
 </html>
