@@ -559,7 +559,6 @@ class LoanController extends Controller
     * @authenticated
     * @response
     */
-
     public function print_contract($id)
     {
         $loan = Loan::findOrFail($id);
