@@ -14,14 +14,14 @@
                         <div v-if="index<3">
                           <strong>Cód. préstamo: </strong> {{ item.code }} | 
                           <strong>Desembolsado: </strong> {{ item.amount_approved }} | 
-                          <strong>Total pagado: </strong> {{ item.balance }}                      
+                          <strong>Total pagado: </strong> {{ item.amount_approved - item.balance }}                      
                           <v-progress-linear 
                               :color="randomColor()"
                               height="15"
-                              :value= '((item.balance*100)/item.amount_approved).toFixed(2)'
+                              :value= '(((item.amount_approved-item.balance)*100)/item.amount_approved).toFixed(2)'
                               striped
                           >
-                          <strong>Porcentaje pagado: {{ ((item.balance*100)/item.amount_approved).toFixed(2) }}%</strong>
+                          <strong>Porcentaje pagado: {{ (((item.amount_approved-item.balance)*100)/item.amount_approved).toFixed(2) }}%</strong>
                           </v-progress-linear>
                         </div>
                       </li>
@@ -54,7 +54,7 @@
                       small
                       color="warning"
                       v-on="on"                      
-                      class="mr-8"
+                      class="mr-10"
                       absolute
                       bottom
                       right
@@ -241,7 +241,7 @@ export default {
     async getLoan(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${id}/loan`, {
+        let res = await axios.get(`affiliate/${7}/loan?guarantor=0`, {
           params: {
             sortBy: ['request_date'],
             sortDesc: [true],
