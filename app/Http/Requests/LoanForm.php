@@ -29,7 +29,7 @@ class LoanForm extends FormRequest
             'procedure_modality_id'=>'integer|exists:procedure_modalities,id',  
             'amount_requested'=>'integer|min:200|max:700000',
             'city_id'=>'integer|exists:cities,id',
-            'loan_term'=>'integer',
+            'loan_term'=>'integer|min:2|max:240',
             'disbursement_type_id'=>'exists:payment_types,id',
             'lenders'=>'array|min:1|exists:affiliates,id',
             'guarantors'=>'array|exists:affiliates,id',

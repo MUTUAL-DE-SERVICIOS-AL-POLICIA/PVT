@@ -14,7 +14,7 @@ class RoleController extends Controller
     /**
     * Lista de roles
     * Devuelve el listado de los roles disponibles en el sistema
-    * @queryParam name string Filtrar roles por nombre. Example: PRE-area-de-recepcion
+    * @queryParam name Filtrar roles por nombre. Example: PRE-area-de-recepcion
     * @authenticated
     * @response
     * [
@@ -90,7 +90,7 @@ class RoleController extends Controller
     */
     public function set_permissions(Request $request, $id) {
         $request->validate([
-            'permissions' => 'required|array',
+            'permissions' => 'required|array|min:1',
             'permissions.*' => 'exists:permissions,id'
         ]);
         $role = Role::findOrFail($id);

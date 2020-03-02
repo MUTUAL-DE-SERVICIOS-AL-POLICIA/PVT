@@ -56,7 +56,7 @@ class Loan extends Model
 
     public function tags()
     {
-        return $this->morphMany(Taggable::class, 'taggable');
+        return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->withTimestamps();
     }
 
     public function state()

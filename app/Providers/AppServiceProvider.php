@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
             'beneficiaries' => 'App\LoanBeneficiary',
             'users' => 'App\User',
             'roles' => 'App\Role',
-            'permissions' => 'App\Permission',
+            'loans' => 'App\Loan'
         ]);
     }
 

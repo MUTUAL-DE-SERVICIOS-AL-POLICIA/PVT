@@ -12,8 +12,9 @@ class RecordTypeSistemaSeeder extends Seeder
      */
     public function run()
     {
-        RecordType::create([
-            'name' => 'sistema',
+        RecordType::firstOrCreate([
+            'name' => 'sistema'
+        ], [
             'display_name' => 'Sistema',
             'description' => 'Cambios al Sistema'
         ]);

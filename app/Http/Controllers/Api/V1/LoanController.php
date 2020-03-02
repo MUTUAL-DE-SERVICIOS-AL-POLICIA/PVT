@@ -7,8 +7,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Affiliate;
 use App\City;
+use App\User;
 use App\Loan;
+use App\Tag;
 use App\LoanState;
+use App\RecordType;
 use Illuminate\Support\Facades\Schema;
 use App\ProcedureDocument;
 use App\ProcedureModality;
@@ -255,8 +258,8 @@ class LoanController extends Controller
     * @bodyParam city_id integer required ID de la ciudad. Example: 2
     * @bodyParam loan_term integer required plazo. Example: 3
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
-    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @queryParam guarantors required array Lista de IDs de afiliados Garante de préstamo. Example: []
+    * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
+    * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (refinanciado,reprogramado)  . Example: refinanciado
@@ -381,7 +384,7 @@ class LoanController extends Controller
     * Registro de documentos presentados
     * Registra todos los documentos entregados por parte del prestatario
     * @urlParam id required ID de préstamo. Example: 2
-    * @queryParam documents required array Lista de IDs de Documentos solicitados. Example: [306,305]
+    * @queryParam documents required Lista de IDs de Documentos solicitados. Example: [306,305]
     * @response
     * {
     *    "attached": [
@@ -394,12 +397,14 @@ class LoanController extends Controller
     */
     public function submit_documents(Request $request, $id)
     {
+        $request->validate([
+            'documents' => 'required|array|min:1',
+            'documents.*' => 'exists:procedure_documents,id'
+        ]);
         $loan = Loan::findOrFail($id);
         $date = Carbon::now()->toISOString();
         $documents = [];
         foreach ($request->documents as $document_id) {
-            $document_id = intval($document_id);
-            ProcedureDocument::findOrFail($document_id);
             if ($loan->submitted_documents()->whereId($document_id)->doesntExist()) {
                 $documents[$document_id] = [
                     'reception_date' => $date
@@ -484,17 +489,26 @@ class LoanController extends Controller
     /**
     * Impresión de los requisitos
     * Devuelve un pdf de los requisitos acorde a una modalidad
-    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @queryParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 35
-    * @queryParam city_id integer required ID de la ciudad. Example: 2
-    * @queryParam amount_requested integer monto solicitado. Example: 5000
-    * @queryParam loan_term integer plazo. Example: 3
-    * @queryParam parent_loan_id integer ID de préstamo padre. Example: 1
+    * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
+    * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 35
+    * @queryParam city_id required ID de la ciudad. Example: 2
+    * @queryParam amount_requested required Monto solicitado. Example: 5000
+    * @queryParam loan_term required Plazo. Example: 3
+    * @queryParam parent_loan_id ID de préstamo padre. Example: 1
     * @authenticated
     */
     public function print_requirements(Request $request)
     {
-        $parent_loan = $request->has('parent_loan_id') ? Loan::find($request->parent_loan_id) : null;
+        $request->validate([
+            'lenders' => 'required|array|min:1',
+            'lenders.*' => 'exists:affiliates,id',
+            'procedure_modality_id' => 'integer|required|exists:procedure_modalities,id',
+            'city_id' => 'integer|required|exists:cities,id',
+            'amount_requested' => 'integer|required|min:200|max:700000',
+            'loan_term' => 'integer|required|min:2|max:240',
+            'parent_loan_id' => 'integer|exists:loans,id'
+        ]);
+        $parent_loan = $request->has('parent_loan_id') ? Loan::findOrFail($request->parent_loan_id) : null;
         $lenders = [];
         foreach ($request->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
@@ -538,18 +552,59 @@ class LoanController extends Controller
         return $pdf->stream($file_name);
     }
 
-    // TODO
     public function switch_states()
     {
+        $user = User::whereUsername('admin')->first();
+        $amortizing_tag = Tag::whereSlug('amortizando')->first();
+        $defaulted_tag = Tag::whereSlug('mora')->first();
+        $defaulted_loans = 0;
+        $amortizing_loans = 0;
+
+        // Switch amortizing loans to defaulted
         $loans = Loan::whereHas('state', function($query) {
             $query->whereName('Desembolsado');
+        })->whereHas('tags', function($q) {
+            $q->whereSlug('amortizando');
         })->get();
         foreach ($loans as $loan) {
             if ($loan->defaulted) {
-                // Verify if it has defaulted tag
-                // Attach defaulted tag
-            } // Else detach defaulted tag
+                $loan->tags()->detach($amortizing_tag);
+                $loan->tags()->attach([$defaulted_tag->id => [
+                    'user_id' => $user->id,
+                    'date' => Carbon::now()
+                ]]);
+                $defaulted_loans++;
+                foreach ($loan->lenders as $lender) {
+                    $lender->records()->create([
+                        'user_id' => $user->id,
+                        'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
+                        'action' => 'etiquetó en mora'
+                    ]);
+                }
+            }
         }
+
+        // Switch defaulted loans to amortizing
+        $loans = Loan::whereHas('state', function($query) {
+            $query->whereName('Desembolsado');
+        })->whereHas('tags', function($q) {
+            $q->whereSlug('mora');
+        })->get();
+        foreach ($loans as $loan) {
+            if (!$loan->defaulted) {
+                $loan->tags()->detach($defaulted_tag);
+                $loan->tags()->attach([$amortizing_tag->id => [
+                    'user_id' => $user->id,
+                    'date' => Carbon::now()
+                ]]);
+                $amortizing_loans++;
+            }
+        }
+
+        return response()->json([
+            'defaulted' => $defaulted_loans,
+            'amortizing' => $amortizing_loans
+        ]);
     }
 
     /**
@@ -617,13 +672,13 @@ class LoanController extends Controller
     /**
     * Impresión de Formulario de Solicitud de Préstamo
     * Devuelve un pdf del Formulario de solicitud
-    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [529]
-    * @queryParam procedure_modality_id required integer ID de la modalidad del préstamo. Example: 32
-    * @queryParam amount_requested required integer monto solicitado. Example: 2000
-    * @queryParam disbursement_type_id required integer Tipo de desembolso. Example: 2
-    * @queryParam loan_term required integer plazo. Example: 2
-    * @queryParam destination required string destino de préstamo. Example: Salud
-    * @queryParam account_number string número de cuenta de Banco Unión. Example: 1-9334298
+    * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [529]
+    * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 32
+    * @queryParam amount_requested required monto solicitado. Example: 2000
+    * @queryParam disbursement_type_id required Tipo de desembolso. Example: 2
+    * @queryParam loan_term required Plazo. Example: 2
+    * @queryParam destination required Destino de préstamo. Example: salud
+    * @queryParam account_number Número de cuenta de Banco Unión. Example: 1-9334298
     * @authenticated
     */
     public function print_form(Request $request)
