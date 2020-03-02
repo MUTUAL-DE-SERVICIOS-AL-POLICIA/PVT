@@ -610,7 +610,7 @@ class LoanController extends Controller
     /**
     * Impresión de Contrato
     * Devuelve un pdf del contrato acorde a un ID de préstamo
-    * @queryParam loan_id required integer ID del préstamo. Example: 1
+    * @queryParam loan_id required ID del préstamo. Example: 1
     * @authenticated
     * @response
     */
