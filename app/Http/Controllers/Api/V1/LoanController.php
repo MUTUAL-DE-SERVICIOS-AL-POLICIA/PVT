@@ -255,8 +255,8 @@ class LoanController extends Controller
     * @bodyParam city_id integer required ID de la ciudad. Example: 2
     * @bodyParam loan_term integer required plazo. Example: 3
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
-    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @queryParam guarantors required array Lista de IDs de afiliados Garante de préstamo. Example: []
+    * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
+    * @bodyParam guarantors array required Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (refinanciado,reprogramado)  . Example: refinanciado
@@ -381,7 +381,7 @@ class LoanController extends Controller
     * Registro de documentos presentados
     * Registra todos los documentos entregados por parte del prestatario
     * @urlParam id required ID de préstamo. Example: 2
-    * @queryParam documents required array Lista de IDs de Documentos solicitados. Example: [306,305]
+    * @queryParam documents required Lista de IDs de Documentos solicitados. Example: [306,305]
     * @response
     * {
     *    "attached": [
@@ -484,12 +484,12 @@ class LoanController extends Controller
     /**
     * Impresión de los requisitos
     * Devuelve un pdf de los requisitos acorde a una modalidad
-    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @queryParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 35
-    * @queryParam city_id integer required ID de la ciudad. Example: 2
-    * @queryParam amount_requested integer monto solicitado. Example: 5000
-    * @queryParam loan_term integer plazo. Example: 3
-    * @queryParam parent_loan_id integer ID de préstamo padre. Example: 1
+    * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
+    * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 35
+    * @queryParam city_id required ID de la ciudad. Example: 2
+    * @queryParam amount_requested Monto solicitado. Example: 5000
+    * @queryParam loan_term Plazo. Example: 3
+    * @queryParam parent_loan_id ID de préstamo padre. Example: 1
     * @authenticated
     */
     public function print_requirements(Request $request)
@@ -555,7 +555,7 @@ class LoanController extends Controller
     /**
     * Impresión de Contrato
     * Devuelve un pdf del contrato acorde a un ID de préstamo
-    * @queryParam loan_id required integer ID del préstamo. Example: 1
+    * @queryParam loan_id required ID del préstamo. Example: 1
     * @authenticated
     * @response
     */
@@ -617,13 +617,13 @@ class LoanController extends Controller
     /**
     * Impresión de Formulario de Solicitud de Préstamo
     * Devuelve un pdf del Formulario de solicitud
-    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [529]
-    * @queryParam procedure_modality_id required integer ID de la modalidad del préstamo. Example: 32
-    * @queryParam amount_requested required integer monto solicitado. Example: 2000
-    * @queryParam disbursement_type_id required integer Tipo de desembolso. Example: 2
-    * @queryParam loan_term required integer plazo. Example: 2
-    * @queryParam destination required string destino de préstamo. Example: Salud
-    * @queryParam account_number string número de cuenta de Banco Unión. Example: 1-9334298
+    * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [529]
+    * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 32
+    * @queryParam amount_requested required Monto solicitado. Example: 2000
+    * @queryParam disbursement_type_id required Tipo de desembolso. Example: 2
+    * @queryParam loan_term required Plazo. Example: 2
+    * @queryParam destination required Destino de préstamo. Example: Salud
+    * @queryParam account_number Número de cuenta de Banco Unión. Example: 100009334298
     * @authenticated
     */
     public function print_form(Request $request)
