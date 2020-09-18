@@ -234,4 +234,21 @@ class CalculatorController extends Controller
         }
         return intval(round(floor($maximum_qualified_amount))/100)*100;
     }
+
+    //
+    public function loan_percent(request $request){
+        $lc=$request->liquid_calculated;
+        $ms=$request->amount_requested;
+        $plm=$request->months_term;
+        $ticm=$request->interest_rate;
+        $ce= ($ticm/(1-(1/(pow(1+$ticm,$plm)))))*$ms;
+        $lpc=0;
+        foreach($lc as $obj){
+            $lpc = $lpc + (int)$obj["liquid_qualification_calculated"];
+        }
+        $ie=($ce/$lpc)*100;
+        //$response[]=array(""=>);
+        //$t = json_encode($t->liquid_qualification_calculated);
+        return $ie;
+    }
 }
