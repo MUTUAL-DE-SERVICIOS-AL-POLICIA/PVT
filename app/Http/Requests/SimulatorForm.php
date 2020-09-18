@@ -40,6 +40,9 @@ class SimulatorForm extends FormRequest
             'months_term'=> ['nullable', 'required_if:guarantor,false', 'integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
             'guarantor' => ['nullable', 'boolean'],
             'quota_lender' => ['nullable', 'required_if:guarantor,true'],
+            'liquid_calculated' => ['required', 'array', 'min:1'],
+            'liquid_calculated.*.affiliate_id' => ['required'],
+            'liquid_calculated.*.liquid_qualification_calculated' => ['required']
         ];
     }
 
