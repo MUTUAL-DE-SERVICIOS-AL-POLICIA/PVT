@@ -53,7 +53,7 @@
         <br>
         <v-card v-show="show_calculated">
           <v-container class="py-0">
-            <v-row>         
+            <v-row>
               <v-col cols="12" md="12">
                 <v-layout row wrap>
                   <v-flex xs12 class="px-2">

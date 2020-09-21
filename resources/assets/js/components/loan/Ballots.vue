@@ -298,6 +298,7 @@ export default {
           for(this.j = 0; this.j< this.datos.length; this.j++)
         {
           this.contributions1[this.j].payable_liquid=this.datos[this.j].payable_liquid
+          this.contributions1[this.j].id_affiliate=this.datos[this.j].affiliate_id
           if(this.j==0){
             this.contributions1[this.j].border_bonus= this.datos[this.j].border_bonus,
             this.contributions1[this.j].east_bonus= this.datos[this.j].east_bonus,

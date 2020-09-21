@@ -51,4 +51,16 @@ class ProcedureModalityController extends Controller
     public function get_requirements(ProcedureModality $procedure_modality) {
         return $procedure_modality->requirements_list;
     }
+
+    /**
+    * Parametros para una modalidad de préstamo
+    * Devuelve los parametros para cada modalidad
+    * @urlParam procedure_modality required ID de la modalidad. Example: 32
+    * @authenticated
+    * @responseFile responses/procedure_modality/get_loan_modality_parameter.200.json
+    */
+    public function get_loan_modality_parameter(ProcedureModality $procedure_modality) {
+        if(!$procedure_modality->loan_modality_parameter) abort(403, 'Parametro de préstamo no encontrado');
+        return $procedure_modality->loan_modality_parameter;
+    }
 }

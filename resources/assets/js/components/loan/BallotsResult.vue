@@ -64,7 +64,8 @@
               </v-container>
               <BallotsResultHipotecary
               v-show="datos.procedure_type_id==12"
-              :datos.sync="datos"/>
+              :datos.sync="datos"
+              :calculos.sync="calculos"/>
             </v-col>
           </v-row>
         <!--/v-card-->

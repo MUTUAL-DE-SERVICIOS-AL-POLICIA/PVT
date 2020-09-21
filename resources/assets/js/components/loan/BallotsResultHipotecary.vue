@@ -25,8 +25,8 @@
                       <v-text-field
                         :error-messages="errors"
                         label="Monto Solicitado"
-                        v-model ="calculos.montos"
-                        v-on:keyup.enter="Calculator()"
+                        v-model ="monto_hipotecario"
+                        v-on:keyup.enter="calculadora()"
                       ></v-text-field>
                       </ValidationProvider>
                         </fieldset>
@@ -38,7 +38,7 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-1">
                           <fieldset class="pa-2">
-                            <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO</p>
+                            <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO {{calculo123}}</p>
                             <p class="py-0 mb-0">PROMEDIO LIQUIDO PAGABLE:{{ calculos.payable_liquid_calculated }}</p>
                             <p class="py-0 mb-0">TOTAL BONOS: {{ calculos.bonus_calculated+ "  " }}LIQUIDO PARA CALIFICACION: {{ calculos.liquid_qualification_calculated}}</p>
                             <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO</p>
@@ -88,6 +88,7 @@ export default {
     loanTypeSelected:null,
     visible:false,
     num_type:9,
+    monto_hipotecario:null
   
   }),
   props: {
@@ -110,13 +111,66 @@ export default {
      prueba: {
       type: Array,
       required: true
-    },
+    },*/
     calculos: {
       type: Object,
       required: true
-    }*/
+    }
   },
   methods: {
+    async calculadora() {
+      try {
+          let res = await axios.post(`liquid_calificated`, {
+            procedure_modality_id: 41,
+            liquid_calification: [
+              {
+                affiliate_id: 123456,
+                contributions: [
+                {
+                    payable_liquid: 2000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                },
+                {
+                    payable_liquid: 3000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                },
+                {
+                    payable_liquid: 3500,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 0,
+                    east_bonus: 0
+                }
+              ]
+            },
+               {
+            affiliate_id: 1,
+            parent_loan_id: 6,
+            contributions: [
+                {
+                    payable_liquid: 2000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                }
+            ]
+        }
+            ]
+          })
+          this.calculo123 = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     async Calculator() {
       try {
         if (this.modalidad.quantity_ballots > 1) {

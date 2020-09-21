@@ -1,0 +1,10 @@
+{
+    "procedure_modality_id": 32,
+    "debt_index": "90",
+    "quantity_ballots": 1,
+    "guarantors": 0,
+    "min_guarantor_category": null,
+    "max_guarantor_category": null,
+    "personal_reference": false,
+    "max_lenders": 1
+}
