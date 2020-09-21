@@ -217,7 +217,7 @@ class CalculatorController extends Controller
             $liquid_qualification_calculated = $payable_liquid_average - $total_bonuses - $sum_quota_guarantor - $sum_quota_lender;
         }else{
             // arreglar cuando hay padre y los demas que son tramites ajenos
-            $liquid_qualification_calculated  = $payable_liquid_average - $total_bonuses - $sum_quota_guarantor + $parent_quota;
+            $liquid_qualification_calculated  = $payable_lcalificatiiquid_average - $total_bonuses - $sum_quota_guarantor + $parent_quota;
         }
         return $liquid_qualification_calculated;
     }
@@ -236,7 +236,7 @@ class CalculatorController extends Controller
     }
 
     //
-    public function loan_percent(request $request){
+    /*public function loan_percent(request $request){
         $lc=$request->liquid_calculated;
         $ms=$request->amount_requested;
         $plm=$request->months_term;
@@ -275,5 +275,5 @@ class CalculatorController extends Controller
             "cosigners"=>$cosigners
         );
         return $response;
-    }
+    }*/
 }
