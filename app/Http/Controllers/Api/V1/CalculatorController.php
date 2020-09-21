@@ -75,7 +75,7 @@ class CalculatorController extends Controller
     * @authenticated
     * @responseFile responses/calculator/simulator.200.json
     */
-    public function simulator(SimulatorForm $request){
+    public function simulator(Request $request){
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $liquid_qualification_calculated = $request->liquid_qualification_calculated;
         if($request->guarantor){
