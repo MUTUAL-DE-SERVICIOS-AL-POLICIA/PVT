@@ -142,35 +142,52 @@ class LoanPaymentController extends Controller
     * @responseFile responses/loan_payment/indexKardex.200.json
      */
     public function indexKardex(Request $request){
-        $loan = Loan::find($request->loan_id);
-        $balance = $loan->amount_approved;
+        $loan = Loan::whereId($request->loan_id)->first();
+        $loan->balance = $loan->balance;
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
-
-        if(!$request->has('search')){
-            $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->orderby('quota_number')->paginate(5);
-            foreach($loan_payments as $payment){
-                $balance = $balance - $payment->capital_payment;
-                $payment->loan = $loan;
-                $payment->state = LoanState::findOrFail($payment->state_id);
-
+        $payments = collect();
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->get();//return $loanPayments;
+            foreach($loanPayments as $loanPayment)
+            {
+                if($loanPayment->procedure_modality_id == 55 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 56 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 57 && $loanPayment->state_id == 6)//amortizacion directa
+                {
+                    //$loanPayment->loan = $loan/
+                    $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->modality;
+                    $payments->push($loanPayment);
+                }
+                if($loanPayment->procedure_modality_id == 62 && $loanPayment->state_id == 5 || $loanPayment->procedure_modality_id == 62 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 63 && $loanPayment->state_id == 5 || $loanPayment->procedure_modality_id == 63 && $loanPayment->state_id == 6)//amortizacion automatica
+                {
+                    //$loanPayment->loan = $loan;
+                    $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->modality;
+                    $payments->push($loanPayment);
+                }
+                if($loanPayment->procedure_modality_id == 64 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 64 && $loanPayment->state_id == 7)// amortizacion por ajuste
+                {
+                    //$loanPayment->loan = $loan;
+                    $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->modality;
+                    $payments->push($loanPayment);
+                }
+                if($loanPayment->procedure_modality_id == 60 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 60 && $loanPayment->state_id == 7 || $loanPayment->procedure_modality_id == 61 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 61 && $loanPayment->state_id == 7)//amortizacion por fondo
+                {
+                    //$loanPayment->loan = $loan;
+                    $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->modality;
+                    $payments->push($loanPayment);
+                }
+                if($loanPayment->procedure_modality_id == 58 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 58 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 59 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 59 && $loanPayment->state_id == 7)//amortizacion por complemento
+                {
+                    //$loanPayment->loan = $loan;
+                    $loanPayment->state = LoanState::whereId($loanPayment->state_id);
+                    $loanPayment->modality;
+                    $payments->push($loanPayment);
+                }
             }
-            //$loan->balance->$balance;
-        }
-        else{
-            $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->where('code', 'ilike','%'.$request->search.'%')->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->where('code', 'ilike','%'.$request->search.'%')->orderby('quota_number')->paginate(7);
-            foreach($loan_payments as $payment){
-                $payment->balance = 0;
-                $payment->loan = $loan;
-                $payment->state = LoanState::findOrFail($payment->state_id);
-               
-              
-            }
-        }
-        /*$loan->estimated_quota = $loan->estimated_quota;
-        $loan->interest = $loan->interest;
-        $loan->payments = $loan_payments;*/
-        return $loan_payments;
+        $loan->payments = $payments;
+        return $loan;
     }
 
     /**
@@ -283,6 +300,11 @@ class LoanPaymentController extends Controller
                 $payment->voucher_number = $request->input('voucher_number', null);
                 $voucher = $loanPayment->voucher_treasury()->create($payment->toArray());
                 $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id]);
+                if($loanPayment->loan->verify_balance() == 0)
+                {
+                    $loan = Loan::whereId($loanPayment->loan_id);
+                    $loan->update(['state_id' => $Pagado]);
+                }
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();
@@ -434,33 +456,24 @@ class LoanPaymentController extends Controller
         $procedure_modality = $loan->modality;
         $lenders = []; 
         $is_dead = false;
+        $quota_treat = 0;
         foreach ($loan->lenders as $lender) {
             $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
             if($lender->dead) $is_dead = true;
         }
         $global_parameter=LoanGlobalParameter::latest()->first();
         $max_current=$global_parameter->grace_period+$global_parameter->days_current_interest;
-
-            $num_quota=$loan_payment->quota_number;
+        $num_quota=$loan_payment->quota_number;
             if($num_quota == 1){
-                $estimated_days['previous_balance']=$loan->amount_approved;
-                $estimated_days['current_balance']=$estimated_days['previous_balance']-$loan_payment->capital_payment; 
-                $disbursement_date=CarbonImmutable::parse($loan->disbursement_date);
-                $estimated_date=$loan->payments->first()->estimated_date;
-                $estimated_date=CarbonImmutable::parse($estimated_date);
-                $estimated_days['current'] = $disbursement_date->diffInDays($estimated_date);
+                $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
+                $estimated_days['current'] = $disbursement_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
                 if($estimated_days['current'] > $max_current)
                     $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
                     $estimated_days['penal'] = 0;
-            }else{   
-                $anulado = LoanState::whereName('Anulado')->first()->id;       
-                $capital_paid = LoanPayment::where('loan_id',$loan->id)->where('quota_number','<',$num_quota)->where('state_id','!=',$anulado)->sum('capital_payment');
-                $estimated_days['previous_balance'] = $loan->amount_approved-$capital_paid;
-                $estimated_days['current_balance'] = $estimated_days['previous_balance']-$loan_payment->capital_payment;              
-                $reg_payment=$loan->payments->where('quota_number', ($num_quota-1));
-                $reg_payment=CarbonImmutable::parse($reg_payment->first()->estimated_date);
-                $estimated_days['current'] = $reg_payment->diffInDays(CarbonImmutable::parse($loan->payments->first()->estimated_date));
+            }else{                
+                $reg_payment_date = CarbonImmutable::parse($loan_payment->previous_payment_date);
+                $estimated_days['current'] = $reg_payment_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
                 if($estimated_days['current'] > $max_current)
                 $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
@@ -479,6 +492,8 @@ class LoanPaymentController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
+                    ['Fecha', Carbon::now()->format('d/m/Y')],
+                    ['Hora', Carbon::now()->format('h:m:s a')],
                     ['Usuario', Auth::user()->username]
                 ]
             ],
@@ -489,7 +504,8 @@ class LoanPaymentController extends Controller
             'signers' => $persons,
             'is_dead'=> $is_dead,
             'estimated_days' => $estimated_days
-        ]; 
+        ];
+      
         $information_loan = $this->get_information_loan($loan);
         $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_loan')->with($data)->render();
@@ -570,7 +586,9 @@ class LoanPaymentController extends Controller
     */
     public function get_voucher(LoanPayment $loan_payment)
     {
-        if ($loan_payment->voucher_treasury) return $loan_payment->voucher_treasury;
+        if ($loan_payment->voucher_treasury){
+            return $loan_payment->voucher_treasury;
+        }
         abort(403, 'No existe el registro de pago');
     }
 

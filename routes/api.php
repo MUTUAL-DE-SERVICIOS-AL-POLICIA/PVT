@@ -74,7 +74,7 @@ Route::group([
         Route::post('search_loan','Api\V1\AffiliateController@search_loan');
         Route::apiResource('contributions_affiliate', 'Api\V1\ContributionController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::get('affiliate/{affiliate}/contributions_affiliate', 'Api\V1\ContributionController@get_all_contribution_affiliate');
-        Route::post('list_loan_generate', 'Api\V1\LoanController@list_loan_generate');
+        Route::get('list_loan_generate', 'Api\V1\LoanController@list_loan_generate');
 
         // Afiliado
         Route::group([

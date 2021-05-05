@@ -169,7 +169,7 @@ export default {
     newOther: null,
     status_click: false,
     loader: null,
-    ids_items: []
+    //ids_items: []
   }),
   props: {
     guarantors: {
@@ -216,7 +216,7 @@ export default {
       this.getRequirement(this.modalidad_id)
       this.selected = []
       this.radios = []
-      this.ids_items = []
+      //this.ids_items = []
     },
     personal_codebtor(){
       return true
@@ -256,7 +256,7 @@ export default {
       this.bus.$emit("beforeStepBus", val)
     },
     async getRequirement(id) {
-      this.ids_items=[]
+      //this.ids_items=[]
       try {
         this.loading = true;
         let res = await axios.get(`procedure_modality/${id}/requirement`);
@@ -264,14 +264,14 @@ export default {
         this.items = this.requirement.required;
         this.optional = this.requirement.optional;
         this.newOptional = this.requirement.optional;
-        console.log(this.items)
+        /*console.log(this.items)
         for(let i = 0; i < this.items.length; i++ ){
           for(let j = 0; j < 1; j++ ){
            this.ids_items.push(this.items[i][j].id)
             //console.log(this.ids_items )
           }
         }
-         console.log(this.id_items )
+         console.log(this.id_items )*/
       } catch (e) {
         console.log(e);
       } finally {
@@ -305,7 +305,7 @@ export default {
               lenders:this.lenders,
               guarantors: this.guarantors,
               data_loan:this.data_loan_parent,
-              documents: this.ids_items.concat(this.itemsOpc.concat(this.radios.filter(Boolean))),
+              documents: this.selected.concat(this.itemsOpc.concat(this.radios.filter(Boolean))),
               notes: this.otherDocuments,
               user_id: this.$store.getters.id,
               remake_loan_id: this.$route.params.hash == 'remake' ? this.$route.query.loan_id : 0

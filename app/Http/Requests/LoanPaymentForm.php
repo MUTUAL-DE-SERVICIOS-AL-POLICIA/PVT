@@ -19,7 +19,8 @@ class LoanPaymentForm extends FormRequest
      */
     public function authorize()
     {
-        if (!is_null($this->loan->disbursement_date) && $this->loan->role->name === 'PRE-cobranzas') return true;
+        //if (!is_null($this->loan->disbursement_date) && $this->loan->role->name === 'PRE-cobranzas') return true;
+        if (!is_null($this->loan->disbursement_date)) return true;
         abort(403, 'El préstamo aún no ha sido desembolsado');
     }
 

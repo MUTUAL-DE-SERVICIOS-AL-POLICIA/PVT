@@ -42,14 +42,14 @@
     </div>
     <div>
     <?php $modality = $loan->modality;
-            if($modality->name == 'Anticipo sector pasivo' && $lender->afp){ ?>
+            if($modality->name == 'Anticipo Sector Pasivo AFP' && $lender->afp){ ?>
         <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
         <?php }
         else{
-            if($modality->name == 'Anticipo sector activo'){
+            if($modality->name == 'Anticipo Sector Activo' || $modality->name == 'Anticipo en Disponibilidad'){
                 $quinta = 'Comando General de la Policía Boliviana';
             }
-            if($modality->name == 'Anticipo sector pasivo'){
+            if($modality->name == 'Anticipo Sector Pasivo SENASIR'){
                 $quinta = 'Servicio Nacional del Sistema de Reparto SENASIR';
             }?>
         <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del {{ $quinta }} conforme al Reglamento de Préstamos.
@@ -91,21 +91,21 @@
     </div>
     <div>
     <?php
-            if($modality->name == 'Anticipo sector pasivo' && $lender->afp){ ?>
+            if($modality->name == 'Anticipo Sector Pasivo AFP' && $lender->afp){ ?>
             <b>OCTAVA.- (DE LA GARANTÍA):</b>El PRESTATARIO, garantiza el pago de lo adeudado con todos sus bienes, derechos y acciones habidos y por haber presentes y futuros conforme lo determina el Art. 1335 del Código Civil, asimismo el PRESTATARIO, garantiza con el Beneficio del Complemento Económico que otorga la MUSERPOL de acuerdo al Reglamento de Préstamos.
         <?php }
             else{
-                if($modality->name == 'Anticipo sector activo'){ ?>
+                if($modality->name == 'Anticipo Sector Activo'){ ?>
                     <b>OCTAVA.- (DE LA GARANTÍA):</b> El PRESTATARIO, garantiza el pago de lo adeudado con todos sus bienes, derechos y acciones habidos y por haber, presentes y futuros conforme determina el Art. 1335 del Código Civil y además con los beneficios que otorga la <b>MUSERPOL</b>, que son Fondo de Retiro Policial Solidario y Complemento Económico así como establece el Artículo 65 del Reglamento de Préstamos de la MUSERPOL, tomando en cuenta que ambos beneficios no se encuentran dentro del régimen de beneficios sociales y/o derecho laboral conforme establece el Art. 134 de la ley Orgánica de la Policía.
                 <?php }?>
-                <?php if($modality->name == 'Anticipo sector pasivo'){ ?>
+                <?php if($modality->name == 'Anticipo Sector Pasivo AFP' || $modality->name == 'Anticipo Sector Pasivo SENASIR'){ ?>
                     <b>OCTAVA.- (DE LA GARANTÍA):</b> El PRESTATARIO, garantiza el pago de la deuda con todos sus bienes, derechos y acciones habidos y por haber presentes y futuros conforme establece el Art. 1335 del Código Civil y así como también con su renta de vejez en curso de pago como señala el Reglamento de Préstamos de MUSERPOL, asimismo este acepta amortizar la deuda con su complemento económico.
                 <?php }?>
         <?php   } ?>
     </div>
     <div>
     <?php
-        if($modality->name == 'Anticipo sector pasivo'){ ?>
+        if($modality->name == 'Anticipo Sector Pasivo AFP' || $modality->name == 'Anticipo Sector Pasivo SENASIR'){ ?>
         <div>
             <b>NOVENA.- (CONTINGENCIAS POR FALLECIMIENTO):</b>El PRESTATARIO en caso de fallecimiento garantiza el cumplimiento efectivo de la presente obligación con el beneficio del Complemento Económico y Auxilio Mortuorio; por cuanto la liquidación de dichos beneficios pasaran a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, cobrados a los derechohabientes, previas las formalidades de ley. 
         </div>

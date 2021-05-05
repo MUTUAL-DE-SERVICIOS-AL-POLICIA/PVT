@@ -83,11 +83,19 @@
         <div class="font-semibold leading-tight text-left m-b-10 text-base">{{ $n++ }}. DATOS DE BOLETA</div>
     </div>
 <div class="block">
-        <table class="table-info w-100 text-center uppercase my-20">
-            <tr class="bg-grey-darker text-sm-1 text-white">
-                <td colspan="7" >INGRESOS</td>
-            </tr>
-        @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="contributions")
+        <table class="table-info w-100 text-center uppercase my-20">        
+        @php ($sum_prom_payable_liquid_calculated = 0)
+        @php ($sum_prom_bonus_calculated = 0)
+        @php ($count_lender = 0)
+        @foreach($loan->lenders as $lender_affiliate)
+            @php ($count_lender = $count_lender + 1)
+            @php ($title_lender = $count_lender == 1 ? "TITULAR":"CODEUDOR")    
+        <tr class="bg-grey-darker text-sm-1 text-white">
+            <td class="w-50 text-left px-10" colspan="7" > {{$title_lender}} {{$lender_affiliate->full_name}} </td>
+        </tr>
+            @php ($sum_prom_payable_liquid_calculated += $lender_affiliate->pivot->payable_liquid_calculated)
+            @php ($sum_prom_bonus_calculated += $lender_affiliate->pivot->bonus_calculated)
+        @if($lender_affiliate->pivot->contributionable_type == "contributions")
             <tr>
                 <td class="bg-grey-darker text-sm-1 text-white">Periodo</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Liquido</td>
@@ -104,15 +112,15 @@
             @php ($sum_payable_liquid = 0)
             @php ($sum_mount_adjust= 0)
             @php ($num_reg = 0)
-            @foreach($ballots as $ballot)
+         @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot as $ballot)
             @php ($mount_adjust = 0)
          
            <tr>
                 <td>{{Carbon::parse($ballot->month_year)->format('d/m/y')}}</td>
                 <td> {{Util::money_format($ballot->payable_liquid)}}</td>
-                    @foreach($adjusts as $adjust)
+                    @foreach($loan->ballot_affiliate($lender_affiliate->id)->adjusts as $adjust)
                     @if($ballot->id == $adjust->adjustable_id)
-                    @php($mount_adjust=$adjust->amount)
+                    @php($mount_adjust = $adjust->amount)
                     @endif
                     @endforeach
                 <td> {{Util::money_format($mount_adjust)}}</td>  
@@ -141,7 +149,7 @@
               
            </tr>
         @endif
-       @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="aid_contributions")
+       @if($lender_affiliate->pivot->contributionable_type =="aid_contributions")
             <tr>
                 <td class="bg-grey-darker text-sm-1 text-white">Periodo</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Liquido</td>
@@ -153,12 +161,12 @@
             @php ($sum_rent = 0)
             @php ($sum_mount_adjust_aid = 0)
             @php ($num_reg = 0)
-            @foreach($ballots as $ballot)
+            @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot as $ballot)
             @php ($mount_adjust_aid = 0)
             <tr>
                 <td>{{Carbon::parse($ballot->month_year)->format('d/m/y')}}</td> 
                 <td> {{Util::money_format($ballot->rent)}}</td> 
-                @foreach($adjusts as $adjust)
+                @foreach($loan->ballot_affiliate($lender_affiliate->id)->adjusts as $adjust)
                     @if($ballot->id == $adjust->adjustable_id)
                     @php($mount_adjust_aid=$adjust->amount)
                     @endif
@@ -178,7 +186,7 @@
                 <td> {{Util::money_format($sum_dignity_rent/$num_reg)}}</td>             
              </tr>
         @endif
-        @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="loan_contribution_adjusts")
+        @if($lender_affiliate->pivot->contributionable_type == "loan_contribution_adjusts")
            <tr>
                 <td class="bg-grey-darker text-sm-1 text-white">Periodo</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Liquido</td>
@@ -187,12 +195,12 @@
            @php ($sum_liquid_amount = 0)
            @php ($sum_mount_adjust = 0)
            @php ($num_reg = 0)
-           @foreach($ballots as $ballot)
+           @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot as $ballot)
            @php ($mount_adjust = 0)         
            <tr>
                 <td>{{Carbon::parse($ballot->period_date)->format('d/m/y')}}</td>  
                 <td>{{Util::money_format($ballot->amount)}}</td> 
-                @foreach($adjusts as $adjust)
+                @foreach($loan->ballot_affiliate($lender_affiliate->id)->adjusts as $adjust)
                     @if($ballot->period_date == $adjust->period_date)
                     @php($mount_adjust = $adjust->amount)
                     @endif
@@ -209,6 +217,7 @@
                 <td> {{Util::money_format($sum_mount_adjust/$num_reg)}}</td>            
              </tr>
         @endif
+        @endforeach
             </table>
             <table class="table-info w-100 text-center uppercase my-20"> 
             <tr class="bg-grey-darker text-sm-1 text-white">
@@ -216,11 +225,11 @@
             </tr>
             <tr >
             <td class="w-50 text-left px-10">TOTAL PROMEDIO LÍQUIDO PAGABLE</td>
-            <td class="w-50 text-left">{{ $lender->pivot->payable_liquid_calculated}} </td>
+            <td class="w-50 text-left px-10">{{ $sum_prom_payable_liquid_calculated}} </td>
             </tr>
             <tr >
             <td class="w-50 text-left px-10">TOTAL PROMEDIO BONOS</td>
-            <td class="w-50 text-left px-10">{{ $lender->pivot->bonus_calculated}}</td>
+            <td class="w-50 text-left px-10">{{ $sum_prom_bonus_calculated}}</td>
             </tr>
             <tr >
             <td class="w-50 text-left px-10">LÍQUIDO PARA CALIFICACIÓN</td>

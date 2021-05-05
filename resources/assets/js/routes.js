@@ -15,6 +15,7 @@ import FlowAdd from '@/components/workflow/Add'
 import PaymentAdd from '@/components/payment/Add'
 import LoanPaymentIndex from '@/components/payment/Index'
 import ImportExport from '@/components/payment/ImportExport'
+import ListLoanGenerate from '@/components/payment/ListLoanGenerate'
 
 export const routes = [
   {
@@ -149,12 +150,12 @@ export const routes = [
       requiresAuth: true
     }
   },
-  /*{
-    path: '*',
-    name: 'ImportComand',
-    component: ImportComand,
+  {
+    path: '/listLoanGenerate',
+    name: 'listLoanGenerate',
+    component: ListLoanGenerate,
     meta: {
       requiresAuth: true
     }
-  }*/
+  },
 ]

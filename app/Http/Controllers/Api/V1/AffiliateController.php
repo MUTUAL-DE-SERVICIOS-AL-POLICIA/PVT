@@ -202,6 +202,11 @@ class AffiliateController extends Controller
         }
         $affiliate->fill($update);
         $affiliate->save();
+        if($request->has('financial_entity_id')&& $request->financial_entity_id != null || $request->has('account_number') && $request->account_number!= null){
+            $affiliate->update([
+                'sigep_status' => 'ACTIVO'
+            ]);
+         }
         return  $affiliate;
     }
 
@@ -643,11 +648,6 @@ class AffiliateController extends Controller
                 $sw = true;
             $affiliate = $spouse->affiliate;
         }
-        $modality_names = ProcedureModality::where('name','like', '%pasivo%')->where('name','like', '%largo Plazo%')->orWhere('name','like','%pasivo%')->where('name','like','Largo Plazo%')->get();
-        foreach($modality_names as $modality)
-            if($modality->id == $request->procedure_modality_id || $sw == true)
-                $validation = true;
-        if($spouse != null && $validation || $spouse == null){
             if($affiliate){
                 if(!$sw){
                     $request->affiliate_id = $affiliate->id;
@@ -656,10 +656,15 @@ class AffiliateController extends Controller
                 else
                 {
                     $affiliate->spouse = $affiliate->spouse;
+                    $affiliate->category = $affiliate->category;
+                    $affiliate->affiliate_state = $affiliate->affiliate_state;
+                    $own_affiliate = Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first();
+                    $own_affiliate->category = $own_affiliate->category;
+                    $own_affiliate->affiliate_state = $own_affiliate->affiliate_state;
                     return array(
                         "double_perception" => $sw,
                         "affiliate" => $affiliate,
-                        "own_affiliate" => Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first(),
+                        "own_affiliate" => $own_affiliate,
                         "guarantor" => false,
                         "active_guarantees_quantity"=> 0,
                         "guarantor_information"=> false,
@@ -671,9 +676,6 @@ class AffiliateController extends Controller
             }
             else
                 $message['validate'] = "No se encontraron coincidencias";
-        }
-        else
-            $message['validate'] = "No corresponde con la modalidad";
        return $message;
     }
 
@@ -688,32 +690,47 @@ class AffiliateController extends Controller
     */
     public function test_spouse_guarantor(request $request){
         $affiliate = Affiliate::whereId($request->affiliate_id)->first();
+        $validation = false;
+        $modality_names = ProcedureModality::where('name','like', '%Pasivo%')->where('name','like', '%Largo Plazo%')->orWhere('name','like','%Pasivo%')->where('name','like','Largo Plazo%')->get();
+        //return $modality_names;
+        foreach($modality_names as $modality)
+            if($modality->id == $request->procedure_modality_id)
+                $validation = true;
         if($affiliate->spouse){
-            if($affiliate->pension_entity->name == "SENASIR"){
-                if($affiliate->affiliate_state != null)
-                {
-                    if($affiliate->affiliate_state->name == "Fallecido")
+            if($validation){
+                if($affiliate->pension_entity->name == null){
+                    if($affiliate->pension_entity->name == "SENASIR")
                     {
-                        if($affiliate->spouse->city_birth && $affiliate->spouse->city_identity_card && $affiliate->spouse->birth_date){
-                            if($affiliate->spouse->address)
-                                return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
-                            else
-                                return $message['validate'] = "debe actualizar la dirección del afiliado";
-                        }
-                        else{
-                            return $message['validate'] = "Actualizar datos de la viuda";
-                        }
+                            if($affiliate->affiliate_state != null)
+                            {
+                                if($affiliate->affiliate_state->name == "Fallecido")
+                                {
+                                    if($affiliate->spouse->city_birth && $affiliate->spouse->city_identity_card && $affiliate->spouse->birth_date){
+                                        if($affiliate->spouse->address)
+                                            return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
+                                        else
+                                            return $message['validate'] = "debe actualizar la dirección del afiliado";
+                                    }
+                                    else{
+                                        return $message['validate'] = "Actualizar datos de la viuda";
+                                    }
+                                }
+                                else{
+                                    return $message['validate'] = "Debe actualizar el estado del afiliado";    
+                                }
+                            }
+                            else{
+                                return $message['validate'] = "Debe colocar el estado del afiliado";
+                            }
                     }
                     else{
-                        return $message['validate'] = "Debe actualizar el estado del afiliado";    
+                        return $message['validate'] = "No puede ser garante por el ente gestor";
                     }
+                }else{
+                    return  $message['validate'] = "Actualize los datos de su Ente Gestor";
                 }
-                else{
-                    return $message['validate'] = "Debe colocar el estado del afiliado";
-                }
-            }
-            else{
-                return $message['validate'] = "No puede ser garante";
+            }else{
+                return $message['validate'] = 'No corresponde con la modalidad';
             }
         }
         else{
@@ -1181,8 +1198,8 @@ class AffiliateController extends Controller
                  $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
                  if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= 1000){
                   $modality_ida= ProcedureType::where('name','=','Préstamo Anticipo')->first()->id;
-                  $modality_idb = ProcedureType::where('name','=','Préstamo a corto plazo')->first()->id;
-                  $modality_idc = ProcedureType::where('name','=','Préstamo a largo plazo')->first()->id;
+                  $modality_idb = ProcedureType::where('name','=','Préstamo a Corto Plazo')->first()->id;
+                  $modality_idc = ProcedureType::where('name','=','Préstamo a Largo Plazo')->first()->id;
                   $ids_modalities=[$modality_ida,$modality_idb,$modality_idc];
                   $i= 0;
                   while ($i < count($ids_modalities)) {

@@ -143,6 +143,15 @@ class Loan extends Model
     {
         return $this->belongsToMany(ProcedureDocument::class, 'loan_submitted_documents', 'loan_id')->withPivot('reception_date', 'comment', 'is_valid');
     }
+    public function documents_modality()
+    {     
+        $ids= $this->submitted_documents->pluck('id');
+        $documents=collect();
+        foreach($ids as $id){
+           $documents->push(ProcedureDocument::where('procedure_documents.id',$id)->leftJoin('procedure_requirements as req','req.procedure_document_id','=','procedure_documents.id')->select('procedure_documents.name','req.number')->first());
+        }  
+         return (object)$documents->sortBy('number');
+    }
 
     public function getSubmittedDocumentsListAttribute()
     {
@@ -164,7 +173,7 @@ class Loan extends Model
 
     public function loan_affiliates()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('contributionable_ids','contributionable_type');
     }
 
     public function loan_affiliates_ballot()
@@ -215,7 +224,7 @@ class Loan extends Model
     }
     public function paymentsKardex()
     {
-        return $this->hasMany(LoanPayment::class)->whereIn('state_id', [6,7])->orderBy('quota_number', 'desc')->orderBy('created_at');
+        return $this->hasMany(LoanPayment::class)->whereIn('state_id', [5,6,7])->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
     //relacion uno a muchos
     public function loan_contribution_adjusts()
@@ -259,8 +268,10 @@ class Loan extends Model
     public function getBalanceAttribute()
     {
         $balance = $this->amount_approved;
+        $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
         if ($this->payments()->count() > 0) {
-            $balance -= $this->payments()->whereIn('state_id', [6,7])->sum('capital_payment');
+            $balance -= $this->payments()->where('state_id', $loan_states->first()->id)->sum('capital_payment');
+            $balance -= $this->payments()->where('state_id', $loan_states->last()->id)->sum('capital_payment');
         }
         return Util::round($balance);
     }
@@ -272,7 +283,8 @@ class Loan extends Model
 
     public function getLastPaymentValidatedAttribute()
     {
-        return $this->payments()->where('state_id', 6)->orWhere('state_id',7)->latest()->first();
+        $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
+        return $this->payments()->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->latest()->first();
     }
 
     public function getObservedAttribute()
@@ -328,6 +340,8 @@ class Loan extends Model
             } else {
                 $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
             }
+            $quota->previous_balance = Util::round($this->balance);
+            $quota->previous_payment_date = $next_payment->previous_payment_date;
             $quota->quota_number = $this->balance > 0 ? $next_payment->quota : null;
             $interest = $this->interest;
             $quota->estimated_days = LoanPayment::days_interest2($this, $quota->estimated_date);
@@ -343,8 +357,16 @@ class Loan extends Model
             //calculo en caso de primera cuota
 
             $date_ini = CarbonImmutable::parse($this->disbursement_date);
+            if($date_ini->day >= LoanGlobalParameter::latest()->first()->offset_interest_day)
+                $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
+            else
+                $date_pay = $date_ini->addMonth()->endOfMonth()->format('Y-m-d');
             $date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
-            if($date_compare >= $quota->estimated_date && $date_ini->format('d') > LoanGlobalParameter::latest()->first()->offset_interest_day && ProcedureModality::where('id', $procedure_modality_id)->where('name', ' not like', '%Introducir%')->first()){
+            if(!$this->last_payment_validated && $estimated_date = $date_pay){
+                $quota->paid_days->current +=1;
+                $quota->estimated_days->current +=1;
+                $quota->paid_days->current_generated = Util::round(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
+                $quota->estimated_days->current_generated = Util::round(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
                 $date_fin = CarbonImmutable::parse($date_ini->endOfMonth());
                 $rest_days_of_month = $date_fin->diffInDays($date_ini);
                 $partial_amount = ($quota->balance * $interest->daily_current_interest * $rest_days_of_month);
@@ -393,7 +415,6 @@ class Loan extends Model
 
         if($quota->estimated_days->penal >= $grace_period){
             $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
-
             if($quota->penal_payment >= 0){
                 if($amount >= $quota->penal_payment){
                     $amount = $amount - $quota->penal_payment;
@@ -431,13 +452,24 @@ class Loan extends Model
             $quota->capital_payment = $quota->balance;
         }
         else{
-            if($amount >= $this->balance){
+            if($this->regular_payment() && $this->payments->count()+1 == $this->loan_term){
                 $quota->capital_payment = Util::round($this->balance);
             }
-            else
-                $quota->capital_payment = Util::round($amount);
+            else{
+                if($amount >= $this->balance){
+                    $quota->capital_payment = Util::round($this->balance);
+                }
+                else
+                    $quota->capital_payment = Util::round($amount);
+            }
         }
-             
+                //calculo de la ultima cuota, solo si fue regular en los pagos
+
+        /*if($this->regular_payment() && $this->payments->count()+1 == $this->loan_term){
+            $amount = $this->balance + $quota->estimated_days;
+            $quota->est += $quota->next_balance;
+            $quota->next_balance = 0;
+        }*/
         // Calcular monto total de la cuota
 
         if ($quota->balance == $quota->capital_payment) {
@@ -463,10 +495,10 @@ class Loan extends Model
 
         //validacion pago excesivo
         
-        if($total_amount == 0)
+        /*if($total_amount == 0)
             $quota->excesive_payment = 0;
         else
-            $quota->excesive_payment = Util::round($total_amount - $quota->estimated_quota);
+            $quota->excesive_payment = Util::round($total_amount - $quota->estimated_quota);*/
 
         //$total_amount = $quota->penal_accumulated + $quota->interest_accumulated + $loan->balance + $quota->interest_remaining + $quota->penal_remaining;
 
@@ -620,143 +652,124 @@ class Loan extends Model
             $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name;
         switch($modality_name){
             case 'Préstamo Anticipo':
-                if($affiliate_state_type == "Activo")
-                {
-                    $modality=ProcedureModality::whereShortened("ANT-SA")->first();
-                }
-                else{
-                    if($affiliate_state_type == "Pasivo"){
-                        $modality=ProcedureModality::whereShortened("ANT-SP")->first();
-                    }
-                }
-            break;
-            case 'Préstamo a corto plazo':
                 if($affiliate_state_type == "Activo"){
                     if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
                     {
-                        $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo
+                        $modality=ProcedureModality::whereShortened("ANT-ACT")->first(); //Anticipo activo
                     }else{
-                        $modality=ProcedureModality::whereShortened("PCP-DLA")->first(); // corto plazo activo letra A, no le corresponde refinanciamiento segun Art 76 del reglamento
+                        $modality=ProcedureModality::whereShortened("ANT-DIS")->first(); // Anicipo dismponibilidad
                     }
                 }
                 if($affiliate_state_type == "Pasivo"){
                     if($affiliate->pension_entity->name != 'SENASIR')
                     {
-                    $modality=ProcedureModality::whereShortened("PCP-SP-AFP")->first(); //  Prestamo a corto plazo sector pasivo afp caso SISMU
+                    $modality=ProcedureModality::whereShortened("ANT-AFP")->first(); //  Prestamo a anticipo afp
                     }else{
-                        $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first(); // Prestamo a corto plazo senarir caso SISMU
+                        $modality=ProcedureModality::whereShortened("ANT-SEN")->first(); // Prestamo a anticipo senasir
                     }
                 }
             break;
-            case 'Refinanciamiento Préstamo a corto plazo':
+            case 'Préstamo a Corto Plazo':
+                if($affiliate_state_type == "Activo"){
+                    if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
+                    {
+                        $modality=ProcedureModality::whereShortened("COR-ACT")->first(); //corto plazo activo
+                    }else{
+                        $modality=ProcedureModality::whereShortened("COR-DIS")->first(); // corto plazo activo letra A, no le corresponde refinanciamiento segun Art 76 del reglamento
+                    }
+                }
+                if($affiliate_state_type == "Pasivo"){
+                    if($affiliate->pension_entity->name != 'SENASIR')
+                    {
+                    $modality=ProcedureModality::whereShortened("COR-AFP")->first(); //  Prestamo a corto plazo sector pasivo afp caso SISMU
+                    }else{
+                        $modality=ProcedureModality::whereShortened("COR-SEN")->first(); // Prestamo a corto plazo senarir caso SISMU
+                    }
+                }
+            break;
+            case 'Refinanciamiento Préstamo a Corto Plazo':
                 if($affiliate_state_type == "Activo" && $affiliate_state !== "Disponibilidad") //affiliados con estado en disponibilidad no realizaran refinanciamientos 
                 {
-                    $modality = ProcedureModality::whereShortened("PCP-R-SA")->first();//Refinanciamiento corto plazo activo                           
+                    $modality = ProcedureModality::whereShortened("REF-COR-ACT")->first();//Refinanciamiento corto plazo activo                           
                 }else{
                     if($affiliate_state_type == "Pasivo"){
                     
                         if($affiliate->pension_entity->name != 'SENASIR')
                         {
-                        $modality=ProcedureModality::whereShortened("PCP-R-SP-AFP")->first();// refi afp pasivo sismu
+                        $modality=ProcedureModality::whereShortened("REF-COR-AFP")->first();// refi afp pasivo sismu
                         }else{
-                            $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();// refi senasir pasivo sismu
+                            $modality=ProcedureModality::whereShortened("REF-COR-SEN")->first();// refi senasir pasivo sismu
                         }
                     }
                 }
             break;
-            case 'Préstamo a largo plazo':
+            case 'Préstamo a Largo Plazo':
                 if($affiliate_state_type == "Activo")
                 {
                     if($affiliate_state !== "Disponibilidad" ) // disponibilidad letra A o C no puede acceder a prestamos a largo plazo
                     {
-                        if($cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-CPOP")->first(); // Largo plazo activo cpop repro sismu
-                        if(!$cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal repro sismu
-                        if(!$cpop_sismu || !$type_sismu){
-                            if($cpop_affiliate){
-                                $modality=ProcedureModality::whereShortened("PLP-CPOP")->first();
-                            }else{
-                                $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first();
-                            }
+                        if($cpop_affiliate || $cpop_sismu){
+                            $modality=ProcedureModality::whereShortened("LAR-CPOP")->first();
+                        }else{
+                            $modality=ProcedureModality::whereShortened("LAR-ACT")->first();
                         }
                     }
                 }
                 if($affiliate_state_type == "Pasivo")
                 {
-                   // if($cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // reprogramacion largo plazo pasivo con 1 garante sismu
-                    if(!$cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); // reprogramacion largo plazo pasivo con 1 garante sismu
-                
-                    if(!$cpop_sismu || !$type_sismu){
-                        if($cpop_affiliate){
-                            //$modality=ProcedureModality::whereShortened("PLP-CPOP")->first();//NO aplica la modalidad cpop sector pasivo 
+                    if($affiliate->pension_entity->name != 'SENASIR')
+                    {
+                        $modality=ProcedureModality::whereShortened("LAR-AFP")->first();// Largo plazo Sector PAsivo
                     }else{
-                            $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); //Largo plazo Sector PAsivo
-                    }
+                        $modality=ProcedureModality::whereShortened("LAR-SEN")->first();// Largo plazo Sector PAsivo
                     }
                 }
             break;  
-            case 'Refinanciamiento Préstamo a largo plazo':
+            case 'Refinanciamiento Préstamo a Largo Plazo':
                 if($affiliate_state_type == "Activo")
                 {
                     if($affiliate_state !== "Disponibilidad" ) //disponibilidad letra A o C no tiene prestamos
                     {
-                        if($cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-SA-CPOP")->first();// Refi largo plazo activo 1 solo garante sismu
-                        if($type_sismu && !$cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GP-SAYADM")->first();// Refinanciamiento Largo plazo activo  y adm con garantia personal sismu
-                    
-                        if(!$cpop_sismu || !$type_sismu){
-                            if($cpop_affiliate){
-                                $modality=ProcedureModality::whereShortened("PLP-R-SA-CPOP")->first();
-                            }else{
-                                $modality=ProcedureModality::whereShortened("PLP-R-GP-SAYADM")->first();
-                            }
+                        if($cpop_affiliate || $cpop_sismu){
+                            $modality=ProcedureModality::whereShortened("REF-ACT-CPOP")->first(); //refi largo plazo activo  cpop
+                        }else{
+                            $modality=ProcedureModality::whereShortened("REF-LAR-ACT")->first(); //refi largo plazo activo
                         }
                     }
                 }
                 else{
                     if($affiliate_state_type == "Pasivo"){
-                    
-                       // if($cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 solo garante
-                        if(!$cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
-                    
-                        if(!$cpop_sismu || !$type_sismu){
-                            if($cpop_affiliate){
-                               // $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 garante
-                            }else{
-                                $modality=ProcedureModality::whereShortened("PLP-R-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
-                            }
+
+                        if($affiliate->pension_entity->name != 'SENASIR')
+                        {
+                            $modality=ProcedureModality::whereShortened("REF-LAR-AFP")->first();// ref Largo plazo Sector Pasivo
+                        }else{
+                            $modality=ProcedureModality::whereShortened("REF-LAR-SEN")->first();// ref Largo plazo Sector Pasivo
                         }
                     }
                 }
             break;
-            case 'Préstamo hipotecario':
+            case 'Préstamo Hipotecario':
                 if($affiliate_state_type == "Activo")
                 {
                     if($affiliate_state_type !== "Comisión"){
-                        if($type_sismu && $cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); // Prestamo hipotecario CPOP
-                        if($type_sismu && !$cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); // Prestamo hipotecario Sector Activo
-
-                        if(!$cpop_sismu || !$type_sismu){
-                            if($cpop_affiliate){
-                                $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); //hipotecario CPOP
-                            }else{
-                                $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); //hipotecario Sector Activo
-                            }
+                        
+                        if($cpop_affiliate || $cpop_sismu){
+                            $modality=ProcedureModality::whereShortened("HIP-ACT-CPOP")->first(); //hipotecario CPOP
+                        }else{
+                            $modality=ProcedureModality::whereShortened("HIP-ACT")->first(); //hipotecario Sector Activo
                         }
                     }
                 }
             break;
-            case 'Refinanciamiento Préstamo hipotecario':
+            case 'Refinanciamiento Préstamo Hipotecario':
                 if($affiliate_state_type == "Activo")
                 {
                     if($affiliate_state_type !== "Comisión" && $affiliate_state !== "Disponibilidad"){//affiliados con estado en disponibilidad no realizaran refinanciamientos 
-                        if($type_sismu && $cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first(); // Refinanciamiento hipotecario CPOP
-                        if($type_sismu && !$cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GH-SA")->first(); // Refinanciamiento hipotecario Sector Activo
-                
-                        if(!$cpop_sismu || !$type_sismu){
-                            if($cpop_affiliate){
-                                $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first(); // Refinanciamiento hipotecario CPOP
-                            }else{
-                                $modality=ProcedureModality::whereShortened("PLP-R-GH-SA")->first(); // Refinanciamiento hipotecario Sector Activo
-                            }
+                        if($cpop_affiliate || $cpop_sismu){
+                            $modality=ProcedureModality::whereShortened("REF-HIP-ACT-CPOP")->first(); // Refinanciamiento hipotecario CPOP
+                        }else{
+                            $modality=ProcedureModality::whereShortened("REF-HIP-ACT")->first(); // Refinanciamiento hipotecario Sector Activo
                         }
                     }                   
                 }
@@ -826,40 +839,40 @@ class Loan extends Model
             $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name;
         switch($modality_name){
             case 'Préstamo Anticipo':
-                if($affiliate_state_type == "Activo")
-                {
-                    $modality=ProcedureModality::whereShortened("ANT-SA")->first();
-                }
-                else{
-                    if($affiliate_state_type == "Pasivo"){
-                        $modality=ProcedureModality::whereShortened("ANT-SP")->first();
+                if($affiliate_state_type == "Activo"){
+                    if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
+                    {
+                        $modality=ProcedureModality::whereShortened("ANT-ACT")->first(); //Anticipo activo
+                    }else{
+                        $modality=ProcedureModality::whereShortened("ANT-DIS")->first(); // Anicipo dismponibilidad
                     }
                 }
             break;
-            case 'Préstamo a corto plazo':
+            case 'Préstamo a Corto Plazo':
                 if($affiliate_state_type == "Activo"){
-                   
                     if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
                     {
-                        $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo
+                        $modality=ProcedureModality::whereShortened("COR-ACT")->first(); //corto plazo activo
                     }else{
-                        $modality=ProcedureModality::whereShortened("PCP-DLA")->first(); // corto plazo activo letra A, no le corresponde refinanciamiento segun Art 76 del reglamento
-                    }                  
-                }
-                break;
-            case 'Préstamo a largo plazo':
-                if($affiliate_state_type == "Activo")
-                {
-                    if($affiliate_state !== "Disponibilidad" ) //cpop no pueden estar en disponibilidad letra A o C
-                    {
-                         $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal
+                        $modality=ProcedureModality::whereShortened("COR-DIS")->first(); // corto plazo activo letra A, no le corresponde refinanciamiento segun Art 76 del reglamento
                     }
                 }
-                break;
-            case 'Préstamo hipotecario':
+            break;
+            case 'Préstamo a Largo Plazo':
                 if($affiliate_state_type == "Activo")
                 {
-                    $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); //hipotecario Sector Activo
+                    if($affiliate_state !== "Disponibilidad" ) // disponibilidad letra A o C no puede acceder a prestamos a largo plazo
+                    {
+                        $modality=ProcedureModality::whereShortened("LAR-ACT")->first();
+                    }
+                }
+            break; 
+            case 'Préstamo Hipotecario':
+                if($affiliate_state_type == "Activo")
+                {
+                    if($affiliate_state_type !== "Comisión"){
+                        $modality=ProcedureModality::whereShortened("HIP-ACT")->first(); //hipotecario Sector Activo
+                    }
                 }
             break;
             }
@@ -896,6 +909,85 @@ class Loan extends Model
            }
        }
        return  $date_cut_refinancing;
-
     }
+
+    //Verifica si los pagos realizados fueron regulares y sin mora
+    public function regular_payment()
+    {
+        $loan_payments = $this->payments;
+        $quota_number = 1;
+        $sw = false;
+        foreach($loan_payments as $payments){
+            if($quota_number == 1 && $payments->estimated_quota >= $this->estimated_quota)
+                $sw = true;
+            else{
+                if($payments->estimated_quota == $this->estimated_quota)
+                    $sw = true;
+                else
+                    break;
+            }
+            $quota_number++;
+        }
+        return $sw;
+    }
+
+    //verificacion de saldo con pagos
+    public function verify_balance()
+    {
+        $payments = $this->payments;
+        $loan_state = LoanState::where('name', 'Pagado')->first();
+        $balance = $this->amount_approved;
+        foreach($payments as $payment)
+        {
+            if($payment->state_id == $loan_state->id)
+                $balance -= $payment->capital_payment;
+        }
+        return $balance;
+    }
+    //muestra boletas de afiliado
+    public function ballot_affiliate($affiliate_id){
+        foreach($this->loan_affiliates as $affiliate){  
+            if( $affiliate->id == $affiliate_id){
+            $contributions = $affiliate->pivot->contributionable_ids;
+            $contributions_type = $affiliate->pivot->contributionable_type;
+            $ballots=json_decode($contributions);
+            $ballot = collect();
+            $adjusts = collect();
+                if($contributions_type == "contributions"){ 
+                    foreach($ballots as $is_ballot_id){
+                        if(Contribution::find($is_ballot_id))
+                        $ballot->push(Contribution::find($is_ballot_id));
+                        if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first()){
+                        $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first());
+                        }  
+                    }                  
+                }
+                if($contributions_type == "aid_contributions"){
+                    foreach($ballots as $is_ballot_id){
+                        if(AidContribution::find($is_ballot_id))
+                        $ballot->push(AidContribution::find($is_ballot_id));
+                        if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first())
+                        $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first());
+                    }
+                }
+                if($contributions_type == "loan_contribution_adjusts"){
+                    $liquid_ids= LoanContributionAdjust::where('loan_id',$this->id)->where('type_adjust',"liquid")->get()->pluck('id');
+                    $adjust_ids= LoanContributionAdjust::where('loan_id',$this->id)->where('type_adjust',"adjust")->get()->pluck('id');
+                    foreach($liquid_ids as $liquid_id){  
+                        $ballot->push(LoanContributionAdjust::find($liquid_id));
+                    }
+                foreach($adjust_ids as $adjust_id){  
+                        $adjusts->push( LoanContributionAdjust::find($adjust_id));
+                    }      
+                }
+
+            }      
+        }
+        $data = [
+            'ballot' => $ballot,   
+            'adjusts' => $adjusts 
+        ];
+          return (object)$data; 
+    }
+
 }

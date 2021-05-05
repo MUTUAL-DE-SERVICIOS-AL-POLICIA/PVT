@@ -25,9 +25,9 @@ class AdvanceRoleSeeder extends Seeder
             $old_receipt->delete();
         }
         $module = Module::whereName('prestamos')->first();
-        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-all-loan', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan','update-note','delete-note','update-documents-requirements','update-loan-calculations','update-reference-cosigner'];
+        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-all-loan', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan','update-note','delete-note','update-documents-requirements','update-loan-calculations','update-reference-cosigner','update-warranty-hipotecary'];
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address', 'update-loan','show-history-loan'];
-        $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
+        $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan','update-values-commercial-rescue'];
         $executive_permissions = ['update-setting'];
         $permissions_primary = ['update-affiliate-primary'];
         $file = ['show-all-loan','show-loan','update-loan'];
@@ -41,7 +41,7 @@ class AdvanceRoleSeeder extends Seeder
         $legal_permissions = ['registration-delivery-return-contracts','update-documents-requirements', 'print-contract-loan'];
         $calification_permissions = ['update-loan-calculations','print-qualification-form','update-reference-cosigner'];
         $sequence_roles = [
-            [
+        [
                 'name' => 'Calificación',
                 'action' => 'Calificado',
             ], [

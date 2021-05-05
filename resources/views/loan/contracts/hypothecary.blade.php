@@ -15,7 +15,7 @@
 </div>
 
 <?php $modality = $loan->modality;
-if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria de bien inmueble para el sector activo' || $modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria de bien inmueble para el sector activo - CPOP')){?>
+if(($modality->name == 'Refinanciamiento de Préstamo con Garantía Hipotecaria de Bien Inmueble Sector Activo' || $modality->name == 'Refinanciamiento de Préstamo con Garantía Hipotecaria de Bien Inmueble Sector Activo CPOP')){?>
 <div class="block text-justify">
 <div>
         <b>SEÑOR NOTARIO DE FE PÚBLICA</b>

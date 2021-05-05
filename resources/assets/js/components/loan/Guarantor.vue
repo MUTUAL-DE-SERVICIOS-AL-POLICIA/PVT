@@ -1,6 +1,6 @@
 <template>
   <v-container fluid >
-    <v-row justify="center"  v-show="modalidad.procedure_type_name!= 'Préstamo hipotecario'">
+    <v-row justify="center"  v-show="modalidad.procedure_type_name!= 'Préstamo Hipotecario'">
          <v-col cols="12" class="py-0" v-if="modalidad_guarantors == 0">
           <v-card>
             <v-container class="py-0">
@@ -71,6 +71,42 @@
                   </template>
                 </v-tooltip>
               </v-col>
+                 <v-col cols="12" md="1" ></v-col>
+                  <v-col cols="12" md="11" class="success--text pb-0 ma-0 py-0" v-show="double_perception">
+                    <h6 class="caption">Afliado de doble percepcion, ecoger como evaluar.</h6>
+                  </v-col>
+                  <v-col cols="12" md="2" class="pb-0 ma-0 py-0" v-show="double_perception"></v-col>
+                 <v-col cols="12" md="5" class="pb-0 ma-0 py-0" v-show="double_perception">
+                  <v-radio-group
+                    class="pb-0 ma-0 py-0"
+                    v-model="tipo_afiliado"
+                    row
+                  >
+                    <v-radio
+                      label="Titular"
+                      :value="false"
+                      class="pb-0 ma-0 py-0"
+                         @change="activar()"
+                     ></v-radio>
+                    <v-radio
+                      label="Viuda"
+                      :value="true"
+                      class="pb-0 ma-0 py-0"
+                         @change="activar()"
+                    ></v-radio>
+                  </v-radio-group>
+                </v-col>
+                <v-col cols="12" md="5" class="pb-0 ma-0 py-0" v-show="double_perception" >
+                  <center>
+                    <v-btn
+                      class="py-0 text-right"
+                      color="info"
+                      rounded
+                      x-small
+                      @click="contributionChange()">Evaluar
+                    </v-btn>
+                  </center>
+                </v-col>
             </v-row>
           </v-container>
         </v-card>
@@ -83,64 +119,66 @@
                   <v-flex xs12 class="px-2">
                     <fieldset class="pa-3">
                       <v-row>
+                        <v-col cols="12" md="10" class="py-0" style="color:teal">
+                          <label><b>Boleta de Pago del mes de {{' '+periodo_boletas}} </b></label>
+                        </v-col>
                         <v-col cols="12" md="5" class="pb-0">
                           <v-text-field
                             :outlined="editar"
                             :readonly="!editar"
                             dense
                             class="py-0"
-                            label="Boleta de Pago"
                             v-model="payable_liquid[0]"
                           ></v-text-field>
                         </v-col>
-                <v-col cols="12" md="3" v-show="show_ajuste" >
-               <label><small  class=" caption" > Meses atras</small> </label>
-                  </v-col>
-                           <v-col cols="12" md="3" v-show="show_ajuste" >
-                 <v-row class="py-0">
-                    <v-text-field
-                      dense
-                      v-model="number_diff_month"
-                      color="info"
-                      append-icon="mdi-plus-box"
-                      prepend-icon="mdi-minus-box"
-                      @click:append="appendIconCallback"
-                      @click:prepend="prependIconCallback"
-                      readonly
-                    ></v-text-field>
-                 </v-row>
-                  </v-col>
-                        <v-col cols="12" md="4" v-show="show_ajuste">
-                          <v-text-field
-                            dense
-                            v-model="monto_ajustable"
-                            :outlined="show_ajuste"
-                            class="mt-0 pt-0"
-                            label="Monto Ajustable"
-                            type="text"
-                            style="width: 90px"
-                          ></v-text-field>
+                        <v-col cols="12" md="3" v-show="show_ajuste" >
+                          <label><small  class=" caption" > Meses atras</small> </label>
                         </v-col>
-                        <v-col cols="12" md="8" v-show="show_ajuste">
-                         <v-text-field
-                            dense
-                            v-model="monto_ajustable_descripcion"
-                            :outlined="show_ajuste"
-                            class="mt-0 pt-0"
-                            label="Descripcion Monto Ajustable"
-                            type="text"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6" class="pb-0" v-show="comision">
-                          <v-text-field
-                            :outlined="editarComision"
-                            :readonly="!editarComision"
-                            dense
-                            class="py-0"
-                            v-model="periodo"
-                            label="Periodo"
-                          ></v-text-field>
-                        </v-col>
+                        <v-col cols="12" md="3" v-show="show_ajuste" >
+                        <v-row class="py-0">
+                            <v-text-field
+                              dense
+                              v-model="number_diff_month"
+                              color="info"
+                              append-icon="mdi-plus-box"
+                              prepend-icon="mdi-minus-box"
+                              @click:append="appendIconCallback"
+                              @click:prepend="prependIconCallback"
+                              readonly
+                            ></v-text-field>
+                        </v-row>
+                      </v-col>
+                      <v-col cols="12" md="4" v-show="show_ajuste">
+                        <v-text-field
+                          dense
+                          v-model="monto_ajustable"
+                          :outlined="show_ajuste"
+                          class="mt-0 pt-0"
+                          label="Monto Ajustable"
+                          type="text"
+                          style="width: 90px"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="8" v-show="show_ajuste">
+                        <v-text-field
+                          dense
+                          v-model="monto_ajustable_descripcion"
+                          :outlined="show_ajuste"
+                          class="mt-0 pt-0"
+                          label="Descripcion Monto Ajustable"
+                          type="text"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pb-0" v-show="comision">
+                        <v-text-field
+                          :outlined="editarComision"
+                          :readonly="!editarComision"
+                          dense
+                          class="py-0"
+                          v-model="periodo"
+                          label="Periodo"
+                        ></v-text-field>
+                      </v-col>
                       </v-row>
                       <v-row >
                         <v-col cols="12" md="6" class="pb-0" v-show="contribusion">
@@ -232,30 +270,9 @@
                   <h3 class="success--text" v-show="validated1"> PUEDE SER GARANTE</h3>
                   <!--{{affiliate_garantor.guarantor_information}}-->
                 </v-col>
-                <v-col cols="12" md="4" class="pb-0 ma-0 py-0" v-show="affiliate_garantor.double_perception"></v-col>
-                 <v-col cols="12" md="8" class="pb-0 ma-0 py-0" v-show="affiliate_garantor.double_perception">
-                  <v-radio-group
-                    class="pb-0 ma-0 py-0"
-                    v-model="tipo_afiliado"
-                    row
-                  >
-                    <v-radio
-                      label="Titular"
-                      :value="false"
-                      class="pb-0 ma-0 py-0"
-                      @change="contributionChange()"
-                    ></v-radio>
-                    <v-radio
-                      label="Viuda"
-                      :value="true"
-                      class="pb-0 ma-0 py-0"
-                      @change="contributionChange()"
-                    ></v-radio>
-                  </v-radio-group>
-                </v-col>
-                <v-col cols="12" md="12" class="py-0" v-show="affiliate_garantor.affiliate.cpop">
+                <!--v-col cols="12" md="12" class="py-0" v-show="affiliate_garantor.affiliate.cpop">
                   <h5 class="success--text text-center">AFILIADO CPOP</h5>
-                </v-col>
+                </!--v-col-->
                 <v-progress-linear></v-progress-linear>
                 <v-col cols="12" md="8" class="font-weight-black caption ma-0 py-0 " >
                   DATOS DEL AFILIADO
@@ -309,13 +326,13 @@
                   PRESTAMOS QUE ESTA GARANTIZANDO EN EL SISMU:
                 </v-col>
                 <v-col cols="12" md="2" class="font-weight-black caption py-0" >
-                  {{affiliate_garantor.loans_sismu}}
+                  {{affiliate_garantor.loans_sismu.length}}
                 </v-col>
                 <v-col cols="12" md="8" class="text-uppercase py-0 font-weight-light caption" >
                   PRESTAMOS VIGENTES QUE TIENE EL AFILIADO EN EL SISMU:
                 </v-col>
                  <v-col cols="12" md="2" class="font-weight-black caption py-1">
-                 {{affiliate_garantor.guarantees_sismu}}
+                 {{affiliate_garantor.guarantees_sismu.length}}
                 </v-col>
                 <v-col cols="12" class="py-0" v-show="loan.length>0">
                   <v-data-table
@@ -484,6 +501,8 @@
     spouse_view:false,
     nombre:null,
 
+    double_perception:false,
+
     tipo_afiliado:false,
     valido:true,
     monto_ajustable_descripcion:null,
@@ -501,7 +520,7 @@
     contributionable:[],
     data_ballots_state_affiliate:null,
     loan_contributions_adjust_ids:[],
-    periodo:null,
+    periodo_boletas:null,
 
 
     cantidad_boletas:1,
@@ -692,11 +711,15 @@ ver()
             type_guarantor_spouse:this.tipo_afiliado,
           })
             this.affiliate_garantor=resp.data
-            if(this.affiliate_garantor.validate)
+            this.double_perception= this.affiliate_garantor.double_perception
+             if(this.affiliate_garantor.validate)
             {
               this.toastr.error(this.affiliate_garantor.validate)
             }else{
-              if(this.affiliate_garantor.affiliate.spouse == null && this.affiliate_garantor.id == null )
+
+              if(!this.double_perception)
+              {
+               if(this.affiliate_garantor.affiliate.spouse == null  )
               {
                 this.spouse_view = false
                 this.nombre=this.affiliate_garantor.affiliate.full_name
@@ -733,6 +756,7 @@ ver()
               this.data_ballots_name=res.data.name_table_contribution
               this.data_ballots_state_affiliate=res.data.state_affiliate
               this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
+              this.periodo_boletas=this.$moment(this.data_ballots[0].month_year).format('MMMM')
               this.valido=res.data.valid
               if(res.data.name_table_contribution=='contributions')
               {
@@ -829,496 +853,7 @@ ver()
             this.loan=this.affiliate_garantor.affiliate.loans
             this.show_garante=false
 
-
-
-
-
-
-
-
-/*
-
-
-
-
-            if(this.affiliate_garantor.affiliate.spouse == null && this.affiliate_garantor.id == null )
-            {
-              this.spouse_view = false
-              this.nombre=this.affiliate_garantor.affiliate.full_name
-
-              let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
-                params:{
-                  city_id: this.$store.getters.cityId,
-                  choose_diff_month: 1,
-                  number_diff_month:1,
-                  sortBy: ['month_year'],
-                  sortDesc: [1],
-                  per_page: 1,
-                  page: 1,
-                  }
-                })
-              this.data_ballots=res.data.data
-              this.data_ballots_name=res.data.name_table_contribution
-              this.data_ballots_state_affiliate=res.data.state_affiliate
-              this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
-              this.valido=res.data.valid
-              if(res.data.name_table_contribution=='contributions')
-              {
-              // this.toastr.error("afiliado que pertenece a contribution")
-                if(res.data.valid)
-                {
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.pasivo=false
-                  this.retroceder_meses=true
-                  this.show_ajuste=true
-                  this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
-                  this.bonos[0] = this.data_ballots[0].border_bonus,
-                  this.bonos[1] = this.data_ballots[0].east_bonus,
-                  this.bonos[2] = this.data_ballots[0].position_bonus,
-                  this.bonos[3] = this.data_ballots[0].public_security_bonus
-                } else{
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.show_ajuste=true
-                  this.pasivo=false
-                  this.retroceder_meses=true
-                  this.payable_liquid[0] = this.payable_liquid[0]
-                  this.bonos[0] = this.bonos[0]
-                  this.bonos[1] =this.bonos[1]
-                  this.bonos[2] = this.bonos[2]
-                  this.bonos[3] =this.bonos[3]
-                }
-              }else{
-                if(res.data.name_table_contribution=='aid_contributions')
-                {
-                  this.pasivo= true
-                  this.contribusion=false
-                  this.retroceder_meses=false
-                  this.comision=false
-                  this.show_ajuste=true
-
-                if(res.data.valid)
-                {
-                  if(this.data_ballots[0].rent==0 && this.data_ballots[0].dignity_rent==0){
-                    this.editar=true
-                    this.editarPasivo= true
-                  }else{
-                    if(this.data_ballots[0].dignity_rent>0 && this.data_ballots[0].rent>0){
-                      this.editar=false
-                      this.editarPasivo= false
-                      this.payable_liquid[0] = this.data_ballots[0].rent
-                      this.bonos[0] = this.data_ballots[0].dignity_rent
-                    }else{
-                      if(this.data_ballots[0].dignity_rent==0){
-                        this.editarPasivo= true
-                        this.editar=false
-                        this.payable_liquid[0] = this.data_ballots[0].rent
-                      }else{
-                        if(this.data_ballots[0].rent==0){
-                          this.editar=true
-                          this.editarPasivo= false
-                          this.bonos[0] = this.data_ballots[0].dignity_rent
-                        }
-                      }
-                    }
-                  }
-                } else{
-                  this.editar=true
-                  this.show_ajuste=true
-              //  this.payable_liquid[0] = this.data_ballots[0].rent
-              //  this.bonos[0] = this.data_ballots[0].dignity_rent
-              }
-              //this.payable_liquid[0] = this.data_ballots[0].rent,
-              //this.bonos[0] = this.data_ballots[0].dignity_rent,
-
-              //this.toastr.error("afiliado que pertenece a aid contribution")
             }
-            else{
-              if(res.data.name_table_contribution==null)
-              {
-                this.comision=true
-                this.contribusion=false
-                this.pasivo=false
-                this.show_ajuste=false
-                //this.periodo=res.data.current_date
-                //this.periodo=this.periodo.getMonth()
-                this.retroceder_meses=false
-              //  this.toastr.error("afiliado que esta de comision")
-              }
-
-            }
-          }
-            this.validated=this.affiliate_garantor.guarantor
-            this.validated1=this.affiliate_garantor.guarantor
-            this.show_calculated=this.affiliate_garantor.guarantor
-            this.loan=this.affiliate_garantor.affiliate.loans
-            this.show_garante=false
-
-            }else
-            {
-              this.spouse_view = true
-              this.spouse=this.affiliate_garantor.affiliate.spouse
-
-              if(this.affiliate_garantor.double_perception)
-              {
-                if(this.tipo_afiliado == false)
-                {
-                  this.nombre=this.affiliate_garantor.affiliate.full_name
-    let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
-                params:{
-                  city_id: this.$store.getters.cityId,
-                  choose_diff_month: 1,
-                  number_diff_month:1,
-                  sortBy: ['month_year'],
-                  sortDesc: [1],
-                  per_page: 1,
-                  page: 1,
-                  }
-                })
-              this.data_ballots=res.data.data
-              this.data_ballots_name=res.data.name_table_contribution
-              this.data_ballots_state_affiliate=res.data.state_affiliate
-              this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
-              this.valido=res.data.valid
-              if(res.data.name_table_contribution=='contributions')
-              {
-              // this.toastr.error("afiliado que pertenece a contribution")
-                if(res.data.valid)
-                {
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.pasivo=false
-                  this.retroceder_meses=true
-                  this.show_ajuste=true
-                  this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
-                  this.bonos[0] = this.data_ballots[0].border_bonus,
-                  this.bonos[1] = this.data_ballots[0].east_bonus,
-                  this.bonos[2] = this.data_ballots[0].position_bonus,
-                  this.bonos[3] = this.data_ballots[0].public_security_bonus
-                } else{
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.show_ajuste=true
-                  this.pasivo=false
-                  this.retroceder_meses=true
-                  this.payable_liquid[0] = this.payable_liquid[0]
-                  this.bonos[0] = this.bonos[0]
-                  this.bonos[1] =this.bonos[1]
-                  this.bonos[2] = this.bonos[2]
-                  this.bonos[3] =this.bonos[3]
-                }
-              }else{
-                if(res.data.name_table_contribution=='aid_contributions')
-                {
-                  this.pasivo= true
-                  this.contribusion=false
-                  this.retroceder_meses=false
-                  this.comision=false
-                  this.show_ajuste=true
-
-                if(res.data.valid)
-                {
-                  if(this.data_ballots[0].rent==0 && this.data_ballots[0].dignity_rent==0){
-                    this.editar=true
-                    this.editarPasivo= true
-                  }else{
-                    if(this.data_ballots[0].dignity_rent>0 && this.data_ballots[0].rent>0){
-                      this.editar=false
-                      this.editarPasivo= false
-                      this.payable_liquid[0] = this.data_ballots[0].rent
-                      this.bonos[0] = this.data_ballots[0].dignity_rent
-                    }else{
-                      if(this.data_ballots[0].dignity_rent==0){
-                        this.editarPasivo= true
-                        this.editar=false
-                        this.payable_liquid[0] = this.data_ballots[0].rent
-                      }else{
-                        if(this.data_ballots[0].rent==0){
-                          this.editar=true
-                          this.editarPasivo= false
-                          this.bonos[0] = this.data_ballots[0].dignity_rent
-                        }
-                      }
-                    }
-                  }
-                } else{
-                  this.editar=true
-                  this.show_ajuste=true
-              //  this.payable_liquid[0] = this.data_ballots[0].rent
-              //  this.bonos[0] = this.data_ballots[0].dignity_rent
-              }
-              //this.payable_liquid[0] = this.data_ballots[0].rent,
-              //this.bonos[0] = this.data_ballots[0].dignity_rent,
-
-              //this.toastr.error("afiliado que pertenece a aid contribution")
-            }
-            else{
-              if(res.data.name_table_contribution==null)
-              {
-                this.comision=true
-                this.contribusion=false
-                this.pasivo=false
-                this.show_ajuste=false
-                //this.periodo=res.data.current_date
-                //this.periodo=this.periodo.getMonth()
-                this.retroceder_meses=false
-              //  this.toastr.error("afiliado que esta de comision")
-              }
-
-            }
-          }
-            this.validated=this.affiliate_garantor.guarantor
-            this.validated1=this.affiliate_garantor.guarantor
-            this.show_calculated=this.affiliate_garantor.guarantor
-            this.loan=this.affiliate_garantor.affiliate.loans
-            this.show_garante=false
-
-                }else{
-                  this.nombre=this.$options.filters.fullName(this.affiliate_garantor.affiliate.spouse, true)
-
-    let res = await axios.get(`affiliate/${this.spouse.affiliate_id}/contribution`, {
-                params:{
-                  city_id: this.$store.getters.cityId,
-                  choose_diff_month: 1,
-                  number_diff_month:1,
-                  sortBy: ['month_year'],
-                  sortDesc: [1],
-                  per_page: 1,
-                  page: 1,
-                  }
-                })
-              this.data_ballots=res.data.data
-              this.data_ballots_name=res.data.name_table_contribution
-              this.data_ballots_state_affiliate=res.data.state_affiliate
-              this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
-              this.valido=res.data.valid
-              if(res.data.name_table_contribution=='contributions')
-              {
-              // this.toastr.error("afiliado que pertenece a contribution")
-                if(res.data.valid)
-                {
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.pasivo=false
-                  this.retroceder_meses=true
-                  this.show_ajuste=true
-                  this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
-                  this.bonos[0] = this.data_ballots[0].border_bonus,
-                  this.bonos[1] = this.data_ballots[0].east_bonus,
-                  this.bonos[2] = this.data_ballots[0].position_bonus,
-                  this.bonos[3] = this.data_ballots[0].public_security_bonus
-                } else{
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.show_ajuste=true
-                  this.pasivo=false
-                  this.retroceder_meses=true
-                  this.payable_liquid[0] = this.payable_liquid[0]
-                  this.bonos[0] = this.bonos[0]
-                  this.bonos[1] =this.bonos[1]
-                  this.bonos[2] = this.bonos[2]
-                  this.bonos[3] =this.bonos[3]
-                }
-              }else{
-                if(res.data.name_table_contribution=='aid_contributions')
-                {
-                  this.pasivo= true
-                  this.contribusion=false
-                  this.retroceder_meses=false
-                  this.comision=false
-                  this.show_ajuste=true
-
-                if(res.data.valid)
-                {
-                  if(this.data_ballots[0].rent==0 && this.data_ballots[0].dignity_rent==0){
-                    this.editar=true
-                    this.editarPasivo= true
-                  }else{
-                    if(this.data_ballots[0].dignity_rent>0 && this.data_ballots[0].rent>0){
-                      this.editar=false
-                      this.editarPasivo= false
-                      this.payable_liquid[0] = this.data_ballots[0].rent
-                      this.bonos[0] = this.data_ballots[0].dignity_rent
-                    }else{
-                      if(this.data_ballots[0].dignity_rent==0){
-                        this.editarPasivo= true
-                        this.editar=false
-                        this.payable_liquid[0] = this.data_ballots[0].rent
-                      }else{
-                        if(this.data_ballots[0].rent==0){
-                          this.editar=true
-                          this.editarPasivo= false
-                          this.bonos[0] = this.data_ballots[0].dignity_rent
-                        }
-                      }
-                    }
-                  }
-                } else{
-                  this.editar=true
-                  this.show_ajuste=true
-              //  this.payable_liquid[0] = this.data_ballots[0].rent
-              //  this.bonos[0] = this.data_ballots[0].dignity_rent
-              }
-              //this.payable_liquid[0] = this.data_ballots[0].rent,
-              //this.bonos[0] = this.data_ballots[0].dignity_rent,
-
-              //this.toastr.error("afiliado que pertenece a aid contribution")
-            }
-            else{
-              if(res.data.name_table_contribution==null)
-              {
-                this.comision=true
-                this.contribusion=false
-                this.pasivo=false
-                this.show_ajuste=false
-                //this.periodo=res.data.current_date
-                //this.periodo=this.periodo.getMonth()
-                this.retroceder_meses=false
-              //  this.toastr.error("afiliado que esta de comision")
-              }
-
-            }
-          }
-            this.validated=this.affiliate_garantor.guarantor
-            this.validated1=this.affiliate_garantor.guarantor
-            this.show_calculated=this.affiliate_garantor.guarantor
-            this.loan=this.affiliate_garantor.affiliate.loans
-            this.show_garante=false
-
-
-                }
-              }else{
-
-                    let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
-                params:{
-                  city_id: this.$store.getters.cityId,
-                  choose_diff_month: 1,
-                  number_diff_month:1,
-                  sortBy: ['month_year'],
-                  sortDesc: [1],
-                  per_page: 1,
-                  page: 1,
-                  }
-                })
-              this.data_ballots=res.data.data
-              this.data_ballots_name=res.data.name_table_contribution
-              this.data_ballots_state_affiliate=res.data.state_affiliate
-              this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
-              this.valido=res.data.valid
-              if(res.data.name_table_contribution=='contributions')
-              {
-              // this.toastr.error("afiliado que pertenece a contribution")
-                if(res.data.valid)
-                {
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.pasivo=false
-                  this.retroceder_meses=true
-                  this.show_ajuste=true
-                  this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
-                  this.bonos[0] = this.data_ballots[0].border_bonus,
-                  this.bonos[1] = this.data_ballots[0].east_bonus,
-                  this.bonos[2] = this.data_ballots[0].position_bonus,
-                  this.bonos[3] = this.data_ballots[0].public_security_bonus
-                } else{
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.show_ajuste=true
-                  this.pasivo=false
-                  this.retroceder_meses=true
-                  this.payable_liquid[0] = this.payable_liquid[0]
-                  this.bonos[0] = this.bonos[0]
-                  this.bonos[1] =this.bonos[1]
-                  this.bonos[2] = this.bonos[2]
-                  this.bonos[3] =this.bonos[3]
-                }
-              }else{
-                if(res.data.name_table_contribution=='aid_contributions')
-                {
-                  this.pasivo= true
-                  this.contribusion=false
-                  this.retroceder_meses=false
-                  this.comision=false
-                  this.show_ajuste=true
-
-                if(res.data.valid)
-                {
-                  if(this.data_ballots[0].rent==0 && this.data_ballots[0].dignity_rent==0){
-                    this.editar=true
-                    this.editarPasivo= true
-                  }else{
-                    if(this.data_ballots[0].dignity_rent>0 && this.data_ballots[0].rent>0){
-                      this.editar=false
-                      this.editarPasivo= false
-                      this.payable_liquid[0] = this.data_ballots[0].rent
-                      this.bonos[0] = this.data_ballots[0].dignity_rent
-                    }else{
-                      if(this.data_ballots[0].dignity_rent==0){
-                        this.editarPasivo= true
-                        this.editar=false
-                        this.payable_liquid[0] = this.data_ballots[0].rent
-                      }else{
-                        if(this.data_ballots[0].rent==0){
-                          this.editar=true
-                          this.editarPasivo= false
-                          this.bonos[0] = this.data_ballots[0].dignity_rent
-                        }
-                      }
-                    }
-                  }
-                } else{
-                  this.editar=true
-                  this.show_ajuste=true
-              //  this.payable_liquid[0] = this.data_ballots[0].rent
-              //  this.bonos[0] = this.data_ballots[0].dignity_rent
-              }
-              //this.payable_liquid[0] = this.data_ballots[0].rent,
-              //this.bonos[0] = this.data_ballots[0].dignity_rent,
-
-              //this.toastr.error("afiliado que pertenece a aid contribution")
-            }
-            else{
-              if(res.data.name_table_contribution==null)
-              {
-                this.comision=true
-                this.contribusion=false
-                this.pasivo=false
-                this.show_ajuste=false
-                //this.periodo=res.data.current_date
-                //this.periodo=this.periodo.getMonth()
-                this.retroceder_meses=false
-              //  this.toastr.error("afiliado que esta de comision")
-              }
-
-            }
-          }
-            this.validated=this.affiliate_garantor.guarantor
-            this.validated1=this.affiliate_garantor.guarantor
-            this.show_calculated=this.affiliate_garantor.guarantor
-            this.loan=this.affiliate_garantor.affiliate.loans
-            this.show_garante=false
-
-
-                this.nombre=this.$options.filters.fullName(this.affiliate_garantor.affiliate.spouse, true)
-
-              }
-
-/*
-                this.validated=this.affiliate_garantor.guarantor
-            this.validated1=this.affiliate_garantor.guarantor
-            this.show_calculated=this.affiliate_garantor.guarantor
-            this.loan=this.affiliate_garantor.affiliate.loans
-            this.show_garante=false*/
-         /* }*/
           }
         }
       } catch (e) {
@@ -1509,7 +1044,9 @@ ver()
           }
           })
           this.data_ballots=res.data.data
-  if(res.data.valid)
+          this.periodo_boletas = this.$moment(this.data_ballots[0].month_year).format('MMMM')
+          this.toastr.error(this.$moment(this.data_ballots[0].month_year).format('MMMM'))
+          if(res.data.valid)
             {
               this.editar=false
               this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
@@ -1546,26 +1083,155 @@ ver()
     }
   },
   async contributionChange(){
+  try {
+    if(this.tipo_afiliado)
+      {
+        let resp = await axios.post(`affiliate_spouse_guarantor`,{
+            affiliate_id:  this.affiliate_garantor.affiliate.id,
+            procedure_modality_id:this.modalidad_id,
+          })
+        this.affiliate_garantor=resp.data
+       }else{
+        let resp = await axios.post(`affiliate_spouse_guarantor`,{
+            affiliate_id:  this.affiliate_garantor.own_affiliate.id,
+            procedure_modality_id:this.modalidad_id,
+          })
+        this.affiliate_garantor=resp.data
+      }
+      if(this.affiliate_garantor.affiliate.spouse == null  )
+      {
+        this.spouse_view = false
+        this.nombre=this.affiliate_garantor.affiliate.full_name
+        this.affiliate_id=this.affiliate_garantor.affiliate.id
+      }else{
 
+                  this.spouse_view = true
+                  this.spouse=this.affiliate_garantor.affiliate.spouse
+                  this.nombre=this.$options.filters.fullName(this.affiliate_garantor.affiliate.spouse, true)
 
+                        if(this.affiliate_garantor.double_perception)
+                        {
+                          if(this.tipo_afiliado == false)
+                          {
+                            this.affiliate_id=this.affiliate_garantor.affiliate.id
+                          }else{
+                            this.affiliate_id=this.spouse.affiliate_id
+                          }
+                        }else{
+                            this.affiliate_id=this.affiliate_garantor.affiliate.id
+                        }
+                    }
+                 let res = await axios.get(`affiliate/${this.affiliate_id}/contribution`, {
+                params:{
+                  city_id: this.$store.getters.cityId,
+                  choose_diff_month: 1,
+                  number_diff_month:1,
+                  sortBy: ['month_year'],
+                  sortDesc: [1],
+                  per_page: 1,
+                  page: 1,
+                  }
+                })
+              this.data_ballots=res.data.data
+              this.data_ballots_name=res.data.name_table_contribution
+              this.data_ballots_state_affiliate=res.data.state_affiliate
+              this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
+              this.valido=res.data.valid
+              if(res.data.name_table_contribution=='contributions')
+              {
+              // this.toastr.error("afiliado que pertenece a contribution")
+                if(res.data.valid)
+                {
+                  this.editar=false
+                  this.contribusion=true
+                  this.comision=false
+                  this.pasivo=false
+                  this.retroceder_meses=true
+                  this.show_ajuste=true
+                  this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
+                  this.bonos[0] = this.data_ballots[0].border_bonus,
+                  this.bonos[1] = this.data_ballots[0].east_bonus,
+                  this.bonos[2] = this.data_ballots[0].position_bonus,
+                  this.bonos[3] = this.data_ballots[0].public_security_bonus
+                } else{
+                  this.editar=false
+                  this.contribusion=true
+                  this.comision=false
+                  this.show_ajuste=true
+                  this.pasivo=false
+                  this.retroceder_meses=true
+                  this.payable_liquid[0] = this.payable_liquid[0]
+                  this.bonos[0] = this.bonos[0]
+                  this.bonos[1] =this.bonos[1]
+                  this.bonos[2] = this.bonos[2]
+                  this.bonos[3] =this.bonos[3]
+                }
+              }else{
+                if(res.data.name_table_contribution=='aid_contributions')
+                {
+                  this.pasivo= true
+                  this.contribusion=false
+                  this.retroceder_meses=false
+                  this.comision=false
+                  this.show_ajuste=true
 
+                if(res.data.valid)
+                {
+                  if(this.data_ballots[0].rent==0 && this.data_ballots[0].dignity_rent==0){
+                    this.editar=true
+                    this.editarPasivo= true
+                  }else{
+                    if(this.data_ballots[0].dignity_rent>0 && this.data_ballots[0].rent>0){
+                      this.editar=false
+                      this.editarPasivo= false
+                      this.payable_liquid[0] = this.data_ballots[0].rent
+                      this.bonos[0] = this.data_ballots[0].dignity_rent
+                    }else{
+                      if(this.data_ballots[0].dignity_rent==0){
+                        this.editarPasivo= true
+                        this.editar=false
+                        this.payable_liquid[0] = this.data_ballots[0].rent
+                      }else{
+                        if(this.data_ballots[0].rent==0){
+                          this.editar=true
+                          this.editarPasivo= false
+                          this.bonos[0] = this.data_ballots[0].dignity_rent
+                        }
+                      }
+                    }
+                  }
+                } else{
+                  this.editar=true
+                  this.show_ajuste=true
+              }
+            }
+            else{
+              if(res.data.name_table_contribution==null)
+              {
+                this.comision=true
+                this.contribusion=false
+                this.pasivo=false
+                this.show_ajuste=false
+                this.retroceder_meses=false
+              }
 
+            }
+          }
+            this.validated=this.affiliate_garantor.guarantor
+            this.validated1=this.affiliate_garantor.guarantor
+            this.show_calculated=this.affiliate_garantor.guarantor
+            this.loan=this.affiliate_garantor.affiliate.loans
+            this.show_garante=false
 
+              this.$forceUpdate();
 
-
-
-
-
-
-
-
-
-
-
-
-
-     this.toastr.error("No se encuentra registrada ninguna dirección. Por favor registre la dirección del afiliado.")
-  }
-  }
+          } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    // this.toastr.error("No se encuentra registrada ninguna dirección. Por favor registre la dirección del afiliado.")
+      }
+    }
   }
 </script>

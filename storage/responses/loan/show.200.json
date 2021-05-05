@@ -310,5 +310,12 @@
         "deleted_at": null,
         "balance": 0,
         "estimated_quota": 1065.74
+    },
+    "payment_type": {
+        "id": 2,
+        "name": "Cheque",
+        "created_at": "2021-04-29T20:59:12.000000Z",
+        "updated_at": "2021-04-29T20:59:12.000000Z"
     }
+
 }

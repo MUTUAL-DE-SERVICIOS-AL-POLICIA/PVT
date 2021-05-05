@@ -109,6 +109,15 @@ class LoanPermissionSeeder extends Seeder
             ],[
                 'name' => 'update-reference-cosigner',
                 'display_name' => 'Actualizar p. referencias y codeudores'
+            ],[
+                'name' => 'update-warranty-hipotecary',
+                'display_name' => 'Actualizar Garantia hipotecaria'
+            ],[
+                'name' => 'update-values-commercial-rescue',
+                'display_name' => 'Actualizar valor comercial/rescate hipoteca'
+            ],[
+                'name' => 'change-disbursement-date',
+                'display_name' => 'Cambiar la fecha de desembolso'
             ]
         ];
         foreach ($permissions as $permission) {

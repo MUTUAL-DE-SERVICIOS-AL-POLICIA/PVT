@@ -15,6 +15,8 @@
         "interest_accumulated": 0
     },
     "balance": 25000,
+    "previous_balance": 2000,
+    "previous_payment_date": "2021-04-30 00:00:00",
     "penal_remaining": 0,
     "penal_payment": 0,
     "interest_remaining": 0,

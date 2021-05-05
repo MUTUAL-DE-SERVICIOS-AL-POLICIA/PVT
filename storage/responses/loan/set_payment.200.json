@@ -13,6 +13,8 @@
         "current": 22
     },
     "balance": 25000,
+    "previous_balance": 2000,
+    "previous_payment_date": "2021-04-30 00:00:00",
     "capital_payment": 298.63,
     "interest_payment": 301.37,
     "accumulated_payment": 0,

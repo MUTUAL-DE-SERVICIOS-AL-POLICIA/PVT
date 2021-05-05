@@ -17,22 +17,23 @@
                       <v-progress-linear></v-progress-linear>
                       <template>
                       <v-row>
-                         <v-col cols="9" v-if="permissionSimpleSelected.includes('create-payment-loan')"
-                          :disabled="ver || editable">
+                         <v-col cols="9"  v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')">
                         </v-col>
                         <!--v-col cols="4" class="ma-0 py-0" v-if="$store.getters.permissions.includes('create-payment-loan')"-->
-                        <v-col cols="2" class="ma-0 py-4"  v-if="permissionSimpleSelected.includes('create-payment-loan')">
+                        <v-col cols="2" class="ma-0 py-4" v-show="isNew"  v-if="permissionSimpleSelected.includes('create-payment-loan')">
                          <label>
                            <h3 style="color:teal">Refinanciamiento</h3>
                          </label>
                         </v-col>
-                        <v-col cols="1" class="ma-0 py-0" v-if="permissionSimpleSelected.includes('create-payment-loan')" >
+                        <v-col cols="1" class="ma-0 py-0" v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')" >
                           <v-checkbox class="ma-0 py-3"
                             :outlined="isNew"
                             :readonly="!isNew"
                             :disabled="ver || editable"
                             v-model="data_payment.refinanciamiento"
                           ></v-checkbox>
+                        </v-col>
+                        <v-col cols="9"  v-show="editable" v-if="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar">
                         </v-col>
                          <v-col cols="3" class="ma-0 py-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar" v-if="editable">
                           <v-checkbox class="ma-0 py-3"

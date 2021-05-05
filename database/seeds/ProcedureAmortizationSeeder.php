@@ -43,7 +43,8 @@ class ProcedureAmortizationSeeder extends Seeder
                 ],
                 'amortizacion por ajuste' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización por Ajuste','second_name'=>'Amort. AJUST'],
-                    'modalities' => [ ['name'=>'A.AJ. Introducir monto','shortened'=>'AAJ-Introducir-monto','requirements'=>[]]
+                    'modalities' => [ ['name'=>'A.AJ. Introducir monto','shortened'=>'AAJ-Introducir-monto','requirements'=>[]],
+                                    ['name'=>'A.AJ. Liquidar préstamo','shortened'=>'AAJ-Liquidar-préstamo','requirements'=>[]]
                     ]
                 ],
             ]

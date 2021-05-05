@@ -88,7 +88,7 @@
                     <span v-if="item.state_id == 3">
                     <v-tooltip
                     left   
-                    v-if="item.modality.procedure_type.name == 'Préstamo a largo plazo' || item.modality.procedure_type.name == 'Préstamo hipotecario'"            
+                    v-if="item.modality.procedure_type.name == 'Préstamo a Largo Plazo' || item.modality.procedure_type.name == 'Préstamo Hipotecario'"            
                     >
                       <template v-slot:activator="{ on }">
                         <v-btn

@@ -47,7 +47,7 @@
                 <td class="data-row py-5">{{ $loan->loan_term }} <span class="capitalize">Meses</span></td>
                 <td class="data-row py-5">
                     @if($loan->payment_type->name=='Deposito Bancario')
-                        <div class="font-bold">Cuenta Banco Union</div>
+                        <div class="font-bold">Cuenta Entidad financiera</div>
                         <div>{{ $loan->number_payment_type }}</div>
                     @else
                         {{ $loan->payment_type->name}}
@@ -150,6 +150,7 @@
                 @php ($sum_capital = 0)
                 @php ($sum_interest = 0)
                 @php ($sum_estimated_quota = 0)
+                @php ($sum_days_amr = 0)
                 @php ($sw = 0)
                 @php ($aux = 0)
                 @foreach ($loan->plan as $quota)
@@ -175,6 +176,7 @@
                     <!--<td class="data-row py-2">{{ $quota->interest_accumulated }}</td>-->
                 </tr>
                 @php ($sum_estimated_quota += $quota->estimated_quota)
+                @php ($sum_days_amr += $quota->days)
                 @php ($sum_capital += $quota->capital)
                 @php ($sum_interest += $quota->interest)
                 @php ($sw = 1)
@@ -182,11 +184,12 @@
                 <tr>
                     <td colspan="2" class="data-row py-2 font-semibold leading-tight text-xs">TOTALES</td>
                     
-                    <td class="data-row py-2"></td>
+                    <td class="data-row py-2">{{$sum_days_amr}}</td>
                     <td class="data-row py-2">{{ Util::money_format($sum_capital) }}</td>
                     <td class="data-row py-2">{{ Util::money_format($sum_interest) }}</td>
                     <td class="data-row py-2">0.0</td>
                     <td class="data-row py-2">{{ Util::money_format($sum_estimated_quota + $aux) }}</td>
+                    <td class="data-row py-2">0.0</td>
                 </tr>
             </tbody>
         </table>
@@ -198,5 +201,35 @@
             EN CASO DE TENER ALGUNA CONSULTA, FAVOR APERSONARSE POR EL ÁREA DE COBRANZAS
         </div>
     </div>
+
+    <div class="m-t-100">
+    <table>
+        <?php  
+         if($loan->payment_type->name == 'Efectivo'){ ?>
+         <tr class="align-top">
+            <td width="50%">
+            @include('partials.signature_box', [
+            'full_name' => $lender->full_name,
+            'identity_card' => $lender->identity_card_ext,
+            'position' => 'PRESTATARIO'
+            ])
+            </td>
+            <td width="50%">
+            @php($user = Auth::user())
+            @include('partials.signature_box', [
+            'full_name' => $user->full_name,
+            'position' => $user->position,
+            'employee' => true
+            ])
+            </td>
+        </tr>
+    </table>
+    <?php }?>
+    <div class="m-t-75">
+    
+    </div>
+</div>
+<?php ?>
+
 </body>
 </html>

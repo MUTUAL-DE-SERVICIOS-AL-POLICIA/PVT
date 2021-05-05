@@ -108,14 +108,14 @@ class LoanPayment extends Model
         $payment_date = CarbonImmutable::parse($payment_date);
         if ($estimated_date->lessThan($payment_date)) 
             return (object)$interest;
-        $diff_days = $estimated_date->diffInDays($payment_date);
+        $diff_days = $estimated_date->diffInDays($payment_date)+1;
         if ($estimated_date->diffInMonths($payment_date) == 0) {
             $interest['current'] = $diff_days;
             $interest['accumulated'] = 0;
         } else {
             $interest['current'] = $estimated_date->day;
         }
-        if ($diff_days > $interest['current']){
+        if ($diff_days > $interest['current']){ 
             $interest['accumulated'] = $diff_days - $interest['current'];
             if($interest['accumulated'] > 0)
                 $interest['accumulated_amount'] = self::interest_by_days($interest['accumulated'], $loan->interest->annual_interest, $loan->amount_approved); //$loan->balance caso dinamico
@@ -174,6 +174,7 @@ class LoanPayment extends Model
             $quota = $latest_quota->quota_number + 1;
         }
         return (object)[
+            'previous_payment_date' => $latest_quota ? $latest_quota->estimated_date : $loan->disbursement_date,
             'date' => $estimated_date->toDateString(),
             'quota' => $quota
         ];

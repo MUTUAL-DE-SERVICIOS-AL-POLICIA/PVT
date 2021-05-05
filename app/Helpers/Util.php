@@ -74,7 +74,7 @@ class Util
 
     public static function round($value)
     {
-        return round($value, 2, PHP_ROUND_HALF_EVEN);
+        return round($value, 4, PHP_ROUND_HALF_EVEN);
     }
 
     public static function money_format($value, $literal = false)

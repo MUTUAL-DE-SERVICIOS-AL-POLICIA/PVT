@@ -134,10 +134,10 @@ class CalculatorController extends Controller
             }
             $liquid_calificated->push([
                 'affiliate_id' => $affiliate->id,
-                'payable_liquid_calculated' => round($payable_liquid_average,2),
-                'bonus_calculated' => round($total_bonuses,2),
-                'liquid_qualification_calculated' => round($liquid_qualification_calculated,2),
-                'quota_previous' => round($parent_quota,2),
+                'payable_liquid_calculated' => Util::round($payable_liquid_average),
+                'bonus_calculated' => Util::round($total_bonuses),
+                'liquid_qualification_calculated' => Util::round($liquid_qualification_calculated),
+                'quota_previous' => Util::round($parent_quota),
                 'livelihood_amount' => $livelihood_amount,
                 'guarantees' => $guarantees_collect
             ]);
@@ -179,7 +179,7 @@ class CalculatorController extends Controller
             }
             $maximum_suggested_valid = false;
             if($modality->loan_modality_parameter->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->loan_modality_parameter->maximum_amount_modality) $maximum_suggested_valid = true;
-            $indebtedness_calculated_total=round((($quota_calculated_total/$liquid_qualification_calculated_lender)*100),2);
+            $indebtedness_calculated_total=Util::round((($quota_calculated_total/$liquid_qualification_calculated_lender)*100));
             $evaluate = false;
             if ($indebtedness_calculated_total<=$debt_index) $evaluate=true;
             //calculo de garantes
@@ -204,8 +204,8 @@ class CalculatorController extends Controller
                 if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100 && ($livelihood_amount>$loan_global_parameter->livelihood_amount)) $valuate_affiliate = true; // validar Indice de endeudamiento y monto de subsistencia
                 $calculated_data->push([
                     'affiliate_id' => $liquid['affiliate_id'],
-                    'quota_calculated' => round($quota_calculated,2),
-                    'indebtedness_calculated' => round($indebtedness_calculated,2),
+                    'quota_calculated' => Util::round($quota_calculated),
+                    'indebtedness_calculated' => Util::round($indebtedness_calculated),
                     'payment_percentage' => $percentage_payment,
                     'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
                     'is_valid' => $valuate_affiliate
@@ -223,7 +223,7 @@ class CalculatorController extends Controller
         }
         else{
             $modality = ProcedureModality::findOrFail($request->procedure_modality_id);
-            if($modality->procedure_type->name == 'Préstamo Anticipo' || $modality->procedure_type->name == 'Préstamo a corto plazo' || $modality->procedure_type->name == 'Préstamo a largo plazo'){
+            if($modality->procedure_type->name == 'Préstamo Anticipo' || $modality->procedure_type->name == 'Préstamo a Corto Plazo' || $modality->procedure_type->name == 'Préstamo a Largo Plazo'){
                 if(count($liquid_calculated)>$modality->loan_modality_parameter->max_lenders)abort(403, 'La cantidad de titulares no corresponde a la modalidad');
                 foreach($liquid_calculated as $liquid){
                     $quota_calculated = $this->quota_calculator($modality, $request->months_term, $amount_requested);
@@ -240,8 +240,8 @@ class CalculatorController extends Controller
                     if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100 && ($livelihood_amount>$loan_global_parameter->livelihood_amount)) $valuate = true;  // validar Indice de endeudamiento y monto de subsistencia
                     $calculated_data->push([
                         'affiliate_id' => $liquid['affiliate_id'],
-                        'quota_calculated' => round($quota_calculated,2),
-                        'indebtedness_calculated' => round($indebtedness_calculated,2),
+                        'quota_calculated' => Util::round($quota_calculated),
+                        'indebtedness_calculated' => Util::round($indebtedness_calculated),
                         'payment_percentage' => 100,
                         'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
                         'is_valid' =>$valuate // debe estar en el rango de indice de endeudamiento y dentro del monto de subsistencia
@@ -309,7 +309,7 @@ class CalculatorController extends Controller
         $ms = $request->amount_requested;
         $plm = $request->months_term;
         $ticm = $procedure_modality->current_interest->monthly_current_interest;
-        $ce = round($this->quota_calculator($procedure_modality, $plm, $ms),2);
+        $ce = Util::round($this->quota_calculator($procedure_modality, $plm, $ms));
         $liquid_qualification_calculated = 0;
         foreach($lc as $obj){
         $liquid_qualification_calculated = $liquid_qualification_calculated + $obj["liquid_qualification_calculated"];
@@ -333,10 +333,10 @@ class CalculatorController extends Controller
         //$ams = $this->maximum_amount($procedure_modality,$plm,$liquid_qualification_calculated);
         $cosigners=array();
         $top_debt_index = $liquid_qualification_calculated * ($debt_index / 100);
-        $percentage_change = round((1 - ($ce / $top_debt_index)),4);
+        $percentage_change = Util::round((1 - ($ce / $top_debt_index)));
         foreach($lc as $liquid_calculated){
-            $estimated_quota = round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100) * $percentage_change),2);
-            $estimated_quota = round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100)),2) - $estimated_quota;
+            $estimated_quota = Util::round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100) * $percentage_change));
+            $estimated_quota = Util::round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100))) - $estimated_quota;
             $livelihood_amount = 0; 
             $valuate_affiliate = false;
             $livelihood_amount = $liquid_calculated['liquid_qualification_calculated'] - $estimated_quota; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
@@ -345,10 +345,11 @@ class CalculatorController extends Controller
 
             /** end m */
             $cosigner=array(
-                "affiliate_id" => $liquid_calculated["affiliate_id"],
+                'affiliate_id' => $liquid_calculated["affiliate_id"],
                 "quota_calculated_estimated" => Util::round($estimated_quota),
-                'payment_percentage'=> round($estimated_quota / $ce * 100),
+                'payment_percentage'=> Util::round($estimated_quota / $ce * 100),
                 'liquid_qualification_calculated' => $liquid_calculated["liquid_qualification_calculated"],
+                'indebtnes_calculated' => Util::round($estimated_quota/$liquid_calculated['liquid_qualification_calculated']*100),
                 'is_valid' => $valuate_affiliate // validar si supera al monto de subsistencia
             );
             array_push($cosigners,$cosigner);
@@ -418,10 +419,10 @@ class CalculatorController extends Controller
                 $evaluate = false;
             $response = array(
                 "affiliate_id" => $affiliate_id,
-                "payable_liquid_calculated" => round($payable_liquid_average,2),
-                "bonus_calculated" => round($total_bonuses,2),
-                "liquid_qualification_calculated" => round($liquid_qualification_calculated,2),
-                "indebtnes_calculated" => round($indebtedness_calculated,2),
+                "payable_liquid_calculated" => Util::round($payable_liquid_average),
+                "bonus_calculated" => Util::round($total_bonuses),
+                "liquid_qualification_calculated" => Util::round($liquid_qualification_calculated),
+                "indebtnes_calculated" => Util::round($indebtedness_calculated),
                 "is_valid" => $evaluate,
                 "livelihood_amount" => $livelihood_amount,
             );

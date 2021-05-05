@@ -31,10 +31,6 @@ class LoanPaymentObserver
     }*/
     public function updating(LoanPayment $object)
     {
-        if($object->loan->balance == 0)
-            //$object->loan->state_id = 6;
-            $object->loan->merge(['state_id'=>6]);
-            $object->loan->save();
         Util::save_record($object, 'datos-de-un-tramite', Util::concat_action($object));
     }
 

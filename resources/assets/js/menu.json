@@ -12,11 +12,17 @@
     "params": {}
   }, {
     "href": "flowIndex",
-    "title": "Préstamos",
-    "icon": "mdi-cash-multiple",
+    "title": "Bandeja",
+    "icon": "mdi-tray-full",
     "permission": "show-loan",
     "params": {}
   }, {
+    "href": "listLoanGenerate",
+    "title": "Préstamos",
+    "icon": "mdi-cash-multiple",
+    "permissions": "show-loan",
+    "params": {}
+  },{
     "title": "Cobros",
     "icon": "mdi-cash-register",
     "permission": "show-payment-loan",

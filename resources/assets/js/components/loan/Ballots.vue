@@ -258,8 +258,8 @@
                     md="3"
                     class="py-0 my-0"
                     v-if="
-                      modalitySelected.name == 'Refinanciamiento Préstamo hipotecario' ||
-                      modalitySelected.name == 'Refinanciamiento Préstamo a largo plazo'
+                      modalitySelected.name == 'Refinanciamiento Préstamo Hipotecario' ||
+                      modalitySelected.name == 'Refinanciamiento Préstamo a Largo Plazo'
                     "
                   >
                     <v-checkbox
@@ -272,8 +272,8 @@
                     md="3"
                     class="py-0 my-0"
                     v-if="
-                      modalitySelected.name == 'Préstamo a largo plazo' ||
-                      modalitySelected.name == 'Préstamo hipotecario'
+                      modalitySelected.name == 'Préstamo a Largo Plazo' ||
+                      modalitySelected.name == 'Préstamo Hipotecario'
                     "
                   >
                     <v-checkbox
@@ -469,7 +469,7 @@ export default {
       for (let i = 0; i< this.modality_loan.length; i++) {
         if(this.loanTypeSelected.id==this.modality_loan[i].id){
           //if($store.getters.modalityLoan.find(item => item.id == loanTypeSelected.id).name == 12){
-          if(this.modalitySelected.name == 'Préstamo hipotecario' || this.modalitySelected.name == 'Refinanciamiento Préstamo hipotecario'){
+          if(this.modalitySelected.name == 'Préstamo Hipotecario' || this.modalitySelected.name == 'Refinanciamiento Préstamo Hipotecario'){
             this.hipotecario=true
             this.window_size=3
             this.see_field=true

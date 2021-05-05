@@ -672,7 +672,7 @@ class LoanStructureSeeder extends Seeder
                   'max_lenders' => 2,
                   'max_cosigner'=>2,
                   'maximum_amount_modality' => 700000,
-                  'minimum_amount_modality' => 10000,
+                  'minimum_amount_modality' => 100000,
                   'maximum_term_modality' => 180,
                   'minimum_term_modality' => 1
                 ],

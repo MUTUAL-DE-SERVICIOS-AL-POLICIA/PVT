@@ -230,12 +230,26 @@
             <tr class="bg-grey-darker text-white">
                 <td colspan="3">Requisitos</td>
             </tr>
-            @foreach ($loan->submitted_documents as $key => $document)
+            @php ($count_req = 0)
+            @foreach ($loan->documents_modality() as $key => $document)
+            @if($document->number != 0)
+            @php($count_req++)
                 <tr>
-                    <td class="data-row py-5 w-10">{{ $key + 1 }}</td>
+                    <td class="data-row py-5 w-10">{{ $count_req}}</td>
                     <td class="data-row py-5 w-85">{{ $document->name }}</td>
                     <td class="data-row py-5 w-5">&#10003;</td>
                 </tr>
+            @endif()
+            @endforeach
+            @foreach ($loan->documents_modality() as $key => $document)
+            @if($document->number === 0)
+            @php($count_req++)
+                <tr>
+                    <td class="data-row py-5 w-10">{{ $count_req}}</td>
+                    <td class="data-row py-5 w-85">{{ $document->name }}</td>
+                    <td class="data-row py-5 w-5">&#10003;</td>
+                </tr>
+            @endif()
             @endforeach
             @if ($loan->notes()->count())
             <tr class="bg-grey-darker text-xxs text-white">

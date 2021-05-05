@@ -18,7 +18,7 @@ class CreateLoanAffiliatesTable extends Migration
             $table->foreign('loan_id')->references('id')->on('loans');
             $table->unsignedBigInteger('affiliate_id')->unsigned();
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
-            $table->unsignedMediumInteger('payment_percentage');// porcentaje de descuento
+            $table->float('payment_percentage',5,2);// porcentaje de descuento
             $table->boolean('guarantor')->default(false);//si es garante
             $table->float('payable_liquid_calculated',10,2); //promedio liquido pagable calculado individual
             $table->float('bonus_calculated',5,2); //total bonos calculado

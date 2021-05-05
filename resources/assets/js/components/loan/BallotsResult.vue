@@ -219,7 +219,11 @@ export default {
     liquid_calificated: {
       type: Array,
       required: true
-      },
+    },
+    lenders: {
+      type: Array,
+      required: true
+    }
   },
     computed: {
 
@@ -307,6 +311,9 @@ export default {
         this.loan_detail.amount_maximum_suggested=this.calculator_result_aux.amount_maximum_suggested
         this.loan_detail.is_valid=this.calculator_result_aux.is_valid
         this.loan_detail.quota_calculated_total_lender=this.calculator_result_aux.quota_calculated_estimated_total
+
+        this.lenders[0].indebtedness_calculated=this.calculator_result_aux.indebtedness_calculated_total
+        this.lenders[0].quota_treat=this.calculator_result_aux.quota_calculated_estimated_total
         }
         else{
           this.toastr.error("El Monto Solicitado no corresponde a la Modalidad")

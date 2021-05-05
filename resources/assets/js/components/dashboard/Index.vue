@@ -529,7 +529,7 @@ export default {
             this.anticipo.annual_interest = this.loans1.modalities[i].interest.annual_interest;
             this.anticipo.quota_calculated = this.loans1.modalities[i].quota_calculated;
           }
-          if (this.loans1.modalities[i].name_procedure_modality == "Préstamo a corto plazo") {
+          if (this.loans1.modalities[i].name_procedure_modality == "Préstamo a Corto Plazo") {
             this.corto_plazo.name = this.loans1.modalities[i].name_procedure_modality;
             this.corto_plazo.amount_max = this.loans1.modalities[i].amount_max;
             this.corto_plazo.maximum_term = this.loans1.modalities[i].modality_affiliate.loan_modality_parameter.maximum_term_modality;
@@ -537,7 +537,7 @@ export default {
             this.corto_plazo.annual_interest = this.loans1.modalities[i].interest.annual_interest;
             this.corto_plazo.quota_calculated = this.loans1.modalities[i].quota_calculated;
           }
-          if (this.loans1.modalities[i].name_procedure_modality == "Préstamo a largo plazo") {
+          if (this.loans1.modalities[i].name_procedure_modality == "Préstamo a Largo Plazo") {
             this.largo_plazo.name = this.loans1.modalities[i].name_procedure_modality;
             this.largo_plazo.amount_max = this.loans1.modalities[i].amount_max;
             this.largo_plazo.maximum_term = this.loans1.modalities[i].modality_affiliate.loan_modality_parameter.maximum_term_modality;
