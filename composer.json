@@ -22,7 +22,7 @@
     "milon/barcode": "^7.0",
     "rap2hpoutre/laravel-log-viewer": "^1.4",
     "santigarcor/laratrust": "^5.2",
-    "simplesoftwareio/simple-qrcode": "^4.1",
+    "simplesoftwareio/simple-qrcode": "^4.2",
     "tymon/jwt-auth": "^2",
     "waavi/sanitizer": "^1.0"
   },
