@@ -55,7 +55,7 @@
                     bottom
                     right
                     v-on="on"
-                    :to="{ name: 'flowAdd', params: { id: $route.query.loan_id,  workTray: 'received'}, query:{ redirectTab: 6 } }"
+                    :to="{ name: 'flowAdd', params: { id: loan_payment.loan_id,  workTray: 'received'}, query:{ redirectTab: 6 } }"
                   >
                   <v-icon>mdi-arrow-left-bold-outline</v-icon>
                   </v-btn>

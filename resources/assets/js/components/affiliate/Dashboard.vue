@@ -40,7 +40,7 @@
                         <span>Ver préstamo</span>
                       </v-tooltip>
                     </span>
-                    <span v-if="item.state_id != 3">
+                    <span v-if="item.state.name == 'En Proceso'">
                       <v-tooltip
                         left
                       >
@@ -62,7 +62,7 @@
                       </v-tooltip>
                     </span>
 
-                    <span v-if="item.state_id == 3">
+                    <span v-if="item.state.name == 'Desembolsado'">
                     <v-tooltip
                     left  
                     v-if="item.modality.procedure_type.name != 'Préstamo Anticipo'"         
@@ -85,10 +85,10 @@
                     </v-tooltip>
                     </span>
 
-                    <span v-if="item.state_id == 3">
+                    <span v-if="item.state.name == 'Desembolsado'">
                     <v-tooltip
                     left   
-                    v-if="item.modality.procedure_type.name == 'Préstamo a Largo Plazo' || item.modality.procedure_type.name == 'Préstamo Hipotecario'"            
+                    v-if="item.modality.procedure_type.name == 'Préstamo a Largo Plazo' || item.modality.procedure_type.name == 'Préstamo Hipotecario'"
                     >
                       <template v-slot:activator="{ on }">
                         <v-btn
@@ -124,7 +124,7 @@
               </ul>
             </div>
             <v-tooltip
-              left v-if="permissionSimpleSelected.includes('create-loan')"              
+              left v-if="permissionSimpleSelected.includes('create-loan')"
             >
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -137,7 +137,7 @@
                   absolute
                   v-on="on"
                   style="margin-right: 99px;"
-                  @click="validateAffiliate($route.params.id, 'is_new')"                
+                  @click="validateAffiliate($route.params.id, 'is_new')"
                 >
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
@@ -145,7 +145,7 @@
               <span>Iniciar trámite</span>
             </v-tooltip>
             <v-tooltip
-              left v-if="permissionSimpleSelected.includes('create-loan')"              
+              left v-if="permissionSimpleSelected.includes('create-loan')"
             >
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -158,7 +158,7 @@
                   absolute
                   v-on="on"
                   style="margin-right: 49px;"
-                  @click="validateAffiliate($route.params.id, 'is_refinancing')"          
+                  @click="validateAffiliate($route.params.id, 'is_refinancing')"
                 >
                   <v-icon>mdi-cash-multiple</v-icon>
                 </v-btn>
@@ -166,7 +166,7 @@
               <span>Refinanciamiento SISMU</span>
             </v-tooltip>
             <v-tooltip
-              left v-if="permissionSimpleSelected.includes('create-loan')"              
+              left v-if="permissionSimpleSelected.includes('create-loan')"
             >
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -179,7 +179,7 @@
                   absolute
                   v-on="on"
                   style="margin-right: -9px;"
-                  @click="validateAffiliate($route.params.id, 'is_reprogramming')"              
+                  @click="validateAffiliate($route.params.id, 'is_reprogramming')"
                 >
                   <v-icon>mdi-calendar-clock</v-icon>
                 </v-btn>

@@ -49,7 +49,7 @@ class AffiliateForm extends FormRequest
             'account_number' => 'nullable|integer',
             'service_years' => 'nullable|integer|min:0',
             'service_months' => 'nullable|integer|min:0|max:11',
-            'unit_police_description' =>'nullable|alpha_spaces|min:3'
+            'unit_police_description' =>'nullable|min:3'
         ];
         switch ($this->method()) {
             case 'POST': {

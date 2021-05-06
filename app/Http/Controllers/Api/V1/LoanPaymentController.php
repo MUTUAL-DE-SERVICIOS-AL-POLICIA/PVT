@@ -147,40 +147,35 @@ class LoanPaymentController extends Controller
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
         $payments = collect();
-            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->get();//return $loanPayments;
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->get();
             foreach($loanPayments as $loanPayment)
             {
-                if($loanPayment->procedure_modality_id == 55 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 56 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 57 && $loanPayment->state_id == 6)//amortizacion directa
+                if($loanPayment->modality->name == 'A.D. Cuota pactada' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.D. Liquidar préstamo' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.D. Introducir monto' && $loanPayment->state->name == 'Pagado')//amortizacion directa
                 {
-                    //$loanPayment->loan = $loan/
                     $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
-                if($loanPayment->procedure_modality_id == 62 && $loanPayment->state_id == 5 || $loanPayment->procedure_modality_id == 62 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 63 && $loanPayment->state_id == 5 || $loanPayment->procedure_modality_id == 63 && $loanPayment->state_id == 6)//amortizacion automatica
+                if($loanPayment->modality->name == 'A.AUT. Cuota pactada' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.AUT. Cuota pactada' && $loanPayment->state->name == 'Pendiente por confirmar' || $loanPayment->modality->name == 'A.AUT. Cuota pactada' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'A.AUT. Parcial' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'A.AUT. Parcial' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.AUT. Parcial' && $loanPayment->state->name == 'Pendiente por confirmar')//amortizacion automatica
                 {
-                    //$loanPayment->loan = $loan;
                     $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
-                if($loanPayment->procedure_modality_id == 64 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 64 && $loanPayment->state_id == 7)// amortizacion por ajuste
+                if($loanPayment->modality->name == 'A.AJ. Introducir monto' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.AJ. Introducir monto' && $loanPayment->state->name == 'Pendiente por Confirmar' || $loanPayment->modality->name == 'A.AJ. Introducir monto' && $loanPayment->state->name == 'Pendiente por confirmar' || $loanPayment->modality->name == 'A.AJ. Liquidar préstamo' && $loanPayment->state->name == 'Pendiente por confirmar')// amortizacion por ajuste
                 {
-                    //$loanPayment->loan = $loan;
                     $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
-                if($loanPayment->procedure_modality_id == 60 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 60 && $loanPayment->state_id == 7 || $loanPayment->procedure_modality_id == 61 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 61 && $loanPayment->state_id == 7)//amortizacion por fondo
+                if($loanPayment->modality->name == 'A.F.R. Introducir monto' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.F.R. Introducir monto' && $loanPayment->state->name == 'Pendiente por Confirmar' || $loanPayment->modality->name == 'A.F.R. Liquidar préstamo' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.F.R. Liquidar préstamo' && $loanPayment->state->name == 'Pendiente por Confirmar')//amortizacion por fondo
                 {
-                    //$loanPayment->loan = $loan;
                     $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
-                if($loanPayment->procedure_modality_id == 58 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 58 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 59 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 59 && $loanPayment->state_id == 7)//amortizacion por complemento
+                if($loanPayment->modality->name == 'A.C.E. Introducir monto' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.C.E. Introducir monto' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.C.E. Liquidar préstamo' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.C.E. Liquidar préstamo' && $loanPayment->state->name == 'Pendiente por Confirmar')//amortizacion por complemento
                 {
-                    //$loanPayment->loan = $loan;
                     $loanPayment->state = LoanState::whereId($loanPayment->state_id);
                     $loanPayment->modality;
                     $payments->push($loanPayment);
@@ -466,7 +461,7 @@ class LoanPaymentController extends Controller
         $num_quota=$loan_payment->quota_number;
             if($num_quota == 1){
                 $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
-                $estimated_days['current'] = $disbursement_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
+                $estimated_days['current'] = $disbursement_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date))+1;
                 if($estimated_days['current'] > $max_current)
                     $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
@@ -776,7 +771,7 @@ class LoanPaymentController extends Controller
             ]);
     }
 
-    /**
+     /**
     * Importación de Pagos Comando SENASIR
     * Realiza la importación de pagos.
 	* @bodyParam file file required Archivo de importación. Example: file.xls
@@ -812,7 +807,7 @@ class LoanPaymentController extends Controller
         $concatenandoCi='';
         $loanAll=collect([]);
         $loanPayments = new LoanPayment();
-
+        $amount_more_affiliate=collect([]);
         $amount_Affiliate=0;
         
             for($i=1;$i<count($array[0]);$i++){   
@@ -820,19 +815,17 @@ class LoanPaymentController extends Controller
                 
                 $totalLoanAmount = 0; 
                 $have_payment=false;
-
                 if($request->state){
                     $ci=(int)$array[0][$i][0];
-                    $affiliate = Affiliate::where('identity_card', '=',$ci)->first();                    
+                    $affiliate = Affiliate::where('identity_card', '=',$ci)->first();                 
                 }else{
                     $matricula= $array[0][$i][0];
                     $affiliate = Affiliate::where('registration', '=',$matricula)->first();
                 }
-               
+
                 $loanPayments = LoanPayment::where('affiliate_id',$affiliate->id)->where('state_id','=',$pendientePago)
                                             ->where('procedure_modality_id','=',$procedure_modality_automatic->id)->where('estimated_date','=',$estimated_date_importation)->get();
 
-                
                 foreach ($loanPayments as $loanPayment){
                       $payment_estimated_date=Carbon::parse($loanPayment->estimated_date);
                         $totalLoanAmount = $totalLoanAmount + $loanPayment->estimated_quota;
@@ -977,17 +970,39 @@ class LoanPaymentController extends Controller
                             }
                         }
                     }
+                    //verifica si el monto es mayor a garantias
+                    if($amount_Affiliate>0){
+                        $affiliate_mount = (object)['ci' => $affiliate->identity_card,'matricula' => $affiliate->registration,'monto_excedente' => $amount_Affiliate,'Estado afiliado' => $affiliate->registration];
+                        $amount_more_affiliate->push($affiliate_mount);
+                    }
                     // $payment_no_automatic->push($loanPaymentsLender);
                 }
             }
-            return response()->json([
+
+           /* return response()->json([
                 'payments_automatic' => $payment_automatic,
                 'payments_no_automatic' => $payment_no_automatic,
+                'amount_more_affiliate'=> $amount_more_affiliate
                // 'Contandooo ' =>  $contand,
                 //'$concatenando' =>  $concatenando,
                // 'todosloans' => $loanLender,
                // 'Concatenando'=>$concatenandoCi
-            ]);
+            ]);*/
+
+        $File=$estimated_date_importation."AffiliadosConPagosExcedentes";
+        $data=array(
+            array("CI", "Matrícula", "Monto excedente")
+        );
+    
+        foreach ($amount_more_affiliate as $row){
+            array_push($data, array(
+                $row->ci,
+                $row->matricula,
+                $row->monto_excedente
+            ));
+        }
+        $export = new ArchivoPrimarioExport($data);
+        return Excel::download($export, $File.'.xlsx');
     }
 
     /** @group Reportes préstamos

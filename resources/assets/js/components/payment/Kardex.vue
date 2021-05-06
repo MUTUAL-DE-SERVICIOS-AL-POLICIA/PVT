@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
-    <v-toolbar-title class="pb-2 ma-0 pa-0">KARDEX </v-toolbar-title>
-    <template v-if="loan.disbursement_date != null">
+    <v-toolbar-title class="pb-2 ma-0 pa-0">KARDEX</v-toolbar-title>
+    <template v-if="loan.disbursement_date != 'Fecha invalida'">
       <v-tooltip top v-if="permissionSimpleSelected.includes('print-payment-kardex-loan')">
         <template v-slot:activator="{ on }">
           <v-btn
@@ -76,7 +76,7 @@
             <strong>Cuotas: </strong> {{ payments.length ? payments.length : ""}}<br />
           </v-col>
           <v-col md="4" class="ma-0 pa-0">
-            <strong>Desembolso: </strong>{{ loan.disbursement_date | date }}<br />
+            <strong>Desembolso: </strong>{{ loan.disbursement_date }}<br />
             <strong>Nro de comprobante contable: </strong>{{ loan.num_accounting_voucher }}<br />
             <strong>Tasa anual: </strong> {{ loan.intereses.annual_interest }}<br />
             <strong>Cuota fija mensual: </strong> {{ loan.estimated_quota }}<br />
@@ -106,6 +106,14 @@
         </template>
         <template v-slot:[`item.estimated_quota`]="{ item }">
           {{ item.estimated_quota | moneyString }}
+        </template>
+        <template v-slot:[`item.voucher`]="{ item }">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <span v-on="on"> {{item.voucher}}</span>
+            </template>
+            <span>{{item.modality.shortened}}</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.amortization_type_id`]="{ item }">
           {{ searchAmortizationType(item.amortization_type_id) }}

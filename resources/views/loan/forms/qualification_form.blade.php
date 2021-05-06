@@ -161,14 +161,14 @@
             @php ($sum_rent = 0)
             @php ($sum_mount_adjust_aid = 0)
             @php ($num_reg = 0)
-            @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot as $ballot)
+         @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot as $ballot)
             @php ($mount_adjust_aid = 0)
             <tr>
                 <td>{{Carbon::parse($ballot->month_year)->format('d/m/y')}}</td> 
                 <td> {{Util::money_format($ballot->rent)}}</td> 
                 @foreach($loan->ballot_affiliate($lender_affiliate->id)->adjusts as $adjust)
                     @if($ballot->id == $adjust->adjustable_id)
-                    @php($mount_adjust_aid=$adjust->amount)
+                    @php($mount_adjust_aid = $adjust->amount)
                     @endif
                     @endforeach
                 <td>{{Util::money_format($mount_adjust_aid)}}</td>  
@@ -176,7 +176,7 @@
             </tr >  
            @php ($num_reg = $num_reg + 1)
            @php ($sum_dignity_rent += $ballot->dignity_rent)
-           @php ($sum_rent += $ballot->$ballot->rent)
+           @php ($sum_rent += $ballot->rent)
            @php ($sum_mount_adjust_aid += $mount_adjust_aid)      
           @endforeach
             <tr>

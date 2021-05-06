@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Carbon\CarbonImmutable;
+use Carbon;
 use App\Loan;
 
 class LoanPaymentForm extends FormRequest
@@ -35,7 +37,7 @@ class LoanPaymentForm extends FormRequest
         if ($latest_payment) {
             $date = $latest_payment->estimated_date;
         } else {
-            $date = $this->loan->disbursement_date;
+            $date = Carbon::parse($this->loan->disbursement_date)->toDateString();
         } 
         $rules = [
             'procedure_modality_id' => ['required','integer', 'exists:procedure_modalities,id'],

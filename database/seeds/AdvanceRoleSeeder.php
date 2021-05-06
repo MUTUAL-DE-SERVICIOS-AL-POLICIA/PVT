@@ -25,15 +25,15 @@ class AdvanceRoleSeeder extends Seeder
             $old_receipt->delete();
         }
         $module = Module::whereName('prestamos')->first();
-        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-all-loan', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan','update-note','delete-note','update-documents-requirements','update-loan-calculations','update-reference-cosigner','update-warranty-hipotecary'];
+        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-all-loan', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan','update-note','delete-note','update-documents-requirements','update-loan-calculations','update-reference-cosigner','update-warranty-hipotecary','show-history-loan'];
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address', 'update-loan','show-history-loan'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan','update-values-commercial-rescue'];
         $executive_permissions = ['update-setting'];
         $permissions_primary = ['update-affiliate-primary'];
-        $file = ['show-all-loan','show-loan','update-loan'];
+        $file = ['show-all-loan','show-loan','update-loan','show-affiliate','show-history-loan'];
         $accounting = ['show-all-loan','show-loan','update-loan','update-accounting-voucher'];
-        $budget = ['show-all-loan','show-loan','update-loan','update-accounting-voucher'];
-        $collection_court = ['show-all-loan','show-loan','update-loan','update-refinancing-balance'];
+        $budget = ['show-all-loan','show-loan','update-loan','update-accounting-voucher','show-history-loan'];
+        $collection_court = ['show-all-loan','show-loan','update-loan','update-refinancing-balance','show-history-loan'];
         $pay_permissions_treasury = ['show-affiliate','show-loan','show-all-loan','print-payment-kardex-loan','print-payment-loan','print-payment-plan','delete-payment-loan','update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
         $treasury_permissions = ['print-payment-plan', 'print-payment-kardex-loan', 'show-loan','disbursement-loan','delete-payment', 'update-loan'];
         $loan_collection = ['show-all-loan', 'show-loan', 'show-affiliate', 'print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan','update-loan'];

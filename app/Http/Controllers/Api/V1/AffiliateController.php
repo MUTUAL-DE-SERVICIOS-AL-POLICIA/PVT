@@ -63,6 +63,17 @@ class AffiliateController extends Controller
         return $affiliate;
     }
 
+    public static function append_data_list_affiliate(Affiliate $affiliate, $with_category = false)
+    {
+        $affiliate->full_name = $affiliate->full_name;
+        $affiliate->civil_status_gender = $affiliate->civil_status_gender;
+        if($affiliate->affiliate_state !=null) $affiliate->dead = $affiliate->dead;
+        $affiliate->identity_card_ext = $affiliate->identity_card_ext;
+        if($affiliate->affiliate_state !=null) $affiliate->affiliate_state;
+        if ($with_category) $affiliate->category = $affiliate->category;
+        return $affiliate;
+    }
+
     /**
     * Lista de afiliados
     * Devuelve el listado con los datos paginados
@@ -78,7 +89,7 @@ class AffiliateController extends Controller
     {
         $data = Util::search_sort(new Affiliate(), $request);
         $data->getCollection()->transform(function ($affiliate) {
-            return self::append_data($affiliate, true);
+            return self::append_data_list_affiliate($affiliate, true);
         });
         return $data;
     }
@@ -689,6 +700,7 @@ class AffiliateController extends Controller
     * @responseFile responses/affiliate/test_spouse_guarantor.200.json
     */
     public function test_spouse_guarantor(request $request){
+        $message=[];
         $affiliate = Affiliate::whereId($request->affiliate_id)->first();
         $validation = false;
         $modality_names = ProcedureModality::where('name','like', '%Pasivo%')->where('name','like', '%Largo Plazo%')->orWhere('name','like','%Pasivo%')->where('name','like','Largo Plazo%')->get();
@@ -709,41 +721,33 @@ class AffiliateController extends Controller
                                         if($affiliate->spouse->address)
                                             return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
                                         else
-                                            return $message['validate'] = "debe actualizar la dirección del afiliado";
+                                            $message['validate'] = "debe actualizar la dirección del afiliado";
                                     }
                                     else{
-                                        return $message['validate'] = "Actualizar datos de la viuda";
+                                        $message['validate'] = "Actualizar datos de la viuda";
                                     }
                                 }
                                 else{
-                                    return $message['validate'] = "Debe actualizar el estado del afiliado";    
+                                    $message['validate'] = "Debe actualizar el estado del afiliado";    
                                 }
                             }
                             else{
-                                return $message['validate'] = "Debe colocar el estado del afiliado";
+                                $message['validate'] = "Debe colocar el estado del afiliado";
                             }
                     }
                     else{
-                        return $message['validate'] = "No puede ser garante por el ente gestor";
+                        $message['validate'] = "No puede ser garante por el ente gestor";
                     }
                 }else{
-                    return  $message['validate'] = "Actualize los datos de su Ente Gestor";
+                    $message['validate'] = "Actualize los datos de su Ente Gestor";
                 }
             }else{
-                return $message['validate'] = 'No corresponde con la modalidad';
+                $message['validate'] = 'No corresponde con la modalidad';
             }
+            return $message;
         }
         else{
-            if($affiliate->birth_date && $affiliate->city_identity_card && $affiliate->city_birth)
-            {
-                if($affiliate->address)
-                    return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
-                else
-                    return $message['validate'] = "debe actualizar la dirección del afiliado";
-            }
-            else{
-                return $message['validate']= "debe actualizar los datos del afiliado";
-            }
+            return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
         }
     }
 

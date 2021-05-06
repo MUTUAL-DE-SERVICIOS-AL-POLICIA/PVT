@@ -583,7 +583,6 @@ export default {
         else{
 
           let res1 = await axios.patch(`loan/${this.loan.id}`, {
-            disbursement_date:new Date().toISOString().substr(0, 10),
             date_signal:true
           })
           this.loan.disbursement_date= this.$moment(res1.data.disbursement_date).format('YYYY-MM-DD')
@@ -636,7 +635,7 @@ export default {
     },
     validation(){
       //VALIDACION DESEMBOLSO
-      if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
+      if((this.loan.disbursement_date != '' ) ){
         this.validate.valid_disbursement = true
       }else{
         this.validate.valid_disbursement = false
@@ -651,7 +650,7 @@ export default {
          //alert("entro 2")
       }
       else{
-        this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.')
+        this.toastr.error('Faltan registar el campo en Desembolso.')
       }
 
     }

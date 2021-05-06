@@ -16,8 +16,9 @@
         <v-data-table
           :headers="headers"
           :items="loans"
-          :items-per-page="5"
-          class="elevation-1"
+    :options.sync="options"
+    :server-items-length="totalAffiliates"
+    :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
         >
           <template v-slot:[`header.code_loan`]="{ header }">
             {{ header.text }}
@@ -333,6 +334,100 @@
               </div>
             </v-menu>
           </template>
+          
+
+    <template v-slot:[`item.modality_loan`]="{ item }">
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">{{ item.modality_loan }}</span>
+        </template>
+        <span>{{ item.sub_modality_loan }}</span>
+      </v-tooltip>
+    </template>
+        <template v-slot:[`item.guarantor_loan_affiliate`]="{ item }">
+      {{ item.guarantor_loan_affiliate? 'SI':'NO'}}
+    </template>
+        <template v-slot:[`item.amount_approved_loan`]="{ item }">
+      {{ item.amount_approved_loan | money}}
+    </template>
+
+    <template v-slot:[`item.balance_loan`]="{ item }">
+      {{ item.balance_loan | money}}
+    </template>
+        <template v-slot:[`item.quota_loan`]="{ item }">
+      {{ item.quota_loan | moneyString}}
+    </template>
+
+        <template v-slot:[`item.disbursement_date_loan`]="{ item }">
+      {{ item.disbursement_date_loan | date}}
+    </template>
+
+          <template v-slot:[`item.actions`]="{ item }" >
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  small
+                  v-on="on"
+                  color="warning"
+                  :to="{ name: 'flowAdd', params: { id: item.id_loan }, query: { workTray: 'all'}}"
+                ><v-icon>mdi-eye</v-icon>
+                </v-btn>
+              </template>
+              <span>Ver trámite</span>
+            </v-tooltip>
+            <v-tooltip bottom v-if="item.state_loan == 'Desembolsado'">
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  icon
+                  small
+                  v-on="on"
+                  color="teal lighten-3"
+                  :to="{ name: 'flowAdd', params: { id: item.id_loan }, query:{ redirectTab: 6 }}"
+                ><v-icon>mdi-folder-multiple</v-icon>
+                </v-btn>
+              </template>
+              <span>Kardex</span>
+            </v-tooltip>
+            <v-menu
+                offset-y
+                close-on-content-click
+                v-if="permissionSimpleSelected.includes('print-contract-loan') || 
+                (permissionSimpleSelected.includes('print-payment-plan') && item.state_loan == 'Desembolsado') || 
+                (permissionSimpleSelected.includes('print-payment-kardex-loan') && item.state_loan == 'Desembolsado')"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    color="primary"
+                    dark
+                    v-on="on"
+                  ><v-icon>mdi-printer</v-icon>
+                  </v-btn>
+                </template>
+                <v-list dense class="py-0">
+                  <v-list-item
+                    v-for="doc in printDocs"
+                    :key="doc.id"
+                    @click="imprimir(doc.id, item.id_loan )"
+                  >
+                    <v-list-item-icon class="ma-0 py-0 pt-2">
+                      <v-icon 
+                        class="ma-0 py-0"
+                        small
+                        v-text="doc.icon"
+                        color="light-blue accent-4"
+                      ></v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title 
+                      class="ma-0 py-0 mt-n2">
+                      {{ doc.title }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>        
+           
+          </template>
 
         </v-data-table>
         </v-card>
@@ -375,24 +470,50 @@ data () {
             { text: 'Ap. Materno',value:'mothers_last_name_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Ap. Casada',value:'surname_husband_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Modalidad',value:'modality_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
-            { text: 'Submodalidad',value:'sub_modality_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
+            //{ text: 'Submodalidad',value:'sub_modality_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
+            { text: 'Fecha Desembolsado',value:'disbursement_date_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Monto Desembolsado',value:'amount_approved_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
-            { text: 'Saldo Capital',value:'amount_approved_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
-            { text: 'Cuota',value:'quota_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},            
+            { text: 'Saldo Capital',value:'balance_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
+            { text: 'Cuota',value:'quota_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Sector',value:'state_type_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Garante?',value:'guarantor_loan_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Estado',value:'state_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Accion',value:'actions',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
         ],
         loans: [],
+         printDocs: [],
+             options: {
+      page: 1,
+      itemsPerPage: 8,
+      sortBy: ["code_loan"],
+      sortDesc: [false],
+    },
+    totalAffiliates :0
       }
     },
    computed: {
+           //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+  },
+    watch: {
+    options: function (newVal, oldVal) {
+      if (
+        newVal.page != oldVal.page ||
+        newVal.itemsPerPage != oldVal.itemsPerPage ||
+        newVal.sortBy != oldVal.sortBy ||
+        newVal.sortDesc != oldVal.sortDesc
+      ) {
+         this.search()
+      }
+    },
 
   },
       mounted()
     {//this.docsLoans()
         this.search();
+         this.docsLoans()
     },
    methods: {
     async search(){
@@ -414,10 +535,20 @@ data () {
                 quota_loan: this.searching.quota_loan,
                 state_loan: this.searching.state_loan,
                 guarantor_loan_affiliate: this.searching.guarantor_loan_affiliate,
-                excel:false
+                excel:false,
+            page: this.options.page,
+            per_page: this.options.itemsPerPage,
+            sortBy: this.options.sortBy,
+            sortDesc: this.options.sortDesc,
               }
             } )
             this.loans = res.data.data
+
+                    this.totalAffiliates = res.data.total
+        delete res.data['data']
+        this.options.page = res.data.current_page
+        this.options.itemsPerPage = parseInt(res.data.per_page)
+        this.options.totalItems = res.data.total
         } catch (e) {
             console.log(e)
         }
@@ -468,7 +599,51 @@ data () {
         if(this.searching.code_loan == '')
           this.search()
     },
-
+    
+      async imprimir(id, item)
+    {
+      try {
+        let res
+        if(id==1){
+          res = await axios.get(`loan/${item}/print/contract`)
+        }else if(id==2){
+          res = await axios.get(`loan/${item}/print/form`)
+        }else if(id==3) {
+          res = await axios.get(`loan/${item}/print/plan`)
+        }else {
+          res = await axios.get(`loan/${item}/print/kardex`)
+        } 
+        printJS({
+            printable: res.data.content,
+            type: res.data.type,
+            documentTitle: res.data.file_name,
+            base64: true
+        })  
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión.")
+        console.log(e)
+      }      
+    },
+    docsLoans(){
+        let docs =[]
+        if(this.permissionSimpleSelected.includes('print-contract-loan')){
+          docs.push(
+            { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
+            { id: 2, title: 'Solicitud', icon: 'mdi-file'})
+        }
+        if(this.permissionSimpleSelected.includes('print-payment-plan')){
+          docs.push(
+            { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'})
+        }    
+        if(this.permissionSimpleSelected.includes('print-payment-kardex-loan')){
+          docs.push(
+            { id: 4, title: 'Kardex', icon: 'mdi-view-list'})
+        }else{
+          console.log("Se ha producido un error durante la generación de la impresión")
+        }
+        this.printDocs=docs
+        console.log(this.printDocs)
+      },
 
    }
   }

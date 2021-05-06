@@ -1289,14 +1289,18 @@ export default {
         } else {
           console.log('entro al grabar por falso :)')
           //Edit desembolso
-            let res = await axios.patch(`loan/${this.loan.id}`, {
-           // payment_type_id: this.loan.payment_type_id,
-           // number_payment_type: this.loan.number_payment_type,
+            if(this.loan.disbursement_date=='Fecha invalida'){
+              let res = await axios.patch(`loan/${this.loan.id}`, {
+               num_accounting_voucher: this.loan.num_accounting_voucher
+            })
+          }else{
+          let res = await axios.patch(`loan/${this.loan.id}`, {
+            // payment_type_id: this.loan.payment_type_id,
+            // number_payment_type: this.loan.number_payment_type,
             disbursement_date:this.loan.disbursement_date,
             date_signal:false,
-            num_budget_certification: this.loan.num_budget_certification,
-            num_accounting_voucher: this.loan.num_accounting_voucher
           })
+        }
             this.toastr.success('Se registró correctamente.')
             this.editable = false
          }

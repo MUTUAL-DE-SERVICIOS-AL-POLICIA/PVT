@@ -105,6 +105,7 @@
                                 <v-col cols="12" md="4" class="py-0" v-if="item.value=='import'">
                                   <v-btn
                                     color="primary"
+                                    :loading="loadingButton"
                                     @click.stop="importationPaymentsBatch()"
                                   >Importar Información</v-btn>
                                   <v-btn
@@ -165,7 +166,8 @@ export default {
       automatic: 0,
       no_automatic: 0
     },
-    visible: false
+    visible: false,
+    loadingButton: false
   }),
   methods: {
     async registerPaymentsBatch() {
@@ -198,16 +200,29 @@ export default {
       formData.append("voucher_payment", this.import_export.code_voucher);
       //formData.append("override", this.override);
       //formData.append("refresh", this.refresh);
-      //this.loadingButton = true;
-      await axios
-        .post("loan_payment/importation_command_senasir", formData)
+      this.loadingButton = true;
+      //await axios
+        //.post("loan_payment/importation_command_senasir", formData)
+      await axios({
+        url: "/loan_payment/importation_command_senasir",
+        method: "POST",
+        responseType: "blob", // important
+        headers: { Accept: "application/vnd.ms-excel" },
+        data: formData
+      })
         .then(response => {
           console.log(response.data);
-          this.import_payments.automatic =
+          /*this.import_payments.automatic =
             response.data.payments_automatic.length;
           this.import_payments.no_automatic =
             response.data.payments_no_automatic.length;
-          this.visible = true;
+          this.visible = true;*/
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "ReporteDecuento.xlsx");
+          document.body.appendChild(link);
+          link.click();
           clearInputs()
         })
         .catch(error => {
@@ -215,7 +230,7 @@ export default {
           this.visible = true;
         });
       //this.showResults = true;
-      //this.loadingButton = false;
+      this.loadingButton = false;
       //this.refresh = false;
     },
     //importar pendiente por confirmar 

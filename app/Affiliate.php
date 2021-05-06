@@ -448,7 +448,7 @@ class Affiliate extends Model
       if($this->affiliate_state == null) abort(403, 'Debe actualizar el estado del afiliado');
       $state_affiliate = $this->affiliate_state->affiliate_state_type->name;
       $contributions = null;
-      $before_month=1;
+      $before_month=2;
       $responce=false;
       $now = CarbonImmutable::now();
       if($state_affiliate == 'Activo') $table_contribution ='contributions';

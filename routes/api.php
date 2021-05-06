@@ -15,7 +15,6 @@ Route::group([
     //Route::get('prueba', 'Api\V1\AffiliateController@get_mixed_guarantees');
     Route::patch('edit_loan/{loan}/qualification', 'Api\V1\LoanController@edit_amounts_loan_term');
     //Route::get('depuracion', 'Api\V1\AffiliateController@eliminacion');
-    Route::get('ballot/{loan_id}', 'Api\V1\LoanController@show_ballot_loan');
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
 
