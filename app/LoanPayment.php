@@ -252,10 +252,10 @@ class LoanPayment extends Model
             return (object)$interest;}
         $diff_days = $estimated_date->diffInDays($payment_date);//correcto
         $interest['current'] = $diff_days;
-        $interest['current_generated'] = Util::round(self::interest_by_days($diff_days,$loan->interest->annual_interest, $loan->balance));
+        $interest['current_generated'] = Util::round2(self::interest_by_days($diff_days,$loan->interest->annual_interest, $loan->balance));
         if ($interest['current'] > 31) {
             $interest['penal'] = $interest['current']-31;
-            $interest['penal_generated'] = Util::round(self::interest_by_days($diff_days-31,$loan->interest->penal_interest, $loan->balance));
+            $interest['penal_generated'] = Util::round2(self::interest_by_days($diff_days-31,$loan->interest->penal_interest, $loan->balance));
         }
         return (object)$interest;
     }

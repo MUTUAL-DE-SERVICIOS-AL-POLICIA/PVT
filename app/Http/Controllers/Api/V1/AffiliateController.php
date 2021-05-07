@@ -710,7 +710,7 @@ class AffiliateController extends Controller
                 $validation = true;
         if($affiliate->spouse){
             if($validation){
-                if($affiliate->pension_entity->name == null){
+                if($affiliate->pension_entity != null && $affiliate->pension_entity->name != null){
                     if($affiliate->pension_entity->name == "SENASIR")
                     {
                             if($affiliate->affiliate_state != null)
@@ -718,10 +718,10 @@ class AffiliateController extends Controller
                                 if($affiliate->affiliate_state->name == "Fallecido")
                                 {
                                     if($affiliate->spouse->city_birth && $affiliate->spouse->city_identity_card && $affiliate->spouse->birth_date){
-                                        if($affiliate->spouse->address)
+                                       // if($affiliate->spouse->address)
                                             return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
-                                        else
-                                            $message['validate'] = "debe actualizar la dirección del afiliado";
+                                        //else
+                                          // $message['validate'] = "Debe actualizar la los datos del afiliado postulante a ser garante";
                                     }
                                     else{
                                         $message['validate'] = "Actualizar datos de la viuda";
@@ -736,7 +736,7 @@ class AffiliateController extends Controller
                             }
                     }
                     else{
-                        $message['validate'] = "No puede ser garante por el ente gestor";
+                        $message['validate'] = "No puede ser garante por el Ente Gestor ser: ".$affiliate->pension_entity->name;
                     }
                 }else{
                     $message['validate'] = "Actualize los datos de su Ente Gestor";

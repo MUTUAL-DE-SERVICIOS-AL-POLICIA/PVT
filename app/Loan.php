@@ -327,7 +327,7 @@ class Loan extends Model
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
             $partial_amount = 0;
-            $total_amount = Util::round($estimated_quota);$amount = 0;
+            $total_amount = Util::round2($estimated_quota);$amount = 0;
             $liquidate = false;//return ProcedureModality::where('id', $procedure_modality_id)->where('name', 'like', '%pactada')->first();
             if(ProcedureModality::where('id', $procedure_modality_id)->where('name', 'like', '%pactada')->first())
                 $amount = $this->estimated_quota;
@@ -370,8 +370,8 @@ class Loan extends Model
             if(!$this->last_payment_validated && $estimated_date <= $date_pay){
                 $quota->paid_days->current +=1;
                 $quota->estimated_days->current +=1;
-                $quota->paid_days->current_generated = Util::round(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
-                $quota->estimated_days->current_generated = Util::round(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
+                $quota->paid_days->current_generated = Util::round2(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
+                $quota->estimated_days->current_generated = Util::round2(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
                 if($date_ini->day >= LoanGlobalParameter::latest()->first()->offset_interest_day){
                     $date_fin = CarbonImmutable::parse($date_ini->endOfMonth());
                     $rest_days_of_month = $date_fin->diffInDays($date_ini);
@@ -421,13 +421,13 @@ class Loan extends Model
         // Interés penal 
 
         if($quota->estimated_days->penal >= $grace_period){
-            $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
+            $quota->penal_payment = Util::round2($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
             if($quota->penal_payment >= 0){
                 if($amount >= $quota->penal_payment){
                     $amount = $amount - $quota->penal_payment;
                 }
                 else{
-                    $quota->penal_accumulated = Util::round($quota->penal_remaining + ($quota->penal_payment - $amount));
+                    $quota->penal_accumulated = Util::round2($quota->penal_remaining + ($quota->penal_payment - $amount));
                     //$quota->penal_remaining = $quota->penal_remaining + ($quota->penal_payment - $amount);
                     $quota->penal_payment = $amount;
                     $amount = 0;
@@ -441,13 +441,13 @@ class Loan extends Model
 
         // Interés corriente
             
-        $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->paid_days->current);
+        $quota->interest_payment = Util::round2($quota->balance * $interest->daily_current_interest * $quota->paid_days->current);
         if($amount >= $quota->interest_payment){
                 $amount = $amount - $quota->interest_payment;
         }
         else{
-            $quota->interest_accumulated = Util::round($quota->interests_remaining + ($quota->interest_payment - $amount));
-            $quota->interest_payment = Util::round($amount);
+            $quota->interest_accumulated = Util::round2($quota->interests_remaining + ($quota->interest_payment - $amount));
+            $quota->interest_payment = Util::round2($amount);
             $amount = 0;
         }
 
@@ -460,14 +460,14 @@ class Loan extends Model
         }
         else{
             if($this->regular_payment() && $this->payments->count()+1 == $this->loan_term){
-                $quota->capital_payment = Util::round($this->balance);
+                $quota->capital_payment = Util::round2($this->balance);
             }
             else{
                 if($amount >= $this->balance){
-                    $quota->capital_payment = Util::round($this->balance);
+                    $quota->capital_payment = Util::round2($this->balance);
                 }
                 else
-                    $quota->capital_payment = Util::round($amount);
+                    $quota->capital_payment = Util::round2($amount);
             }
         }
                 //calculo de la ultima cuota, solo si fue regular en los pagos
@@ -482,21 +482,21 @@ class Loan extends Model
         if ($quota->balance == $quota->capital_payment) {
             $quota->next_balance = 0;
         } else {
-            $quota->next_balance = Util::round($this->balance - $quota->capital_payment);
+            $quota->next_balance = Util::round2($this->balance - $quota->capital_payment);
         }
-        $quota->estimated_quota = Util::round($quota->capital_payment + $total_interests);
-        $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
+        $quota->estimated_quota = Util::round2($quota->capital_payment + $total_interests);
+        $quota->next_balance = Util::round2($quota->balance - $quota->capital_payment);
 
 
         //calculo de los nuevos montos restantes
 
-        $quota->penal_accumulated = Util::round($quota->penal_accumulated + ($quota->estimated_days->penal_accumulated - $quota->penal_remaining));
-        $quota->interest_accumulated = Util::round($quota->interest_accumulated + ($quota->estimated_days->interest_accumulated - $quota->interest_remaining));
+        $quota->penal_accumulated = Util::round2($quota->penal_accumulated + ($quota->estimated_days->penal_accumulated - $quota->penal_remaining));
+        $quota->interest_accumulated = Util::round2($quota->interest_accumulated + ($quota->estimated_days->interest_accumulated - $quota->interest_remaining));
 
         //redondeos
 
-        $quota->interest_remaining = Util::round($quota->interest_remaining);
-        $quota->penal_remaining = Util::round($quota->penal_remaining);
+        $quota->interest_remaining = Util::round2($quota->interest_remaining);
+        $quota->penal_remaining = Util::round2($quota->penal_remaining);
         //$quota->excesive_payment = Util::round($total_amount - ($quota->estimated_quota));
 
 

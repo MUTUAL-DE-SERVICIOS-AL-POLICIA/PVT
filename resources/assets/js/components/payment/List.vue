@@ -47,6 +47,14 @@
       {{ item.capital_payment | moneyString }}
     </template>
 
+    <template v-slot:[`item.interest_payment`]="{ item }">
+      {{ item.interest_payment | moneyString }}
+    </template>
+
+    <template v-slot:[`item.penal_payment`]="{ item }">
+      {{ item.penal_payment | moneyString }}
+    </template>
+
       <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">

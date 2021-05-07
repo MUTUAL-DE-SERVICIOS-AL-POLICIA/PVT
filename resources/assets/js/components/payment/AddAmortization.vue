@@ -381,7 +381,8 @@ export default {
               }else{
                 if(this.tipo_de_amortizacion[i].name == 'A.C.E. Liquidar préstamo'
                   || this.tipo_de_amortizacion[i].name == 'A.D. Liquidar préstamo'
-                  || this.tipo_de_amortizacion[i].name == 'A.F.R. Liquidar préstamo'){
+                  || this.tipo_de_amortizacion[i].name == 'A.F.R. Liquidar préstamo'
+                  || this.tipo_de_amortizacion[i].name == 'A.AJ. Liquidar préstamo'){
                   this.regular=false
                 }
                 else{

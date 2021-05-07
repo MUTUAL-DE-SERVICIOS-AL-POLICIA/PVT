@@ -67,7 +67,7 @@
                                   </v-col>
                                   <v-progress-linear></v-progress-linear>
                                   <v-col cols="12" md="4" v-show="!calificacion_edit" class="pb-0">
-                                    <p><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}} Bs.</p>
+                                    <p><b>MONTO SOLICITADO: </b>{{' '+loan.amount_approved | moneyString}} Bs.</p>
                                   </v-col>
                                   <v-col cols="12" md="4" v-show="calificacion_edit" class="pb-0" >
                                     <v-text-field
@@ -79,10 +79,10 @@
                                     ></v-text-field>
                                   </v-col>
                                   <v-col cols="12" md="4" class="pb-0">
-                                    <p><b>PROMEDIO LIQUIDO PAGABLE</b>{{' '+loan.lenders[0].pivot.payable_liquid_calculated}} Bs.</p>
+                                    <p><b>PROMEDIO LIQUIDO PAGABLE: </b>{{' '+ loan.lenders[0].pivot.payable_liquid_calculated | moneyString }} Bs.</p>
                                   </v-col>
                                   <v-col cols="12" md="4" class="pb-0" >
-                                    <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}} Bs.</p>
+                                    <p><b>LIQUIDO PARA CALIFICACION: </b>{{loan.liquid_qualification_calculated | moneyString}} Bs.</p>
                                   </v-col>
                                   <v-col cols="12" md="4" v-show="!calificacion_edit" class="py-0">
                                     <p><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
@@ -97,10 +97,10 @@
                                     ></v-text-field>
                                   </v-col>
                                   <v-col cols="12" md="4" class="py-0">
-                                    <p><b>TOTAL BONOS:</b>{{' '+loan.lenders[0].pivot.bonus_calculated}}</p>
+                                    <p><b>TOTAL BONOS:</b>{{' '+loan.lenders[0].pivot.bonus_calculated | moneyString}}</p>
                                   </v-col>
                                    <v-col cols="12" md="4" class="py-0">
-                                    <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+ loan.indebtedness_calculated }} </p>
+                                    <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+ parseInt(loan.indebtedness_calculated).toFixed(2)+'%'}} </p>
                                   </v-col>
                                   <v-col cols="12" md="4" v-show="calificacion_edit" class="py-0">
                                     <center>
@@ -114,7 +114,7 @@
                                     </center>
                                   </v-col>
                                   <v-col cols="12" md="4" class="py-0">
-                                    <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}} Bs.</p>
+                                    <p><b>CALCULO DE CUOTA: </b>{{' '+loan.estimated_quota | moneyString}} Bs.</p>
                                   </v-col>
                                   <v-col cols="12" md="12" >
                                     <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
@@ -382,19 +382,19 @@
                                               <p><b>TELEFONO:</b> {{guarantor.cell_phone_number}}</p>
                                             </v-col>
                                             <v-col cols="12" md="3">
-                                              <p><b>PORCENTAJE DE PAGO:</b> {{guarantor.pivot.payment_percentage}} %</p>
+                                              <p><b>PORCENTAJE DE PAGO:</b> {{parseInt(guarantor.pivot.payment_percentage).toFixed(2) }} %</p>
                                             </v-col>
                                              <v-col cols="12" md="3">
-                                              <p><b>LIQUIDO PARA CALIFICACION:</b> {{guarantor.pivot.payable_liquid_calculated}}</p>
+                                              <p><b>LIQUIDO PARA CALIFICACION:</b> {{guarantor.pivot.payable_liquid_calculated | moneyString}}</p>
                                             </v-col>
                                             <v-col cols="12" md="3">
-                                              <p><b>PROMEDIO DE BONOS:</b> {{guarantor.pivot.bonus_calculated }}</p>
+                                              <p><b>PROMEDIO DE BONOS:</b> {{guarantor.pivot.bonus_calculated| moneyString }}</p>
                                             </v-col>
                                             <v-col cols="12" md="3">
-                                              <p><b>LIQUIDO PARA CALIFICACION CALCULADO:</b> {{guarantor.pivot.liquid_qualification_calculated}}</p>
+                                              <p><b>LIQUIDO PARA CALIFICACION CALCULADO:</b> {{guarantor.pivot.liquid_qualification_calculated | moneyString}}</p>
                                             </v-col>
                                             <v-col cols="12" md="3">
-                                              <p><b>INDICE DE ENDEUDAMIENTO CALCULADO:</b> {{guarantor.pivot.indebtedness_calculated}} %</p>
+                                              <p><b>INDICE DE ENDEUDAMIENTO CALCULADO:</b> {{ parseInt(guarantor.pivot.indebtedness_calculated).toFixed(2) }} %</p>
                                             </v-col>
                                           </v-row>
                                         </v-col>

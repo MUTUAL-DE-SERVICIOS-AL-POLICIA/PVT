@@ -53,6 +53,8 @@
                   @click="beforeStep(2)">Atras</v-btn>
                   <v-btn right
                     color="primary"
+                    :disabled="this.status_click"
+                    :loading="this.status_click"
                     @click="validatedStepTwo()">
                     Siguiente
                   </v-btn>
@@ -98,6 +100,7 @@ export default {
         penal:null
       }
     },
+    status_click:false,
     data_payment:{
       payment_date:new Date().toISOString().substr(0, 10),
       pago_total: null,
@@ -209,6 +212,10 @@ export default {
     //Metodo para crear el Pago
     async savePayment(){
       try {
+          this.status_click = true
+          if(this.status_click==true)
+          {
+
             let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
@@ -221,13 +228,17 @@ export default {
             state: this.data_payment.refinanciamiento,
             description:this.data_payment.glosa
           })
+             if(res.status==201 || res.status == 200){
+              this.status_click = false
+            }
             printJS({
             printable: res.data.attachment.content,
             type: res.data.attachment.type,
-            base64: true 
+            base64: true
           })
           this.$router.push({ name: 'flowAdd',  params: { id: this.$route.query.loan_id, workTray: 'received'}, query:{ redirectTab: 6 } })
           this.payment = res.data
+        }
       }catch (e) {
         console.log(e)
       }finally {

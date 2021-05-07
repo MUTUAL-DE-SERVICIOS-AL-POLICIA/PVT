@@ -104,6 +104,21 @@
         <template v-slot:[`item.created_at`]="{ item }">
           {{ item.created_at | date }}
         </template>
+                <template v-slot:[`item.capital_payment`]="{ item }">
+          {{ item.capital_payment | moneyString }}
+        </template>
+                <template v-slot:[`item.interest_payment`]="{ item }">
+          {{ item.interest_payment | moneyString }}
+        </template>
+                <template v-slot:[`item.interest_remaining`]="{ item }">
+          {{ item.interest_remaining | moneyString }}
+        </template>
+                <template v-slot:[`item.penal_payment`]="{ item }">
+          {{ item.penal_payment | moneyString }}
+        </template>
+                <template v-slot:[`item.penal_remaining`]="{ item }">
+          {{ item.penal_remaining | moneyString }}
+        </template>
         <template v-slot:[`item.estimated_quota`]="{ item }">
           {{ item.estimated_quota | moneyString }}
         </template>

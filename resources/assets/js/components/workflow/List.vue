@@ -46,7 +46,7 @@
       {{ item.balance | money }}
     </template>
     <template v-slot:[`item.estimated_quota`]="{ item }">
-      {{ item.estimated_quota | money }}
+      {{ item.estimated_quota }}
     </template>
     <template v-slot:[`item.user`]="{ item }">
       {{ item.user }}

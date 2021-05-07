@@ -176,6 +176,35 @@
               </div>
             </v-menu>
           </template>
+
+          <template v-slot:[`header.guarantor_loan_affiliate`]="{ header }">
+            {{ header.text }}
+            <v-menu offset-y :close-on-content-click="false">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon small :color="searching.guarantor_loan_affiliate !='' ? 'red' : 'black' ">
+                    mdi-filter
+                  </v-icon>
+                </v-btn>
+              </template>
+              <div>
+                <v-select
+                  dense
+                  :items="items"
+                  item-text="name"
+                  item-value="value"
+                  v-model="searching.guarantor_loan_affiliate"
+                  
+                  :label="'Buscar ' + header.text"
+                  @change="search()"
+                  hide-details
+                  single-line
+                ></v-select>
+
+              </div>
+            </v-menu>
+          </template>
+
                               <template v-slot:[`header.second_name_affiliate`]="{ header }">
             {{ header.text }}
             <v-menu offset-y :close-on-content-click="false">
@@ -476,10 +505,24 @@ data () {
             { text: 'Saldo Capital',value:'balance_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Cuota',value:'quota_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Sector',value:'state_type_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
-            { text: 'Garante?',value:'guarantor_loan_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
+            { text: 'Garante?',value:'guarantor_loan_affiliate',class: ['normal', 'white--text']},
             { text: 'Estado',value:'state_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
             { text: 'Accion',value:'actions',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
         ],
+        items: [
+        {
+          name: "SI",
+          value: 'TRUE',
+        },
+        {
+          name: "NO",
+          value: 'FALSE',
+        },
+        {
+          name: "TODOS",
+          value: '',
+        },
+      ],
         loans: [],
          printDocs: [],
              options: {

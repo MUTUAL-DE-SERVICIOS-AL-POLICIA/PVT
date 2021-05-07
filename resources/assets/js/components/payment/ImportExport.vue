@@ -89,6 +89,7 @@
                                 <v-col cols="12" md="4" class="py-0" v-if="item.value=='export'">
                                   <v-btn
                                     color="primary"
+                                    :loading="loadingButton"
                                     @click.stop="registerPaymentsBatch()"
                                   >Generar Información</v-btn>
                                   <br /><br /><br />
@@ -172,6 +173,7 @@ export default {
   methods: {
     async registerPaymentsBatch() {
       try {
+        this.loadingButton = true;
         let res = await axios.post(`command_senasir_save_payment`, {
           estimated_date: this.import_export.cutoff_date,
           voucher: this.import_export.code_voucher
@@ -182,6 +184,7 @@ export default {
       } catch (e) {
         console.log(e);
       }
+      this.loadingButton = false
     },
     clearInputs() {
       (this.import_export.file = null),
@@ -227,7 +230,6 @@ export default {
         })
         .catch(error => {
           console.log(error);
-          this.visible = true;
         });
       //this.showResults = true;
       this.loadingButton = false;

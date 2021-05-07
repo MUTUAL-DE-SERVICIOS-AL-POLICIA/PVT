@@ -635,7 +635,7 @@ export default {
     },
     validation(){
       //VALIDACION DESEMBOLSO
-      if((this.loan.disbursement_date != '' ) ){
+      if((this.loan.disbursement_date != 'Fecha invalida' ) ){
         this.validate.valid_disbursement = true
       }else{
         this.validate.valid_disbursement = false
