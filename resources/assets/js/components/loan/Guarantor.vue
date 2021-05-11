@@ -326,13 +326,13 @@
                   PRESTAMOS QUE ESTA GARANTIZANDO EN EL SISMU:
                 </v-col>
                 <v-col cols="12" md="2" class="font-weight-black caption py-0" >
-                  {{affiliate_garantor.loans_sismu.length}}
+                  {{affiliate_garantor.guarantees_sismu.length}}
                 </v-col>
                 <v-col cols="12" md="8" class="text-uppercase py-0 font-weight-light caption" >
                   PRESTAMOS VIGENTES QUE TIENE EL AFILIADO EN EL SISMU:
                 </v-col>
                  <v-col cols="12" md="2" class="font-weight-black caption py-1">
-                 {{affiliate_garantor.guarantees_sismu.length}}
+                 {{affiliate_garantor.loans_sismu.length}}
                 </v-col>
                 <v-col cols="12" class="py-0" v-show="loan.length>0">
                   <v-data-table
@@ -362,7 +362,7 @@
                           <p class="py-0 mb-0 caption" v-show="show_data">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<br>
                            Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<br>
                            Liquido para la Calificacion:{{evaluate_garantor.liquid_qualification_calculated }}</p>
-                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamiento: {{evaluate_garantor.indebtnes_calculated+'% '}}<br>{{'Monto Ajustable:'+ monto_ajustable}}<br> <b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
+                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamiento: {{evaluate_garantor.indebtnes_calculated+'% '}}<br>{{'Monto Ajustable:'+ monto_ajustable}}<br> {{'Liquido Restante para garantias:'+ evaluate_garantor.liquid_rest}}<br><b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                           <div class="text-right"  v-show="evaluate_garantor.is_valid">
                             <v-btn
                               v-if="show_data"
@@ -870,6 +870,13 @@ ver()
 
     async añadir()
     {
+       let resp = await axios.post(`affiliate_guarantor`,{
+            identity_card: this.guarantor_ci,
+            procedure_modality_id:this.modalidad_id,
+            type_guarantor_spouse:this.tipo_afiliado,
+          })
+      this.affiliate_garantor.guarantor_information=resp.data.guarantor_information
+
       if(this.affiliate_garantor.guarantor_information==true)
       {
       this.guarantor_ci=null

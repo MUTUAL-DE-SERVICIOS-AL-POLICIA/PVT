@@ -16,23 +16,56 @@
                       </center>
                       <v-progress-linear></v-progress-linear>
                       <template>
-                      <v-row>
-                         <v-col cols="7"  v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')">
-                        </v-col>
-                        <!--v-col cols="4" class="ma-0 py-0" v-if="$store.getters.permissions.includes('create-payment-loan')"-->
-                        <v-col cols="4" class="ma-0 py-4" v-show="isNew"  v-if="permissionSimpleSelected.includes('create-payment-loan')">
-                         <label>
-                           <h3 style="color:teal">Pendiente por Confirmar</h3>
-                         </label>
-                        </v-col>
-                        <v-col cols="1" class="ma-0 py-0" v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')" >
-                          <v-checkbox class="ma-0 py-3"
-                            :outlined="isNew"
-                            :readonly="!isNew"
-                            :disabled="ver || editable"
-                            v-model="data_payment.refinanciamiento"
-                          ></v-checkbox>
-                        </v-col>
+                        <v-row>
+                            <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Primer Nombre:</b></label>
+                                    {{garantes.lenders[0].first_name}}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Paterno:</b></label>
+                                  {{garantes.lenders[0].last_name}}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Materno:</b></label>
+                                  {{garantes.lenders[0].mothers_last_name}}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>C.I.:</b></label>
+                                  {{ garantes.lenders[0].identity_card}}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Nro Prestamos:</b></label>
+                                  {{garantes.code}}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Fecha de Desembolso:</b></label>
+                                  {{$moment(garantes.disbursement_date).format("YYYY-MM-DD")}}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Monto Desembolsado:</b></label>
+                                  {{ garantes.amount_approved}}
+                                </v-col>
+                                 <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Plazo :</b></label>
+                                   {{ garantes.loan_term +' Meses'}}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Cuota fija:</b></label>
+                                  {{ garantes.estimated_quota}}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b style="color:teal" >Saldo:</b></label>
+                                  <b style="color:teal">{{garantes.balance}}</b>
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Fecha anterior de pago:</b></label>
+                                  {{garantes.last_payment_validated.previous_payment_date }}
+                                </v-col>
+                                <v-col cols="3" class="ma-0 py-2">
+                                  <label><b style="color:teal">Fecha siguiente pago:</b></label>
+                                  <b style="color:teal">{{garantes.last_payment_validated.estimated_date }}</b>
+                                </v-col>
+                        <v-progress-linear></v-progress-linear>
                         <v-col cols="9"  v-show="editable" v-if="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar">
                         </v-col>
                          <v-col cols="3" class="ma-0 py-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar" v-if="editable">
@@ -65,7 +98,6 @@
                             dense
                             class="caption"
                             style="font-size: 10px;"
-                            @change="OnchangeAmortization()"
                             v-model="data_payment.procedure_modality_id"
                             :outlined="!editable"
                             :readonly="editable"
@@ -183,17 +215,7 @@
                             :disabled="ver || editable"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="4" class="ma-0 pb-0" v-show="view" v-if="regular">
-                          <v-text-field
-                            dense
-                            v-model="data_payment.pago_total"
-                            label="Total Pagado"
-                            :outlined="isNew || permissionSimpleSelected.includes('create-payment') "
-                            :readonly="!isNew "
-                            :disabled="ver"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="4" class="ma-0 pb-0">
+                           <v-col cols="4" class="ma-0 pb-0">
                           <v-select
                              class="caption"
                             style="font-size: 10px;"
@@ -204,11 +226,23 @@
                             :items="payment_types"
                             item-text="name"
                             item-value="id"
-                            label="Tipo de Cobro"
+                            label="Tipo de Pago"
                             persistent-hint
+                            @change="OnchangeAmortization()"
                             :disabled="ver || editable"
                           ></v-select>
                         </v-col>
+                        <v-col cols="4" class="ma-0 pb-0" v-show="view">
+                          <v-text-field
+                            dense
+                            v-model="data_payment.pago_total"
+                            label="Total Pagado"
+                            :outlined="isNew || permissionSimpleSelected.includes('create-payment') "
+                            :readonly="!isNew "
+                            :disabled="ver"
+                          ></v-text-field>
+                        </v-col>
+                     
                         <v-col cols="4" class="ma-0 pb-0" v-show="editable" v-if="permissionSimpleSelected.includes('create-payment')">
                           <v-select
                             class="caption"
@@ -307,7 +341,16 @@ export default {
     view:true,
     efectivo:false,
     loan_payment:{},
-    payment_types:[],
+    payment_types:[
+      {
+        value:1,
+        name:"Liquidar"
+      },
+      {
+        value:0,
+        name:"Regular"
+      }
+    ],
     voucher_type:[],
     payment_type_treasury:[],
     dates: {
@@ -343,7 +386,6 @@ export default {
     }
     this.getTypeProcedure()
     this.getPymentTypes()
-    this.getAmortizationTypes()
     this.getVoucherTypes()
     if(this.isNew)
     {
@@ -368,27 +410,16 @@ export default {
   },
   methods: {
       OnchangeAmortization(){
-        this.data_payment.pago_total=null
-         for (let i = 0; i<  this.tipo_de_amortizacion.length; i++) {
-            if(this.data_payment.procedure_modality_id == this.tipo_de_amortizacion[i].id){
-              if(this.tipo_de_amortizacion[i].name == 'A.AUT. Cuota pactada'
-                || this.tipo_de_amortizacion[i].name == 'A.D. Cuota pactada' )
-              {
-                this.regular=false
-              }else{
-                if(this.tipo_de_amortizacion[i].name == 'A.C.E. Liquidar préstamo'
-                  || this.tipo_de_amortizacion[i].name == 'A.D. Liquidar préstamo'
-                  || this.tipo_de_amortizacion[i].name == 'A.F.R. Liquidar préstamo'
-                  || this.tipo_de_amortizacion[i].name == 'A.AJ. Liquidar préstamo'){
-                  this.regular=false
-                }
-                else{
-                  this.regular=true
-                }
-              }
-              this.data_payment.procedure_modality_name = this.tipo_de_amortizacion[i].name
-            }
-         }
+ //        this.data_payment.pago_total=null
+        if(this.data_payment.pago=="Liquidar"){
+      
+          this.data_payment.pago_total= this.garantes.balance
+          this.data_payment.liquidate=true
+
+        }else{
+          this.data_payment.pago_total=(this.garantes.estimated_quota).toFixed(2)
+          this.data_payment.liquidate=false
+        }
       },
       OnchangeAffiliate(){
       if(this.data_payment.affiliate_id=="G")
@@ -590,23 +621,16 @@ export default {
       }
     },
     //Metodo para sacar los tipos de cobros
-    async getAmortizationTypes() {
-      try {
-        this.loading = true
-        let res = await axios.get(`amortization_type`)
-        this.payment_types = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
     async getLoan(id) {
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.garantes=res.data
         console.log(this.garantes.guarantors.length)
+        if(this.garantes.last_payment_validated==null)
+        {
+          this.garantes.last_payment_validated={}
+        }
         if(this.garantes.guarantors.length > 0)
         {
             this.tipo_afiliado.push(

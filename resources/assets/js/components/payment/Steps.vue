@@ -308,6 +308,7 @@ export default {
             affiliate_id:this.data_payment.affiliate_id_paid_by,
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
+            liquidate : this.data_payment.liquidate,
             procedure_modality_id:this.data_payment.procedure_modality_id,
           })
             this.payment = res.data
@@ -365,42 +366,16 @@ export default {
                 {
                   if(this.data_payment.pago)
                   {
-                    if( this.data_payment.procedure_modality_name == 'A.AUT. Parcial')
-                    {
                        if(this.data_payment.pago_total)
                         {
-                          if(this.data_payment.pago_total < this.loan.estimated_quota)
-                            {
-                              this.Calcular(this.$route.query.loan_id)
-                              this.nextStep(1)
-                            }else{
-                              this.toastr.error('Un pago parcial no puede ser mayor a la cuota')
-                            }
-                        }else{
-                          this.toastr.error('Debe introducir el total pagado')
-                        }
-                    }
-                    else{
-                      if(this.data_payment.procedure_modality_name == 'A.C.E. Introducir monto'
-                          || this.data_payment.procedure_modality_name == 'A.D. Introducir monto'
-                          || this.data_payment.procedure_modality_name == 'A.F.R. Introducir monto'
-                          || this.data_payment.procedure_modality_name == 'A.AJ. Introducir monto')
-                      {
-                        if(this.data_payment.pago_total)
-                        {
-                            this.Calcular(this.$route.query.loan_id)
-                            this.nextStep(1)
-                        }else{
-                          this.toastr.error('Debe introducir el total pagado')
-                        }
-                      }else{
                           this.Calcular(this.$route.query.loan_id)
                           this.nextStep(1)
-                      }
-                    }
+                        }else{
+                          this.toastr.error('Debe introducir el total pagado')
+                        }
                   }
                   else{
-                    this.toastr.error('Debe seleccionar el tipo de cobro')
+                      this.toastr.error('Debe introducir el tipo de pago')
                   }
                 }else{
                   this.toastr.error('Debe seleccionar quien realiza el pago')
