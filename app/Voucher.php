@@ -13,7 +13,7 @@ class Voucher extends Model
     use Traits\EloquentGetTableNameTrait;
     public $timestamps = true;
     public $guarded = ['id'];
-    protected $fillable = ['user_id','affiliate_id', 'voucher_type_id','code','total','payment_date','paid_amount', 'payable_id', 'payable_type', 'payment_type_id', 'voucher_number', 'description'];
+    protected $fillable = ['voucher_type_id','code','total','payment_date', 'payable_id', 'payable_type', 'bank_pay_number', 'description'];
 
     function __construct(array $attributes = [])
     {
@@ -30,10 +30,10 @@ class Voucher extends Model
         return $this->morphTo();
     }
 
-    public function payment_type()
+   /* public function payment_type()
     {
         return $this->belongsTo(PaymentType::class);
-    }
+    }*/
 
     public function voucher_type()
     {

@@ -29,7 +29,14 @@
     "group": [
       {
         "href": "loanPaymentIndex",
-        "title": "Préstamos",
+        "title": "Bandeja Cobros",
+        "icon": "mdi-tray-full",
+        "permissions": "show-payment-loan",
+        "params": {}
+      },
+      {
+        "href": "listPaymentGenerate",
+        "title": "Amortizaciones",
         "icon": "mdi-account-cash",
         "permissions": "show-payment-loan",
         "params": {}

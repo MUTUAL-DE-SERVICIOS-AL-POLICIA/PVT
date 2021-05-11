@@ -58,7 +58,7 @@ class CalculatorController extends Controller
     * @responseFile responses/calculator/store.200.json
     */
     public function store(CalculatorForm $request)
-    {
+    {$type = true;
         $liquid_calification = $request->liquid_calification;
         $liquid_calificated = collect([]);
         foreach($liquid_calification as $liq){
@@ -93,10 +93,10 @@ class CalculatorController extends Controller
             //$contribution_first = $contributions->first();// se obtiene los bonos de la ultima boleta
             //$total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
             //$total_bonuses = $contribution_first['position_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
-            $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota);
+            $liquid_qualification_calculated = $this->liquid_qualification($type, $payable_liquid_average, $total_bonuses, $affiliate, $parent_quota);
             $loan_global_parameter = LoanGlobalParameter::latest()->first();
             $livelihood_amount = false;
-            if($liquid_qualification_calculated>$loan_global_parameter->livelihood_amount) $livelihood_amount=true;
+            if($liquid_qualification_calculated > 0) $livelihood_amount=true;
             $guarantees_sismu = $affiliate->active_guarantees_sismu();
             $guarantees_collect = collect([]);
             foreach($guarantees_sismu as $guarantees){
@@ -263,25 +263,30 @@ class CalculatorController extends Controller
         return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
     }
     // liquido para calificacion
-    private function liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota=null){
-        $active_guarantees = $affiliate->active_guarantees(); $sum_quota = 0;
-        foreach($active_guarantees as $res)
-            $sum_quota+= ($res->estimated_quota*$res->pivot->payment_percentage)/100; // descuento en caso de tener garantias activas
-        $active_guarantees_sismu = $affiliate->active_guarantees_sismu();
-        foreach($active_guarantees_sismu as $res)
-            $sum_quota+= $res->PresCuotaMensual/$res->quantity_guarantors; // descuento en caso de tener garantias activas del sismu
+    // type true para lenders, false para guarantees
+    private function liquid_qualification($type, $payable_liquid_average, $total_bonuses, $affiliate, $parent_quota=null){
+        $sum_quota = 0;
+        if($type){
+            $sum_quota += LoanGlobalParameter::latest()->first()->livelihood_amount;
+        }
+        /*$active_guarantees = $affiliate->active_guarantees();
+            foreach($active_guarantees as $res)
+                $sum_quota+= ($res->estimated_quota*$res->pivot->payment_percentage)/100; // descuento en caso de tener garantias activas
+            $active_guarantees_sismu = $affiliate->active_guarantees_sismu();
+            foreach($active_guarantees_sismu as $res)
+                $sum_quota+= $res->PresCuotaMensual/$res->quantity_guarantors; // descuento en caso de tener garantias activas del sismu
         /*$active_loans = $affiliate->active_loans();
         foreach($active_loans as $res)
             $sum_quota+= ($res->estimated_quota*$res->pivot->payment_percentage)/100; // descuento en caso de tener prestamos activos
         $active_loans_sismu = $affiliate->active_loans_sismu();
         foreach($active_loans_sismu as $res)
             $sum_quota+= $res->PresCuotaMensual; // descuento en caso de tener prestamos activas del sismu*/
-        $process_loans_sismu = $affiliate->process_loans_sismu();
+        /*$process_loans_sismu = $affiliate->process_loans_sismu();
         foreach($process_loans_sismu as $res)
             $sum_quota+= $res->PresCuotaMensual; // descuento en caso de tener prestamos en proceso del sismu
         $process_guarantees_sismu = $affiliate->process_guarantees_sismu();
         foreach($process_guarantees_sismu as $res)
-            $sum_quota+= $res->PresCuotaMensual/$res->quantity_guarantors; // descuento en caso de tener garantias en proceso del sismu
+            $sum_quota+= $res->PresCuotaMensual/$res->quantity_guarantors; // descuento en caso de tener garantias en proceso del sismu*/
         $liquid_qualification_calculated = $payable_liquid_average - $total_bonuses - $sum_quota + $parent_quota;
         return $liquid_qualification_calculated;
     }
@@ -400,7 +405,7 @@ class CalculatorController extends Controller
         $loan_global_parameter = LoanGlobalParameter::latest()->first();
         $livelihood_amount = true;
         $quantity_guarantors = $procedure_modality->loan_modality_parameter->guarantors;
-        if($quantity_guarantors > 0){
+        if($quantity_guarantors > 0){$type = false;
             $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
             $affiliate_id = $request->affiliate_id;
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
@@ -409,11 +414,18 @@ class CalculatorController extends Controller
             $quota_calculated = $request->quota_calculated_total_lender/$quantity_guarantors;
             $contribution_first = $contributions->first();
             $total_bonuses = $contribution_first['position_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
-            $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate);
-            $indebtedness_calculated = $quota_calculated/$liquid_qualification_calculated*100;
-            if($liquid_qualification_calculated < $loan_global_parameter->livelihood_amount)
+            $liquid_qualification_calculated = $this->liquid_qualification($type, $payable_liquid_average, $total_bonuses, $affiliate);
+            $active_guarantees = $affiliate->active_guarantees();$sum_quota = 0;
+            foreach($active_guarantees as $res)
+                $sum_quota += ($res->estimated_quota * $res->pivot->payment_percentage)/100; // descuento en caso de tener garantias activas
+            $active_guarantees_sismu = $affiliate->active_guarantees_sismu();
+            foreach($active_guarantees_sismu as $res)
+                $sum_quota += $res->PresCuotaMensual / $res->quantity_guarantors; // descuento en caso de tener garantias activas del sismu*/
+            $liquid_rest = Util::round(($liquid_qualification_calculated * 0.5) - ($quota_calculated + $sum_quota));
+            $indebtedness_calculated = ($quota_calculated + $sum_quota)/$liquid_qualification_calculated * 100;
+            if($liquid_qualification_calculated < 0)
             $livelihood_amount = false;
-            if ($indebtedness_calculated <= $debt_index && $liquid_qualification_calculated > $loan_global_parameter->livelihood_amount)
+            if ($indebtedness_calculated <= $debt_index && $liquid_qualification_calculated > 0)
                 $evaluate = true;
             else
                 $evaluate = false;
@@ -425,6 +437,7 @@ class CalculatorController extends Controller
                 "indebtnes_calculated" => Util::round($indebtedness_calculated),
                 "is_valid" => $evaluate,
                 "livelihood_amount" => $livelihood_amount,
+                "liquid_rest" => $liquid_rest
             );
             return $response;
         }

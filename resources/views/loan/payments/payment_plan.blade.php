@@ -63,10 +63,10 @@
             <tr>
                 <td>{{ $loan->interest->annual_interest}}</td>
                 <td>{{ $loan->estimated_quota }}</td>
-                <td>{{ Carbon::parse($loan->disbursement_date)->format('d/m/y') }}</td>
+                <td>{{ $loan->disbursement_date }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
-                <td>Certificacion Presupuestaria</td>
+                <td>Certificación Presupuestaria contable</td>
             </tr>
             <tr>
                 <td>{{$loan->num_accounting_voucher ? $loan->num_accounting_voucher: 0}}</td>

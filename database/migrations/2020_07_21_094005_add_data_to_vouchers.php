@@ -14,9 +14,7 @@ class AddDataToVouchers extends Migration
     public function up()
     {
         Schema::table('vouchers', function (Blueprint $table) {
-            $table->unsignedBigInteger('voucher_number')->nullable(); // numero de voucher
             $table->text('description')->nullable(); // descripcion por parte de tesoreria
-            $table->dropColumn('bank_pay_number', 'bank');
         });
     }
 
@@ -28,8 +26,6 @@ class AddDataToVouchers extends Migration
     public function down()
     {
         Schema::table('vouchers', function (Blueprint $table) {
-            $table->dropColumn('voucher_number', 'description');
-            $table->text('bank')->nullable();
             $table->text('bank_pay_number')->nullable();
         });
     }

@@ -544,7 +544,7 @@ export default {
             type_affiliate: 'lender',
             amount: this.contributions[i].adjustment_amount,
             type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
-            period_date: this.$moment(this.fecha).format('YYYY-MM-DD'),
+            period_date: this.contributions[i].period,
             description: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contributions[i].adjustment_description : 'Liquido pagable por Comisión'
           })
           this.contributions[i].loan_contributions_adjust_id = res.data.id
@@ -803,7 +803,7 @@ export default {
       //this.contributions = []
       let continuar = false
       //llama al a funcion getContributions del componente Ballots
-      this.contributions = this.$refs.ballotsComponent.getLoanModalityAffiliate(this.$route.query.affiliate_id)
+      //this.contributions = this.$refs.ballotsComponent.getLoanModalityAffiliate(this.$route.query.affiliate_id) //TODO REVISAR LA LLAMDA A ESTA LINEA, A DETALLE
       if(this.$refs.ballotsComponent) {
         this.contributions = this.$refs.ballotsComponent.getContributions()
       }

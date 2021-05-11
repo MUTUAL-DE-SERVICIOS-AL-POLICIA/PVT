@@ -15,9 +15,9 @@ class LoanState extends Model
 		return $this->hasMany(Loan::class);
     }
 
-    public function loan_payments()
+    /*public function loan_payments()
 	{
 		return $this->hasMany(Loan::class);
-    }
+    }*/
       
 }

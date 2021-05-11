@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAmortizationTypesTable extends Migration
+class CreateLoanPaymentStatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateAmortizationTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('amortization_types', function (Blueprint $table) {
+        Schema::create('loan_payment_states', function (Blueprint $table) {
             $table->id();
-            $table->string('name');// tipo de amortización
+            $table->string('name');// Estados del cobro
+            $table->string('description');// descripcion del Estado del cobro
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -27,6 +29,6 @@ class CreateAmortizationTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('amortization_types');
+        Schema::dropIfExists('loan_payment_states');
     }
 }

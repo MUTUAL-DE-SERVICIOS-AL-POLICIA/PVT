@@ -35,7 +35,7 @@ $factory->define(App\Loan::class, function (Faker $faker) {
         'amount_requested' => $amount,
         'city_id' => City::all()->random(),
         'interest_id' => $procedure_modality->current_interest,
-        'state_id' => LoanState::whereName('Desembolsado')->first()->id,
+        'state_id' => LoanState::whereName('Vigente')->first()->id,
         'amount_approved' => $amount,
         'loan_term' => $faker->numberBetween($procedure_type->interval->minimum_term,$procedure_type->interval->maximum_term),
         'payment_type_id' => PaymentType::whereName('Cheque')->first()->id,

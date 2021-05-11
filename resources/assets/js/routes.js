@@ -16,6 +16,7 @@ import PaymentAdd from '@/components/payment/Add'
 import LoanPaymentIndex from '@/components/payment/Index'
 import ImportExport from '@/components/payment/ImportExport'
 import ListLoanGenerate from '@/components/payment/ListLoanGenerate'
+import ListPaymentGenerate from '@/components/payment/ListPaymentGenerate'
 
 export const routes = [
   {
@@ -133,6 +134,14 @@ export const routes = [
       requiresAuth: true
     }
   },
+  {
+    path: '/listLoanGenerate',
+    name: 'listLoanGenerate',
+    component: ListLoanGenerate,
+    meta: {
+      requiresAuth: true
+    }
+  },
   //Cobros
   {
     path: '/kardex/:hash',
@@ -150,10 +159,11 @@ export const routes = [
       requiresAuth: true
     }
   },
+  
   {
-    path: '/listLoanGenerate',
-    name: 'listLoanGenerate',
-    component: ListLoanGenerate,
+    path: '/listPaymentGenerate',
+    name: 'listPaymentGenerate',
+    component: ListPaymentGenerate,
     meta: {
       requiresAuth: true
     }

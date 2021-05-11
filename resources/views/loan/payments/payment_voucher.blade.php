@@ -60,6 +60,14 @@
                     {{ $voucher->payment_type->name }}
                 </td>
             </tr>
+            <tr>
+                <td class="font-semibold">
+                Impresión de Refrendo y Sello de Tesorería:
+                </td>
+                <td class="uppercase" colspan="3">
+                  
+                </td>
+            </tr>
         </table>
     </div>
     <div class="m-t-25 no-page-break">
@@ -78,13 +86,10 @@
             </tbody>
         </table>
         <div class="m-b-10">
-            Esta liquidación no es válida sin el Refrendo y Sello correspondiente </div>
+            ***Esta liquidación no es válida sin el Refrendo y Sello de Tesoreria ***
+        </div>
     </div>
     <br>
-    <div class="text-left">
-        <p class="center">
-        La Paz, {{ Carbon::parse(Carbon::parse(now()))->isoFormat('LL') }}
-        </p>
-    </div>
+  
 </body>
 </html>

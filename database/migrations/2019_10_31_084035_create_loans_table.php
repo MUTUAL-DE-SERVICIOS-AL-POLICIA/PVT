@@ -21,7 +21,6 @@ class CreateLoansTable extends Migration
             $table->unsignedBigInteger('procedure_modality_id'); // id modalidad
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->dateTime('disbursement_date')->nullable(); //fecha y hora de desembolso
-            //$table->string('num_budget_certification')->nullable();//codigo de certificacion presupuestaria
             $table->string('num_accounting_voucher')->nullable();//codigo de comprobante contable
             $table->unsignedBigInteger('parent_loan_id')->nullable();  // id padre , loan padre
             $table->enum('parent_reason', ['REFINANCIAMIENTO', 'REPROGRAMACIÓN'])->nullable();// para indicar si es reprogramación y refinanciamiento 

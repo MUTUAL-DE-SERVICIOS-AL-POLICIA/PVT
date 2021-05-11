@@ -107,7 +107,7 @@
                         {{ $loan->payment_type->name}}
                     @endif
                 </td>
-                <td class="data-row py-5 m-b-10 text-xs" >{{Carbon::parse($loan->disbursement_date)->format('d/m/y')}}</td>
+                <td class="data-row py-5 m-b-10 text-xs" >{{Carbon::parse($loan->disbursement_date)}}</td>
                 @if($loan->parent_loan && $loan->parent_reason == "REPROGRAMACIÓN")
                 <td colspan="2">{{ Util::money_format($loan->parent_loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
                 @else
@@ -181,7 +181,7 @@
                     <td class="w-10 text-right">{{ Util::money_format($parent_loan_payment->estimated_quota) }}</td> {{-- total pagado--}}
                     <td class="w-10 text-right">{{ Util::money_format($res_saldo_capital) }}</td>
                     <td class="w-10 text-right">{{ $parent_loan_payment->voucher }}</td>
-                    <td class="w-10">{{ $parent_loan_payment->amortization_type->name }}</td>
+                    <td class="w-10">{{ $payment->modality->shortened }}</td>
                 </tr>
                 @php ($sum_estimated_quota += $parent_loan_payment->estimated_quota)
                 @php ($sum_capital_payment += $parent_loan_payment->capital_payment)
@@ -223,7 +223,7 @@
                     <td class="w-10 text-right">{{ Util::money_format($payment->estimated_quota) }}</td> {{-- total pagado--}}
                     <td class="w-10 text-right">{{ Util::money_format($res_saldo_capital) }}</td>
                     <td class="w-10 text-right">{{ $payment->voucher }}</td>
-                    <td class="w-10">{{ $payment->amortization_type->name }}</td>
+                    <td class="w-10">{{ $payment->modality->shortened }}</td>
                 </tr>
                 @php ($sum_capital_payment += $payment->capital_payment)
                 @php ($sum_interest_payment += $payment->interest_payment)

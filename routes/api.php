@@ -51,7 +51,7 @@ Route::group([
         Route::get('procedure_type/{procedure_type}/modality', 'Api\V1\ProcedureTypeController@get_modality');
         Route::get('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@get_flow');
         Route::apiResource('payment_type', 'Api\V1\PaymentTypeController')->only('index', 'show');
-        Route::apiResource('amortization_type', 'Api\V1\AmortizationTypeController')->only('index', 'show');
+       // Route::apiResource('amortization_type', 'Api\V1\AmortizationTypeController')->only('index', 'show');
         Route::apiResource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
         Route::get('procedure_modality/{procedure_modality}/loan_modality_parameter', 'Api\V1\ProcedureModalityController@get_loan_modality_parameter');
         Route::apiResource('module', 'Api\V1\ModuleController')->only('index', 'show');
@@ -74,6 +74,7 @@ Route::group([
         Route::apiResource('contributions_affiliate', 'Api\V1\ContributionController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::get('affiliate/{affiliate}/contributions_affiliate', 'Api\V1\ContributionController@get_all_contribution_affiliate');
         Route::get('list_loan_generate', 'Api\V1\LoanController@list_loan_generate');
+        Route::get('list_loan_payments_generate', 'Api\V1\LoanPaymentController@list_loan_payments_generate');
 
         // Afiliado
         Route::group([

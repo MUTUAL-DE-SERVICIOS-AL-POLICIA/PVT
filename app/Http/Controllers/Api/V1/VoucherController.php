@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Voucher;
 use App\LoanState;
+use App\LoanPaymentState;
 use Illuminate\Http\Request;
 use App\Http\Requests\VoucherForm;
 use Util;
@@ -66,7 +67,6 @@ class VoucherController extends Controller
     * Editar registro de cobro
     * Edita el Pago realizado.
     * @urlParam voucher required ID del registro de pago. Example: 2
-    * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 2
     * @bodyParam voucher_type_id integer required ID de tipo de voucher. Example: 1
     * @bodyParam voucher_number integer número de voucher. Example: 12354121
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
@@ -76,7 +76,7 @@ class VoucherController extends Controller
     public function update(VoucherForm $request, Voucher $voucher)
     {
         if (Auth::user()->can('update-payment')) {
-            $update = $request->only('voucher_type_id', 'description', 'voucher_number','payment_type_id');
+            $update = $request->only('voucher_type_id', 'description', 'voucher_number');
         }
         $voucher->fill($update);
         $voucher->save();
@@ -94,7 +94,7 @@ class VoucherController extends Controller
         $payable_type = Voucher::findOrFail($voucher->id);
         if($payable_type->payable_type = "loan_payments")
         {
-            $state = LoanState::whereName('Pendiente de Pago')->first();
+            $state = LoanPaymentState::whereName('Pendiente de Pago')->first();
             $loanPayment = $voucher->payable;
             $loanPayment->state()->associate($state);
             $loanPayment->save();
@@ -112,7 +112,7 @@ class VoucherController extends Controller
         $voucher = Voucher::findOrFail($id_payment);
         if($voucher->payable_type = "loan_payments")
         {
-            $state = LoanState::whereName('Anulado')->first();
+            $state = LoanPaymentState::whereName('Anulado')->first();
             $loan_payment = $voucher->payable;
             $loan_payment->state()->associate($state);
             $loan_payment->save();
@@ -142,6 +142,8 @@ class VoucherController extends Controller
                 'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
                 'table' => [
                     ['Código', $voucher->code],
+                    ['Fecha', Carbon::now()->format('d/m/Y')],
+                    ['Hora', Carbon::now()->format('h:m:s a')],
                     ['Usuario', Auth::user()->username]
                 ]
             ],

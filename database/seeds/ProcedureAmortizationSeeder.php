@@ -18,33 +18,29 @@ class ProcedureAmortizationSeeder extends Seeder
             'procedures' => [
                 'amortizacion directa' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Directa','second_name'=>'Amort. DIRECTA'],
-                    'modalities' => [ ['name'=>'A.D. Cuota pactada','shortened'=>'AD-Cuota-pactada','requirements'=>[]],
-                                      ['name'=>'A.D. Liquidar préstamo','shortened'=>'AD-Liquidar-préstamo','requirements'=>[]],
-                                      ['name'=>'A.D. Introducir monto','shortened'=>'AD-Indroducir-monto','requirements'=>[]],
+                    'modalities' => [ ['name'=>'Directo','shortened'=>'DIRECTO','requirements'=>[]],
                     ]
                 ],
                 'amortizacion complemento' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Complemento Económico','second_name'=>'Amort. CE'],
-                    'modalities' => [ ['name'=>'A.C.E. Introducir monto','shortened'=>'ACE-Indroducir-monto','requirements'=>[]],
-                                      ['name'=>'A.C.E. Liquidar préstamo','shortened'=>'ACE-Liquidar-préstamo','requirements'=>[]],
+                    'modalities' => [ ['name'=>'Complemento Económico','shortened'=>'COMP-ECO','requirements'=>[]],
                     ]
                 ],
                 'amortizacion fondo' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Fondo de Retiro','second_name'=>'Amort. FR'],
-                    'modalities' => [ ['name'=>'A.F.R. Introducir monto','shortened'=>'AFR-Indroducir-monto','requirements'=>[]],
-                                       ['name'=>'A.F.R. Liquidar préstamo','shortened'=>'AFRT','requirements'=>[]],
+                    'modalities' => [ ['name'=>'Fondo de Retiro','shortened'=>'FRP','requirements'=>[]],
                     ]
                 ],
                 'amortizacion automatica' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Automática','second_name'=>'Amort. AUT'],
-                    'modalities' => [ ['name'=>'A.AUT. Cuota pactada','shortened'=>'AA-Cuota-pactada','requirements'=>[]],
-                                    ['name'=>'A.AUT. Parcial','shortened'=>'AA-Parcial','requirements'=>[]],
+                    'modalities' => [ ['name'=>'Descuento Comando General de la Policia Boliviana','shortened'=>'DES-COMANDO','requirements'=>[]],
+                                    ['name'=>'Descuento Servicio Nacional del Sistema de Reparto','shortened'=>'DES-SENASIR','requirements'=>[]],
                     ]
                 ],
                 'amortizacion por ajuste' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización por Ajuste','second_name'=>'Amort. AJUST'],
-                    'modalities' => [ ['name'=>'A.AJ. Introducir monto','shortened'=>'AAJ-Introducir-monto','requirements'=>[]],
-                                    ['name'=>'A.AJ. Liquidar préstamo','shortened'=>'AAJ-Liquidar-préstamo','requirements'=>[]]
+                    'modalities' => [ ['name'=>'Descuento Indebido','shortened'=>'DES-INDEBIDO','requirements'=>[]],
+                                    ['name'=>'Refinanciamiento de Préstamo','shortened'=>'REFINANCIAMIENTO','requirements'=>[]]
                     ]
                 ],
             ]

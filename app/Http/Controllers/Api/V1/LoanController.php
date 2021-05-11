@@ -15,6 +15,7 @@ use App\User;
 use App\Loan;
 use App\Tag;
 use App\LoanState;
+use App\LoanPaymentState;
 use App\RecordType;
 use App\ProcedureDocument;
 use App\ProcedureModality;
@@ -56,6 +57,7 @@ class LoanController extends Controller
         $loan->estimated_quota = $loan->estimated_quota;
         $loan->defaulted = $loan->defaulted;
         $loan->observed = $loan->observed;
+        $loan->last_payment_validated = $loan->last_payment_validated;
         if ($with_lenders) {
             $loan->lenders = $loan->lenders;
             $loan->guarantors = $loan->guarantors;
@@ -418,7 +420,7 @@ class LoanController extends Controller
     public function update(LoanForm $request, Loan $loan)
     {    $message = [];
          if($request->date_signal == true || ($request->date_signal == false && $request->has('disbursement_date') && $request->disbursement_date != NULL)){
-            $state_id = LoanState::whereName('Desembolsado')->first()->id;
+            $state_id = LoanState::whereName('Vigente')->first()->id;
             $request['state_id'] = $state_id;
             /*$hour = Carbon::now()->hour;
             $minute = Carbon::now()->minute;
@@ -456,7 +458,7 @@ class LoanController extends Controller
     if(Auth::user()->can('disbursement-loan')) {
         if($request->date_signal == true){
             $loan['disbursement_date'] = Carbon::now();
-            $state_id = LoanState::whereName('Desembolsado')->first()->id;
+            $state_id = LoanState::whereName('Vigente')->first()->id;
             $loan['state_id'] = $state_id;
             $loan->save();
         }else{
@@ -464,7 +466,7 @@ class LoanController extends Controller
                 if($request->has('disbursement_date') && $request->disbursement_date != NULL){
                     if(Auth::user()->can('change-disbursement-date')) {
                     $loan['disbursement_date'] = $request->disbursement_date;
-                    $state_id = LoanState::whereName('Desembolsado')->first()->id;
+                    $state_id = LoanState::whereName('Vigente')->first()->id;
                     $loan['state_id'] = $state_id;
                     $loan->save();
                     }  else return $message['validate'] = "El usuario no tiene los permisos necesarios para realizar el registro" ;
@@ -767,7 +769,7 @@ class LoanController extends Controller
 
         // Switch amortizing loans to defaulted
         $loans = Loan::whereHas('state', function($query) {
-            $query->whereName('Desembolsado');
+            $query->whereName('Vigente');
         })->whereHas('tags', function($q) {
             $q->whereSlug('amortizando');
         })->get();
@@ -791,7 +793,7 @@ class LoanController extends Controller
 
         // Switch defaulted loans to amortizing
         $loans = Loan::whereHas('state', function($query) {
-            $query->whereName('Desembolsado');
+            $query->whereName('Vigente');
         })->whereHas('tags', function($q) {
             $q->whereSlug('mora');
         })->get();
@@ -914,6 +916,7 @@ class LoanController extends Controller
     {
         $lenders = [];
         $is_dead = false;
+        $is_spouse = false;
         foreach ($loan->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
             if($lender->dead) $is_dead = true;
@@ -957,7 +960,14 @@ class LoanController extends Controller
             ]);
             $lender->loans_balance = $loans;
         }
+        $guarantors = [];
         foreach ($loan->guarantors as $guarantor) {
+            $spouse = $guarantor->spouse;
+            if(isset($spouse)){
+                $guarantor = $spouse;
+                $is_spouse = true;
+                }
+                array_push($guarantors, $guarantor); 
             $persons->push([
                 'id' => $lender->id,
                 'full_name' => implode(' ', [$guarantor->title, $guarantor->full_name]),
@@ -979,7 +989,9 @@ class LoanController extends Controller
             'loan' => $loan,
             'lenders' => collect($lenders),
             'signers' => $persons,
-            'is_dead'=> $is_dead
+            'guarantors'=> collect($guarantors),
+            'is_dead'=> $is_dead,
+            'is_spouse'=> $is_spouse,
         ];
         $information_loan= $this->get_information_loan($loan);
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
@@ -1138,13 +1150,13 @@ class LoanController extends Controller
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @bodyParam procedure_modality integer required id de la modalidad. Example: 54
     * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
-    * @bodyParam adjust refinanciamiento con antecedente(1) o sin antecedente(0). Example: 1
+    * @bodyParam liquidate boolean liquidacion del prestamo true cuota introducida false
     * @authenticated
     * @responseFile responses/loan/get_next_payment.200.json}
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
     {
-        return $loan->next_payment2($request->input('affiliate_id'),$request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('adjust', false));
+        return $loan->next_payment2($request->input('affiliate_id'),$request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('liquidate', false));
     }
 
     /** @group Cobranzas
@@ -1155,24 +1167,23 @@ class LoanController extends Controller
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
     * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @bodyParam voucher string Comprobante de pago GAR-ABV o D-10/20 o CONT-123. Example: CONT-123
-    * @bodyParam amortization_type_id integer required ID del tipo de pago. Example: 1
     * @bodyParam affiliate_id integer required ID del afiliado. Example: 57950
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @bodyParam procedure_modality_id integer required ID de la modalidad de amortización. Example: 53
     * @bodyParam user_id integer required ID del usuario. Example: 95
-    * @bodyParam state boolean refinanciamiento con antecedente(1) o sin antecedente(0). Example: 1
+    * @bodyParam liquidate boolean liquidacion del prestamo true cuota introducida false
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
     */
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
         if($loan->balance!=0){
-            $payment = $loan->next_payment2($request->input('affiliate_id'), $request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('adjust'));
+            $payment = $loan->next_payment2($request->input('affiliate_id'), $request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('liquidate', false));
             $payment->description = $request->input('description', null);
-            if($request->state)
-                $payment->state_id = LoanState::whereName('Pendiente por confirmar')->first()->id;
+            if(ProcedureModality::where($request->procedure_mmodality_id)->first()->name == 'Directo')
+                $payment->state_id = LoanPaymentState::whereName('Pendiente de Pago')->first()->id;
             else
-                $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
+                $payment->state_id = LoanPaymentState::whereName('Pendiente por confirmar')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
             if($request->has('procedure_modality_id')){
                 $modality = ProcedureModality::findOrFail($request->procedure_modality_id)->procedure_type;
@@ -1180,7 +1191,7 @@ class LoanController extends Controller
             }
             $payment->procedure_modality_id = $request->input('procedure_modality_id');
             $payment->voucher = $request->input('voucher', null);
-            $payment->amortization_type_id = $request->input('amortization_type_id');
+            //$payment->amortization_type_id = $request->input('amortization_type_id');
             $payment->affiliate_id = $request->input('affiliate_id');
             $payment->paid_by = $request->input('paid_by');
             if($request->has('user_id')){

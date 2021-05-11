@@ -59,7 +59,7 @@
                 <td class="w-15">Saldo Anterior</td>
                 <td class="w-15">Saldo Actual</td>
                 <td class="w-15">Fecha de Cálculo</td>
-                <td class="w-15">Fecha de Registro</td>
+                <td class="w-15">Fecha de Cobro</td>
                 <td >Intereses Penales Pendientes</td>
                 <td >Intereses Corrientes Pendientes</td>
             </tr>
@@ -68,7 +68,7 @@
                 <td class="data-row py-5">{{ Util::money_format($loan_payment->previous_balance) }}</td> 
                 <td class="data-row w-10">{{ Util::money_format($loan_payment->previous_balance-$loan_payment->capital_payment) }}</td>
                 <td class="data-row py-5">{{ Carbon::parse($loan_payment->estimated_date)->format('d/m/y') }}</td>
-                <td class="data-row py-5">{{ Carbon::parse($loan_payment->created_at)->format('d/m/y') }}</td>
+                <td class="data-row py-5">{{ Carbon::parse($loan_payment->updated_at)->format('d/m/y') }}</td>
                 <td>{{ Util::money_format($loan->payments->first()->penal_accumulated) }}</td>
                 <td>{{ Util::money_format($loan->payments->first()->interest_accumulated) }}</td>
             </tr>
@@ -106,7 +106,7 @@
             </tr>
             @if($loan_payment->description)
             <tr>
-                <td colspan="3" class="text-left p-10"><span class="font-semibold">Observaciones</span> <br>
+                <td colspan="3" class="text-left p-10"><span class="font-semibold">Glosa:</span> <br>
                     {{$loan_payment->description}}
                 </td>
             </tr>
@@ -150,7 +150,7 @@
             </tbody>
         </table>
         <div class="m-b-10">
-            Esta liquidación no es válida sin el Refrendo y Sello correspondiente </div>
+            ***Esta liquidación no es válida sin el Refrendo y Sello de Tesorería***</div>
     </div>
 </body>
 

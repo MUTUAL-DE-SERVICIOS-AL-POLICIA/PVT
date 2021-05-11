@@ -615,8 +615,6 @@ ver()
     },
      async calculator() {
       try {
-        if(this.affiliate_garantor.guarantor_information==true)
-        {
           if(this.monto_ajustable>0){
             if(this.monto_ajustable_descripcion)
             {
@@ -663,9 +661,6 @@ ver()
             this.evaluate_garantor= res.data
             this.loan_detail.simulador=false
           }
-        }else{
-          this.toastr.error("Tiene que actualizar los datos personales del Garante.")
-        }
       }catch (e) {
         console.log(e)
       }finally {
@@ -875,6 +870,8 @@ ver()
 
     async añadir()
     {
+      if(this.affiliate_garantor.guarantor_information==true)
+      {
       this.guarantor_ci=null
       this.show_data=false
       this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
@@ -1039,6 +1036,9 @@ ver()
         this.contributionable=[]
         this.clear()
         console.log(this.guarantors)
+    }else{
+          this.toastr.error("Tiene que actualizar los datos personales del Garante.")
+    }
     },
     async retrocederContribusiones(){
       //  this.toastr.error("se retroceden boletas.")
@@ -1057,7 +1057,6 @@ ver()
            if(res.data.valid)
             {
               this.periodo_boletas = this.$moment(this.data_ballots[0].month_year).format('MMMM')
-         //     this.toastr.error(this.$moment(this.data_ballots[0].month_year).format('MMMM'))
               this.editar=false
               this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
               this.bonos[0] = this.data_ballots[0].border_bonus,
@@ -1065,19 +1064,17 @@ ver()
               this.bonos[2] = this.data_ballots[0].position_bonus,
               this.bonos[3] = this.data_ballots[0].public_security_bonus
             } else{
-              this.periodo_boletas = this.$moment(this.data_ballots.current_tiket).format('MMMM')
-             // this.toastr.error(this.$moment(this.data_ballots[0].current_tiket).format('MMMM'))
+              this.periodo_boletas = this.$moment(res.data.current_tiket).format('MMMM')
               this.editar=false
               this.retroceder_meses=true
               this.payable_liquid[0] = 0
-              this.bonos[0] = this.bonos[0]
-              this.bonos[1] =this.bonos[1]
-              this.bonos[2] = this.bonos[2]
-              this.bonos[3] =this.bonos[3]
+              this.bonos[0] = 0
+              this.bonos[1] = 0
+              this.bonos[2] = 0
+              this.bonos[3] = 0
             }
 
-             this.$forceUpdate()
-
+            // this.$forceUpdate()
     },
      appendIconCallback () {
       if(this.number_diff_month < 8){

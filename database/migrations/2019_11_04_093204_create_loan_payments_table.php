@@ -36,13 +36,13 @@ class CreateLoanPaymentsTable extends Migration
             $table->unsignedBigInteger('state_id')->nullable(false); //id estado del tramite
             $table->text('voucher')->nullable(); // Comprobante del pago
             $table->enum('paid_by', ['T', 'G']);// Pago realizado por Titular o Garante
-            $table->foreign('state_id')->references('id')->on('loan_states'); // estado de registro de pago
+            $table->foreign('state_id')->references('id')->on('loan_payment_states'); // estado de registro de pago
             $table->unsignedBigInteger('role_id');  // id rol bandeja actual
             $table->foreign('role_id')->references('id')->on('roles');
             $table->unsignedBigInteger('affiliate_id')->unsigned(); // Id del afiliado
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
-            $table->unsignedBigInteger('amortization_type_id')->unsigned(); // Id del tipo de cobro
-            $table->foreign('amortization_type_id')->references('id')->on('amortization_types');
+           // $table->unsignedBigInteger('amortization_type_id')->unsigned(); // Id del tipo de cobro
+           // $table->foreign('amortization_type_id')->references('id')->on('amortization_types');
             $table->boolean('validated')->default(false);
             $table->text('description')->nullable(); // descripcion del pago
             $table->unsignedBigInteger('user_id')->nullable();  // id usuario

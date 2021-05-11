@@ -216,20 +216,20 @@ class Loan extends Model
     }
     public function payments_pendings_confirmations()
     {
-        $state_id = LoanState::whereName('Pendiente por confirmar')->first()->id;
+        $state_id = LoanPaymentState::whereName('Pendiente por confirmar')->first()->id;
         return $this->hasMany(LoanPayment::class)->where('state_id', $state_id)->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
     public function payment_pending_confirmation()//pago de pendiente por confirmacion para refin
     {
-        $state_id = LoanState::whereName('Pendiente por confirmar')->first()->id;
+        $state_id = LoanPaymentState::whereName('Pendiente por confirmar')->first()->id;
         return $this->hasMany(LoanPayment::class)->where('state_id', $state_id)->orderBy('quota_number', 'desc')->orderBy('created_at')->first();
     }
     public function paymentsKardex()
     {
-        $id = LoanState::whereName('Pagado')->orWhere('name', 'Pendiente por confirmar')->get('id');
-        $ids = LoanState::whereName('Pendiente de Pago')->first()->id;
-        $modality = ProcedureModality::where('name', 'like', 'A.AUT.%')->get('id');
-        return $this->hasMany(LoanPayment::class)->whereIn('state_id', $id)->orWhere('state_id', $ids)->whereIn('procedure_modality_id', $modality)->orderBy('quota_number', 'desc')->orderBy('created_at');
+        $id = LoanPaymentState::whereName('Pagado')->orWhere('name', 'Pendiente por confirmar')->get('id');
+        $ids = LoanPaymentState::whereName('Pendiente de Pago')->first()->id;
+        $modality = ProcedureModality::where('name', 'like', 'Directo')->get('id');
+        return $this->hasMany(LoanPayment::class)->whereIn('state_id', $id)->orWhere('state_id', $ids)->whereNotIn('procedure_modality_id', $modality)->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
     //relacion uno a muchos
     public function loan_contribution_adjusts()
@@ -273,7 +273,7 @@ class Loan extends Model
     public function getBalanceAttribute()
     {
         $balance = $this->amount_approved;
-        $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
+        $loan_states = LoanPaymentState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
         if ($this->payments()->count() > 0) {
             $balance -= $this->payments()->where('state_id', $loan_states->first()->id)->sum('capital_payment');
             $balance -= $this->payments()->where('state_id', $loan_states->last()->id)->sum('capital_payment');
@@ -288,7 +288,7 @@ class Loan extends Model
 
     public function getLastPaymentValidatedAttribute()
     {
-        $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
+        $loan_states = LoanPaymentState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
         return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->whereLoanId($this->id)->latest()->first();
     }
 
@@ -322,21 +322,15 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
-    public function next_payment2($affiliate_id, $estimated_date = null, $paid_by, $procedure_modality_id, $estimated_quota, $adjust = false)
+    public function next_payment2($affiliate_id, $estimated_date = null, $paid_by, $procedure_modality_id, $estimated_quota, $liquidate = false)
     {
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
             $partial_amount = 0;
             $total_amount = Util::round2($estimated_quota);$amount = 0;
-            $liquidate = false;//return ProcedureModality::where('id', $procedure_modality_id)->where('name', 'like', '%pactada')->first();
-            if(ProcedureModality::where('id', $procedure_modality_id)->where('name', 'like', '%pactada')->first())
-                $amount = $this->estimated_quota;
-            if(ProcedureModality::where('id', $procedure_modality_id)->where('name', 'like', '%Liquidar%')->first())
-            {
+            if($liquidate)
                 $amount = $this->balance;
-                $liquidate = true;
-            }
-            if(ProcedureModality::where('id', $procedure_modality_id)->where('name', 'like', '%Introducir%')->first() || ProcedureModality::where('id', $procedure_modality_id)->where('name', 'like', '%Parcial')->first())
+            else
                 $amount = $estimated_quota;
             $quota = new LoanPayment();
             $next_payment = LoanPayment::quota_date($this);
@@ -366,8 +360,7 @@ class Loan extends Model
                 $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
             else
                 $date_pay = $date_ini->addMonth()->endOfMonth()->format('Y-m-d');
-            //$date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
-            if(!$this->last_payment_validated && $estimated_date <= $date_pay){
+            if(!$this->last_payment_validated && CarbonImmutable::parse($quota->estimated_date)->format('Y-m-d') < CarbonImmutable::parse($date_pay)->format('Y-m-d') && CarbonImmutable::parse($quota->estimated_date) != CarbonImmutable::parse($this->disbursement_date)){
                 $quota->paid_days->current +=1;
                 $quota->estimated_days->current +=1;
                 $quota->paid_days->current_generated = Util::round2(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
@@ -801,9 +794,9 @@ class Loan extends Model
    {
      $loan_global_parameter  = $loan_global_parameter = LoanGlobalParameter::latest()->first();
      $number_payment_consecutive = $loan_global_parameter->consecutive_manual_payment;//3
-     $modality_id=ProcedureModality::whereShortened("AD-Cuota-pactada")->first()->id;
+     $modality_id=ProcedureModality::whereShortened("DIRECTO")->first()->id;
 
-     $Pagado = LoanState::whereName('Pagado')->first()->id;
+     $Pagado = LoanPaymentState::whereName('Pagado')->first()->id;
     
      $payments=$this->payments->where('procedure_modality_id','=',$modality_id)->where('state_id','=',$Pagado)->sortBy('estimated_date');
     
@@ -945,7 +938,7 @@ class Loan extends Model
     public function verify_balance()
     {
         $payments = $this->payments;
-        $loan_state = LoanState::where('name', 'Pagado')->first();
+        $loan_state = LoanPaymentState::where('name', 'Pagado')->first();
         $balance = $this->amount_approved;
         foreach($payments as $payment)
         {

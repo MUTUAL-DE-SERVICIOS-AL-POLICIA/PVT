@@ -17,12 +17,12 @@
                       <v-progress-linear></v-progress-linear>
                       <template>
                       <v-row>
-                         <v-col cols="9"  v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')">
+                         <v-col cols="7"  v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')">
                         </v-col>
                         <!--v-col cols="4" class="ma-0 py-0" v-if="$store.getters.permissions.includes('create-payment-loan')"-->
-                        <v-col cols="2" class="ma-0 py-4" v-show="isNew"  v-if="permissionSimpleSelected.includes('create-payment-loan')">
+                        <v-col cols="4" class="ma-0 py-4" v-show="isNew"  v-if="permissionSimpleSelected.includes('create-payment-loan')">
                          <label>
-                           <h3 style="color:teal">Refinanciamiento</h3>
+                           <h3 style="color:teal">Pendiente por Confirmar</h3>
                          </label>
                         </v-col>
                         <v-col cols="1" class="ma-0 py-0" v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')" >
@@ -322,7 +322,6 @@ export default {
   permissionSimpleSelected () {
     return this.$store.getters.permissionSimpleSelected
   },   
-
     isNew() {
       return  this.$route.params.hash == 'new'
     },
@@ -346,7 +345,6 @@ export default {
     this.getPymentTypes()
     this.getAmortizationTypes()
     this.getVoucherTypes()
-
     if(this.isNew)
     {
       this.getLoan(this.$route.query.loan_id)
@@ -369,7 +367,6 @@ export default {
     }
   },
   methods: {
-
       OnchangeAmortization(){
         this.data_payment.pago_total=null
          for (let i = 0; i<  this.tipo_de_amortizacion.length; i++) {
@@ -494,14 +491,8 @@ export default {
            this.data_payment.quota_number=this.loan_payment.quota_number
             this.data_payment.quota_number=this.loan_payment.quota_number
              this.data_payment.quota_number=this.loan_payment.quota_number
-
-
-
 //quota_number
 //estimated_quota.
-
-
-
         if(this.data_payment.procedure_modality_name == 'Amortización Complemento Económico' ||
             this.data_payment.procedure_modality_name == 'Amortización Fondo de Retiro' ||
             this.data_payment.procedure_modality_name == 'Amortización por Ajuste' ||

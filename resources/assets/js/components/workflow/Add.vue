@@ -178,7 +178,7 @@
                   </v-btn>
                 </template>
                 <div>
-                  <span>Imprimir plan de pagos</span>
+                  <span>Generar plan de pagos</span>
                 </div>
               </v-tooltip>
               <!--FORMULARIO PARA CALIFICACION-->
@@ -290,6 +290,34 @@
         </v-tab-item>
       </v-tabs>
     </v-card-text>
+      <v-dialog
+      v-model="dialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title>
+          Esta seguro de habilitar el plan de pagos?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="dialog = false"
+          >
+            Cancelar
+          </v-btn>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="generatePlan($route.params.id)"
+          >
+            Aceptar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <AddObservation :bus="bus" :loan="loan" />
   </v-card>
 </template>
@@ -343,6 +371,7 @@ export default {
       unit_name: null,
       registration: null
     },
+    dialog:false,
     bonos: [0, 0, 0, 0],
     payable_liquid: [0, 0, 0],
     modalidad: {},
@@ -581,8 +610,16 @@ export default {
             })
         }
         else{
-
-          let res1 = await axios.patch(`loan/${this.loan.id}`, {
+            this.dialog=true
+        }
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión.")
+        console.log(e)
+      }
+    },
+     async generatePlan(item) {
+      try {
+            let res1 = await axios.patch(`loan/${this.loan.id}`, {
             date_signal:true
           })
           this.loan.disbursement_date= this.$moment(res1.data.disbursement_date).format('YYYY-MM-DD')
@@ -593,8 +630,7 @@ export default {
             file_name: res.data.file_name,
             base64: true
           })
-
-        }
+          this.dialog=false
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)

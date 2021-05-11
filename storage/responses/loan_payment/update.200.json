@@ -21,6 +21,5 @@
     "deleted_at": null,
     "voucher": "CONT-123",
     "paid_by": "T",
-    "affiliate_id": 57950,
-    "amortization_type_id": 3
+    "affiliate_id": 57950
 }

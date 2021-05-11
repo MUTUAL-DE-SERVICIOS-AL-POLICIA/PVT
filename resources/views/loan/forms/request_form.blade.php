@@ -139,7 +139,8 @@
 
     <div class="block ">
     @php ($count = 1)
-        @foreach ($loan->guarantors as $guarantor)
+        @foreach ($guarantors as $guarantor)
+
         <div class="block">
             <div class="font-semibold leading-tight text-left m-b-10 text-base">Garante {{$count}}</div>@php ($count = $count + 1)
         </div>
@@ -152,7 +153,11 @@
             <tr>
                 <td class="data-row py-5">{{ $guarantor->title }} {{ $guarantor->full_name }}</td>
                 <td class="data-row py-5">{{ $guarantor->identity_card_ext }}</td>
+                @if(!$is_spouse)
                 <td class="data-row py-5">{{ $guarantor->affiliate_state->affiliate_state_type->name }}</td>
+                @else
+                <td class="data-row py-5">no corresponde</td>
+                @endif
             </tr>
             <tr class="bg-grey-darker text-sm-1 text-white">
                 <td>Domicilio actual</td>
@@ -171,6 +176,7 @@
                 @endif
                 </td>
             </tr>
+            @if(!$is_spouse)
             <tr class="bg-grey-darker text-sm-1 text-white">
                 @php ($inactive = $guarantor->pension_entity)
                 <td colspan="{{$inactive ? 1 : 2}}">Unidad</td>
@@ -186,6 +192,7 @@
                     <td class="data-row py-5">{{ $guarantor->afp ? $guarantor->pension_entity ? $guarantor->pension_entity->name : "APS" : "SENASIR"}}</td>
                 @endif
             </tr>
+            @endif
         </table>
         @endforeach
     </div>

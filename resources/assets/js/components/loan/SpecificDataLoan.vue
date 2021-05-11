@@ -193,7 +193,7 @@
                                    <v-col cols="12" md="4" class="py-0">
                                     <p><b>Cuota de Prestamo Padre:</b>{{' '+loan_refinancing.estimated_quota}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" class="py-0"  v-show="!cobranzas_edit_sismu">
+                                  <v-col cols="12" md="4" class="py-0"  v-show="!cobranzas_edit_sismu" v-if="loan_refinancing.type_sismu==true">
                                     <p><b>Fecha de Corte :</b>{{' '+loan_refinancing.date_cut_refinancing}}</p>
                                   </v-col>
                                   <v-col cols="12" md="4"  v-show="cobranzas_edit_sismu "  class="py-0">
@@ -1046,7 +1046,6 @@ export default {
       sortable: false
     }
       ],
-
     editable1: false,
     editable: false,
     reload: false,
@@ -1100,12 +1099,10 @@ export default {
         second_name:this.editedItem1.second_name,
         last_name:this.editedItem1.last_name,
         mothers_last_name:this.editedItem1.mothers_last_name,
-
         city_identity_card_id:this.editedItem1.city_identity_card_id,
         gender:this.editedItem1.gender,
         civil_status:this.editedItem1.civil_status,
         city_birth_id:this.editedItem1.city_birth_id,
-
         phone_number:this.editedItem1.phone_number,
         cell_phone_number:this.editedItem1.cell_phone_number,
         cell_phone_number:this.editedItem1.cell_phone_number,
@@ -1114,7 +1111,6 @@ export default {
     this.closeCodeptor()
     this.$forceUpdate()
 },
-
       editItem1 (item) {
         //this.editedIndex = this.loan.personal_references.indexOf(item)
         this.editedItem1 =  item
@@ -1156,7 +1152,6 @@ export default {
         let res = await axios.get(`financial_entity`)
         this.entity = res.data
         console.log("ciudad "+ this.entity)
-
       } catch (e) {
         console.log(e)
       } finally {
@@ -1169,7 +1164,6 @@ export default {
         let res = await axios.get(`city`)
         this.city = res.data
         console.log("ciudad "+ this.city)
-
       } catch (e) {
         console.log(e)
       } finally {
@@ -1338,6 +1332,8 @@ export default {
               let res = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
               this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
               this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
+            //  this.loan_refinancing.date_cut_refinancing= this.$moment(res.data.request_date).format("YYYY-MM-DD")
+      
       
             }
             this.toastr.success('Se Actualizó Correctamente.')
@@ -1349,7 +1345,6 @@ export default {
       } finally {
         this.loading = false
       }
-
     },
        async editSimulate(){
       try {
