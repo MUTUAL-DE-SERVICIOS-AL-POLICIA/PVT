@@ -133,7 +133,8 @@ class VoucherController extends Controller
 
     public function print_voucher(Request $request, Voucher $voucher, $standalone = true)
     {
-        $affiliate = Affiliate::findOrFail($voucher->affiliate_id);
+        $loan_payment=LoanPayment::find($voucher->payable_id);
+        $affiliate = Affiliate::findOrFail($loan_payment->affiliate_id);
         $lenders = [];
         $lenders[] = LoanController::verify_spouse_disbursable($affiliate)->disbursable;
         $data = [

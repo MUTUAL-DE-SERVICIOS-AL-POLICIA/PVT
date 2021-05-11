@@ -49,15 +49,15 @@
                     Por Concepto de:
                 </td>
                 <td class="uppercase" colspan="3">
-                    {{ $voucher->voucher_type->name }}
+                    {{ $voucher->description }}
                 </td>
             </tr>
             <tr>
                 <td class="font-semibold">
                     Forma de Pago:
                 </td>
-                <td class="uppercase" colspan="3">
-                    {{ $voucher->payment_type->name }}
+               <td class="uppercase" colspan="3">
+                    {{ $voucher->voucher_type->name }}
                 </td>
             </tr>
             <tr>
