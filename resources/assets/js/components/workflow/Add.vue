@@ -478,6 +478,16 @@ export default {
         this.loan = res.data
         this.loan.amount_approved_before= res.data.amount_approved
         this.loan.loan_term_before= res.data.loan_term
+
+        this.loan.amount_approved_aux = this.loan.amount_approved
+        this.loan.payable_liquid_calculated_aux = this.loan.lenders[0].pivot.payable_liquid_calculated
+        this.loan.liquid_qualification_calculated_aux = this.loan.liquid_qualification_calculated
+        this.loan.loan_term_aux = this.loan.loan_term
+        this.loan.bonus_calculated_aux = this.loan.lenders[0].pivot.bonus_calculated
+        this.loan.indebtedness_calculated_aux = this.loan.indebtedness_calculated
+        this.loan.estimated_quota_aux = this.loan.estimated_quota
+
+
         this.loan.disbursement_date=this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
         if(this.loan.parent_reason=='REFINANCIAMIENTO')
         {

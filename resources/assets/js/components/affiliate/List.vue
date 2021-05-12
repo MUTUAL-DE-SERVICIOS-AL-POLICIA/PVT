@@ -11,8 +11,8 @@
     <tr>
       <td class="text-xs-left">{{ props.item | fullName(byFirstName = true) }} </td>
       <td class="text-xs-left">{{ props.item.identity_card }}</td>
-       <td class="text-xs-left">{{ searchState(props.item.affiliate_state_id) }}</td>
-      <td class="text-xs-left">{{ searchCategory(props.item.category_id) }}</td>
+       <td class="text-xs-left">{{ props.item.affiliate_state ? props.item.affiliate_state.name : ''}}</td>
+      <td class="text-xs-left">{{ props.item.category ? props.item.category.name : '' }}</td>
      
       <td>
         <v-icon class="mr-1" :color="props.item.picture_saved ? 'success' : 'error'">mdi-camera</v-icon>
@@ -117,8 +117,8 @@ export default {
       this.search = val
     })
     this.getAffiliates()
-    this.getCategory()
-    this.getAffiliateState()
+    //this.getCategory()
+    //this.getAffiliateState()
   },
   methods: {
     async getAffiliates(params) {
@@ -145,7 +145,7 @@ export default {
         this.loading = false
       }
     },
-    async getCategory(id) {
+    /*async getCategory(id) {
       try {
         this.loading = true;
         let res = await axios.get(`category`)
@@ -183,7 +183,7 @@ export default {
       } else {
         return null
       }
-    },
+    },*/
 
 
   }

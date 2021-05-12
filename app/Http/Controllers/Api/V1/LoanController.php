@@ -1180,7 +1180,7 @@ class LoanController extends Controller
         if($loan->balance!=0){
             $payment = $loan->next_payment2($request->input('affiliate_id'), $request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('liquidate', false));
             $payment->description = $request->input('description', null);
-            if(ProcedureModality::where($request->procedure_mmodality_id)->first()->name == 'Directo')
+            if(ProcedureModality::where('id', $request->procedure_modality_id)->first()->name == 'Directo')
                 $payment->state_id = LoanPaymentState::whereName('Pendiente de Pago')->first()->id;
             else
                 $payment->state_id = LoanPaymentState::whereName('Pendiente por confirmar')->first()->id;

@@ -941,8 +941,12 @@ export default {
                           {
                             this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
                           }else{
-                            this.addDataLoan()
-                            this.nextStep(2)
+                            if( parseFloat(this.data_loan_parent_aux.estimated_quota) >= parseFloat(this.calculator_result.quota_calculated_estimated_total)){
+                              this.addDataLoan()
+                              this.nextStep(2)
+                            }else{
+                              this.toastr.error("La cuota del prestamo padre no puede ser menor a la nueva cuota.")
+                            }
                           }
                         }
                       }

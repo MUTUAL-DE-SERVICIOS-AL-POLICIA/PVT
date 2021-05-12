@@ -149,36 +149,12 @@ class LoanPaymentController extends Controller
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
         $payments = collect();
-            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->get();
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->orderBy('id')->get();
             foreach($loanPayments as $loanPayment)
             {
-                if($loanPayment->modality->name == 'Directo' && $loanPayment->state->name == 'Pagado')//amortizacion directa
+                if($loanPayment->state->name == 'Pagado' || $loanPayment->state->name == 'Pendiente por confirmar')
                 {
                     $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->modality;
-                    $payments->push($loanPayment);
-                }
-                if($loanPayment->modality->name == 'Descuento Comando General de la Policia Boliviana' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Descuento Comando General de la Policia Boliviana' && $loanPayment->state->name == 'Pendiente por confirmar' || $loanPayment->modality->name == 'Descuento Comando General de la Policia Boliviana' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'Descuento Servicio Nacional del Sistema de Reparto' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'Descuento Servicio Nacional del Sistema de Reparto' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Descuento Servicio Nacional del Sistema de Reparto' && $loanPayment->state->name == 'Pendiente por confirmar')//amortizacion automatica
-                {
-                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->modality;
-                    $payments->push($loanPayment);
-                }
-                if($loanPayment->modality->name == 'Descuento Indebido' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Descuento Indebido' && $loanPayment->state->name == 'Pendiente por Confirmar' || $loanPayment->modality->name == 'Descuento Indebido' && $loanPayment->state->name == 'Pendiente por confirmar' || $loanPayment->modality->name == 'Refinanciamiento de Préstamo' && $loanPayment->state->name == 'Pendiente por confirmar')// amortizacion por ajuste
-                {
-                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->modality;
-                    $payments->push($loanPayment);
-                }
-                if($loanPayment->modality->name == 'Fondo de Retiro' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Fondo de Retiro' && $loanPayment->state->name == 'Pendiente por Confirmar' )//amortizacion por fondo
-                {
-                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->modality;
-                    $payments->push($loanPayment);
-                }
-                if($loanPayment->modality->name == 'Complemento Económico' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Complemento Económico' && $loanPayment->state->name == 'Pendiente por Confirmar')//amortizacion por complemento
-                {
-                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id);
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
@@ -287,7 +263,7 @@ class LoanPaymentController extends Controller
             DB::beginTransaction();
             try {
                 $payment = new Voucher;
-                //$payment->user_id = auth()->id();
+                $payment->user_id = auth()->id();
                 //$payment->affiliate_id = $loanPayment->loan->disbursable_id;
                 $payment->voucher_type_id = $request->input('voucher_type_id');
                 $payment->total = $request->input('voucher_amount_total');
@@ -297,7 +273,7 @@ class LoanPaymentController extends Controller
                 $payment->description = $request->input('description', null);
                 $payment->bank_pay_number = $request->input('bank_pay_number', null);
                 $voucher = $loanPayment->voucher_treasury()->create($payment->toArray());
-                $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id]);
+                $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id,'validated'=>true]);
                 if($loanPayment->loan->verify_balance() == 0)
                 {
                     $loan = Loan::whereId($loanPayment->loan_id);
@@ -339,10 +315,10 @@ class LoanPaymentController extends Controller
         $from_role = null;
         $to_role = $request->role_id;
 
-        //$PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+        $PendientePago = LoanPaymentState::whereName('Pendiente de Pago')->first()->id;
 
         $to_role = $request->role_id;
-        $loanPayment =  LoanPayment::whereIn('id',$request->ids)->where('role_id', '!=', $request->role_id)->whereIn('state_id', [5,7])->orderBy('code');
+        $loanPayment =  LoanPayment::whereIn('id',$request->ids)->where('role_id', '!=', $request->role_id)->where('state_id',$PendientePago)->orderBy('code');
         $derived = $loanPayment->get();
         $to_role = Role::find($to_role);
         

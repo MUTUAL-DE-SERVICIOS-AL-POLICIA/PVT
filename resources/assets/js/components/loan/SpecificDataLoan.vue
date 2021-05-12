@@ -364,7 +364,7 @@
                               <v-col cols="12" md="12" class="mb-0 py-0">
                                 <v-card-text class="pa-0 mb-0">
                                   <div v-for="procedure_type in procedure_types" :key="procedure_type.id" class="pa-0 py-0" >
-                                    <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a Largo Plazo' || procedure_type.name == 'Préstamo a Corto Plazo'">
+                                    <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a Largo Plazo' || procedure_type.name == 'Préstamo a Corto Plazo'|| procedure_type.name == 'Refinanciamiento Préstamo a Corto Plazo' || procedure_type.name == 'Refinanciamiento Préstamo a Largo Plazo'">
                                       <li v-for="guarantor in loan.guarantors" :key="guarantor.id">
                                         <v-col cols="12" md="12" class="pa-0">
                                           <v-row class="pa-2">
@@ -402,7 +402,7 @@
                                       <br>
                                       <p v-if="loan.guarantors.length==0" style="color:teal"><b> NO TIENE GARANTES </b></p>
                                     </ul>
-                                    <v-col cols="12" md="12" v-if="procedure_type.name == 'Préstamo Hipotecario'">
+                                    <v-col cols="12" md="12" v-if="procedure_type.name == 'Préstamo Hipotecario' || procedure_type.name == 'Refinanciamiento Préstamo Hipotecario'">
                                       <p style="color:teal"><b>GARANTIA HIPOTECARIA </b></p>
                                       <v-tooltip >
                                         <template v-slot:activator="{ on }">
@@ -1198,6 +1198,17 @@ export default {
         this.loan_refinancing.balance= this.loan.balance_parent_loan_refinancing
       }
       this.loan_refinancing.date_cut_refinancing= this.loan.date_cut_refinancing
+
+
+      this.loan.amount_approved = this.loan.amount_approved_aux
+      this.loan.lenders[0].pivot.payable_liquid_calculated = this.loan.payable_liquid_calculated_aux
+      this.loan.liquid_qualification_calculated = this.loan.liquid_qualification_calculated_aux
+      this.loan.loan_term = this.loan.loan_term_aux
+      this.loan.lenders[0].pivot.bonus_calculated = this.loan.bonus_calculated_aux
+      this.loan.indebtedness_calculated = this.loan.indebtedness_calculated_aux
+      this.loan.estimated_quota = this.loan.estimated_quota_aux
+
+
       this.$nextTick(() => {
       this.reload = false
       })

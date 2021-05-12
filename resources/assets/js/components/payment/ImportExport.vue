@@ -8,15 +8,13 @@
               <v-toolbar-title>GENERACIÓN AUTOMÁTICA DE COBROS</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
-
           <template>
             <v-container fluid class="px-2 pt-0">
               <v-row justify="center" class="py-0">
                 <v-col cols="12" class="py-0">
                   <v-tabs dark active-class="secondary" v-model="tab">
-                    <v-tab v-for="item in actions" :key="item.nameTab">{{ item.nameTab }}</v-tab>
+                    <v-tab v-for="item in actions" :key="item.nameTab">{{item.nameTab}}</v-tab>
                   </v-tabs>
-
                   <v-tabs-items v-model="tab">
                     <v-tab-item v-for="item in actions" :key="item.nameTab">
                       <v-card flat tile>
@@ -39,8 +37,12 @@
                                     outlined
                                   ></v-text-field>
                                 </v-col>
-
-                                <v-col cols="12" md="12" class="py-0" v-if="item.value=='import'">
+                                <v-col
+                                  cols="12"
+                                  md="12"
+                                  class="py-0"
+                                  v-if="item.value == 'import'"
+                                >
                                   <ValidationProvider
                                     v-slot="{ errors }"
                                     name="Estado del afiliado"
@@ -58,7 +60,7 @@
                                     ></v-select>
                                   </ValidationProvider>
                                 </v-col>
-                                <v-col cols="12" md="12" class="py-0">
+                                <!--<v-col cols="12" md="12" class="py-0">
                                   <ValidationProvider
                                     v-slot="{ errors }"
                                     name="Código comprobante"
@@ -72,8 +74,13 @@
                                       v-model="import_export.code_voucher"
                                     ></v-text-field>
                                   </ValidationProvider>
-                                </v-col>
-                                <v-col cols="12" md="12" class="py-0" v-if="item.value=='import'">
+                                </v-col>-->
+                                <v-col
+                                  cols="12"
+                                  md="12"
+                                  class="py-0"
+                                  v-if="item.value == 'import'"
+                                >
                                   <v-file-input
                                     counter
                                     show-size
@@ -86,41 +93,54 @@
                                   ></v-file-input>
                                 </v-col>
                                 <br />
-                                <v-col cols="12" md="4" class="py-0" v-if="item.value=='export'">
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  class="py-0"
+                                  v-if="item.value == 'export'"
+                                >
                                   <v-btn
                                     color="primary"
-                                    :loading="loadingButton"
+                                    :loading="loading_rpb"
                                     @click.stop="registerPaymentsBatch()"
-                                  >Generar Información</v-btn>
+                                    >Generar Información</v-btn
+                                  >
                                   <br /><br /><br />
 
-
-
-                                                                    <v-btn
-                                    color="succes"
+                                  <v-btn 
+                                    color="succes" 
+                                    :loading="loading"
                                     @click.stop="excel()"
-                                  >Ver Reporte de Descuento</v-btn>
-                                <br />
-
+                                    >Ver Reporte de Descuento</v-btn
+                                  >
+                                  <br />
                                 </v-col>
-                                <v-col cols="12" md="4" class="py-0" v-if="item.value=='import'">
+                                <v-col
+                                  cols="12"
+                                  md="4"
+                                  class="py-0"
+                                  v-if="item.value == 'import'"
+                                >
                                   <v-btn
                                     color="primary"
-                                    :loading="loadingButton"
+                                    :loading="loading_ipb"
                                     @click.stop="importationPaymentsBatch()"
-                                  >Importar Información</v-btn>
+                                    >Importar Información</v-btn
+                                  >
                                   <v-btn
                                     color="primary"
+                                    :loading="loading_ipcs"
                                     @click.stop="importationPendingCommandSenasir()"
-                                  >Importar Pendientes por Confirmar</v-btn>
+                                    >Importar Pendientes por Confirmar</v-btn
+                                  >
                                   <br /><br />
-                                    <template v-if="visible == true">
-                                    <p
-                                      style="color: green"
-                                    >Cantidad de pagos importados: {{import_payments.automatic}}</p>
-                                    <p
-                                      style="color: red"
-                                    >Cantidad de pagos NO importados: {{import_payments.no_automatic}}</p>
+                                  <template v-if="visible == true">
+                                    <p style="color: green">
+                                      Cantidad de pagos importados: {{ import_payments.automatic }}
+                                    </p>
+                                    <p style="color: red">
+                                      Cantidad de pagos NO importados: {{ import_payments.no_automatic }}
+                                    </p>
                                   </template>
                                 </v-col>
                               </v-layout>
@@ -151,133 +171,110 @@ export default {
       file: null,
       state_affiliate: null,
       cutoff_date: null,
-      code_voucher: null
     },
     actions: [
       { nameTab: "Exportación", value: "export" },
-      { nameTab: "Importación", value: "import" }
+      { nameTab: "Importación", value: "import" },
     ],
     state_affiliate: [
       { name: "Activo - Comando", value: 1 },
-      { name: "Pasivo - Senasir", value: 0 }
+      { name: "Pasivo - Senasir", value: 0 },
     ],
     paymentsBatch: [],
     datos: [],
     import_payments: {
       automatic: 0,
-      no_automatic: 0
+      no_automatic: 0,
     },
     visible: false,
-    loadingButton: false
+    loading_rpb: false,
+    loading_ipb: false,
+    loading_ipcs: false
+
   }),
   methods: {
     async registerPaymentsBatch() {
       try {
-        this.loadingButton = true;
+        this.loading_rpb = true;
         let res = await axios.post(`command_senasir_save_payment`, {
           estimated_date: this.import_export.cutoff_date,
-          voucher: this.import_export.code_voucher
         });
         this.paymentsBatch = res.data;
-        this.toastr.success("Se realizo el registro de: "+ this.paymentsBatch.loans_quantity +" pago del mes de "+ this.import_export.cutoff_date);
-        console.log(this.paymentsBatch)
+        this.toastr.success("Se realizo el registro de: " + this.paymentsBatch.loans_quantity + " pago del mes de " + this.import_export.cutoff_date);
+        console.log(this.paymentsBatch);
       } catch (e) {
         console.log(e);
       }
-      this.loadingButton = false
+      this.loading_rpb = false;
     },
     clearInputs() {
-      (this.import_export.file = null),
-        (this.import_export.state_affiliate = null),
-        (this.import_export.cutoff_date = null),
-        (this.import_export.code_voucher = null);
+      this.import_export.file = null
+      this.import_export.state_affiliate = null
+      this.import_export.cutoff_date = null
     },
     async importationPaymentsBatch() {
-      //this.showResults = false;
-      //this.override = false;
-      //const fileInput = document.querySelector("#impExp);
       const formData = new FormData();
       formData.append("file", this.import_export.file);
       formData.append("state", this.import_export.state_affiliate);
       formData.append("estimated_date", this.import_export.cutoff_date);
-      formData.append("voucher_payment", this.import_export.code_voucher);
-      //formData.append("override", this.override);
-      //formData.append("refresh", this.refresh);
-      this.loadingButton = true;
-      //await axios
-        //.post("loan_payment/importation_command_senasir", formData)
+      this.loading_ipb = true
       await axios({
         url: "/loan_payment/importation_command_senasir",
         method: "POST",
         responseType: "blob", // important
         headers: { Accept: "application/vnd.ms-excel" },
-        data: formData
+        data: formData,
       })
-        .then(response => {
+        .then((response) => {
           console.log(response.data);
-          /*this.import_payments.automatic =
-            response.data.payments_automatic.length;
-          this.import_payments.no_automatic =
-            response.data.payments_no_automatic.length;
-          this.visible = true;*/
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
           link.href = url;
           link.setAttribute("download", "ReporteDecuento.xlsx");
           document.body.appendChild(link);
           link.click();
-          clearInputs()
+          clearInputs();
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
-      //this.showResults = true;
-      this.loadingButton = false;
-      //this.refresh = false;
+      this.loading_ipb = false;
     },
-    //importar pendiente por confirmar 
-      async importationPendingCommandSenasir() {
-      //this.showResults = false;
-      //this.override = false;
-      //const fileInput = document.querySelector("#impExp);
+    //importar pendiente por confirmar
+    async importationPendingCommandSenasir() {
+      this.loading_ipcs= true
       const formData = new FormData();
       formData.append("file", this.import_export.file);
       formData.append("state", this.import_export.state_affiliate);
       formData.append("estimated_date", this.import_export.cutoff_date);
-      formData.append("voucher_payment", this.import_export.code_voucher);
-      //formData.append("override", this.override);
-      //formData.append("refresh", this.refresh);
-      //this.loadingButton = true;
+      
       await axios
         .post("loan_payment/importation_command_senasir", formData)
-        .then(response => {
+        .then((response) => {
           console.log(response.data);
-          this.import_payments.automatic =
-            response.data.payments_automatic.length;
-          this.import_payments.no_automatic =
-            response.data.payments_no_automatic.length;
+          this.import_payments.automatic = response.data.payments_automatic.length;
+          this.import_payments.no_automatic = response.data.payments_no_automatic.length;
           this.visible = true;
-          clearInputs()
+          clearInputs();
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
-          this.visible = true;
         });
-      //this.showResults = true;
-      //this.loadingButton = false;
-      //this.refresh = false;
+        this.visible = false
+        this.loading_ipcs= true
     },
 
     //REPORTES
     async excel() {
+      this.visible = true;
       await axios({
         url: "/excel",
         method: "GET",
         responseType: "blob", // important
         headers: { Accept: "application/vnd.ms-excel" },
-        data: this.datos
+        data: this.datos,
       })
-        .then(response => {
+        .then((response) => {
           console.log(response);
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
@@ -286,19 +283,21 @@ export default {
           document.body.appendChild(link);
           link.click();
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
+        this.visible = false;
     },
     async mora() {
+      this.visible = true;
       await axios({
         url: "/loans_delay",
         method: "GET",
         responseType: "blob", // important
         headers: { Accept: "application/vnd.ms-excel" },
-        data: this.datos
+        data: this.datos,
       })
-        .then(response => {
+        .then((response) => {
           console.log(response);
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
@@ -307,10 +306,11 @@ export default {
           document.body.appendChild(link);
           link.click();
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
+        this.visible = false;
     },
-  }
+  },
 };
 </script>

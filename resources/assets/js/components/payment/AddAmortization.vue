@@ -65,7 +65,7 @@
                                   <label><b style="color:teal">Fecha siguiente pago:</b></label>
                                   <b style="color:teal">{{garantes.last_payment_validated.estimated_date }}</b>
                                 </v-col>
-                        <v-progress-linear></v-progress-linear>
+                          <v-progress-linear></v-progress-linear>
                         <v-col cols="9"  v-show="editable" v-if="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar">
                         </v-col>
                          <v-col cols="3" class="ma-0 py-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar" v-if="editable">
@@ -165,7 +165,7 @@
                                </li>
                             </ul>
                         </v-col>
-                        <v-col cols="4" class="ma-0 pb-0" v-show="!editable">
+                        <v-col cols="4" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan')" >
                           <v-text-field
                             dense
                             v-model="data_payment.voucher"
@@ -185,20 +185,11 @@
                         </v-col>
                         <v-col cols="4" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan')" v-if="!isNew" >
                            <v-text-field
-                            v-model="data_payment.estimated_quota"
+                            v-model="data_payment.quota_number"
                             :readonly="true"
                             :disabled="true"
                             dense
                             label="Nro.Cuota"
-                          ></v-text-field>
-                        </v-col>
-                           <v-col cols="4" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan')" v-if="!isNew">
-                           <v-text-field
-                            v-model="data_payment.estimated_quota"
-                            :disabled="true"
-                            :readonly="true"
-                            dense
-                            label="Monto Pagado"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="4">
@@ -215,7 +206,7 @@
                             :disabled="ver || editable"
                           ></v-text-field>
                         </v-col>
-                           <v-col cols="4" class="ma-0 pb-0">
+                           <v-col cols="4" class="ma-0 pb-0" v-show="isNew">
                           <v-select
                              class="caption"
                             style="font-size: 10px;"
@@ -237,9 +228,18 @@
                             dense
                             v-model="data_payment.pago_total"
                             label="Total Pagado"
-                            :outlined="isNew || permissionSimpleSelected.includes('create-payment') "
-                            :readonly="!isNew "
-                            :disabled="ver"
+                            :outlined="isNew"
+                            :readonly="!isNew"
+                            :disabled="ver || editable"
+                          ></v-text-field>
+                        </v-col>
+                          <v-col cols="4" v-show="!isNew" v-if="permissionSimpleSelected.includes('create-payment')" >
+                          <v-text-field
+                            v-model="data_payment.voucher_amount_total"
+                            :outlined="editable"
+                            :readonly="!editable"
+                            label="Total Pagado en Tesoreria"
+                            dense
                           ></v-text-field>
                         </v-col>
                      
@@ -258,7 +258,7 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="4" v-show="editable" v-if="permissionSimpleSelected.includes('create-payment')" >
+                        <v-col cols="4" v-show="!isNew" v-if="permissionSimpleSelected.includes('create-payment')" >
                           <v-text-field
                             v-model="data_payment.comprobante"
                             :outlined="editable"
@@ -267,7 +267,20 @@
                             dense
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment')">
+                        <v-col cols="4" v-show="permissionSimpleSelected.includes('create-payment')">
+                          <v-text-field
+                            dense
+                            v-model="data_payment.voucher_date"
+                            hint="Día/Mes/Año"
+                            class="purple-input"
+                            type="date"
+                            label="Fecha"
+                            :clearable="editable"
+                            :outlined="editable"
+                            :readonly="!editable"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="4" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment')">
                           <v-text-field
                             v-if="!ver"
                             v-model="data_payment.glosa_voucher"
@@ -311,7 +324,7 @@ export default {
     data_payment: {
       type: Object,
       required: true
-    },
+    }
   },
   data: () => ({
     loan: {},
@@ -322,8 +335,9 @@ export default {
     loanTypeSelectedThree:null,
     tipo_tramite: [],
     regular:false,
-    garantes:{
-      lenders:[]
+     garantes:{
+      lenders:[],
+      last_payment_validated:{}
     },
     radio:null,
     codigo:null,
@@ -504,7 +518,18 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
-        this.data_payment.code=this.loan_payment.code
+             this.garantes.lenders=[this.loan_payment.affiliate]
+             this.garantes.code=this.loan_payment.loan.code
+             this.garantes.disbursement_date=this.$moment(this.loan_payment.loan.disbursement_date).format("YYYY-MM-DD")
+             this.garantes.amount_approved=this.loan_payment.loan.amount_approved
+             this.garantes.loan_term=this.loan_payment.loan.loan_term
+             this.garantes.estimated_quota=0
+             this.garantes.balance=0
+             this.garantes.last_payment_validated.previous_payment_date=0
+             this.garantes.last_payment_validated.estimated_date=0
+
+    
+         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
         this.data_payment.affiliate_id =this.loan_payment.paid_by
@@ -522,8 +547,6 @@ export default {
            this.data_payment.quota_number=this.loan_payment.quota_number
             this.data_payment.quota_number=this.loan_payment.quota_number
              this.data_payment.quota_number=this.loan_payment.quota_number
-//quota_number
-//estimated_quota.
         if(this.data_payment.procedure_modality_name == 'Amortización Complemento Económico' ||
             this.data_payment.procedure_modality_name == 'Amortización Fondo de Retiro' ||
             this.data_payment.procedure_modality_name == 'Amortización por Ajuste' ||
@@ -593,7 +616,7 @@ export default {
     async getPymentTypes() {
       try {
         this.loading = true
-        let res = await axios.get(`payment_type`)
+        let res = await axios.get(`voucher_type`)
         this.payment_type_treasury = res.data
       } catch (e) {
         console.log(e)

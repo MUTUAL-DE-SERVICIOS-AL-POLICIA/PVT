@@ -103,7 +103,13 @@ export default {
     status_click:false,
     data_payment:{
       payment_date:new Date().toISOString().substr(0, 10),
+      voucher_date:new Date().toISOString().substr(0, 10),
       pago_total: null,
+  
+      
+    },
+     garantes:{
+      lenders:[]
     },
     validar:false,
   }),
@@ -168,10 +174,12 @@ export default {
             validated:true
           })
           let res = await axios.post(`loan_payment/${this.$route.query.loan_payment}/voucher`,{
-            payment_type_id:this.data_payment.tipo_pago,
-            voucher_type_id:2,
-            voucher_number:this.data_payment.comprobante,
-            description:this.data_payment.glosa_voucher
+
+            voucher_type_id: this.data_payment.tipo_pago,
+            bank_pay_number: this.data_payment.comprobante,
+            voucher_amount_total:this.data_payment.voucher_amount_total,
+            voucher_payment_date: this.data_payment.voucher_date,
+            description: this.data_payment.glosa_voucher
           })
             this.$router.push('/loanPayment')
       }catch (e) {
@@ -199,7 +207,8 @@ export default {
      async editPayment() {
       try {
             let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
-              description:this.data_payment.glosa
+              description:this.data_payment.glosa,
+              voucher:this.data_payment.voucher
           })
           this.toastr.success('Se edito correctamente')
             this.$router.push('/loanPayment')
@@ -252,6 +261,8 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
+          this.garantes.lenders=this.loan_payment.affiliate
+    
         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota

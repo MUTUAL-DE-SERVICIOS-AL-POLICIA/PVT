@@ -116,23 +116,26 @@
                 <template v-slot:[`item.penal_payment`]="{ item }">
           {{ item.penal_payment | moneyString }}
         </template>
-                <template v-slot:[`item.penal_remaining`]="{ item }">
+        <template v-slot:[`item.penal_remaining`]="{ item }">
           {{ item.penal_remaining | moneyString }}
         </template>
         <template v-slot:[`item.estimated_quota`]="{ item }">
           {{ item.estimated_quota | moneyString }}
         </template>
         <template v-slot:[`item.voucher`]="{ item }">
+          {{item.voucher}}
+        </template>
+        <template v-slot:[`item.modality_shortened`]="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <span v-on="on"> {{item.voucher}}</span>
+              <span v-on="on"> {{item.modality.shortened}}</span>
             </template>
-            <span>{{item.modality.shortened}}</span>
+            <span>{{item.modality.name}}</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.amortization_type_id`]="{ item }">
+        <!--<template v-slot:[`item.amortization_type_id`]="{ item }">
           {{ searchAmortizationType(item.amortization_type_id) }}
-        </template>
+        </template>-->
         <template v-slot:[`item.state.name`]="{ item }">
           {{ item.state.name }}
         </template>
@@ -359,8 +362,8 @@ export default {
         width: "5%",
       },
       {
-        text: "Obs.",
-        value: "amortization_type_id",
+        text: "Tipo de Amortización.",
+        value: "modality_shortened",
         class: ["normal", "white--text"],
         align: "center",
         sortable: false,
@@ -508,7 +511,7 @@ export default {
       }
     },
     //Busca el tipo de Cobro que se realizará para el cobro
-    searchAmortizationType(item) {
+    /*searchAmortizationType(item) {
       let procedureAmortization_type = this.amortization_type.find((o) => o.id == item);
       if (procedureAmortization_type) {
         return procedureAmortization_type.name;
@@ -523,7 +526,7 @@ export default {
       } catch (e) {
         console.log(e);
       }
-    },
+    },*/
 
   },
 };

@@ -475,6 +475,31 @@
             </v-menu>
           </template>
 
+          <template v-slot:[`header.sub_modality_shortened_payment`]="{ header }">
+            {{ header.text }}<br>
+            <v-menu offset-y :close-on-content-click="false">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon small :color="searching.sub_modality_shortened_payment !='' ? 'red' : 'black'">
+                    mdi-filter
+                  </v-icon>
+                </v-btn>
+              </template>
+              <div>
+                <v-text-field
+                  dense
+                  v-model="searching.sub_modality_shortened_payment"
+                  type="text"
+                  :label="'Buscar ' + header.text"
+                  @keydown.enter="search()"
+                  hide-details
+                  single-line
+                ></v-text-field>
+
+              </div>
+            </v-menu>
+          </template>
+
           <template v-slot:[`header.state_loan`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
@@ -502,9 +527,12 @@
           
 
     <template v-slot:[`item.modality_payment`]="{ item }">
+    {{ item.modality_payment }}
+    </template>
+        <template v-slot:[`item.sub_modality_shortened_payment`]="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <span v-on="on">{{ item.modality_payment }}</span>
+          <span v-on="on">{{ item.sub_modality_shortened_payment }}</span>
         </template>
         <span>{{ item.sub_modality_payment }}</span>
       </v-tooltip>
@@ -629,6 +657,7 @@ data () {
           //guarantor_loan_affiliate: '',
           voucher_payment:'',
           modality_payment:'',
+          sub_modality_shortened_payment:'',
           amortization_type_payment:'',
           state_payment:''
         },
@@ -657,6 +686,7 @@ data () {
             //{ text: 'Garante?',value:'guarantor_loan_affiliate',class: ['normal', 'white--text','text-md-center'],width: '5%'},
               { text: 'Comprobante',value:'voucher_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
             { text: 'Modalida pago',value:'modality_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+            { text: 'Tpo de Amortización',value:'sub_modality_shortened_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
             { text: 'Tipo de pago',value:'amortization_type_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
             { text: 'Estado',value:'state_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
             //{ text: 'Estado',value:'state_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
@@ -759,7 +789,7 @@ data () {
 
     async excel() {
       await axios({
-        url: "/list_loan_generate",
+        url: "/list_loan_payments_generate",
         method: "GET",
         responseType: "blob", // important
         headers: { Accept: "application/vnd.ms-excel" },
@@ -785,6 +815,7 @@ data () {
                 guarantor_loan_affiliate: this.searching.guarantor_loan_affiliate,*/
           voucher_payment:this.searching.voucher_payment,
           modality_payment:this.searching.modality_payment,
+          sub_modality_shortened_payment: this.searching.sub_modality_shortened_payment,
           amortization_type_payment:this.searching.amortization_type_payment,
           state_payment:this.searching.state_payment,
           excel:true
@@ -827,6 +858,7 @@ data () {
       this.searching.guarantor_loan_affiliate= '',*/
       this.searching.voucher_payment='',
       this.searching.modality_payment='',
+      this.searching.sub_modality_shortened_payment='',
       this.searching.amortization_type_payment='',
       this.searching.state_payment='',
       this.search()

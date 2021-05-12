@@ -10,7 +10,7 @@
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>DATOS DEL CODEUDOR</v-toolbar-title>
+          <v-toolbar-title>DATOS DEL CODEUDOR NO AFILIADO</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="600px">
@@ -212,7 +212,7 @@
           </v-dialog>
         </v-toolbar>
       </template>
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" color="success" @click="editItem(item)">mdi-pencil</v-icon>
         <v-icon small color="error" @click="deleteItem(item)">mdi-delete</v-icon>
       </template>
