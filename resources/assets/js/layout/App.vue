@@ -1,6 +1,9 @@
 <template>
   <v-app>
-    <Navbar :expanded.sync="expandNavbar" v-if="$store.getters.user"/>
+    <!-- Si no hay un rol seleccionado, no se muestra el menu -->
+    <template v-if="rolePermissionSelected">
+      <Navbar :expanded.sync="expandNavbar" v-if="$store.getters.user"/>
+    </template>
     <Appbar :expanded.sync="expandNavbar" v-if="$store.getters.user"/>
     <v-content>
       <router-view></router-view>
@@ -11,6 +14,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Footer from '@/layout/Footer'
 import Navbar from '@/layout/Navbar'
 import Appbar from '@/layout/Appbar'
@@ -34,7 +38,10 @@ export default {
     }).catch(() => {
       this.$store.commit("setDate", this.$moment().format("YYYY-MM-DD"))
     })
-  }
+  },
+  computed: {
+    ...mapGetters(['rolePermissionSelected']),
+  },
 }
 </script>
 

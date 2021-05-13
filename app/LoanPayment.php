@@ -38,7 +38,7 @@ class LoanPayment extends Model
         'paid_by',
         'role_id',
         'affiliate_id',
-        //'amortization_type_id',
+        'loan_payment_date',
         'validated',
         'description',
         'user_id'

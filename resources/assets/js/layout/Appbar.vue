@@ -8,11 +8,13 @@
     dark
     :color="bar.color"
   >
-    <v-app-bar-nav-icon @click.stop="$emit('update:expanded', !expanded)"></v-app-bar-nav-icon>
+    <template v-if="rolePermissionSelected">
+      <v-app-bar-nav-icon @click.stop="$emit('update:expanded', !expanded)"></v-app-bar-nav-icon>
+    </template>
     <v-toolbar-title>{{ bar.text }}</v-toolbar-title>
     <v-spacer></v-spacer>
     <div width="300px">
-      <v-select
+      <!-- <v-select
         outlined
         hide-details
         v-model="rolePermissionSelected"
@@ -22,14 +24,27 @@
         item-text="display_name"
         return-object
         dense
-      ></v-select>
+      ></v-select> -->
+      <span class="text-caption font-weight-bold">{{ rolePermissionSelected ? rolePermissionSelected.display_name : '' }}</span>
+        <v-btn
+          v-on="on"
+          fab
+          dark
+          x-small
+          v-if="rolePermissionSelected!=null"
+          color="white"
+          outlined
+          class="mx-3"
+          @click="$router.push('/changeRol')">
+          <v-icon>mdi-keyboard-return</v-icon>
+        </v-btn>
     </div>
-    <!-- <span>{{ roles }}aaa</span> -->
     <LoggedUser/>
   </v-app-bar>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import LoggedUser from '@/layout/LoggedUser'
 
 export default {
@@ -46,12 +61,11 @@ export default {
   data() {
     return {
       rolesPermissionsItems: [],
-      rolePermissionSelected: null,
     }
   },
   async created() {
     await this.getRolePermissions()
-    this.setDefaultValues()
+    // this.setDefaultValues()
   },
   methods: {
     async getRolePermissions() {
@@ -82,6 +96,7 @@ export default {
     },
   },
   computed: {
+    ...mapGetters(['rolePermissionSelected']),
     bar() {
       if (process.env.NODE_ENV != 'production') {
         return {
@@ -95,19 +110,11 @@ export default {
         }
       }
     },
-    // roles() {
-    //   return this.$store.getters.roles
-    // },
+
   },
   watch: {
     'rolePermissionSelected.display_name'(val) {
       this.$store.commit('setRolePermissionSelected', this.rolePermissionSelected)
-      //volver a la ruta de inicio
-      /*if(this.$route.name != 'dashboardIndex'){
-        this.$router.push("dashboardIndex")
-      }else{
-        console.log("Esta en dashboardIndex")
-      }*/
     }
   }
 }

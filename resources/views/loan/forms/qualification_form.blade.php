@@ -42,7 +42,7 @@
                 <td>Tipo de Desembolso</td>
             </tr>
             <tr>
-                <td class="data-row py-5">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
+                <td class="data-row py-5">{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
                 <td class="data-row py-5">{{ $loan->loan_term }} <span class="capitalize">Meses</span></td>
                 <td class="data-row py-5">
                     @if($loan->payment_type->name=='Deposito Bancario')
@@ -221,19 +221,24 @@
             </table>
             <table class="table-info w-100 text-center uppercase my-20"> 
             <tr class="bg-grey-darker text-sm-1 text-white">
-            <td colspan="2" class="w-100">PROMEDIO DE LA BOLETA</td>
+            @php ($title_average = " ")
+            @if($loan->modality->loan_modality_parameter->quantity_ballots >1)
+                @php ($title_average = "PROMEDIO")
+            @endif
+                @php ($a = $title_average == "PROMEDIO" ? "DE LA":" ")
+            <td colspan="2" class="w-100">{{$title_average }} {{$a}} BOLETA</td>
             </tr>
             <tr >
-            <td class="w-50 text-left px-10">TOTAL PROMEDIO LÍQUIDO PAGABLE</td>
+            <td class="w-50 text-left px-10">TOTAL {{$title_average }} LÍQUIDO PAGABLE</td>
             <td class="w-50 text-left px-10">{{ $sum_prom_payable_liquid_calculated}} </td>
             </tr>
             <tr >
-            <td class="w-50 text-left px-10">TOTAL PROMEDIO BONOS</td>
+            <td class="w-50 text-left px-10">TOTAL {{$title_average }} BONOS</td>
             <td class="w-50 text-left px-10">{{ $sum_prom_bonus_calculated}}</td>
             </tr>
             <tr >
             <td class="w-50 text-left px-10">LÍQUIDO PARA CALIFICACIÓN</td>
-            <td class="w-50 text-left px-10">{{ $loan->liquid_qualification_calculated }}</td>
+            <td class="w-50 text-left px-10">{{ Util::money_format($loan->liquid_qualification_calculated) }}</td>      
             </tr>
         </table>
     </div>
@@ -273,7 +278,7 @@
             </tr>
             <tr  class="w-100">
             <td class="w-50 text-left px-10">CUOTA MENSUAL</td>
-            <td class="w-50 text-left px-10">{{ $loan->estimated_quota }}</td>
+            <td class="w-50 text-left px-10">{{ Util::money_format($loan->estimated_quota) }}</td>
             </tr>
             <tr  class="w-100">
             <td class="w-50 text-left px-10">ÍNDICE DE ENDEUDAMIENTO</td>
@@ -299,7 +304,7 @@
             </tr>
             <tr  class="w-100">
                 <td class="w-50 text-left px-10">LÍQUIDO PARA CALIFICACIÓN</td>
-                <td class="w-50 text-left px-10">{{ $guarantor->pivot->liquid_qualification_calculated }}</td> 
+                <td class="w-50 text-left px-10">{{ Util::money_format($guarantor->pivot->liquid_qualification_calculated) }}</td> 
             </tr>
             <tr  class="w-100">
                 <td class="w-50 text-left px-10">ÍNDICE DE ENDEUDAMIENTO</td>

@@ -9,7 +9,7 @@
             </v-toolbar>
           </v-card-title>
         <v-btn 
-          @click="excel()" 
+          @click="dowload_payments()" 
           color="success"  
           class="mb-2" 
           small>
@@ -51,7 +51,7 @@
                   v-model="searching.code_loan"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -59,7 +59,7 @@
             </v-menu>
           </template>
 
-                    <template v-slot:[`header.disbursement_date_loan`]="{ header }">
+          <template v-slot:[`header.disbursement_date_loan`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
@@ -75,7 +75,7 @@
                   v-model="searching.disbursement_date_loan"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -83,7 +83,7 @@
             </v-menu>
           </template>
 
-                    <template v-slot:[`header.state_type_affiliate`]="{ header }">
+          <template v-slot:[`header.state_type_affiliate`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
@@ -99,7 +99,7 @@
                   v-model="searching.state_type_affiliate"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -107,7 +107,7 @@
             </v-menu>
           </template>
 
-                    <template v-slot:[`header.code_payment`]="{ header }">
+          <template v-slot:[`header.code_payment`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
@@ -123,7 +123,7 @@
                   v-model="searching.code_payment"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -131,7 +131,7 @@
             </v-menu>
           </template>
 
-                    <template v-slot:[`header.estimated_quota_payment`]="{ header }">
+          <template v-slot:[`header.estimated_quota_payment`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
@@ -147,7 +147,7 @@
                   v-model="searching.estimated_quota_payment"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -171,7 +171,7 @@
                   v-model="searching.voucher_payment"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -195,7 +195,7 @@
                   v-model="searching.estimated_date_payment"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -219,7 +219,7 @@
                   v-model="searching.registration_affiliate"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -243,7 +243,7 @@
                   v-model="searching.identity_card_affiliate"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -267,7 +267,7 @@
                   v-model="searching.first_name_affiliate"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -291,7 +291,7 @@
                   v-model="searching.second_name_affiliate"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -315,7 +315,7 @@
                   v-model="searching.last_name_affiliate"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -339,7 +339,7 @@
                   v-model="searching.mothers_last_name_affiliate"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -365,7 +365,7 @@
                   v-model="searching.surname_husband_affiliate"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -373,12 +373,12 @@
             </v-menu>
           </template>
 
-           <template v-slot:[`header.amortization_type_payment`]="{ header }">
+           <template v-slot:[`header.name_voucher_type`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon small :color="searching.amortization_type_payment !='' ? 'red' : 'black'">
+                  <v-icon small :color="searching.name_voucher_type !='' ? 'red' : 'black'">
                     mdi-filter
                   </v-icon>
                 </v-btn>
@@ -386,20 +386,16 @@
               <div>
                 <v-text-field
                   dense
-                  v-model="searching.amortization_type_payment"
+                  v-model="searching.name_voucher_type"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
               </div>
             </v-menu>
           </template>
-
-
-
-
 
           <template v-slot:[`header.state_payment`]="{ header }">
             {{ header.text }}<br>
@@ -417,14 +413,13 @@
                   v-model="searching.state_payment"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
               </div>
             </v-menu>
           </template>
-
 
           <!--<template v-slot:[`header.balance_loan`]="{ header }">
             {{ header.text }}
@@ -442,7 +437,7 @@
                   v-model="searching.balance_loan"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
@@ -466,11 +461,10 @@
                   v-model="searching.modality_payment"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
-
               </div>
             </v-menu>
           </template>
@@ -491,11 +485,10 @@
                   v-model="searching.sub_modality_shortened_payment"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
-
               </div>
             </v-menu>
           </template>
@@ -516,42 +509,25 @@
                   v-model="searching.state_loan"
                   type="text"
                   :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
+                  @keydown.enter="search_payments()"
                   hide-details
                   single-line
                 ></v-text-field>
-
               </div>
             </v-menu>
           </template>
-          
 
-    <template v-slot:[`item.modality_payment`]="{ item }">
-    {{ item.modality_payment }}
-    </template>
-        <template v-slot:[`item.sub_modality_shortened_payment`]="{ item }">
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">{{ item.sub_modality_shortened_payment }}</span>
-        </template>
-        <span>{{ item.sub_modality_payment }}</span>
-      </v-tooltip>
-    </template>
-        <!--<template v-slot:[`item.guarantor_loan_affiliate`]="{ item }">
-      {{ item.guarantor_loan_affiliate? 'SI':'NO'}}
-    </template>
-        <template v-slot:[`item.amount_approved_loan`]="{ item }">
-      {{ item.amount_approved_loan | money}}
-    </template>
-    <template v-slot:[`item.balance_loan`]="{ item }">
-      {{ item.balance_loan | money}}
-    </template>
-        <template v-slot:[`item.quota_loan`]="{ item }">
-      {{ item.quota_loan | moneyString}}
-    </template>
-        <template v-slot:[`item.disbursement_date_loan`]="{ item }">
-      {{ item.disbursement_date_loan}}
-    </template>-->
+          <template v-slot:[`item.modality_payment`]="{ item }">
+          {{ item.modality_payment }}
+          </template>
+              <template v-slot:[`item.sub_modality_shortened_payment`]="{ item }">
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">{{ item.sub_modality_shortened_payment }}</span>
+              </template>
+              <span>{{ item.sub_modality_payment }}</span>
+            </v-tooltip>
+          </template>
 
           <template v-slot:[`item.actions`]="{ item }" >
             <v-tooltip bottom>
@@ -616,10 +592,8 @@
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
-              </v-menu>        
-           
+              </v-menu>
           </template>
-
         </v-data-table>
         </v-card>
       </v-form>
@@ -628,130 +602,117 @@
 </template>
 
 <script>
-  // Table info.
-  //import tableData from './sampleDataTable';
-  export default {
+
+export default {
+name: 'list-payment-generate',
 data () {
-      return {
-        searching:{
-          code_loan: '',
-          disbursement_date_loan:'',
-           state_type_affiliate: '',
-           code_payment:'',
-           estimated_quota_payment:'',
-           estimated_date_payment:'',
+  return {
+    searching:{
+      code_loan: '',
+      disbursement_date_loan:'',
+      state_type_affiliate: '',
+      code_payment:'',
+      estimated_quota_payment:'',
+      estimated_date_payment:'',
+      identity_card_affiliate: '',
+      registration_affiliate: '',
+      last_name_affiliate: '',
+      mothers_last_name_affiliate: '',
+      first_name_affiliate: '',
+      second_name_affiliate: '',
+      surname_husband_affiliate: '',
+      voucher_payment:'',
+      modality_payment:'',
+      sub_modality_shortened_payment:'',
+      name_voucher_type:'',
+      state_payment:''
+    },
 
-          identity_card_affiliate: '',
-          registration_affiliate: '',
-          last_name_affiliate: '',
-          mothers_last_name_affiliate: '',
-          first_name_affiliate: '',
-          second_name_affiliate: '',
-          surname_husband_affiliate: '',
-          //modality_loan: '',
-          //disbursement_date_loan: '',
-          //amount_approved_loan: '',
-         
-          //quota_loan: '',
-          //state_loan: '',
-          //guarantor_loan_affiliate: '',
-          voucher_payment:'',
-          modality_payment:'',
-          sub_modality_shortened_payment:'',
-          amortization_type_payment:'',
-          state_payment:''
-        },
+    headers: [
+      { text: 'Cód. Préstamo', value: 'code_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Fecha Desembolso',value:'disbursement_date_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Sector',value:'state_type_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Cód. Pago', value: 'code_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Fecha Pago', value: 'estimated_date_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Total Pagado', value: 'estimated_quota_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'CI', value: 'identity_card_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Matricula', value: 'registration_affiliate' ,input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: '1er Nombre', value: 'first_name_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: '2do Nombre', value: 'second_name_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Ap. Paterno', value: 'last_name_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Ap. Materno',value:'mothers_last_name_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Ap. Casada',value:'surname_husband_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Comprobante',value:'voucher_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Modalida pago',value:'modality_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Tpo de Amortización',value:'sub_modality_shortened_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Tipo de pago',value:'name_voucher_type',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Estado',value:'state_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Accion',value:'actions',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'], sortable: false,width: '10%'},
+    ],
 
-          headers: [
-            { text: 'Cód. Préstamo', value: 'code_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Fecha Desembolso',value:'disbursement_date_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Sector',value:'state_type_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-             { text: 'Cód. Pago', value: 'code_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-             { text: 'Fecha Pago', value: 'estimated_date_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-             { text: 'Total Pagado', value: 'estimated_quota_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'CI', value: 'identity_card_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Matricula', value: 'registration_affiliate' ,input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: '1er Nombre', value: 'first_name_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: '2do Nombre', value: 'second_name_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Ap. Paterno', value: 'last_name_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Ap. Materno',value:'mothers_last_name_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Ap. Casada',value:'surname_husband_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            //{ text: 'Modalidad',value:'modality_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            //{ text: 'Submodalidad',value:'sub_modality_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text']},
-            
-            //{ text: 'Monto Desembolsado',value:'amount_approved_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            //{ text: 'Saldo Capital',value:'balance_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            //{ text: 'Cuota',value:'quota_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            
-            //{ text: 'Garante?',value:'guarantor_loan_affiliate',class: ['normal', 'white--text','text-md-center'],width: '5%'},
-              { text: 'Comprobante',value:'voucher_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Modalida pago',value:'modality_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Tpo de Amortización',value:'sub_modality_shortened_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Tipo de pago',value:'amortization_type_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Estado',value:'state_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            //{ text: 'Estado',value:'state_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-            { text: 'Accion',value:'actions',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'], sortable: false,width: '10%'},
-        ],
-        items: [
-        {
-          name: "SI",
-          value: 'TRUE',
-        },
-        {
-          name: "NO",
-          value: 'FALSE',
-        },
-        {
-          name: "TODOS",
-          value: '',
-        },
-      ],
-        loans: [],
-         printDocs: [],
-             options: {
+    items: [
+      {
+        name: "SI",
+        value: 'TRUE',
+      },
+      {
+        name: "NO",
+        value: 'FALSE',
+      },
+      {
+        name: "TODOS",
+        value: '',
+      },
+    ],
+    loans: [],
+    printDocs: [],
+    options: {
       page: 1,
       itemsPerPage: 5,
       sortBy: ["code_loan"],
       sortDesc: [false],
     },
-    totalAffiliates :0
-      }
-    },
-   computed: {
-           //permisos del selector global por rol
+    totalAffiliates :0,
+    excel: false
+  }
+},
+  
+  computed: {
+    //permisos del selector global por rol
     permissionSimpleSelected () {
       return this.$store.getters.permissionSimpleSelected
     },
   },
-    watch: {
+    
+  watch: {
     options: function (newVal, oldVal) {
       if (
         newVal.page != oldVal.page ||
         newVal.itemsPerPage != oldVal.itemsPerPage ||
         newVal.sortBy != oldVal.sortBy ||
-        newVal.sortDesc != oldVal.sortDesc
-      ) {
-         this.search()
+        newVal.sortDesc != oldVal.sortDesc){
+
+        this.search_payments()
       }
     },
 
   },
-      mounted()
-    {//this.docsLoans()
-        this.search();
-         this.docsLoans()
+    mounted(){
+      this.search_payments();
+      this.docsLoans()
     },
+
    methods: {
-    async search(){
+    async search_payments(){
         try {
             let res = await axios.get(`list_loan_payments_generate`,{
               params:{
                 code_loan: this.searching.code_loan,
                 disbursement_date_loan: this.searching.disbursement_date_loan,
                 state_type_affiliate: this.searching.state_type_affiliate,
-           code_payment: this.searching.code_payment,
-           estimated_quota_payment:this.searching.estimated_quota_payment,
-           estimated_date_payment:this.searching.estimated_date_payment,
+                code_payment: this.searching.code_payment,
+                estimated_quota_payment:this.searching.estimated_quota_payment,
+                estimated_date_payment:this.searching.estimated_date_payment,
                 identity_card_affiliate: this.searching.identity_card_affiliate,
                 registration_affiliate: this.searching.registration_affiliateF,
                 last_name_affiliate: this.searching.last_name_affiliate,
@@ -759,35 +720,29 @@ data () {
                 first_name_affiliate: this.searching.first_name_affiliate,
                 second_name_affiliate: this.searching.second_name_affiliate,
                 surname_husband_affiliate: this.searching.surname_husband_affiliate,
-                /*modality_loan: this.searching.modality_loan,                
-                amount_approved_loan: this.searching.amount_approved_loan,                
-                quota_loan: this.searching.quota_loan,
-                state_loan: this.searching.state_loan,
-                guarantor_loan_affiliate: this.searching.guarantor_loan_affiliate,*/
-          voucher_payment:this.searching.voucher_payment,
-          modality_payment:this.searching.modality_payment,
-          amortization_type_payment:this.searching.amortization_type_payment,
-          state_payment:this.searching.state_payment,
-              excel:false,
-            page: this.options.page,
-            per_page: this.options.itemsPerPage,
-            sortBy: this.options.sortBy,
-            sortDesc: this.options.sortDesc,
+                voucher_payment:this.searching.voucher_payment,
+                modality_payment:this.searching.modality_payment,
+                name_voucher_type:this.searching.name_voucher_type,
+                state_payment:this.searching.state_payment,
+                excel: false,
+                page: this.options.page,
+                per_page: this.options.itemsPerPage,
+                sortBy: this.options.sortBy,
+                sortDesc: this.options.sortDesc,
               }
             })
             this.loans = res.data.data
-
-        this.totalAffiliates = res.data.total
-        delete res.data['data']
-        this.options.page = res.data.current_page
-        this.options.itemsPerPage = parseInt(res.data.per_page)
-        this.options.totalItems = res.data.total
+            this.totalAffiliates = res.data.total
+            delete res.data['data']
+            this.options.page = res.data.current_page
+            this.options.itemsPerPage = parseInt(res.data.per_page)
+            this.options.totalItems = res.data.total
         } catch (e) {
             console.log(e)
         }
     },
 
-    async excel() {
+      async dowload_payments() {
       await axios({
         url: "/list_loan_payments_generate",
         method: "GET",
@@ -795,28 +750,23 @@ data () {
         headers: { Accept: "application/vnd.ms-excel" },
         data: this.datos,
         params:{
-                code_loan: this.searching.code_loan,
-                disbursement_date_loan: this.searching.disbursement_date_loan,
-                state_type_affiliate: this.searching.state_type_affiliate,
-           code_payment: this.searching.code_payment,
-           estimated_quota_payment:this.searching.estimated_quota_payment,
-           estimated_date_payment:this.searching.estimated_date_payment,
-                identity_card_affiliate: this.searching.identity_card_affiliate,
-                registration_affiliate: this.searching.registration_affiliateF,
-                last_name_affiliate: this.searching.last_name_affiliate,
-                mothers_last_name_affiliate: this.searching.mothers_last_name_affiliate,
-                first_name_affiliate: this.searching.first_name_affiliate,
-                second_name_affiliate: this.searching.second_name_affiliate,
-                surname_husband_affiliate: this.searching.surname_husband_affiliate,
-                /*modality_loan: this.searching.modality_loan,                
-                amount_approved_loan: this.searching.amount_approved_loan,                
-                quota_loan: this.searching.quota_loan,
-                state_loan: this.searching.state_loan,
-                guarantor_loan_affiliate: this.searching.guarantor_loan_affiliate,*/
+          code_loan: this.searching.code_loan,
+          disbursement_date_loan: this.searching.disbursement_date_loan,
+          state_type_affiliate: this.searching.state_type_affiliate,
+          code_payment: this.searching.code_payment,
+          estimated_quota_payment:this.searching.estimated_quota_payment,
+          estimated_date_payment:this.searching.estimated_date_payment,
+          identity_card_affiliate: this.searching.identity_card_affiliate,
+          registration_affiliate: this.searching.registration_affiliateF,
+          last_name_affiliate: this.searching.last_name_affiliate,
+          mothers_last_name_affiliate: this.searching.mothers_last_name_affiliate,
+          first_name_affiliate: this.searching.first_name_affiliate,
+          second_name_affiliate: this.searching.second_name_affiliate,
+          surname_husband_affiliate: this.searching.surname_husband_affiliate,
           voucher_payment:this.searching.voucher_payment,
           modality_payment:this.searching.modality_payment,
           sub_modality_shortened_payment: this.searching.sub_modality_shortened_payment,
-          amortization_type_payment:this.searching.amortization_type_payment,
+          name_voucher_type:this.searching.name_voucher_type,
           state_payment:this.searching.state_payment,
           excel:true
         }
@@ -826,7 +776,7 @@ data () {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "ReportePrestamo.xlsx");
+          link.setAttribute("download", "ReportePrestamos.xlsx");
           document.body.appendChild(link);
           link.click();
         })
@@ -834,7 +784,6 @@ data () {
           console.log(error);
         });
     },
-
     clearAll(){
       this.searching.code_loan= '',
       this.searching.disbursement_date_loan= '',
@@ -849,19 +798,12 @@ data () {
       this.searching.first_name_affiliate= '',
       this.searching.second_name_affiliate= '',
       this.searching.surname_husband_affiliate= '',
-      /*this.searching.modality_loan= '',
-  
-      this.searching.amount_approved_loan= '',
-
-      this.searching.quota_loan= '',
-      this.searching.state_loan= '',
-      this.searching.guarantor_loan_affiliate= '',*/
       this.searching.voucher_payment='',
       this.searching.modality_payment='',
       this.searching.sub_modality_shortened_payment='',
-      this.searching.amortization_type_payment='',
+      this.searching.name_voucher_type='',
       this.searching.state_payment='',
-      this.search()
+      this.search_payments()
     },
     
       async imprimir(id, item)
@@ -880,11 +822,11 @@ data () {
             type: res.data.type,
             documentTitle: res.data.file_name,
             base64: true
-        })  
+        })
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)
-      }      
+      }
     },
     docsLoans(){
       let docs = [];

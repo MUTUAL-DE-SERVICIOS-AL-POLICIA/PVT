@@ -17,6 +17,7 @@ import LoanPaymentIndex from '@/components/payment/Index'
 import ImportExport from '@/components/payment/ImportExport'
 import ListLoanGenerate from '@/components/payment/ListLoanGenerate'
 import ListPaymentGenerate from '@/components/payment/ListPaymentGenerate'
+import ChangeRol from '@/components/dashboard/ChangeRol'
 
 export const routes = [
   {
@@ -41,8 +42,16 @@ export const routes = [
   }, {
     path: '*',
     redirect: {
-      name: 'dashboardIndex'
+      name: 'changeRol'
     },
+    meta: {
+      requiresAuth: true
+    }
+  }, 
+  {
+    path: '/changeRol',
+    name: 'changeRol',
+    component: ChangeRol,
     meta: {
       requiresAuth: true
     }

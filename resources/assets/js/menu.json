@@ -20,7 +20,7 @@
     "href": "listLoanGenerate",
     "title": "Préstamos",
     "icon": "mdi-cash-multiple",
-    "permissions": "show-loan",
+    "permission": "show-loan",
     "params": {}
   },{
     "title": "Cobros",
@@ -31,21 +31,21 @@
         "href": "loanPaymentIndex",
         "title": "Bandeja Cobros",
         "icon": "mdi-tray-full",
-        "permissions": "show-payment-loan",
+        "permission": "show-payment-loan",
         "params": {}
       },
       {
         "href": "listPaymentGenerate",
         "title": "Amortizaciones",
         "icon": "mdi-account-cash",
-        "permissions": "show-payment-loan",
+        "permission": "show-list-payments-generated",
         "params": {}
       },
       {
         "href": "ImportExport",
         "title": "Imp./Exp.",
         "icon": "mdi-file-move",
-        "permissions": "show-payment-loan",
+        "permission": "show-payment-loan",
         "params": {}
       }
     ]

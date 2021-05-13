@@ -68,7 +68,7 @@
                 <td class="data-row py-5">{{ Util::money_format($loan_payment->previous_balance) }}</td> 
                 <td class="data-row w-10">{{ Util::money_format($loan_payment->previous_balance-$loan_payment->capital_payment) }}</td>
                 <td class="data-row py-5">{{ Carbon::parse($loan_payment->estimated_date)->format('d/m/y') }}</td>
-                <td class="data-row py-5">{{ Carbon::parse($loan_payment->updated_at)->format('d/m/y') }}</td>
+                <td class="data-row py-5">{{$loan_payment->loan_payment_date? Carbon::parse($loan_payment->loan_payment_date)->format('d/m/Y H:i:s A'): ''}}</td>
                 <td>{{ Util::money_format($loan->payments->first()->penal_accumulated) }}</td>
                 <td>{{ Util::money_format($loan->payments->first()->interest_accumulated) }}</td>
             </tr>

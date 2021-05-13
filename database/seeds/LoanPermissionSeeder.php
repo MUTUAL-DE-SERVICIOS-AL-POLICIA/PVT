@@ -118,6 +118,12 @@ class LoanPermissionSeeder extends Seeder
             ],[
                 'name' => 'change-disbursement-date',
                 'display_name' => 'Cambiar la fecha de desembolso'
+            ],[
+                'name' => 'show-list-loans-generated',
+                'display_name' => 'Ver generador de reporte de prestamos'
+            ],[
+                'name' => 'show-list-payments-generated',
+                'display_name' => 'Ver generador de reporte de cobros'
             ]
         ];
         foreach ($permissions as $permission) {

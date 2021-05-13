@@ -7,10 +7,10 @@ Route::group([
     // Rutas abiertas
     Route::get('config', 'Api\V1\ConfigController');
     Route::apiResource('auth', 'Api\V1\AuthController')->only('store');
-    Route::get('excel', 'Api\V1\LoanPaymentController@download');
-    Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
+    //Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
     //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
     Route::get('loans_delay', 'Api\V1\LoanPaymentController@loans_delay');
+    //Route::get('excel', 'Api\V1\LoanPaymentController@download');
     //sismu
     //Route::get('prueba', 'Api\V1\AffiliateController@get_mixed_guarantees');
     Route::patch('edit_loan/{loan}/qualification', 'Api\V1\LoanController@edit_amounts_loan_term');
@@ -196,6 +196,8 @@ Route::group([
             Route::patch('loan_payment/{id}/reactivate','Api\V1\LoanPaymentController@reactivate');
             Route::get('loan_payment/{loan_payment}/flow','Api\V1\LoanPaymentController@get_flow');
             Route::get('kardex_loan_payment','Api\V1\LoanPaymentController@indexKardex');
+            Route::post('payments_per_period','Api\V1\LoanPaymentController@payments_per_period');
+            Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@download');
         });
         Route::group([
             'middleware' => 'permission:create-payment-loan'

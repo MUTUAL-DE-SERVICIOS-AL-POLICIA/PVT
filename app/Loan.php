@@ -359,7 +359,7 @@ class Loan extends Model
                 $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
             else
                 $date_pay = $date_ini->addMonth()->endOfMonth()->format('Y-m-d');
-            if(!$this->last_payment_validated && CarbonImmutable::parse($quota->estimated_date)->format('Y-m-d') < CarbonImmutable::parse($date_pay)->format('Y-m-d') && CarbonImmutable::parse($quota->estimated_date) != CarbonImmutable::parse($this->disbursement_date)){
+            if(!$this->last_payment_validated && CarbonImmutable::parse($quota->estimated_date)->format('Y-m-d') < CarbonImmutable::parse($date_pay)->format('Y-m-d') && CarbonImmutable::parse($quota->estimated_date)->format('Y-m-d') != CarbonImmutable::parse($this->disbursement_date)->format('Y-m-d')){
                 $quota->paid_days->current +=1;
                 $quota->estimated_days->current +=1;
                 $quota->paid_days->current_generated = Util::round2(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));

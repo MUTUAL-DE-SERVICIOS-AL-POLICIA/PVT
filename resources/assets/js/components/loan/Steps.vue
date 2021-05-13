@@ -941,7 +941,7 @@ export default {
                           {
                             this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
                           }else{
-                            if( parseFloat(this.data_loan_parent_aux.estimated_quota) >= parseFloat(this.calculator_result.quota_calculated_estimated_total)){
+                            if( parseFloat(this.data_loan_parent_aux.estimated_quota) <= parseFloat(this.calculator_result.quota_calculated_estimated_total)){
                               this.addDataLoan()
                               this.nextStep(2)
                             }else{

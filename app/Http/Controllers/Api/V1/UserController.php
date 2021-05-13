@@ -232,18 +232,18 @@ class UserController extends Controller
     * @authenticated
     * @responseFile responses/user/get_roles_permission.200.json
     */
-    public function role_permision($module_id)
-    {  
-      $user =  Auth::user();
-      $roles = $user->roles->where('module_id',$module_id);
-      $items = [];  
-        foreach($roles as $role){
-            array_push($items,$role->permissions);    
-        }
-      $role_permission = [];
-        foreach($roles as $role){
-            array_push($role_permission,$role); 
-        }
-        return $role_permission; 
-    }  
+    public function role_permision(Request $module_id)
+    {
+        $user =  Auth::user();
+        $roles = $user->roles;
+        $items = [];
+          foreach($roles as $role){
+              array_push($items,$role->module,$role->permissions);
+          }
+        $role_permission = [];
+          foreach($roles as $role){
+              array_push($role_permission,$role);
+          }
+          return $role_permission;
+      }  
 }

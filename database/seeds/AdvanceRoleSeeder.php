@@ -29,6 +29,7 @@ class AdvanceRoleSeeder extends Seeder
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address', 'update-loan','show-history-loan'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan','update-values-commercial-rescue'];
         $executive_permissions = ['update-setting'];
+        $reports_permissions = ['show-list-loans-generated'];
         $permissions_primary = ['update-affiliate-primary'];
         $file = ['show-all-loan','show-loan','update-loan','show-affiliate','show-history-loan'];
         $accounting = ['show-all-loan','show-loan','update-loan','update-accounting-voucher'];
@@ -36,7 +37,7 @@ class AdvanceRoleSeeder extends Seeder
         $collection_court = ['show-all-loan','show-loan','update-loan','update-refinancing-balance','show-history-loan'];
         $pay_permissions_treasury = ['show-affiliate','show-loan','show-all-loan','print-payment-kardex-loan','print-payment-loan','print-payment-plan','delete-payment-loan','update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
         $treasury_permissions = ['print-payment-plan', 'print-payment-kardex-loan', 'show-loan','disbursement-loan','delete-payment', 'update-loan'];
-        $loan_collection = ['show-all-loan', 'show-loan', 'show-affiliate', 'print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan','update-loan'];
+        $loan_collection = ['show-all-loan', 'show-loan', 'show-affiliate', 'print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan','update-loan','show-list-payments-generated'];
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
         $legal_permissions = ['registration-delivery-return-contracts','update-documents-requirements', 'print-contract-loan'];
         $calification_permissions = ['update-loan-calculations','print-qualification-form','update-reference-cosigner'];
@@ -112,26 +113,26 @@ class AdvanceRoleSeeder extends Seeder
                     'module_id' => $module->id,
                 ]);
                 if (in_array($role['display_name'], ['Jefatura'])) {
-                    $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $permissions_primary));
+                    $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $permissions_primary,$reports_permissions));
                 } elseif (in_array($role['display_name'], ['Aprobación Dirección', 'Revisión Dirección'])) {
-                    $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $executive_permissions, $permissions_primary));
+                    $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $executive_permissions, $permissions_primary,$reports_permissions));
                 } elseif (in_array($role['display_name'], ['Presupuesto'])) {
-                    $role->syncPermissions(array_merge($budget));
+                    $role->syncPermissions(array_merge($budget,$reports_permissions));
                 } elseif (in_array($role['display_name'], ['Contabilidad'])) {
-                    $role->syncPermissions(array_merge($sequence_permissions));
+                    $role->syncPermissions(array_merge($sequence_permissions,$reports_permissions));
                 } elseif (in_array($role['display_name'], ['Cobranzas Corte'])) {
-                    $role->syncPermissions(array_merge($collection_court));
+                    $role->syncPermissions(array_merge($collection_court,$reports_permissions));
                 } elseif (in_array($role['display_name'], ['Tesorería'])) {
-                    $role->syncPermissions(array_merge($treasury_permissions));
+                    $role->syncPermissions(array_merge($treasury_permissions,$reports_permissions));
                 }elseif (in_array($role['display_name'], ['Revisión Legal','Aprobación Legal'])) {
-                    $role->syncPermissions(array_merge($sequence_permissions,$legal_permissions));
+                    $role->syncPermissions(array_merge($sequence_permissions,$legal_permissions,$reports_permissions));
                 }elseif (in_array($role['display_name'], ['Calificación'])) {
-                    $role->syncPermissions(array_merge($sequence_permissions,$calification_permissions));
+                    $role->syncPermissions(array_merge($sequence_permissions,$calification_permissions,$reports_permissions));
                 }elseif (in_array($role['display_name'], ['Archivo'])) {
-                    $role->syncPermissions(array_merge($file));
+                    $role->syncPermissions(array_merge($file,$reports_permissions));
                 }
                 else {
-                    $role->syncPermissions($sequence_permissions);
+                    $role->syncPermissions($sequence_permissions,$reports_permissions);
                 }
             }
 

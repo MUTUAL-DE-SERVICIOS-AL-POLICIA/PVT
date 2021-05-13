@@ -33,13 +33,13 @@ class ProcedureAmortizationSeeder extends Seeder
                 ],
                 'amortizacion automatica' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Automática','second_name'=>'Amort. AUT'],
-                    'modalities' => [ ['name'=>'Descuento Comando General de la Policia Boliviana','shortened'=>'DES-COMANDO','requirements'=>[]],
+                    'modalities' => [ ['name'=>'Descuento Comando General de la Policía Boliviana','shortened'=>'DES-COMANDO','requirements'=>[]],
                                     ['name'=>'Descuento Servicio Nacional del Sistema de Reparto','shortened'=>'DES-SENASIR','requirements'=>[]],
                     ]
                 ],
                 'amortizacion por ajuste' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización por Ajuste','second_name'=>'Amort. AJUST'],
-                    'modalities' => [ ['name'=>'Descuento Indebido','shortened'=>'DES-INDEBIDO','requirements'=>[]],
+                    'modalities' => [['name'=>'Ajuste Contable','shortened'=>'AJUSTE-CONT','requirements'=>[]],
                                     ['name'=>'Refinanciamiento de Préstamo','shortened'=>'REFINANCIAMIENTO','requirements'=>[]]
                     ]
                 ],

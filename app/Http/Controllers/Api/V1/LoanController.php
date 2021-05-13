@@ -65,7 +65,7 @@ class LoanController extends Controller
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
         $loan->data_loan = $loan->data_loan;
-        //$loan->user = $loan->records_user;
+        $loan->user = $loan->user;
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
         $loan->modality=$loan->modality->procedure_type;
