@@ -12,44 +12,38 @@
     "params": {}
   }, {
     "href": "flowIndex",
-    "title": "Bandeja",
+    "title": "Bandeja préstamos",
     "icon": "mdi-tray-full",
     "permission": "show-loan",
     "params": {}
   }, {
     "href": "listLoanGenerate",
-    "title": "Préstamos",
-    "icon": "mdi-cash-multiple",
+    "title": "Reporte préstamos",
+    "icon": "mdi-view-list",
     "permission": "show-loan",
     "params": {}
-  },{
-    "title": "Cobros",
-    "icon": "mdi-cash-register",
+  },
+  {
+    "href": "loanPaymentIndex",
+    "title": "Bandeja cobros",
+    "icon": "mdi-tray-full",
     "permission": "show-payment-loan",
-    "group": [
-      {
-        "href": "loanPaymentIndex",
-        "title": "Bandeja Cobros",
-        "icon": "mdi-tray-full",
-        "permission": "show-payment-loan",
-        "params": {}
-      },
-      {
-        "href": "listPaymentGenerate",
-        "title": "Amortizaciones",
-        "icon": "mdi-account-cash",
-        "permission": "show-list-payments-generated",
-        "params": {}
-      },
-      {
-        "href": "ImportExport",
-        "title": "Imp./Exp.",
-        "icon": "mdi-file-move",
-        "permission": "show-payment-loan",
-        "params": {}
-      }
-    ]
-  }, 
+    "params": {}
+  },
+  {
+    "href": "listPaymentGenerate",
+    "title": "Reporte amortizaciones",
+    "icon": "mdi-view-list-outline",
+    "permission": "show-list-payments-generated",
+    "params": {}
+  },
+  {
+    "href": "ImportExport",
+    "title": "Imp./Exp.",
+    "icon": "mdi-file-import-outline",
+    "permission": "show-payment-loan",
+    "params": {}
+  },
   {
     "title": "Acceso",
     "icon": "mdi-key",

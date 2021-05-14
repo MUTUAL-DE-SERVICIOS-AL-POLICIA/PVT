@@ -20,7 +20,7 @@
           v-if="!item.group && checkPermission(item)"
         >
           <v-list-item-icon class="ml-0 mr-2">
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon color='primary'>{{ item.icon }}</v-icon>
           </v-list-item-icon>
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>

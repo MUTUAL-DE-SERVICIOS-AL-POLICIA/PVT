@@ -8,26 +8,38 @@
               <v-toolbar-title>Amortizaciones</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
-        <v-btn 
-          @click="dowload_payments()" 
-          color="success"  
-          class="mb-2" 
-          small>
-            <v-icon>
-                mdi-file-excel
-            </v-icon>
-            DESCARGAR
-        </v-btn>
-        <v-btn 
-          @click="clearAll()" 
-          color="light-blue lighten-3"  
-          class="mb-2" 
-          small>
-            <v-icon>
-                mdi-filter-off
-            </v-icon>
-            LIMPIAR
-        </v-btn>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn 
+              fab
+              v-on="on"
+              @click="dowload_payments()" 
+              color="success"  
+              class="mb-2" 
+              small>
+                <v-icon>
+                    mdi-file-excel
+                </v-icon>
+            </v-btn>
+          </template>
+          <span class="caption">Descargar reporte</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                v-on="on"
+                @click="clearAll()" 
+                color="light-blue lighten-3"  
+                class="mb-2" 
+                small>
+                  <v-icon>
+                      mdi-format-clear
+                  </v-icon>
+              </v-btn>
+          </template>
+          <span class="caption">Limpiar todos los filtros</span>
+        </v-tooltip> 
         <v-data-table
           :headers="headers"
           :items="loans"
@@ -776,7 +788,7 @@ data () {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
           link.href = url;
-          link.setAttribute("download", "ReportePrestamos.xlsx");
+          link.setAttribute("download", "ReporteAmortizaciones.xlsx");
           document.body.appendChild(link);
           link.click();
         })

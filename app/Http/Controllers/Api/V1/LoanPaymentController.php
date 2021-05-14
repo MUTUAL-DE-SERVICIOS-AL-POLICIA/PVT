@@ -26,6 +26,7 @@ use DB;
 use App\Helpers\Util;
 use App\Http\Controllers\Api\V1\LoanController;
 use App\Exports\ArchivoPrimarioExport;
+use App\Exports\FileWithMultipleSheets;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Loan;
 use App\Role;
@@ -600,24 +601,61 @@ class LoanPaymentController extends Controller
         }
         else{
             $this->command_senasir_save_payment($request->estimated_date);
-            $data=array(
-                array("Nro", "Codigo", "Cuota Estimada", "Numero de Cuota", "Pago Penal", "Fecha estimada" )
+            $command_sheet=array(
+                array("Fecha de desembolso", "numero", "Tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota", "Descuento", "Ciudad", "Interes")
             );
-            $pay = LoanPayment::where('estimated_date',$request->estimated_date)->get();
-            foreach ($pay as $row){
+            $command_id = ProcedureModality::where('shortened', 'DES-COMANDO')->first();
+            $command = LoanPayment::where('estimated_date',$request->estimated_date)->where('procedure_modality_id', $command_id->id)->get();
+            foreach ($command as $row){
                 if($row->loan->state->name == 'Vigente'){
-                    array_push($data, array(
-                        $row->id,
-                        $row->loan_id,
+                    array_push($command_sheet, array(
+                        $row->loan->disbursement_date,
+                        $row->loan->code,
+                        $row->affiliate->affiliate_state->name,
+                        $row->affiliate->registration,
+                        $row->affiliate->registration,//verificar
+                        $row->affiliate->identity_card,
+                        $row->affiliate->city_identity_card->first_shortened,
+                        $row->affiliate->first_name,
+                        $row->affiliate->second_name,
+                        $row->affiliate->last_name,
+                        $row->affiliate->mothers_last_name,
+                        $row->previous_balance,
                         $row->estimated_quota,
-                        $row->quota_number,
-                        $row->penal_payment,
-                        $row->estimated_date,
-                        $row->modality->shortened,
+                        $row->estimated_quota,
+                        $row->loan->city->name,
+                        $row->loan->interest->annual_interest,
                     ));
                 }
             }
-            $export = new ArchivoPrimarioExport($data);
+            $senasir_sheet=array(
+                array("Fecha de desembolso", "numero", "Tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota", "Descuento", "Ciudad", "Interes")
+            );
+            $senasir_id = ProcedureModality::where('shortened', 'DES-SENASIR')->first();
+            $senasir = LoanPayment::where('estimated_date',$request->estimated_date)->where('procedure_modality_id', $senasir_id->id)->get();
+            foreach ($senasir as $row){
+                if($row->loan->state->name == 'Vigente'){
+                    array_push($command_sheet, array(
+                        $row->loan->disbursement_date,
+                        $row->loan->code,
+                        $row->affiliate->affiliate_state->name,
+                        $row->affiliate->registration,
+                        $row->affiliate->registration,//verificar
+                        $row->affiliate->identity_card,
+                        $row->affiliate->city_identity_card->first_shortened,
+                        $row->affiliate->first_name,
+                        $row->affiliate->second_name,
+                        $row->affiliate->last_name,
+                        $row->affiliate->mothers_last_name,
+                        $row->previous_balance,
+                        $row->estimated_quota,
+                        $row->estimated_quota,
+                        $row->loan->city->name,
+                        $row->loan->interest->annual_interest,
+                    ));
+                }
+            }
+            $export = new FileWithMultipleSheets($command_sheet, $senasir_sheet, $command_sheet, $senasir_sheet);
             Excel::store($export, $file_name.$extension, 'public');
             return $file = Storage::disk('public')->download($file_name.$extension);
         }
@@ -1190,6 +1228,8 @@ class LoanPaymentController extends Controller
 
     $registration_spouse = request('registration_spouse') ?? '';
     $payment_by = request('payment_by') ?? '';
+
+    $loan_payment_date = request('loan_payment_date') ?? '';
     //$amortization_type_payment = request('amortization_type_payment') ?? '';
 
       if ($id_loan != '') {//1
@@ -1280,6 +1320,9 @@ class LoanPaymentController extends Controller
       if ($payment_by != '') {
         array_push($conditions, array('loan_payments.paid_by', 'ilike', "%{$payment_by}%"));
       }
+      if ($loan_payment_date != '') {
+        array_push($conditions, array('loan_payments.loan_payment_date', 'ilike', "%{$loan_payment_date}%"));
+      }
       
  
       if($excel==true){
@@ -1301,7 +1344,8 @@ class LoanPaymentController extends Controller
                 ->where($conditions)
                 ->select('loans.id as id_loan','loans.code as code_loan','loans.disbursement_date as disbursement_date_loan','affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate',
                 'affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate','affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.estimated_quota as estimated_quota_payment','loan_payments.voucher as voucher_payment',
+                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.loan_payment_date as loan_payment_date',
+                'loan_payments.estimated_quota as estimated_quota_payment','loan_payments.voucher as voucher_payment',
                 'procedure_modalities.name as sub_modality_payment','procedure_modalities.shortened as sub_modality_shortened_payment','procedure_types.name as modality_payment','loan_payment_states.name as state_payment','voucher_types.name as name_voucher_type','spouses.registration as registration_spouse',
                 'loan_payments.paid_by as payment_by','loan_payments.capital_payment as capital_payment','loan_payments.interest_payment as interest_payment','loan_payments.penal_payment as penal_payment','loan_payments.interest_remaining as interest_current_pending','loan_payments.penal_remaining as interest_penal_pending','loan_payments.estimated_quota as estimated_quota_payment',
                 'loan_payments.previous_balance as previous_balance',DB::raw("(loan_payments.previous_balance - loan_payments.capital_payment) as current_balance"))
@@ -1312,7 +1356,7 @@ class LoanPaymentController extends Controller
                $data=array(
                    array("Id del préstamo", "Código préstamo", "Fecha desembolso préstamo","estado del afiliado","Tipo de estado del afiliado","ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada",
                    "Entidad de pensión del afiliado","Código pago","fecha de pago","Total pagado","Nro comprobante","Modalidad pago","Modalidad pago nombre","Tipo amortización","Estado del pago","Tipo de voucher","Matrícula esposa",
-                   "Pagado por","Capital pagado","Interés corriente pagado","Interés penal pagado","Interés corriente pendiente","Interés penal pendiente","Total pagado","Saldo anterior","Saldo actual")
+                   "Pagado por","Capital pagado","Interés corriente pagado","Interés penal pagado","Interés corriente pendiente","Interés penal pendiente","Total pagado","Saldo anterior","Saldo actual","fecha y hora de cobro")
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
@@ -1340,7 +1384,7 @@ class LoanPaymentController extends Controller
                        $row->state_payment,
                        $row->name_voucher_type,
                        $row->registration_spouse,$row->payment_by,$row->capital_payment,$row->interest_payment,$row->penal_payment,
-                       $row->interest_current_pending,$row->interest_penal_pending,$row->estimated_quota_payment,$row->previous_balance,$row->current_balance
+                       $row->interest_current_pending,$row->interest_penal_pending,$row->estimated_quota_payment,$row->previous_balance,$row->current_balance,$row->loan_payment_date
 
                    ));
                }
@@ -1366,7 +1410,8 @@ class LoanPaymentController extends Controller
                 ->where($conditions)
                 ->select('loans.id as id_loan','loans.code as code_loan','loans.disbursement_date as disbursement_date_loan','affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate',
                 'affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate','affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.voucher as voucher_payment',
+                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.loan_payment_date as loan_payment_date',
+                'loan_payments.voucher as voucher_payment',
                 'procedure_modalities.name as sub_modality_payment','procedure_modalities.shortened as sub_modality_shortened_payment','procedure_types.name as modality_payment','loan_payment_states.name as state_payment','voucher_types.name as name_voucher_type','spouses.registration as registration_spouse',
                 'loan_payments.paid_by as payment_by','loan_payments.capital_payment as capital_payment','loan_payments.interest_payment as interest_payment','loan_payments.penal_payment as penal_payment','loan_payments.interest_remaining as interest_current_pending','loan_payments.penal_remaining as interest_penal_pending','loan_payments.estimated_quota as estimated_quota_payment',
                 'loan_payments.previous_balance as previous_balance',DB::raw("(loan_payments.previous_balance - loan_payments.capital_payment) as current_balance"))

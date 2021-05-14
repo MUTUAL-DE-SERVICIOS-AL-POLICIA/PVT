@@ -8,26 +8,40 @@
               <v-toolbar-title>Préstamos</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
+        <v-tooltip top>
+            <template v-slot:activator="{ on }">
         <v-btn 
+          fab
           @click="download_loans()" 
           color="success"  
           class="mb-2" 
+          v-on="on"
           small>
             <v-icon>
                 mdi-file-excel
             </v-icon>
-            DESCARGAR
+            
         </v-btn>
+            </template>
+            <span class="caption">Descargar reporte</span>
+        </v-tooltip>
+        <v-tooltip top>
+            <template v-slot:activator="{ on }">
         <v-btn 
+          fab
           @click="clearAll()" 
-          color="light-blue lighten-3"  
-          class="mb-2" 
+          color="info"  
+          class="mb-2"
+          v-on="on"
           small>
             <v-icon>
-                mdi-filter-off
+                mdi-format-clear
             </v-icon>
-            LIMPIAR
+            
         </v-btn>
+            </template>
+            <span class="caption">Limpiar todos los filtros</span>
+        </v-tooltip>
         <v-data-table
           :headers="headers"
           :items="loans"
@@ -759,6 +773,6 @@ data () {
   padding:5px;
   margin: 0px;
   font-size: 0.8em;
-  border-color: palegreen;
+  border-color: teal;
 }
 </style>
