@@ -18,6 +18,8 @@ import ImportExport from '@/components/payment/ImportExport'
 import ListLoanGenerate from '@/components/payment/ListLoanGenerate'
 import ListPaymentGenerate from '@/components/payment/ListPaymentGenerate'
 import ChangeRol from '@/components/dashboard/ChangeRol'
+import ListVouchers from '@/components/treasury/ListVouchers'
+import Reports from '@/components/reports/Reports'
 
 export const routes = [
   {
@@ -173,6 +175,22 @@ export const routes = [
     path: '/listPaymentGenerate',
     name: 'listPaymentGenerate',
     component: ListPaymentGenerate,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/listVouchers',
+    name: 'listVouchers',
+    component: ListVouchers,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/reports',
+    name: 'reports',
+    component: Reports,
     meta: {
       requiresAuth: true
     }

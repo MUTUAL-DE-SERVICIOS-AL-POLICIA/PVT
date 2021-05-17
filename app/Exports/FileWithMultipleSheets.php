@@ -6,6 +6,7 @@ use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use App\Exports\MultipleSheetsExport;
+use App\Exports\MultipleSheetsExportDeployed;
 
 class FileWithMultipleSheets implements WithMultipleSheets
 {
@@ -28,8 +29,8 @@ class FileWithMultipleSheets implements WithMultipleSheets
     public function sheets(): array
     {
         $sheets = [
-            "command_deployed" => new MultipleSheetsExport($this->data_command, 'comando desplegado'),
-            "senasir_deployed" => new MultipleSheetsExport($this->data_senasir, 'senasir desplegado'),
+            "command_deployed" => new MultipleSheetsExportDeployed($this->data_command, 'comando desplegado'),
+            "senasir_deployed" => new MultipleSheetsExportDeployed($this->data_senasir, 'senasir desplegado'),
             "command" => new MultipleSheetsExport($this->data_command, 'comando'),
             "senasir" => new MultipleSheetsExport($this->data_senasir, 'senasir')
         ];

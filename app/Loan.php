@@ -207,7 +207,11 @@ class Loan extends Model
     }
     public function getdelay()
     {
-        return LoanPayment::days_interest($this);
+        return LoanPayment::days_interest2($this);
+    }
+    public function getdelay_parcial()
+    {
+        return LoanPayment::days_interest2($this)->interest_accumulated > 0 ? true : false;
     }
 
     public function payments()
@@ -359,7 +363,7 @@ class Loan extends Model
                 $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
             else
                 $date_pay = $date_ini->addMonth()->endOfMonth()->format('Y-m-d');
-            if(!$this->last_payment_validated && CarbonImmutable::parse($quota->estimated_date)->format('Y-m-d') < CarbonImmutable::parse($date_pay)->format('Y-m-d') && CarbonImmutable::parse($quota->estimated_date)->format('Y-m-d') != CarbonImmutable::parse($this->disbursement_date)->format('Y-m-d')){
+            if(!$this->last_payment_validated && CarbonImmutable::parse($quota->estimated_date)->format('Y-m-d') <= CarbonImmutable::parse($date_pay)->format('Y-m-d') && CarbonImmutable::parse($quota->estimated_date)->format('Y-m-d') != CarbonImmutable::parse($this->disbursement_date)->format('Y-m-d')){
                 $quota->paid_days->current +=1;
                 $quota->estimated_days->current +=1;
                 $quota->paid_days->current_generated = Util::round2(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
@@ -369,8 +373,10 @@ class Loan extends Model
                     $rest_days_of_month = $date_fin->diffInDays($date_ini);
                     $partial_amount = ($quota->balance * $interest->daily_current_interest * $rest_days_of_month);
                     $quota->paid_days->penal = 0;
+                    $quota->penal_generated = 0;
                     $quota->estimated_days->penal = 0;
                     $amount = $amount + $partial_amount;
+                    $quota->estimated_days->penal_generated = 0;
                 }
             }
 

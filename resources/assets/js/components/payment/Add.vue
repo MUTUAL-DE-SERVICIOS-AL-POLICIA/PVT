@@ -24,12 +24,12 @@
                     bottom
                     right
                     v-on="on"
-                    :to="{ name: 'flowAdd', params: { id: $route.query.loan_id,  workTray: 'received'}, query:{ redirectTab: 6 } }"
+                    :to="{ name: 'flowAdd', params: { id: $route.query.loan_id ? $route.query.loan_id : loan_payment.loan_id }, query:{ redirectTab: 6 } }"
                   >
                   <v-icon>mdi-arrow-left-bold-outline</v-icon>
                   </v-btn>
                 </template>
-                <span>Regresar</span>
+                <span>Ir a Kardex</span>
                 </v-tooltip>
               </span>
               {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
@@ -45,7 +45,7 @@
             </v-col>
             <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
                 <span>
-                <v-tooltip left>
+                <!--<v-tooltip left>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     icon
@@ -60,8 +60,8 @@
                   <v-icon>mdi-arrow-left-bold-outline</v-icon>
                   </v-btn>
                 </template>
-                <span>Regresar</span>
-                </v-tooltip>
+                <span>Regresar tesoreria</span>
+                </v-tooltip>-->
               </span>
              {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>

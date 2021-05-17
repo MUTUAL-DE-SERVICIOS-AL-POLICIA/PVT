@@ -304,6 +304,7 @@ class Util
 
     public static function save_record($object, $type, $action, $recordable = null)
     {
+        $role_id = $object->role_id;
         if ($action) {
             $record_type = RecordType::whereName($type)->first();
             if ($record_type) {
@@ -315,7 +316,7 @@ class Util
                 ]);
                 $record->record_type()->associate($record_type);
                 //if($record->role_id)
-                    $record->role_id = $role->id;
+                    $record->role_id = $role_id ? $role_id : $role->id;
                 if ($recordable) $record->recordable()->associate($recordable);
                 $record->save();
             }

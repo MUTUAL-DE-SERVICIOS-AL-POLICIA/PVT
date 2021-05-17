@@ -121,7 +121,8 @@ export default {
           this.status_click = true
             res = await axios.patch(`loans`, {
               ids: this.idLoans,
-              role_id: this.selectedRoleId
+              role_id: this.selectedRoleId,
+              current_role_id: this.$store.getters.rolePermissionSelected.id
             });
             /*////HACER DESDE BACK
             for(let i = 0; i< this.idLoans.length; i++){
@@ -140,6 +141,7 @@ export default {
             res = await axios.patch(`loans`, {
               ids: this.idLoans,
               role_id: parseInt(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).map(o => o.id)),
+              current_role_id: this.$store.getters.rolePermissionSelected.id
             });  
             /*////HACER DESDE BACK
             for(let i = 0; i< this.idLoans.length; i++){

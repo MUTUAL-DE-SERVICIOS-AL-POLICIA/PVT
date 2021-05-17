@@ -20,13 +20,13 @@
     "href": "listLoanGenerate",
     "title": "Reporte préstamos",
     "icon": "mdi-view-list",
-    "permission": "show-loan",
+    "permission": "show-list-loans-generated",
     "params": {}
   },
   {
     "href": "loanPaymentIndex",
     "title": "Bandeja cobros",
-    "icon": "mdi-tray-full",
+    "icon": "mdi-tray-minus",
     "permission": "show-payment-loan",
     "params": {}
   },
@@ -42,6 +42,20 @@
     "title": "Imp./Exp.",
     "icon": "mdi-file-import-outline",
     "permission": "show-payment-loan",
+    "params": {}
+  },
+  {
+    "href": "listVouchers",
+    "title": "Tesoreria",
+    "icon": "mdi-bank",
+    "permission": "show-list-voucher",
+    "params": {}
+  },
+  {
+    "href": "reports",
+    "title": "Reportes",
+    "icon": "mdi-file-table-outline",
+    "permission": "show-report-payment",
     "params": {}
   },
   {

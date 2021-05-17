@@ -157,7 +157,8 @@ export default {
             if(this.observation.accion=='validar'){
                 let res = await axios.patch(`loan/${id}`, {
                 validated: true,
-                user_id: this.$store.getters.id
+                user_id: this.$store.getters.id,
+                current_role_id: this.$store.getters.rolePermissionSelected.id
               })
               this.toastr.success("Se validó el trámite correctamente.")
             }else{

@@ -31,6 +31,7 @@
                 hide-default-footer
                 class="elevation-1"
                 v-if="cities.length > 0"
+                :key="refreshAddressTable"
               >
                 <template v-slot:item="props">
                   <tr>
@@ -65,7 +66,7 @@
                       >
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
-                      <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                      <v-btn :disabled="props.item.id===id_street" text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`), currentItem=props.item">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                     </td>
@@ -287,6 +288,10 @@ export default {
       city: [],
       cityTypeSelected: null,
       bus: new Vue(),
+      //util para refrescar el componente data-table de addresses
+      refreshAddressTable: 0,
+      //guarda el ultimo registro editado o eliminado
+      currentItem: null,
     };
   },
   beforeMount() {
@@ -297,14 +302,23 @@ export default {
     if (this.affiliate.id) {
       this.getCelular();
     }
+    this.bus.$on("removed", () => {
+      console.log('delete', this.currentItem)
+      let newAddresses = this.addresses.filter(item => item.id !== this.currentItem.id)
+      this.$emit('update:addresses', newAddresses)
+      this.refreshAddressTable++
+    });
     this.bus.$on("saveAddress", (address) => {
       if (address.id) {
-        let index = this.addresses.findIndex((o) => o.id == address.id);
+        let addressesAux = this.addresses
+        let index = addressesAux.findIndex((o) => o.id == address.id);
         if (index == -1) {
-          this.addresses.unshift(address);
+          addressesAux.unshift(address);
         } else {
-          this.addresses[index] = address;
+          addressesAux[index] = address;
         }
+        this.$emit('update:addresses', addressesAux)
+        this.refreshAddressTable++
       }
     });
   },

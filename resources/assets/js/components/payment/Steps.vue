@@ -6,22 +6,18 @@
           <v-stepper-step
             :key="`${1}-step`"
             :complete="e1 > 1"
-            :step="1">Modalidad
+            :step="1">Creación Amortización
           </v-stepper-step>
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
-          <v-stepper-step
-            :key="`${2}-step`"
-            :complete="e1 > 2"
-            :step="2">Calculo
-          </v-stepper-step>
-          <v-divider v-if="2 !== steps" :key="2" ></v-divider>
+          
          </template>
       </v-stepper-header>
       <v-stepper-items>
         <v-stepper-content :key="`${1}-content`" :step="1">
           <v-card color="grey lighten-1">
             <AddAmortization
-            :data_payment.sync="data_payment"/>
+            :data_payment.sync="data_payment"
+             :payment.sync="payment"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer><v-spacer></v-spacer>
@@ -33,36 +29,15 @@
                   <v-btn
                     color="primary"
                     @click="validatedStepOne()" v-show="!ver">
-                    Siguiente
+                    Guardar
                   </v-btn>
                 </v-col>
               </v-row>
             </v-container>
           </v-card>
         </v-stepper-content>
-        <v-stepper-content :key="`${2}-content`" :step="2" >
-          <v-card color="grey lighten-1">
-              <AddPayment
-                :payment.sync="payment"
-                :data_payment.sync="data_payment"/>
-            <v-container class="py-0">
-              <v-row>
-                <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
-                <v-col class="py-0">
-                  <v-btn text
-                  @click="beforeStep(2)">Atras</v-btn>
-                  <v-btn right
-                    color="primary"
-                    :disabled="this.status_click"
-                    :loading="this.status_click"
-                    @click="validatedStepTwo()">
-                    Siguiente
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-stepper-content>
+     
+     
       </v-stepper-items>
     </v-stepper>
   </div>
@@ -370,35 +345,7 @@ export default {
             }
           }
           else{
-            if(this.data_payment.procedure_id)
-            {
-              if(this.data_payment.procedure_modality_id)
-              {
-                if(this.data_payment.affiliate_id)
-                {
-                  if(this.data_payment.pago)
-                  {
-                       if(this.data_payment.pago_total)
-                        {
-                          this.Calcular(this.$route.query.loan_id)
-                          this.nextStep(1)
-                        }else{
-                          this.toastr.error('Debe introducir el total pagado')
-                        }
-                  }
-                  else{
-                      this.toastr.error('Debe introducir el tipo de pago')
-                  }
-                }else{
-                  this.toastr.error('Debe seleccionar quien realiza el pago')
-                }
-              }else{
-                this.toastr.error('Debe seleccionar el tipo de amortizacion')
-              }
-            }
-            else{
-              this.toastr.error('Debe seleccionar el tipo de tramite')
-            }
+            this.validatedStepTwo()
           }
       }catch (e) {
         console.log(e)

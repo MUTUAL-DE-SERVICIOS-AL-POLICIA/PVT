@@ -183,7 +183,7 @@ export default {
       type: Array,
       required: true
     },
-    procedureTypeSelected:{
+    procedureTypeSelected1:{
       type:Number,
       required: true,
       default: 0

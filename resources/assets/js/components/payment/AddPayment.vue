@@ -19,36 +19,13 @@
                           <v-form>
                             <template>
                               <v-row>
-                                <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Primer Nombre:</b></label>
-                                    {{loan.lenders[0].first_name}}
-                                </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Paterno:</b></label>
-                                  {{loan.lenders[0].last_name}}
-                                </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Materno:</b></label>
-                                  {{loan.lenders[0].mothers_last_name}}
-                                </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>C.I.:</b></label>
-                                  {{ loan.lenders[0].identity_card}}
-                                </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Número de Pago:</b></label>
-                                  {{ payment.quota_number}}
-                                </v-col>
+                             
+                             
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Fecha de Pago:</b></label>
                                   {{ payment.estimated_date}}
                                 </v-col>
-                                 <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Nro Prestamos:</b></label>
-                                  {{loan.code}}
-                                </v-col>
-                                 <v-col cols="3" class="ma-0 py-2">
-                                </v-col>
+
                                 <v-progress-linear></v-progress-linear>
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Cuota Fija:</b></label>
@@ -184,6 +161,7 @@ export default {
     },
   },
  beforeMount(){
+    this.$forceUpdate()
     this.getPaymentTypes()
      if(this.isNew)
     {

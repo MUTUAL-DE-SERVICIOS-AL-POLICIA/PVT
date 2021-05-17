@@ -35,9 +35,9 @@ class AdvanceRoleSeeder extends Seeder
         $accounting = ['show-all-loan','show-loan','update-loan','update-accounting-voucher'];
         $budget = ['show-all-loan','show-loan','update-loan','update-accounting-voucher','show-history-loan'];
         $collection_court = ['show-all-loan','show-loan','update-loan','update-refinancing-balance','show-history-loan'];
-        $pay_permissions_treasury = ['show-affiliate','show-loan','show-all-loan','print-payment-kardex-loan','print-payment-loan','print-payment-plan','delete-payment-loan','update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
+        $pay_permissions_treasury = ['show-list-voucher','show-affiliate','show-loan','show-all-loan','print-payment-kardex-loan','print-payment-loan','print-payment-plan','delete-payment-loan','update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
         $treasury_permissions = ['print-payment-plan', 'print-payment-kardex-loan', 'show-loan','disbursement-loan','delete-payment', 'update-loan'];
-        $loan_collection = ['show-all-loan', 'show-loan', 'show-affiliate', 'print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan','update-loan','show-list-payments-generated'];
+        $loan_collection = ['show-all-loan', 'show-loan', 'show-affiliate','show-report-payment','print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan','update-loan','show-list-payments-generated'];
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
         $legal_permissions = ['registration-delivery-return-contracts','update-documents-requirements', 'print-contract-loan'];
         $calification_permissions = ['update-loan-calculations','print-qualification-form','update-reference-cosigner'];
@@ -147,7 +147,7 @@ class AdvanceRoleSeeder extends Seeder
                 if (in_array($role['display_name'], ['Tesorería Cobros'])) {
                     $role->syncPermissions(array_merge($pay_permissions_treasury));
                 } elseif (in_array($role['display_name'], ['Cobranzas'])) {
-                    $role->syncPermissions(array_merge($loan_collection));
+                    $role->syncPermissions(array_merge($loan_collection,$reports_permissions));
                 }
             }
         }

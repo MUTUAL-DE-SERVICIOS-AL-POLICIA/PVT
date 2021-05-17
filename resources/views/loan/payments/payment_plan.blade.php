@@ -63,7 +63,7 @@
             <tr>
                 <td>{{ $loan->interest->annual_interest}}</td>
                 <td>{{ $loan->estimated_quota }}</td>
-                <td>{{ $loan->disbursement_date }}</td>
+                <td>{{ Carbon::parse($loan->disbursement_date)->format('d/m/Y H:m:s') }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td>Certificación Presupuestaria contable</td>
@@ -156,7 +156,7 @@
                 @foreach ($loan->plan as $quota)
                 <tr>
                     <td class="data-row py-2">{{ $quota->quota }}</td>
-                    <td class="data-row py-2">{{ Carbon::parse($quota->date)->format('d/m/y') }}</td>
+                    <td class="data-row py-2">{{ Carbon::parse($quota->date)->format('d/m/Y') }}</td>
                     @if($sw == 0)
                         <td class="data-row py-2">{{ $quota->days + $quota->accumulated }}</td>
                         <td class="data-row py-2">{{ Util::money_format($quota->capital) }}</td>

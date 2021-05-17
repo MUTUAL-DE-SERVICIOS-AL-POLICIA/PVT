@@ -108,7 +108,7 @@ class LoanPayment extends Model
         $payment_date = CarbonImmutable::parse($payment_date);
         if ($estimated_date->lessThan($payment_date)) 
             return (object)$interest;
-        $diff_days = $estimated_date->diffInDays($payment_date)+1;
+        $diff_days = $estimated_date->diffInDays($payment_date);
         if ($estimated_date->diffInMonths($payment_date) == 0) {
             $interest['current'] = $diff_days;
             $interest['accumulated'] = 0;
@@ -160,14 +160,14 @@ class LoanPayment extends Model
     {
         $quota = 1;
         $latest_quota = $loan->last_payment_validated;
-        $estimated_date = Carbon::now()->endOfMonth();
+        $estimated_date = Carbon::now()->endOfMonth()->format('d-m-Y');
         if (!$latest_quota || $first) {
-            $payment_date = $loan->disbursement_date ? $loan->disbursement_date : $loan->request_date;
-            $payment_date = Carbon::parse($payment_date);
-            if ($estimated_date->lessThan($payment_date) || $first)
-                $estimated_date = $payment_date->endOfMonth();
-            if ($payment_date->day >= LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date->diffInMonths($payment_date) == 0) {
-                $estimated_date = $payment_date->startOfMonth()->addMonth()->endOfMonth();
+            $payment_date = $loan->disbursement_date;
+            $payment_date = Carbon::parse($payment_date)->format('d-m-Y');
+            if ($estimated_date < $payment_date || $first)
+                $estimated_date = Carbon::parse($payment_date)->endOfMonth()->format('d-m-Y');
+            if (Carbon::parse($payment_date)->day >= LoanGlobalParameter::latest()->first()->offset_interest_day && Carbon::parse($estimated_date)->diffInMonths(Carbon::parse($payment_date)) == 0) {
+                $estimated_date = Carbon::parse($payment_date)->startOfMonth()->addMonth()->endOfMonth();
             }
         } else {
             $estimated_date = Carbon::parse($latest_quota->estimated_date)->startOfMonth()->addMonth()->endOfMonth();
@@ -175,7 +175,7 @@ class LoanPayment extends Model
         }
         return (object)[
             'previous_payment_date' => $latest_quota ? $latest_quota->estimated_date : $loan->disbursement_date,
-            'date' => $estimated_date->toDateString(),
+            'date' => Carbon::parse($estimated_date)->toDateString(),
             'quota' => $quota
         ];
     }

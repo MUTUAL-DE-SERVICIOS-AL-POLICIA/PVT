@@ -269,7 +269,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
             if($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activo' || $modality->name='Largo Plazo con Garantía Personal Sector Activo' || $modality->name='Refinanciamiento de Préstamo a largo Plazo con un Solo Garante Sector Activo CPOP' || $modality->name == 'Largo Plazo con un Solo Garante Sector Activo CPOP' ){
                 $quinta = 'Comando General de la Policía Boliviana';
             }
-            if($modality->name == 'Largo Plazo con Garantía Personal Sector Pasivo SENASIR' || $modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR' || $modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo AFP'  ){
+            if($modality->name == 'Largo Plazo con Garantía Personal Sector Pasivo SENASIR' || $modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'){
                 $quinta = 'Servicio Nacional del Sistema de Reparto SENASIR';
             }?>
         <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del {{ $quinta }} conforme al Reglamento de Préstamos.
@@ -325,16 +325,16 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
     </div>
     <div>
     <?php $modality = $loan->modality;
-            if($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'|| $modality->name == 'Largo Plazo con Garantía Personal Sector Pasivo AFP'){ ?>
+        if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'|| $modality->name == 'Largo Plazo con Garantía Personal Sector Pasivo AFP')){ ?>
+         <b>NOVENA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO y/o GARANTE):</b>
+        El PRESTATARIO y/o GARANTE en caso de Fallecimiento (de ambos), retiro voluntario o retiro forzoso (del garante) garantizan con la totalidad de los Beneﬁcios de Fondo de Retiro Policial Solidario y Complemento Económico otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneﬁcios pasarán a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
+        <?php } else{               
+        if($modality->name == 'Largo Plazo con Garantía Personal Sector Activo'||$modality->name == 'Largo Plazo con un Solo Garante Sector Activo CPOP'){ ?>
         <b>NOVENA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO y/o GARANTE):</b>
-        El PRESTATARIO y/o GARANTE en caso de
-Fallecimiento (de ambos), retiro voluntario o retiro forzoso (del garante) garantizan con la totalidad de los Beneﬁcios de Fondo de Retiro Policial Solidario y Complemento Económico otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneﬁcios pasarán a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
-            <?php } $modality = $loan->modality;
-            if($modality->name == 'Largo Plazo con Garantía Personal Sector Activo'){ ?>
-        <b>NOVENA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b>
-            El PRESTATARIO y/o GARANTE en caso de
-fallecimiento, retiro voluntario o retiro forzoso garantizan con la totalidad de los Beneﬁcios de Fondo de Retiro Policial Solidario y Complemento Económico otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneﬁcios pasarán a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
-            <?php } ?>
+        El PRESTATARIO y/o GARANTE en caso de Fallecimiento (de ambos), retiro voluntario o retiro forzoso (del garante) garantizan con la totalidad de los Beneﬁcios de Fondo de Retiro Policial Solidario y Complemento Económico otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneﬁcios pasarán a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
+
+        <?php }?>
+    <?php } ?>
     </div>
     <div>
         En caso de que se haya modificado la situación del PRESTATARIO y/o GARANTE del sector activo al sector pasivo de la Policía Boliviana teniendo un saldo deudor respecto del préstamo obtenido, este acepta amortizar la deuda con su complemento económico, en caso de corresponderle debiendo al efecto solicitar la reprogramación conforme establece el Artículo 90 del Reglamento de Préstamos de la MUSERPOL, por lo que el saldo se sujetará en función a su nuevo liquido pagable, estableciéndose una correlativa modificación de los plazos y cuota según sea el caso.

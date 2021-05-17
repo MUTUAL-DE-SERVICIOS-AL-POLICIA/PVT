@@ -96,7 +96,7 @@
                 <v-card flat tile>
                   <v-card-text>
                     <v-col cols="12" class="mb-0">
-                      <v-data-table
+                      <!--<v-data-table
                         :headers="headersHist2"
                         :items="record_payment"
                         :items-per-page="6"
@@ -109,7 +109,8 @@
                             <td>{{items.item.action}}</td>
                           </tr>
                         </template>
-                      </v-data-table>
+                      </v-data-table>-->
+                      <HistoryPayments :affiliate.sync="affiliate" :loan="loan"  />
                     </v-col>
                   </v-card-text>
                 </v-card>
@@ -128,13 +129,15 @@
 <script>
 import AddObservation from "@/components/workflow/AddObservation"
 import RemoveItem from "@/components/shared/RemoveItem"
+import HistoryPayments from "@/components/payment/HistoryPayments"
 
 export default {
   name: "observer-flow",
 
   components: {
     AddObservation,
-    RemoveItem
+    RemoveItem,
+    HistoryPayments
   },
   data: () => ({
     //valor: false,
@@ -214,9 +217,13 @@ export default {
       }
     ],
     record: [],
-    record_payment: []
+    //record_payment: []
   }),
   props: {
+    affiliate: {
+      type: Object,
+      required: true,
+    },
     loan: {
       type: Object,
       required: true
@@ -284,7 +291,7 @@ export default {
         this.loading = false
       }
     },
-    async getRecordsPayment(id) {
+    /*async getRecordsPayment(id) {
       try {
         this.loading = true
         let res = await axios.get(`record_payment`, {
@@ -299,7 +306,7 @@ export default {
       } finally {
         this.loading = false
       }
-    },
+    },*/
     async deleteObservation(
       user_id1,
       observation_type_id1,

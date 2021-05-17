@@ -100,7 +100,7 @@
                                     <p><b>TOTAL BONOS:</b>{{' '+loan.lenders[0].pivot.bonus_calculated | moneyString}}</p>
                                   </v-col>
                                    <v-col cols="12" md="4" class="py-0">
-                                    <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+ parseInt(loan.indebtedness_calculated).toFixed(2)+'%'}} </p>
+                                    <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+ (loan.indebtedness_calculated/1).toFixed(2)+'%'}} </p>
                                   </v-col>
                                   <v-col cols="12" md="4" v-show="calificacion_edit" class="py-0">
                                     <center>
@@ -426,7 +426,7 @@
                                           <span>Cancelar</span>
                                         </div>
                                       </v-tooltip>
-                                      <v-tooltip top  v-if="permissionSimpleSelected.includes('update-warranty-hipotecary')">
+                                      <v-tooltip top  v-if="permissionSimpleSelected.includes('update-warranty-hipotecary') || permissionSimpleSelected.includes('update-values-commercial-rescue')">
                                         <template v-slot:activator="{ on }">
                                           <v-btn
                                             fab
@@ -454,8 +454,8 @@
                                         <v-col cols="12" md="4">
                                         <v-select
                                           dense
-                                          :outlined="editable1"
-                                          :readonly="!editable1"
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :items="city"
                                           item-text="name"
                                           item-value="id"
@@ -465,8 +465,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1"
-                                          :readonly="!editable1"
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'UBICACION'"
                                           dense
                                           v-model="loan_properties.location"
@@ -474,8 +474,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1"
-                                          :readonly="!editable1"
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'NUMERO DE LOTE'"
                                           dense
                                           v-model="loan_properties.land_lot_number"
@@ -483,8 +483,8 @@
                                       </v-col>
                                       <v-col cols="12" md="1">
                                         <v-text-field
-                                          :outlined="editable1"
-                                          :readonly="!editable1"
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'SUPERFICIE'"
                                           dense
                                           v-model="loan_properties.surface"
@@ -492,8 +492,8 @@
                                       </v-col>
                                       <v-col cols="12" md="3">
                                       <v-select
-                                        :outlined="editable1"
-                                        :readonly="!editable1"
+                                        :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                        :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                         dense
                                         :items="items_measurement"
                                         item-text="name"
@@ -504,8 +504,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1"
-                                          :readonly="!editable1"
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'CODIGO CATASTRAL'"
                                           dense
                                           v-model="loan_properties.cadastral_code"
@@ -513,8 +513,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1"
-                                          :readonly="!editable1"
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'NRO MATRICULA'"
                                           dense
                                           v-model="loan_properties.registration_number"
@@ -522,8 +522,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1"
-                                          :readonly="!editable1"
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'NRO FOLIO REAL'"
                                           dense
                                           v-model="loan_properties.real_folio_number"
@@ -545,7 +545,7 @@
                                         <v-text-field
                                           :outlined="editable1 && permissionSimpleSelected.includes('update-values-commercial-rescue')"
                                           :readonly="!editable1 && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
-                                          :label="'RESCATE HIPOTECARIO'"
+                                          :label="'VALOR DE RESCATE HIPOTECARIO'"
                                           dense
                                           v-model="loan_properties.rescue_value"
                                         ></v-text-field>

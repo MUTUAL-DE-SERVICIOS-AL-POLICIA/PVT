@@ -14,6 +14,11 @@ Vue.filter('capitalize', value => {
 Vue.filter('datetime', value => {
 	return moment(value).format('LLL')
 })
+Vue.filter('datetimeshorted', value => {
+	if(value != null)
+	return moment(value).format('D/MM/YYYY HH:mm:ss')
+	else ''
+})
 Vue.filter('date', value => {
 	if(value != null)
 	return moment(value).format('L')

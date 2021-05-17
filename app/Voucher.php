@@ -30,10 +30,6 @@ class Voucher extends Model
         return $this->morphTo();
     }
 
-   /* public function payment_type()
-    {
-        return $this->belongsTo(PaymentType::class);
-    }*/
 
     public function voucher_type()
     {

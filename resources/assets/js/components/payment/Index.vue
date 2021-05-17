@@ -188,7 +188,7 @@
         <v-col cols="12">
           <List :bus="bus" 
           :tray="filters.traySelected" 
-          :procedureTypeSelected="this.filters.procedureTypeSelected"
+          :procedureTypeSelected1="this.filters.procedureTypeSelected"
           :procedureModalities="procedureModalities" 
           :options.sync="options" 
           :loans="loans" 

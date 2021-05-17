@@ -345,7 +345,7 @@ export default {
     tab: 'tab-1',
     has_registered_spouse: false,
     bus: new Vue(),
-    id_street: 0
+    id_street: 0,
   }),
   computed: {
     //permisos del selector global por rol

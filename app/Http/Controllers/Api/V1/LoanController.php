@@ -43,6 +43,8 @@ use App\Http\Controllers\Api\V1\LoanPaymentController;
 use Carbon\CarbonImmutable;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ArchivoPrimarioExport;
+use App\Exports\FileWithMultipleSheetsReport;
+use App\Exports\FileWithMultipleSheetsDefaulted;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -1345,14 +1347,14 @@ class LoanController extends Controller
         else
             $user_id = $request->user_id;
         $sequence = null;
-        $from_role = null;
+        $from_role = $request->current_role_id;
         $to_role = $request->role_id;
         $loans = Loan::whereIn('id', $request->ids)->where('role_id', '!=', $request->role_id)->orderBy('code');
         $derived = $loans->get();
-        $to_role = Role::find($to_role);
+        $to_role = Role::whereId($to_role)->first();
         if (count(array_unique($loans->pluck('role_id')->toArray()))) $from_role = $derived->first()->role_id;
         if ($from_role) {
-            $from_role = Role::find($from_role);
+            $from_role = Role::whereId($from_role)->first();
             $flow_message = $this->flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
         }
         $derived->map(function ($item, $key) use ($from_role, $to_role, $flow_message) {
@@ -1361,8 +1363,9 @@ class LoanController extends Controller
                 $from_role = Role::find($item['role_id']);
                 $flow_message = $this->flow_message($item->modality->procedure_type->id, $from_role, $to_role);
             }
-            $item['role_id'] = $to_role->id;
+            $item['role_id'] = $from_role->id;
             $item['validated'] = false;
+
             Util::save_record($item, $flow_message['type'], $flow_message['message']);
         });
         $loans->update(array_merge($request->only('role_id'), ['validated' => false], ['user_id' => $user_id]));
@@ -2042,4 +2045,31 @@ class LoanController extends Controller
       }
    }
 
+   public function switch_loans_guarantors()
+   {
+        $loans = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->get();
+        $c = 0;
+        foreach($loans as $loan)
+        {
+            if($loan->guarantors->count() > 0)
+            {
+                if($loan->last_payment_validated != null)
+                {
+                    if(Carbon::parse($loan->last_payment_validated->estimated_date)->diffInDays(Carbon::now()->format('Y-m-d')) > 60);
+                        $loan->guarantor_amortizing =  true;
+                        $loan->update();
+                        $c++;
+                }
+                else{
+                    if(Carbon::parse($loan->disbursement_date)->diffInDays(Carbon::now()->format('Y-m-d')) > 60);
+                        $loan->guarantor_amortizing =  true;
+                        $loan->update();
+                        $c++;
+                }
+            }
+        }
+        return response()->json([
+            'defaulted' => $c,
+        ]);
+   }
 }

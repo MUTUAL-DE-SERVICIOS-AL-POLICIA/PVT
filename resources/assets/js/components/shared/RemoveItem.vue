@@ -41,7 +41,11 @@ export default {
       try {
         this.loading = true
         let res = await axios.delete(this.path)
-        this.toastr.success('Eliminado correctamente')
+        if(!res.data.message){
+          this.toastr.success('Eliminado correctamente')
+        }else{
+          this.toastr.error(res.data.message)
+        }
         this.close()
         this.bus.$emit('removed', Number(this.path.split('/').pop()))
       } catch (e) {

@@ -62,9 +62,9 @@
                           ></v-text-field>
                         </ValidationProvider>
                       </v-col>-->
-                      <v-col cols="12" md="12">
+                      <!-- <v-col cols="12" md="12">
                         <LMap :address.sync="address" :cities.sync="countryCities" :edit.sync="address.edit" class="pa-0 ma-0"/>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </v-form>
                 </ValidationObserver>
@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import LMap from '@/components/affiliate/LMap'
+// import LMap from '@/components/affiliate/LMap'
 
 export default {
   name: "affiliate-addresses",
@@ -98,9 +98,9 @@ export default {
       required: true
     }
   },
-  components: {
-    LMap
-  },
+  // components: {
+  //   LMap
+  // },
   data: () => ({
     dialog: false,
     address: {}

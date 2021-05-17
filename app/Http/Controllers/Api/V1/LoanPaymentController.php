@@ -157,10 +157,40 @@ class LoanPaymentController extends Controller
                 if($loanPayment->state->name == 'Pagado' || $loanPayment->state->name == 'Pendiente por confirmar')
                 {
                     $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
+                    $loanPayment->user = User::whereId($loanPayment->user_id)->first();
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
             }
+        $loan->payments = $payments;
+        return $loan;
+    }
+     /**
+    * Historial de pagos
+    * Devuelve el historial de pagos con los datos paginados
+    * @bodyParam loan_id integer required ID del tramite de préstamo. Example 1
+    * @authenticated
+    * @responseFile responses/loan_payment/payment_history.200.json
+     */
+    public function payment_history(Request $request){
+        $request->validate([
+            'loan_id' => 'required',
+        ]);
+        $loan = Loan::whereId($request->loan_id)->first();
+        $loan->balance = $loan->balance;
+        $loan['estimated_quota'] = $loan->estimated_quota;
+        $loan['interest'] = $loan->interest;
+        $payments = collect();
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->orderBy('id')->withTrashed()->get();
+            foreach($loanPayments as $loanPayment)
+            {
+                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
+                    $loanPayment->user = User::whereId($loanPayment->user_id)->first();
+                    $loanPayment->modality;
+                    $payments->push($loanPayment);
+            }           
         $loan->payments = $payments;
         return $loan;
     }
@@ -245,6 +275,50 @@ class LoanPaymentController extends Controller
         }else{
             abort(403, 'El registro a eliminar no está en estado Pendiente');
         }
+    }
+
+    /**
+    * Anular el Ultimo Registro de Pago
+    * @urlParam loan_payment required ID del pago. Example: 1
+    * @authenticated
+    * @responseFile responses/loan_payment/delete_last_record_payment.200.json
+    */
+    public function delete_last_record_payment(LoanPayment $loanPayment)
+    {       
+        $message['message'] = false;
+        if(isset($loanPayment)){     
+            $last_records = $loanPayment->loan->paymentsKardex->sortByDesc('id')->first();    
+            if ($loanPayment->id == $last_records->id){
+                $procedure_modality_id = ProcedureModality::whereName("Directo")->first()->id;
+                if($loanPayment->procedure_modality_id == $procedure_modality_id){ 
+                    $voucher=Voucher::wherePayableId($loanPayment->id)->wherePayableType('loan_payments')->whereDeletedAt(null)->first();
+                    if($voucher == null){
+                        $state = LoanPaymentState::whereName('Anulado')->first();
+                        $loanPayment->state()->associate($state);
+                        $loanPayment->save();
+                        $loanPayment->delete();
+                        return $loanPayment;
+                    } else{
+                        $message['message'] = "El registro no puede ser eliminado por tener un váucher asociado";
+                        $message['deleted'] = false;
+                    }
+                } else{
+                    $state = LoanPaymentState::whereName('Anulado')->first();
+                    $loanPayment->state()->associate($state);
+                    $loanPayment->save();
+                    $loanPayment->delete();
+                    return $loanPayment;
+                }
+            }else{
+                $message['message'] = "El registro no puede ser eliminado por no se el ultimo";
+                $message['deleted'] = false;
+                }
+        }
+        else{       
+            $message['message'] = "No se encontro el registro del Pago";  
+            $message['deleted'] = false;        
+        }
+        return $message;
     }
 
     /** @group Tesoreria
@@ -434,7 +508,7 @@ class LoanPaymentController extends Controller
     * @responseFile responses/loan_payment/print_loan_payment.200.json
     */
     public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
-    { 
+    {  
         $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
         $affiliate = $loan_payment->affiliate;
         $spouse = $affiliate->spouse;
@@ -454,14 +528,14 @@ class LoanPaymentController extends Controller
         $num_quota=$loan_payment->quota_number;
             if($num_quota == 1){
                 $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
-                $estimated_days['current'] = $disbursement_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date))+1;
+                $estimated_days['current'] = $disbursement_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
                 if($estimated_days['current'] > $max_current)
                     $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
                     $estimated_days['penal'] = 0;
             }else{                
                 $reg_payment_date = CarbonImmutable::parse($loan_payment->previous_payment_date);
-                $estimated_days['current'] = $reg_payment_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
+                $estimated_days['current'] = $reg_payment_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date)->toDateString());
                 if($estimated_days['current'] > $max_current)
                 $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
@@ -481,7 +555,7 @@ class LoanPaymentController extends Controller
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
                     ['Fecha', Carbon::now()->format('d/m/Y')],
-                    ['Hora', Carbon::now()->format('h:m:s a')],
+                    ['Hora', Carbon::now()->format('H:i:s')],
                     ['Usuario', Auth::user()->username]
                 ]
             ],
@@ -605,7 +679,11 @@ class LoanPaymentController extends Controller
                 array("Fecha de desembolso", "numero", "Tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota", "Descuento", "Ciudad", "Interes")
             );
             $command_id = ProcedureModality::where('shortened', 'DES-COMANDO')->first();
-            $command = LoanPayment::where('estimated_date',$request->estimated_date)->where('procedure_modality_id', $command_id->id)->get();
+            $loan_states = LoanPaymentState::whereName('Pendiente de Pago')->orWhere('name', 'Pendiente por confirmar')->get();
+            $id = [];
+            foreach($loan_states as $state)
+                array_push($id, $state->id);
+            $command = LoanPayment::where('estimated_date',$request->estimated_date)->where('procedure_modality_id', $command_id->id)->whereIn('state_id', $id)->get();
             foreach ($command as $row){
                 if($row->loan->state->name == 'Vigente'){
                     array_push($command_sheet, array(
@@ -628,11 +706,32 @@ class LoanPaymentController extends Controller
                     ));
                 }
             }
+            $command_sheet_deployed=array(
+                array("N°", "PADRON DE LA ENTIDAD", "CI", "PATERNO", "MATERNO", "NOMBRE 1", "NOMBRE 2", "TOTAL DEUDA", "PLAZO", "MONTO DESC.")
+            );
+
+            $command_grouped = DB::table('loan_payments')->where('estimated_date', $request->estimated_date)->where('procedure_modality_id', $command_id->id)->whereIn('state_id', $id)
+                            ->select('affiliate_id', DB::raw('sum(estimated_quota) as quota'))->groupBy('affiliate_id')->get();
+            $c = 1;
+            foreach ($command_grouped as $row){
+                $affiliate = Affiliate::whereId($row->affiliate_id)->first();
+                array_push($command_sheet_deployed, array(
+                    $c,
+                    '2345678021',
+                    $affiliate->last_name,
+                    $affiliate->mothers_last_name,
+                    $affiliate->first_name,
+                    $affiliate->second_name,
+                    $row->quota,
+                    '1',
+                    $row->quota,
+                ));$c++;
+            }
             $senasir_sheet=array(
                 array("Fecha de desembolso", "numero", "Tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota", "Descuento", "Ciudad", "Interes")
             );
             $senasir_id = ProcedureModality::where('shortened', 'DES-SENASIR')->first();
-            $senasir = LoanPayment::where('estimated_date',$request->estimated_date)->where('procedure_modality_id', $senasir_id->id)->get();
+            $senasir = LoanPayment::where('estimated_date',$request->estimated_date)->where('procedure_modality_id', $senasir_id->id)->whereIn('state_id', $id)->get();
             foreach ($senasir as $row){
                 if($row->loan->state->name == 'Vigente'){
                     array_push($command_sheet, array(
@@ -655,7 +754,27 @@ class LoanPaymentController extends Controller
                     ));
                 }
             }
-            $export = new FileWithMultipleSheets($command_sheet, $senasir_sheet, $command_sheet, $senasir_sheet);
+            $senasir_sheet_deployed=array(
+                array("REGIONAL", "T-MATRICULA", "B-MATRICULA", "CI", "PATERNO", "MATERNO", "NOMBRES", "MONTO", "FECHA INI", "FECHA FIN")
+            );
+            $senasir_grouped = DB::table('loan_payments')->where('estimated_date', $request->estimated_date)->where('procedure_modality_id', $senasir_id->id)->whereIn('state_id', $id)
+                            ->select('affiliate_id', DB::raw('sum(estimated_quota) as quota'))->groupBy('affiliate_id')->get();
+            foreach ($senasir_grouped as $row){
+                $affiliate = Affiliate::whereId($row->affiliate_id)->first();
+                array_push($senasir_sheet_deployed, array(
+                    $affiliate->city_identity_card->to_bank,
+                    $affiliate->registration,
+                    $affiliate->spouse ? $affiliate->spouse->registration : '',
+                    $affiliate->identity_card,
+                    $affiliate->last_name,
+                    $affiliate->mothers_last_name,
+                    $affiliate->first_name.' '.$affiliate->second_name,
+                    $row->quota,
+                    Carbon::now()->startOfMonth()->format('d/m/Y'),
+                    Carbon::now()->endOfMonth()->format('d/m/Y'),
+                    ));
+            }
+            $export = new FileWithMultipleSheets($command_sheet_deployed, $senasir_sheet_deployed, $command_sheet, $senasir_sheet);
             Excel::store($export, $file_name.$extension, 'public');
             return $file = Storage::disk('public')->download($file_name.$extension);
         }
@@ -710,14 +829,16 @@ class LoanPaymentController extends Controller
                         foreach($loan->lenders as $lender)
                         {
                             $paid_by = "T";
-                            if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
-                            if($lender->affiliate_state->name == 'Jubilado' && $lender->affiliate_state && $lender->pension_entity->name == 'SENASIR') $procedure_modality = $procedure_modality_senasir;
-                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                            if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') 
+                                $procedure_modality = $procedure_modality_command;
+                            if($lender->affiliate_state->name == 'Jubilado' && $lender->affiliate_state && $lender->pension_entity->name == 'SENASIR') 
+                                $procedure_modality = $procedure_modality_senasir;
+                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && Carbon::parse($estimated_date)->toDateString() == Carbon::parse($date_payment)->toDateString()){
                                 LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                 $loans_quantity++;
                             }
                             else{
-                                if($estimated_date > $date_payment)
+                                if(Carbon::parse($estimated_date)->toDateString() > Carbon::parse($date_payment)->toDateString())
                                 {
                                     LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                     $loans_quantity++;
@@ -732,12 +853,12 @@ class LoanPaymentController extends Controller
                             $paid_by = "G";
                             if($guarantor->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
                             if($guarantor->affiliate_state->name == 'Jubilado' && $lender->affiliate_state && $lender->pension_entity->name == 'SENASIR') $procedure_modality = $procedure_modality_senasir;
-                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && Carbon::parse($estimated_date)->toDateString() == Carbon::parse($date_payment)->toDateString()){
                                 LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                 $loans_quantity++;
                             }
                             else{
-                                if($estimated_date > $date_payment)
+                                if(Carbon::parse($estimated_date)->toDateString() > Carbon::parse($date_payment)->toDateString())
                                 {
                                     LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                     $loans_quantity++;
@@ -752,12 +873,12 @@ class LoanPaymentController extends Controller
                         $paid_by = "T";
                         if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
                         if($lender->affiliate_state->name == 'Jubilado' && $lender->pension_entity && $lender->pension_entity->name == 'SENASIR') $procedure_modality = $procedure_modality_senasir;
-                        if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                        if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && Carbon::parse($estimated_date)->toDateString() == Carbon::parse($date_payment)->toDateString()){
                             LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                             $loans_quantity++;
                         }
                         else{
-                            if($estimated_date > $date_payment)
+                            if(Carbon::parse($estimated_date)->toDateString() > Carbon::parse($date_payment)->toDateString())
                             {
                                 LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                 $loans_quantity++;
@@ -910,7 +1031,7 @@ class LoanPaymentController extends Controller
                 $totalLoanAmount = 0; 
                 $have_payment = false;
                 if($request->state){//comando
-                    $procedure_modality_id = ProcedureModality::whereShortened("DES-COMANDO")->first()->id;;
+                    $procedure_modality_id = ProcedureModality::whereShortened("DES-COMANDO")->first()->id;
                     $ci=(int)$array[0][$i][0];
                     $affiliate = Affiliate::whereIdentityCard($ci)->first(); 
                     $loanPayments = LoanPayment::where('affiliate_id', $affiliate->id)->where('state_id',$pendiente_confirmar_id)
@@ -1096,7 +1217,7 @@ class LoanPaymentController extends Controller
         return Excel::download($export, $File.'.xlsx');
         
 
-    }
+ }
     /** @group Reportes préstamos
     * Préstamos en móra
     * Descarga en xls los prestamos que se encuentran en Móra.

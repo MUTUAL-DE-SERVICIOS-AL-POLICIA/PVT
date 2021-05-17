@@ -264,7 +264,6 @@
                 :editable.sync="editable"
                 :permission="permission"
                 :id_street.sync="id_street"
-                :has_registered_spouse="has_registered_spouse"
               />
             </v-card-text>
           </v-card>
@@ -284,7 +283,11 @@
         <v-tab-item :value="'tab-7'">
           <v-card flat tile>
             <v-card-text class="pa-0 pl-3 pr-0 py-0">
-              <ObserverFlow :loan.sync="loan" :observations.sync="observations" :bus1="bus1" />
+              <ObserverFlow 
+              :loan.sync="loan" 
+              :observations.sync="observations" 
+              :bus1="bus1" 
+              :affiliate.sync="affiliate" />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -394,7 +397,8 @@ export default {
       valid_disbursement: false
     },
     role_name: null,
-    user_name: null
+    user_name: null,
+    id_street: 0,
   }),
   watch: {
     search: _.debounce(function() {
@@ -699,7 +703,21 @@ export default {
         this.toastr.error('Faltan registar el campo en Desembolso.')
       }
 
-    }
+    },
+      async getAddress(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}/address`)
+        this.addresses = res.data
+        // Seteando el valor del address
+        let address = this.addresses.find(item => item.pivot.validated)
+        this.id_street = address.id
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
   }
 }
 </script>

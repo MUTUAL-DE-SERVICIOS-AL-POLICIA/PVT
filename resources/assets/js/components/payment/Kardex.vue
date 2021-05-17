@@ -76,10 +76,10 @@
             <strong>Cuotas: </strong> {{ payments.length ? payments.length : ""}}<br />
           </v-col>
           <v-col md="4" class="ma-0 pa-0">
-            <strong>Desembolso: </strong>{{ loan.disbursement_date }}<br />
+            <strong>Desembolso: </strong>{{ loan.disbursement_date | datetimeshorted }}<br />
             <strong>Nro de comprobante contable: </strong>{{ loan.num_accounting_voucher }}<br />
-            <strong>Tasa anual: </strong> {{ loan.intereses.annual_interest }}<br />
-            <strong>Cuota fija mensual: </strong> {{ loan.estimated_quota }}<br />
+            <strong>Tasa anual: </strong> {{ parseInt(loan.intereses.annual_interest) }}%<br />
+            <strong>Cuota fija mensual: </strong> {{ loan.estimated_quota | moneyString}}<br />
           </v-col>
           <v-col md="4" class="ma-0 pa-0">
             <strong>Monto desembolsado: </strong>{{ loan.amount_approved | moneyString }}<br />
@@ -89,7 +89,7 @@
            </v-col>
         </v-row>
       </v-card>
-
+  
       <v-data-table
         dense
         :headers="headers"
@@ -97,7 +97,33 @@
         :loading="loading"
         :options.sync="options"
         :footer-props="{ itemsPerPageOptions: [10,50,100] }"
+        :search="search"
+        :key="refreshKardexTable"
       >
+        
+        <template v-slot:[`header.code`]="{ header }">
+            {{ header.text }}<br>
+            <v-menu offset-y :close-on-content-click="false">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon small :color="search !='' ? 'red' : 'black'">
+                    mdi-filter
+                  </v-icon>
+                </v-btn>
+              </template>
+              <div>
+                <v-text-field
+                  dense
+                  v-model="search"
+                  type="text"
+                  :label="'Buscar ' + header.text"
+                  hide-details
+                  single-line
+                ></v-text-field>
+              </div>
+            </v-menu>
+          </template>
+
         <template v-slot:[`item.estimated_date`]="{ item }">
           {{ item.estimated_date | date }}
         </template>
@@ -186,8 +212,8 @@
                 small
                 v-on="on"
                 color="error"
-                v-if="item.state.name != 'Pagado'"
-                @click.stop="bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)"
+                v-if="last_payment(item)"
+                @click.stop="bus.$emit('openRemoveDialog', `delete_last_payment/${item.id}/payment`)"
               >
                 <v-icon>mdi-file-cancel-outline</v-icon>
               </v-btn>
@@ -262,6 +288,7 @@ export default {
     printDocs: [],
     amortization_type: [],
     procedure_modality: [],
+    search: '',
 
     headers: [
       {
@@ -271,6 +298,7 @@ export default {
         align: "center",
         sortable: true,
         width: "5%",
+        filterable: false,
       },
       ,
       {
@@ -286,16 +314,18 @@ export default {
         value: "estimated_date",
         class: ["normal", "white--text"],
         align: "center",
-        sortable: false,
+        sortable: true,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Fecha de cobro",
         value: "created_at",
         class: ["normal", "white--text"],
         align: "center",
-        sortable: false,
+        sortable: true,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Amortización capital",
@@ -304,6 +334,7 @@ export default {
         align: "center",
         sortable: false,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Interes corriente",
@@ -312,6 +343,7 @@ export default {
         align: "center",
         sortable: false,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Interes penal",
@@ -320,6 +352,7 @@ export default {
         align: "center",
         sortable: false,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Interes corriente pendiente",
@@ -328,6 +361,7 @@ export default {
         align: "center",
         sortable: false,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Interes penal pendiente",
@@ -336,6 +370,7 @@ export default {
         align: "center",
         sortable: false,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Total pagado",
@@ -344,6 +379,7 @@ export default {
         align: "center",
         sortable: false,
         width: "5%",
+        filterable: false,
       },
       /*{
         text: "Saldo capital",
@@ -360,6 +396,7 @@ export default {
         align: "center",
         sortable: true,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Tipo de Amortización.",
@@ -368,14 +405,25 @@ export default {
         align: "center",
         sortable: false,
         width: "5%",
+        filterable: false,
+      },
+      {
+        text: "Pagado por",
+        value: "paid_by",
+        class: ["normal", "white--text"],
+        align: "center",
+        sortable: true,
+        width: "5%",
+        filterable: false,
       },
       {
         text: "Estado",
         value: "state.name",
         class: ["normal", "white--text"],
         align: "center",
-        sortable: false,
+        sortable: true,
         width: "5%",
+        filterable: false,
       },
       {
         text: "Acciones",
@@ -384,8 +432,10 @@ export default {
         align: "center",
         sortable: false,
         width: "15%",
+        filterable: false,
       },
     ],
+    refreshKardexTable: 0,
   }),
   computed: {
     //Metodo para obtener Permisos por rol
@@ -407,10 +457,11 @@ export default {
 
   },
   mounted() {
+  this.bus.$on('removed', val => {
+      this.getPayments()
+    })
     this.getPayments();
     this.docsLoans();
-    this.getAmortizationType();
-    this.getProcedureModality();
   },
   methods: {
     async getPayments() {
@@ -423,7 +474,7 @@ export default {
         });
         this.payments = res.data.payments;
         console.log(this.payments);
-
+        this.refreshKardexTable++
       } catch (e) {
         console.log(e);
       } finally {
@@ -510,6 +561,15 @@ export default {
         console.log(e);
       }
     },
+    last_payment(item){
+      if(item.id == this.payments[this.payments.length -1].id ){
+        return true
+      }else{
+        return false
+      }
+    },
+  
+
     //Busca el tipo de Cobro que se realizará para el cobro
     /*searchAmortizationType(item) {
       let procedureAmortization_type = this.amortization_type.find((o) => o.id == item);
@@ -536,5 +596,13 @@ export default {
   position: fixed;
   bottom: 0;
   padding: 0px;
+}
+.v-text-field{
+  background-color: white;
+  width: 200px;
+  padding:5px;
+  margin: 0px;
+  font-size: 0.8em;
+  border-color: palegreen;
 }
 </style>

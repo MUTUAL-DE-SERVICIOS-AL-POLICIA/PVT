@@ -55,7 +55,7 @@
           </v-tooltip>
         </div>
       </template>
-      <template v-if="permissionSimpleSelected.includes('update-loan')" >
+      <template v-if="permissionSimpleSelected.includes('update-documents-requirements')" >
           <div >
             <v-tooltip top>
               <template v-slot:activator="{ on }">

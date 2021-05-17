@@ -27,7 +27,6 @@
       ></v-select> -->
       <span class="text-caption font-weight-bold">{{ rolePermissionSelected ? rolePermissionSelected.display_name : '' }}</span>
         <v-btn
-          v-on="on"
           fab
           dark
           x-small
