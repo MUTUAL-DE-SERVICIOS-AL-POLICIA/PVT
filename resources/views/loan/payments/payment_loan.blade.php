@@ -94,12 +94,12 @@
                 <td colspan="3" class="font-semibold leading-tight text-left p-10"><div>Total a Pagar:</div> </td>
                 <td class="font-semibold leading-tight text-right">{{ Util::money_format($loan_payment->estimated_quota) }}</td>
                 <td class="w-20" >Intereses Corrientes Pendientes Act.</td>
-                <td class="text-right">{{ Util::money_format($loan->payments->first()->interest_accumulated) }}</td>
+                <td class="text-right">{{ Util::money_format($loan_payment->interest_accumulated) }}</td>
             </tr>
             <tr class="">
                 <td colspan="4" class="font-semibold  leading-tight text-right">Son:(<span class="uppercase font-semibold leading-tight  m-b-10 text-xs">{{ Util::money_format($loan_payment->estimated_quota, true) }} Bolivianos</span> )</td>
                 <td >Intereses Penales Pendientes Act.</td>
-                <td class="text-right">{{ Util::money_format($loan->payments->first()->penal_accumulated) }}</td>              
+                <td class="text-right">{{ Util::money_format($loan_payment->penal_accumulated) }}</td>              
             </tr>       
             <tr>
                 <td colspan="7" class="text-left p-10"><span class="font-semibold">Glosa:</span> <br>

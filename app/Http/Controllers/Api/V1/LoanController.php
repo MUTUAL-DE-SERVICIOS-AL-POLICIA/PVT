@@ -1209,7 +1209,7 @@ class LoanController extends Controller
             $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
             $loanpayment = new LoanPaymentController;
             $payment->attachment = Util::pdf_to_base64([
-                $loanpayment->print_loan_payment(new Request([]), $loan_payment, false)
+                $loanpayment->print_loan_payment(new Request([]), $loan_payment->id, false)
             ], $file_name,$information_loan, 'legal', $request->copies ?? 1);
             return $payment;
         }else{

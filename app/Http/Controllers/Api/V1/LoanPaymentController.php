@@ -507,9 +507,10 @@ class LoanPaymentController extends Controller
     * @authenticated
     * @responseFile responses/loan_payment/print_loan_payment.200.json
     */
-    public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
+    public function print_loan_payment(Request $request,$loan_payment, $standalone = true)
     {  
-        $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
+        $loan_payment = LoanPayment::withTrashed()->whereId($loan_payment)->first();
+        $loan = $loan_payment->loan;
         $affiliate = $loan_payment->affiliate;
         $spouse = $affiliate->spouse;
         if(isset($spouse)){
