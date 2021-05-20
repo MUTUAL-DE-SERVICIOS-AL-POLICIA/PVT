@@ -286,8 +286,12 @@ class LoanPaymentController extends Controller
     public function delete_last_record_payment(LoanPayment $loanPayment)
     {       
         $message['message'] = false;
-        if(isset($loanPayment)){     
-            $last_records = $loanPayment->loan->paymentsKardex->sortByDesc('id')->first();    
+        if(isset($loanPayment)){   
+            $loan_state_liquidated = LoanState::whereName("Liquidado")->first()->id;  
+            $loan_state_current = LoanState::whereName("Vigente")->first()->id;
+            $last_records = $loanPayment->loan->paymentsKardex->sortByDesc('id')->first();  
+            $loan_state = $loanPayment->loan->state_id; 
+            $loan = $loanPayment->loan;   
             if ($loanPayment->id == $last_records->id){
                 $procedure_modality_id = ProcedureModality::whereName("Directo")->first()->id;
                 if($loanPayment->procedure_modality_id == $procedure_modality_id){ 
@@ -295,9 +299,14 @@ class LoanPaymentController extends Controller
                     if($voucher == null){
                         $state = LoanPaymentState::whereName('Anulado')->first();
                         $loanPayment->state()->associate($state);
+                        $loanPayment->validated = false;
                         $loanPayment->save();
-                        $loanPayment->delete();
-                        return $loanPayment;
+                        if($loan_state_liquidated == $loan_state){
+                            $loan->state_id = LoanState::whereName("Vigente")->first()->id;
+                            $loan->update();
+                          }
+                        $loanPayment->delete();                       
+                        return $loanPayment;                 
                     } else{
                         $message['message'] = "El registro no puede ser eliminado por tener un váucher asociado";
                         $message['deleted'] = false;
@@ -305,7 +314,12 @@ class LoanPaymentController extends Controller
                 } else{
                     $state = LoanPaymentState::whereName('Anulado')->first();
                     $loanPayment->state()->associate($state);
+                    $loanPayment->validated = false;
                     $loanPayment->save();
+                    if($loan_state_liquidated == $loan_state){
+                        $loan->state_id = LoanState::whereName("Vigente")->first()->id;
+                        $loan->update();
+                      }
                     $loanPayment->delete();
                     return $loanPayment;
                 }
@@ -1216,9 +1230,9 @@ class LoanPaymentController extends Controller
        } 
         $export = new ArchivoPrimarioExport($data);
         return Excel::download($export, $File.'.xlsx');
-        
 
- }
+
+    }
     /** @group Reportes préstamos
     * Préstamos en móra
     * Descarga en xls los prestamos que se encuentran en Móra.

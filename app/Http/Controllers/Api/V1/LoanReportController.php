@@ -59,32 +59,35 @@ class LoanReportController extends Controller
     
     array_push($conditions, array('loan_states.name', 'ilike', "%{$state_vigente}%"));
 
-       $list_loan = DB::table('loans')
-               ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
-               ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
-               ->join('loan_states','loans.state_id', '=', 'loan_states.id')
-               ->join('cities','loans.city_id', '=', 'cities.id')
-               ->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
-               ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
-               ->leftjoin('spouses','affiliates.id', '=', 'spouses.affiliate_id')
-               ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
-               ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
-               ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
-               ->leftjoin('loan_destinies','loans.destiny_id', '=', 'loan_destinies.id')
-               ->whereNull('loans.deleted_at')
-               ->where($conditions)
-               ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate',
-               'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-               'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
-               'procedure_modalities.name as sub_modality_loan','procedure_types.second_name as modality_loan','loans.amount_approved as amount_approved_loan',
-               'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
-               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan',
-               'loans.request_date as request_date_loan','cities.name as name_city','spouses.registration as registration_spouse','loans.num_accounting_voucher as loan_accounting',
-               'loans.parent_reason as parent_reason_loan','loans.amount_approved as amount_disbursement',DB::raw("(loans.amount_approved - loans.refinancing_balance) as amount_disbursement_liquido"),
-               'loans.loan_term as term_loan','loan_destinies.name as name_destinity_loan')
-               //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
-               ->orderBy('loans.code', $order_loan)
-               ->get();
+    $list_loan = DB::table('loans')
+            ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
+            ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
+            ->join('loan_states','loans.state_id', '=', 'loan_states.id')
+            ->join('cities','loans.city_id', '=', 'cities.id')
+            //->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
+        // ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
+            ->join('affiliates','loans.disbursable_id', '=', 'affiliates.id')
+            ->leftjoin('spouses','affiliates.id', '=', 'spouses.affiliate_id')
+            ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
+            ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
+            ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
+            ->leftjoin('loan_destinies','loans.destiny_id', '=', 'loan_destinies.id')
+            ->whereNull('loans.deleted_at')
+            ->where($conditions)
+            ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate',
+            'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
+            'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
+            'procedure_modalities.name as sub_modality_loan','procedure_types.second_name as modality_loan','loans.amount_approved as amount_approved_loan',
+            'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate',
+        // 'loan_affiliates.quota_treat as quota_loan', 'loan_affiliates.guarantor as guarantor_loan_affiliate',
+            'loan_states.name as state_loan',
+            'pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan',
+            'loans.request_date as request_date_loan','cities.name as name_city','spouses.registration as registration_spouse','loans.num_accounting_voucher as loan_accounting',
+            'loans.parent_reason as parent_reason_loan','loans.amount_approved as amount_disbursement',DB::raw("(loans.amount_approved - loans.refinancing_balance) as amount_disbursement_liquido"),
+            'loans.loan_term as term_loan','loan_destinies.name as name_destinity_loan')
+            //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
+            ->orderBy('loans.code', $order_loan)
+            ->get();
  
                foreach ($list_loan as $loan) {
                  $padron = Loan::where('id', $loan->id_loan)->first();
@@ -468,7 +471,7 @@ class LoanReportController extends Controller
     * @authenticated
     */
     public function loan_information(Request $request)
-    {
+    {return $request;
         $month = Carbon::parse($request->date)->format('m');
         $year = Carbon::parse($request->date)->format('Y');
         $loans = Loan::whereMonth('disbursement_date', $month)->whereYear('disbursement_date', $year)->get();

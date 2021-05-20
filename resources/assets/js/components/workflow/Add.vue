@@ -394,7 +394,11 @@ export default {
     reload: false,
     tab: "tab-1",
     validate: {
-      valid_disbursement: false
+      valid_disbursement: false,
+      valid_date_contract : false,
+      valid_date_contract_return: false,
+      valid_certificate : false
+
     },
     role_name: null,
     user_name: null,
@@ -684,25 +688,111 @@ export default {
       }
     },
     validation(){
-      //VALIDACION DESEMBOLSO
-      if((this.loan.disbursement_date != 'Fecha invalida' ) ){
-        this.validate.valid_disbursement = true
-      }else{
-        this.validate.valid_disbursement = false
-      }
-      /////
-      if(this.permissionSimpleSelected.includes('disbursement-loan') == true && this.validate.valid_disbursement == true){
-         this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
-         //alert("entro")
-      }
-      else if(this.permissionSimpleSelected.includes('disbursement-loan') == false){
-         this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
-         //alert("entro 2")
-      }
-      else{
-        this.toastr.error('Faltan registar el campo en Desembolso.')
+      //VALIDACION FECHA ENTREGA DE CONTRATO
+     if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true)
+      {
+        if((this.loan.delivery_contract_date != null)){
+         this.validate.valid_date_contract = true
+        }else{
+           this.validate.valid_date_contract = false
+        }
+
+        if((this.loan.return_contract_date != null)){
+          this.validate.valid_date_contract_return = true
+        }else{
+          this.validate.valid_date_contract_return = false
+        }
+
+      }else if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
+      {
+        if((this.loan.disbursement_date != 'Fecha invalida' ) ){
+          this.validate.valid_disbursement = true
+        }else{
+          this.validate.valid_disbursement = false
+        }
+      }else if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
+      {
+        if((this.loan.num_accounting_voucher != null ) ){
+          this.validate.valid_certificate = true
+        }else{
+          this.validate.valid_certificate = false
+        }
       }
 
+      if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true )
+      {
+        if(this.validate.valid_date_contract == true && this.validate.valid_date_contract_return == true)
+        {
+          if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
+          {
+            if(this.validate.valid_certificate == true)
+            {
+              if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
+              {
+                if(this.validate.valid_disbursement == true)
+                {
+                  this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+                }
+                else
+                {
+                  this.toastr.error('Falta generar el plan de pago.')
+                }
+              }else{
+                this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+              }
+            }else
+            {
+              this.toastr.error('Faltan registar el número presupuestario.')
+            }
+          }else{
+            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+          }
+        }else{
+            this.toastr.error('Faltan registar la fecha de entrega de contrato.')
+        }
+      }else{
+        if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
+        {
+          if(this.validate.valid_certificate == true)
+          {
+            if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
+            {
+              if(this.validate.valid_disbursement == true)
+              {
+                this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+              }else
+              {
+                this.toastr.error('Falta generar el plan de pago.')
+              }
+            }
+            else
+            {
+              this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+            }
+          }
+          else
+          {
+            this.toastr.error('Falta registrar el número de presupuesto.')
+          }
+        }else
+        {
+          if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
+          {
+            if(this.validate.valid_disbursement == true)
+            {
+              this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+            }else
+            {
+              this.toastr.error('Falta generar el plan de pago.')
+            }
+          }
+          else
+          {
+            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+          }
+        }
+      }
+    }
     },
       async getAddress(id) {
       try {
@@ -719,5 +809,5 @@ export default {
       }
     },
   }
-}
+
 </script>

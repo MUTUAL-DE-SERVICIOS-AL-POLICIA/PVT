@@ -61,7 +61,7 @@
                         <v-text-field
                           dense
                           v-model="report_inputs.date"
-                          label="Fecha final"
+                          label="Periódo (seleccione cualquier dia del mes)"
                           hint="Día/Mes/Año"
                           type="date"
                           outlined
@@ -122,10 +122,11 @@ export default {
       this.report_selected = null
       this.report_inputs.initial_date = null
       this.report_inputs.final_date = null
+      this.report_inputs.date = null
     },
     async downloadReport() {
       if(this.report_selected) {
-        let params = ''
+        let params = []
         const formData = new FormData();
         // let validation = true
         this.report_selected.criterios.forEach(criterio => {
@@ -151,6 +152,11 @@ export default {
           headers: { Accept: "application/vnd.ms-excel" },
           //headers: { Accept: "text/plain" },
           data: formData,
+          params: {                
+            initial_date: this.report_inputs.initial_date,
+            final_date : this.report_inputs.final_date,
+            date: this.report_inputs.date,
+          }          
         })
           .then((response) => {
             console.log(response.data);

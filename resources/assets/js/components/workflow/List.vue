@@ -159,7 +159,7 @@ export default {
       type: Array,
       required: true
     },
-    procedureTypeSelected1:{
+    procedureTypeSelected:{
       type:Number,
       required: true,
       default: 0

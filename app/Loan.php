@@ -322,7 +322,7 @@ class Loan extends Model
     {
         $monthly_interest = $this->interest->monthly_current_interest;
         unset($this->interest);
-        return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
+        return Util::round2($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
     public function next_payment2($affiliate_id, $estimated_date = null, $paid_by, $procedure_modality_id, $estimated_quota, $liquidate = false)
@@ -342,7 +342,7 @@ class Loan extends Model
             } else {
                 $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
             }
-            $quota->previous_balance = Util::round($this->balance);
+            $quota->previous_balance = Util::round2($this->balance);
             $quota->previous_payment_date = $next_payment->previous_payment_date;
             $quota->quota_number = $this->balance > 0 ? $next_payment->quota : null;
             $interest = $this->interest;
@@ -537,7 +537,7 @@ class Loan extends Model
             // Interés penal
             do {
                 $total_interests -= $quota->penal_payment;
-                $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
+                $quota->penal_payment = Util::round2($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
                 $total_interests += $quota->penal_payment;
                 if ($total_interests > $amount) {
                     $quota->paid_days->penal = intval($amount * $quota->paid_days->penal / $quota->penal_payment);
@@ -547,7 +547,7 @@ class Loan extends Model
             // Interés acumulado
             do {
                 $total_interests -= $quota->accumulated_payment;
-                $quota->accumulated_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->paid_days->accumulated);
+                $quota->accumulated_payment = Util::round2($quota->balance * $interest->daily_current_interest * $quota->paid_days->accumulated);
                 $total_interests += $quota->accumulated_payment;
                 if ($total_interests > $amount) {
                     $quota->paid_days->accumulated = intval(($amount - $quota->penal_payment) * $quota->paid_days->accumulated / $quota->accumulated_payment);
@@ -557,7 +557,7 @@ class Loan extends Model
             // Interés corriente
             do {
                 $total_interests -= $quota->interest_payment;
-                $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->paid_days->current);
+                $quota->interest_payment = Util::round2($quota->balance * $interest->daily_current_interest * $quota->paid_days->current);
                 $total_interests += $quota->interest_payment;
                 if ($total_interests > $amount) {
                     $quota->paid_days->current = intval(($amount - $quota->penal_payment - $quota->accumulated_payment) * $quota->paid_days->current / $quota->interest_payment);
@@ -567,17 +567,17 @@ class Loan extends Model
             //if ($total_interests > 0) {
                 if (($quota->balance + $total_interests) > $amount) {
                     if($quota->quota_number == 1 && $quota->estimated_days->accumulated < 31){
-                        $quota->capital_payment = Util::round($amount + $quota->accumulated_payment - $total_interests);
+                        $quota->capital_payment = Util::round2($amount + $quota->accumulated_payment - $total_interests);
                     }else{
-                        $quota->capital_payment = Util::round($amount - $total_interests);
+                        $quota->capital_payment = Util::round2($amount - $total_interests);
                     }
                 } else {
                     $quota->capital_payment = $quota->balance;
                 }
             //}
             // Calcular monto total de la cuota
-            $quota->estimated_quota = Util::round($quota->capital_payment + $total_interests);
-            $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
+            $quota->estimated_quota = Util::round2($quota->capital_payment + $total_interests);
+            $quota->next_balance = Util::round2($quota->balance - $quota->capital_payment);
 
             if ($liquidate) {
                 if ($quota->next_balance > 0) {
@@ -607,14 +607,14 @@ class Loan extends Model
                 ];
             }
             $interest = LoanPayment::days_interest($this, $next_payment->date);
-            $next_interest = Util::round($balance * $interest->current * $daily_interest);
+            $next_interest = Util::round2($balance * $interest->current * $daily_interest);
             if (($balance + $next_interest) > $estimated_quota) {
                 $next_balance = $estimated_quota - $next_interest;
             } else {
                 $next_balance = $balance;
             }
-            $next_balance = Util::round($next_balance);
-            $balance = Util::round($balance - $next_balance);
+            $next_balance = Util::round2($next_balance);
+            $balance = Util::round2($balance - $next_balance);
             $total = $next_balance + $next_interest;
             if($next_payment->quota == $loan_term){
                 $next_balance = $next_balance + $balance;

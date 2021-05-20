@@ -211,7 +211,8 @@ export default {
             procedure_modality_id:this.data_payment.procedure_modality_id,
             user_id: this.$store.getters.id,
             state: this.data_payment.refinanciamiento,
-            description:this.data_payment.glosa
+            description:this.data_payment.glosa,
+            liquidate : this.data_payment.liquidate,
           })
              if(res.status==201 || res.status == 200){
               this.status_click = false

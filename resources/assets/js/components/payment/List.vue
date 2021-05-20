@@ -183,11 +183,17 @@ export default {
       type: Array,
       required: true
     },
-    procedureTypeSelected1:{
+    procedureTypeSelected:{
       type:Number,
       required: true,
       default: 0
     }
+  },
+  computed: {
+      //Metodo para obtener Permisos por rol
+      permissionSimpleSelected () {
+        return this.$store.getters.permissionSimpleSelected
+      }
   },
   data: () => ({
     selectedLoans: [],
@@ -282,12 +288,7 @@ export default {
       if (typeof val === 'string') this.updateHeader()
     }
   },
-  computed: {
-      //Metodo para obtener Permisos por rol
-      permissionSimpleSelected () {
-        return this.$store.getters.permissionSimpleSelected
-      }
-  },
+
   mounted() {
     this.bus.$on('emitRefreshLoans', val => {
       this.selectedLoans = []
