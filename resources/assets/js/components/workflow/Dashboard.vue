@@ -46,10 +46,10 @@
                   <h6><strong><b style="color:white">C.I: </b>{{lenders.identity_card}}</strong> </h6>
                 </v-card-text>
               </v-card>
-
+              
               </div>
           </v-col>
-
+         
         </v-row>
       </v-col>
       <v-col cols="6" class="text-center">
@@ -76,7 +76,7 @@
               </v-card-text>
             </v-card>
           </v-col>
-
+         
           <v-col cols="12" class="text-center py-0" style="margin-top:10px">
             <v-card class="mx-auto" color="#151515" dark max-height="400">
               <v-card-text class="headline font-weight-bold">
@@ -127,7 +127,6 @@ export default {
     isNew() {
       return this.$route.params.id == "new"
     },
-
     /*spouseNombre: function() {
       return (
         this.spouse.mothers_last_name +
