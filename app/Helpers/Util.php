@@ -88,7 +88,7 @@ class Util
             $f = new \NumberFormatter('es', \NumberFormatter::SPELLOUT);
             $data = $f->format(intval($value)) . ' ' . explode('.', number_format(round($value, 2), 2))[1] . '/100';
         } else {
-            $data = number_format($value, 2, ',', '.');
+            $data = number_format($value, 2, '.', ',');
         }
         return $data;
     }

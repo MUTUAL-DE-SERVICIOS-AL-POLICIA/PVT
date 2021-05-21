@@ -471,7 +471,7 @@ class LoanReportController extends Controller
     * @authenticated
     */
     public function loan_information(Request $request)
-    {return $request;
+    {
         $month = Carbon::parse($request->date)->format('m');
         $year = Carbon::parse($request->date)->format('Y');
         $loans = Loan::whereMonth('disbursement_date', $month)->whereYear('disbursement_date', $year)->get();
