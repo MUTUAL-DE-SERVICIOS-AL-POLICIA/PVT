@@ -127,6 +127,7 @@ export default {
     isNew() {
       return this.$route.params.id == "new"
     },
+    
     /*spouseNombre: function() {
       return (
         this.spouse.mothers_last_name +
