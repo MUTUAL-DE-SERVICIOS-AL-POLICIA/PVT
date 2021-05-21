@@ -75,10 +75,10 @@
               {{"NÚMERO DE CUOTA: "+this.loan_payment.quota_number}}
             </v-col>
             <v-col  cols="4" v-show="ver" class='py-1'>
-              {{'MONTO:'+this.loan.amount_approved}}
+              {{'MONTO: '+$options.filters.money( this.loan.amount_approved)}}
             </v-col>
             <v-col  cols="4" v-show="ver" class='py-1'>
-              {{'CUOTA ESTIMADA MENSUAL :'+this.loan_payment.estimated_quota}}
+              {{'CUOTA ESTIMADA MENSUAL: '+$options.filters.moneyString(this.loan_payment.estimated_quota)}}
             </v-col>
           </v-row>
           <Steps

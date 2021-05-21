@@ -40,7 +40,7 @@
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Fecha de Desembolso:</b></label>
-                                  {{$moment(garantes.disbursement_date).format("YYYY-MM-DD")}}
+                                  {{$moment(garantes.disbursement_date).format("L")}}
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Monto Desembolsado:</b></label>
@@ -50,8 +50,8 @@
                                   <label><b>Plazo :</b></label>
                                    {{ garantes.loan_term +' Meses'}}
                                 </v-col>
-                              
-                                 
+
+
 
                       <v-progress-linear></v-progress-linear>
 
@@ -59,15 +59,15 @@
                           <center>
                            <v-toolbar-title>DATOS DEL PAGO ANTERIOR</v-toolbar-title>
                            </center>
-                       
+
                         </v-col>
                       <v-progress-linear v-show="isNew"></v-progress-linear>
-                       
+
                                 <v-col cols="3" class="ma-0 py-2"  v-show="isNew">
                                   <label><b style="color:teal" >Saldo Capital:</b></label>
                                   <b style="color:teal">{{garantes.balance | moneyString}}</b>
                                 </v-col>
-                               
+
                                 <v-col cols="3" class="ma-0 py-2" v-show="isNew">
                                   <label><b style="color:teal">Número de Cuota:</b></label>
                                   <b style="color:teal">{{(garantes.last_payment_validated.quota_number+1)  }}</b>
@@ -77,13 +77,13 @@
                                   <b style="color:teal">{{ garantes.last_payment_validated.estimated_date}}</b>
                                 </v-col>
 
-                               
-                              
+
+
                                 <v-col cols="3" class="ma-0 py-2" v-show="isNew">
                                   <label><b style="color:teal" >Total Pagado:</b></label>
                                   <b style="color:teal">{{garantes.last_payment_validated.estimated_quota | moneyString}}</b>
                                 </v-col>
-                           
+
                                 <v-col cols="3" class="ma-0 py-2" v-show="isNew">
                                   <label><b>Interes Pendiente:</b></label>
                                   {{garantes.last_payment_validated.interest_remaining}}
@@ -96,13 +96,13 @@
                                   <label><b>Interes Penal Pendiente:</b></label>
                                   {{garantes.last_payment_validated.penal_remaining}}
                                 </v-col>
-                              
+
                                 <v-col cols="3" class="ma-0 py-2" v-show="isNew">
                                   <label><b>Interes Corrientes Pendientes:</b></label>
                                   {{garantes.last_payment_validated.interest_payment}}
                                 </v-col>
-                               
-                              
+
+
                                  <v-col cols="6" class="ma-0 py-2" v-show="isNew">
                                   <label><b>Interes Restante Acumulado:</b></label>
                                   {{garantes.last_payment_validated.interest_accumulated}}
@@ -289,7 +289,7 @@
                             dense
                           ></v-text-field>
                         </v-col>
-                     
+
                         <v-col cols="4" class="ma-0 pb-0" v-show="editable" v-if="permissionSimpleSelected.includes('create-payment')">
                           <v-select
                             class="caption"
@@ -346,12 +346,12 @@
                             dense
                             label="Glosa"
                           ></v-text-field>
-                          
+
                         </v-col>
                           <v-col cols="8" v-show="permissionSimpleSelected.includes('create-payment-loan')">
                         </v-col>
                         <v-col cols="10" v-show="isNew" class="py-0">
-                     
+
                         </v-col>
                         <v-col cols="2" v-show="isNew" class="py-0">
                            <v-btn
@@ -364,10 +364,10 @@
                           <AddPayment
                 :payment.sync="payment"
                 :data_payment.sync="data_payment"/>
-                          
+
                       </v-row>
                     </template>
-                    
+
                   </v-form>
                 </ValidationObserver>
                       </fieldset>
@@ -390,7 +390,7 @@ export default {
       type: Object,
       required: true
     },
-  
+
   },
     components: {
     AddPayment
@@ -449,7 +449,7 @@ export default {
   //Metodo para obtener Permisos por rol
   permissionSimpleSelected () {
     return this.$store.getters.permissionSimpleSelected
-  },   
+  },
     isNew() {
       return  this.$route.params.hash == 'new'
     },
@@ -497,7 +497,7 @@ export default {
       OnchangeAmortization(){
  //        this.data_payment.pago_total=null
         if(this.data_payment.pago=="Liquidar"){
-      
+
           this.data_payment.pago_total= this.garantes.balance
           this.data_payment.liquidate=true
 
@@ -600,7 +600,7 @@ export default {
              this.garantes.last_payment_validated.estimated_date=0
              this.garantes.modality.name = res.data.modality.name
 
-    
+
          this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
@@ -725,7 +725,7 @@ export default {
             }
             else{
               this.toastr.error('Debe seleccionar el tipo de tramite')
-            
+
           }
       }catch (e) {
         console.log(e)
