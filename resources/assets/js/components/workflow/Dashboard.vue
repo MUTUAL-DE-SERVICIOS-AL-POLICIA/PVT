@@ -16,7 +16,7 @@
                 </h6>
                 <h6>
                   <strong><b style="color:white">PRESTATARIO: </b></strong>
-                  {{ $options.filters.fullName(affiliate, false) }}
+                  {{ $options.filters.fullName(affiliate, true) }}
                 </h6>
                 <h6><strong><b style="color:white">GRADO: </b></strong> {{ degree_name }}</h6>
                 <h6><strong><b style="color:white">UNIDAD: </b></strong> {{ unit_name }}</h6>
