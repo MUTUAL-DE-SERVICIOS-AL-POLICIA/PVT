@@ -3,8 +3,9 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ArchivoPrimarioExport implements FromArray
+class ArchivoPrimarioExport implements FromArray,ShouldAutoSize
 {
     protected $data;
 
