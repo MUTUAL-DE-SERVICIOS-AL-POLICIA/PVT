@@ -36,7 +36,7 @@ class ImportationReportController extends Controller
     public function report_amortization_importation_payments(Request $request)
     {
         $request->validate([
-        'origin'=>'required|string|in:C,S',
+        'origin'=>'required|string|in:C,S,E',
         'period'=>'required|exists:loan_payment_periods,id',
         'category_name'=>'string|in:Refinanciamiento,Regular',
         'state_name'=>'string|in:Pagado,Pendiente por confirmar'
@@ -48,12 +48,13 @@ class ImportationReportController extends Controller
         ini_set('memory_limit', '960M');
 
         //origin y period
-        if ($request->origin == 'C') {
-            $procedure_modality_id = 'DES-COMANDO';
-        }
-        if ($request->origin == 'S') {
-            $procedure_modality_id = 'DES-SENASIR';
-        }
+        $procedure_modality = [
+            'C' => 'DES-COMANDO',
+            'S' => 'DES-SENASIR',
+            'E' => 'DES-ECO-COM'
+        ];
+
+        $procedure_modality_id = $procedure_modality[$request->origin] ?? null;
 
         $period = LoanPaymentPeriod::whereId($request->period)->first();
         $estimated_date = Carbon::create($period->year, $period->month, 1);
@@ -67,8 +68,6 @@ class ImportationReportController extends Controller
         $final_date = $estimated_date;
         //$category_name = $request->category_name? $request->category_name:'Regular' ;//para imprementar otro listado de refis y repros  descomentar
         $state_pagado= $request->state_name? $request->state_name:'Pagado';
-
-        $final_date = $estimated_date;
 
         if ($initial_date != '') {
             array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '=', "%{$initial_date}%"));
@@ -337,6 +336,83 @@ class ImportationReportController extends Controller
          return Excel::download($export, $file_name.'.xls');
     
      }
+    
+    /*
+    Reporte de solicitud para Préstamos Estacionales 
+    por Beneficio del Complemento Económico
+    */	
+    public function report_request_season_payments($period_id, $date){ 
+        // aumenta el tiempo máximo de ejecución de este script a 150 min
+        ini_set('max_execution_time', 9000);
+        // aumentar el tamaño de memoria permitido de este script
+        ini_set('memory_limit', '960M');
+
+        if ($period_id) {
+            $period = LoanPaymentPeriod::find($period_id);
+            $estimated_date = Carbon::create($period->year, $period->month, 1);
+            $estimated_date = Carbon::parse($estimated_date)
+                ->subMonths(3) 
+                ->endOfMonth()  
+                ->endOfDay()
+                ->format('Y-m-d');  
+
+            // fecha para cálculo del descuento      
+            $estimated_date_calculate = Carbon::create($period->year, $period->month, 1);
+            $estimated_date_calculate = Carbon::parse($estimated_date_calculate)->endOfMonth()->endOfDay()->format('Y-m-d');
+        } else {
+            if ($date) {
+                $estimated_date = $date;
+            } else {
+                $estimated_date = Carbon::now()->format('Y-m-d');
+            }
+        }
+        
+        $current_loans = "select id_loan as id from view_loan_borrower
+                        where shortened_sub_modality_loan ilike 'EST%'
+                        and CAST(disbursement_date_loan AS date) <= CAST('$estimated_date' AS date) and state_loan ='Vigente'"; 
+        $current_loans = DB::select($current_loans);
+
+        $data = array(
+            array("PTMO", "Fecha Desembolso", "Ciudad", "Sector", "CI Titular", "CI Cónyuge", "Ap.Paterno", "Ap.Materno",
+                "Ap de Casada", "Primer Nombre", "Segundo Nombre", "Saldo Actual", "Cuota", "Descuento", "Tasa"));
+
+        foreach ($current_loans as $loan) {
+            $loan = Loan::find($loan->id);
+            $lender = $loan->borrower[0];
+
+            $identity_card_beneficiary = '';
+            if ($loan->affiliate->dead) {
+                if ($loan->modality->shortened === 'EST-PAS-CON') {
+                    $identity_card_beneficiary = $loan->affiliate->spouse->identity_card ?? '';
+                }
+            } else {
+                $identity_card_beneficiary = $lender->identity_card;
+            }
+
+            array_push($data, array(
+                $loan->code,
+                Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
+                $loan->city->name,
+                $lender->affiliate_state->affiliate_state_type->name,
+                $lender->identity_card,
+                $identity_card_beneficiary,
+                $lender->last_name,
+                $lender->mothers_last_name,
+                $lender->surname_husband,
+                $lender->first_name,
+                $lender->second_name,
+                Util::money_format($loan->balance),
+                Util::money_format($loan->estimated_quota),
+                Util::money_format($loan->get_amount_payment($estimated_date_calculate , false, 'T')),
+                $loan->interest->annual_interest
+            ));
+        }
+        $file_name = "solicitud_estacional";
+        $extension = '.xls';
+
+        $export = new ArchivoPrimarioExport($data);
+        return Excel::download($export, $file_name.$extension);
+    }
 
      /**
     * Reporte de solicitud a senasir o COMANDO
@@ -348,17 +424,18 @@ class ImportationReportController extends Controller
     */
      public function report_request_institution(request $request){
         $request->validate([
-            'origin'=>'required|string|in:C,S',
+            'origin'=>'required|string|in:C,S,E',
             'period'=>'integer|exists:loan_payment_periods,id',
             'date'=> 'nullable|date_format:"Y-m-d"'
         ]);
 
         if ($request->origin == 'C') {
             return $this->report_request_command_payments($request->period,$request->date);
+        } elseif ($request->origin == 'S') {
+                return $this->report_request_senasir_payments($request->period, $request->date);
         }else{
-            return $this->report_request_senasir_payments($request->period, $request->date);
+            return $this->report_request_season_payments($request->period, $request->date);
         }
-
-     }
+    }
 
 }
