@@ -16,6 +16,9 @@
                   <v-btn value="SENASIR">
                     Senasir
                   </v-btn>
+                  <v-btn value="ESTACIONAL">
+                    Estacional
+                  </v-btn>
                 </v-btn-toggle>
                 <v-select
                   :items="year"
@@ -136,6 +139,45 @@
                     </v-tooltip>
                 </v-col>
               </v-row>
+              <v-row v-if="period_type==='ESTACIONAL'">
+                <v-col cols="12" md="12" class="py-0">
+                  <b>Senasir <v-icon small>mdi-home-analytics</v-icon></b>
+                </v-col>
+                <v-divider inset></v-divider>
+                <v-col cols="12" md="12" class="py-0">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on}">
+                        <v-btn
+                          class="ma-2 teal white--text btn-period"
+                          v-on="on"
+                          :loading="loading_ss && i == l_index"
+                          :disabled="item.importation"
+                          @click.stop="l_index = i;solicitudSenasir('S', item.id,meses[item.month - 1])"
+                        >
+                          <v-icon  dark left small>mdi-arrow-down</v-icon>Solicitud
+                        </v-btn>
+                      </template>
+                      <div>
+                        <span>Solicitud Senasir</span>
+                      </div>
+                    </v-tooltip>
+                    <v-tooltip top>
+                    <template v-slot:activator="{ on}">
+                      <v-btn
+                        class="ma-2 info white--text btn-period"
+                        v-on="on"
+                        :disabled="item.importation"
+                         @click.stop="importacionEstacional(item.month, item.id)"
+                      >
+                        <v-icon dark left small>mdi-arrow-up</v-icon>Importación
+                      </v-btn>
+                    </template>
+                    <div>
+                      <span>Importación Senasir</span>
+                    </div>
+                    </v-tooltip>
+                </v-col>
+              </v-row>
             </v-card-text>
             <v-progress-linear color="white"></v-progress-linear>
             <v-card-actions class="blue-grey lighten-5">
@@ -170,6 +212,25 @@
                     v-model="report_button_senasir[i]"
                     :loading="report_loading_senasir[i]"
                     @click.stop="reporteComandoSenasir(item.id,'S',i)"
+                  >
+                    <v-icon >mdi-file-document</v-icon> 
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Reporte Pago Senasir</span>
+                </div>
+              </v-tooltip>
+              <v-tooltip top v-if="period_type==='ESTACIONAL'">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    :disabled="!item.importation"
+                    small
+                    :color="'primary'"
+                    fab
+                    v-on="on"
+                    v-model="report_button_senasir[i]"
+                    :loading="report_loading_senasir[i]"
+                    @click.stop="reporteComandoSenasir(item.id,'E',i)"
                   >
                     <v-icon >mdi-file-document</v-icon> 
                   </v-btn>
@@ -232,8 +293,9 @@
                                 <v-list>
                                   <v-list-item>
                                     <v-list-item-content>
-                                      <v-list-item-title v-show="import_export.state_affiliate !='C'">Importación Senasir</v-list-item-title>
+                                      <v-list-item-title v-show="import_export.state_affiliate =='S'">Importación Senasir</v-list-item-title>
                                        <v-list-item-title v-show="import_export.state_affiliate =='C'">Importación Comando</v-list-item-title>
+                                       <v-list-item-title v-show="import_export.state_affiliate =='E'">Importación Estacional</v-list-item-title>
                                       <v-list-item-subtitle>Descripción de documento de Importacion</v-list-item-subtitle>
                                     </v-list-item-content>
                                   </v-list-item>
@@ -241,25 +303,33 @@
                                 <v-divider></v-divider>
                                 <div class="py-1 pl-2 ma-1">
                                     <small class="py-0 ma-0"><v-icon class="py-1 ma-0">mdi-check</v-icon>
-                                      Archivo CSV </small> <br>
+                                      Archivo CSV </small><br>
                                     <small v-show="import_export.state_affiliate =='C'"><v-icon>mdi-check</v-icon>
                                       NOMBRE DEL ARCHIVO EJEMPLO: comando-2021-03.csv</small>
-                                    <small v-show="import_export.state_affiliate !='C'"><v-icon>mdi-check</v-icon>
-                                      NOMBRE DEL ARCHIVO EJEMPLO: senasir-2021-03.csv</small><br>
+                                    <small v-show="import_export.state_affiliate =='S'"><v-icon>mdi-check</v-icon>
+                                      NOMBRE DEL ARCHIVO EJEMPLO: senasir-2021-03.csv</small>
+                                    <small v-show="import_export.state_affiliate =='E'"><v-icon>mdi-check</v-icon>
+                                      NOMBRE DEL ARCHIVO EJEMPLO: estacional-2024-12.csv</small><br>
                                     <small class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
                                       tipo-año-periodo.csv</small><br>
                                     <small><v-icon>mdi-check</v-icon>
-                                      FORMATO CABECERA DEL ARCHIVO</small><br v-show="import_export.state_affiliate !='C'">
-                                      <small class=" pl-6 ma-1" v-show="import_export.state_affiliate !='C'">
+                                      FORMATO CABECERA DEL ARCHIVO</small><br v-show="import_export.state_affiliate =='S'">
+                                    <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='S'">
                                       MATRICULA:MATRICULA_DH:MONTO</small><br v-show="import_export.state_affiliate =='C'">
-                                      <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='C'">
-                                      CI:MONTO</small><br>
-                                     <small><v-icon>mdi-check</v-icon>
-                                      Campos del Archivo CSV</small><br v-show="import_export.state_affiliate !='C'" >
-                                    <small v-show="import_export.state_affiliate !='C'" class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
-                                      MATRICULA: Matricula del afiliado</small><br v-show="import_export.state_affiliate !='C'">
-                                     <small class=" pl-6 ma-1" v-show="import_export.state_affiliate !='C'"><v-icon >mdi-arrow-right-thick</v-icon>
-                                      MATRICULA DERECHO HABIENTE: Matricula del conyugue</small><br v-show="import_export.state_affiliate =='C'">
+                                    <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='C'">
+                                      CI:MONTO</small><br v-show="import_export.state_affiliate =='E'">
+                                      <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='E'">
+                                        CI:CI_DH:MONTO</small><br>
+                                    <small><v-icon>mdi-check</v-icon>
+                                      Campos del Archivo CSV</small><br v-show="import_export.state_affiliate =='S'" >
+                                    <small v-show="import_export.state_affiliate =='S'" class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      MATRICULA: Matricula del afiliado</small><br v-show="import_export.state_affiliate =='S'">
+                                     <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='S'"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      MATRICULA DERECHO HABIENTE: Matricula del conyugue</small><br v-show="import_export.state_affiliate =='E'" >
+                                      <small v-show="import_export.state_affiliate =='E'" class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      Ci: CI del afiliado</small><br v-show="import_export.state_affiliate =='E'">
+                                     <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='E'"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      CI_DH: CI del conyugue</small><br v-show="import_export.state_affiliate =='E'">
                                     <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='C'"><v-icon >mdi-arrow-right-thick</v-icon>
                                       CI: CI del afiliado</small><br>
                                      <small class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
@@ -344,9 +414,9 @@
                                         v-model="import_export.file"
                                       ></v-file-input>
                                     </v-col>
-                                    <v-col cols="9" md="9" class="py-0">
+                                    <v-col cols="9" md="9">
                                     </v-col>
-                                    <v-col cols="2" md="2" class="py-0">
+                                    <v-col cols="2" md="2">
                                       <v-btn
                                         color="success"
                                         dark
@@ -641,6 +711,7 @@ export default {
     state_affiliate: [
       { name: "Activo - Comando", value: 'C' },
       { name: "Pasivo - Senasir", value: 'S' },
+      { name: "Pasivo - Estacional", value: 'E' },
     ],
   period_year:null,
   mes:null,
@@ -731,6 +802,7 @@ export default {
         })
         .catch((e) => {
           console.log(e);
+          this.loading_uf=false;
         });
     },
     //Metodo para sacar el año
@@ -898,6 +970,55 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para realizar el porcentaje la importacion de Prestamos estacionales
+    async importacionEstacional(month, id){
+        try {
+        let res = await axios.get(`periods/${id}`)
+        if(res.data.import_senasir){
+          this.toastr.error('Este periodo ya fue Importado')
+        }else{
+          this.aux_period= month
+          this.mes=id
+          if( this.aux_period < 10){
+            this.period_show= res.data.year+'-0'+this.aux_period
+          }else{
+            this.period_show= res.data.year+'-'+this.aux_period
+          }
+          this.dialog=true
+          this.import_export.state_affiliate = 'E'
+          this.title= 'Estacional'
+          let resp = await axios.post(`loan_payment/import_progress_bar`,{
+            period_id: this.mes,
+            origin: this.import_export.state_affiliate
+          });
+          if(resp.data.percentage > 0){
+            this.percentage=resp.data.percentage
+            if(resp.data.query_step_1 == true)
+            {
+              this.e1=2
+              this.validate_data=true
+            }else{
+              if(resp.data.query_step_2 == true){
+                this.e1=3
+                this.show_import=true
+              }
+            }
+            this.import_export.file_name = resp.data.file_name
+            this.import_export.reg_copy = resp.data.reg_copy
+            this.import_export.reg_group = resp.data.reg_group
+            this.import_export.period_importation = resp.data.period_importation
+          }else{
+            this.percentage=0
+            this.e1=1
+          }
+        }
+      } catch (e) {
+        this.loading = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
     //Metodo para realizar la validacion del archivo a importar
     async validateFilePayment(){
     try {
@@ -971,7 +1092,7 @@ export default {
           this.dialog_confirm_import=false
           this.toastr.error(res.data.message)
         }
-      }else{
+      }else if(this.import_export.state_affiliate=='S'){
         let res = await axios.get(`importation_payments_senasir`,{
         params:{
           period: this.mes
@@ -982,6 +1103,22 @@ export default {
           this.dialog=false
           this.dialog_confirm_import=false
           this.toastr.success('Importado Correctamente: '+res.data.paid_by_lenders+ ' titulares y '+ res.data.paid_by_guarantors+' garantes' )
+        }
+      }
+      else{
+        this.toastr.error(res.data.message)
+      }
+     } else if(this.import_export.state_affiliate=='E'){
+        let res = await axios.get(`importation_payments_estacional`,{
+        params:{
+          period: this.mes
+        }
+      })
+      if(res.data.importation_validated){
+        if(res.status==201 || res.status == 200){
+          this.dialog=false
+          this.dialog_confirm_import=false
+          this.toastr.success('Importado Correctamente: '+res.data.paid_by_lenders+ ' titulares')
         }
       }
       else{

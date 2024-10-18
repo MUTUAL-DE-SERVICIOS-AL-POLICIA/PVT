@@ -43,22 +43,22 @@ class ImportationController extends Controller
     * @responseFile responses/importation/importation_agroup.200.json
      */
 
- public function agruped_payments(Request $request){
-    $request->validate([
-        'origin'=>'required|string|in:C,S',
-        'period'=>'required|exists:loan_payment_periods,id'
-    ]);
+    public function agruped_payments(Request $request){
+        $request->validate([
+            'origin'=>'required|string|in:C,S,E',
+            'period'=>'required|exists:loan_payment_periods,id'
+        ]);
 
-    DB::beginTransaction();
-    try {
+        DB::beginTransaction();
+        try {
 
-    $data = array();
-    $count_affiliate = 0;
-    $count_no_exist = 0;
-    $validado = false;
-    $origin = $request->origin; $period = $request->period;//entradas
+        $data = array();
+        $count_affiliate = 0;
+        $count_no_exist = 0;
+        $validado = false;
+        $origin = $request->origin; $period = $request->period;//entradas
         if($origin == 'C'){
-            $query = "  SELECT loan_payment_copy_commands.identity_card as identity_card, sum(amount) as amount
+            $query = "SELECT loan_payment_copy_commands.identity_card as identity_card, sum(amount) as amount
                         FROM loan_payment_copy_commands
                         where loan_payment_copy_commands.period_id = '$period'
                         group by loan_payment_copy_commands.identity_card";
@@ -71,50 +71,45 @@ class ImportationController extends Controller
                 if($affiliate_id != 0){
                     DB::table("loan_payment_group_commands")
                     ->insert([
-                      "affiliate_id" => $affiliate_id,
-                      "period_id" => $period,
-                      "identity_card" =>$payment_agroup->identity_card,
-                      "amount" => $payment_agroup->amount,
-                      "amount_balance" => $payment_agroup->amount,
-                      "created_at" =>Carbon::now(),
-                      "updated_at" =>Carbon::now(),
+                        "affiliate_id" => $affiliate_id,
+                        "period_id" => $period,
+                        "identity_card" =>$payment_agroup->identity_card,
+                        "amount" => $payment_agroup->amount,
+                        "amount_balance" => $payment_agroup->amount,
+                        "created_at" =>Carbon::now(),
+                        "updated_at" =>Carbon::now(),
                     ]);
-                   Log::info('Registro agrupado de affiliado con Id: '.$affiliate_id);
-                  $count_affiliate++;
+                    Log::info('Registro agrupado de affiliado con Id: '.$affiliate_id);
+                    $count_affiliate++;
                 }else{
 
                     $data_loan =  $payment_agroup;
                     array_push($data, $data_loan);
                     $count_no_exist++;
                 }
-             }
-
-        }else{
-            if($origin == 'S'){
-
-             $query = "  SELECT loan_payment_copy_senasirs.registration as registration, loan_payment_copy_senasirs.registration_dh as registration_dh, sum(amount) as amount
-                        FROM loan_payment_copy_senasirs
-                        where loan_payment_copy_senasirs.period_id = '$period'
-                        group by loan_payment_copy_senasirs.registration, loan_payment_copy_senasirs.registration_dh";
-
+            }
+        }elseif($origin == 'S'){
+            $query = "SELECT loan_payment_copy_senasirs.registration as registration, loan_payment_copy_senasirs.registration_dh as registration_dh, sum(amount) as amount
+                    FROM loan_payment_copy_senasirs
+                    where loan_payment_copy_senasirs.period_id = '$period'
+                    group by loan_payment_copy_senasirs.registration, loan_payment_copy_senasirs.registration_dh";
             $payment_agroups = DB::select($query);
-
             $this->delete_agroups_payments($period, $origin);
             foreach($payment_agroups as $payment_agroup){
                 $affiliate_id = $this->serch_id($payment_agroup->registration);
                 if($affiliate_id != 0){
                     DB::table("loan_payment_group_senasirs")
                     ->insert([
-                      "affiliate_id" => $affiliate_id,
-                      "period_id" => $period,
-                      "registration" =>$payment_agroup->registration,
-                      "registration_dh" =>$payment_agroup->registration_dh,
-                      "amount" => $payment_agroup->amount,
-                      "amount_balance" => $payment_agroup->amount,
-                      "created_at" =>Carbon::now(),
-                      "updated_at" =>Carbon::now(),
+                        "affiliate_id" => $affiliate_id,
+                        "period_id" => $period,
+                        "registration" =>$payment_agroup->registration,
+                        "registration_dh" =>$payment_agroup->registration_dh,
+                        "amount" => $payment_agroup->amount,
+                        "amount_balance" => $payment_agroup->amount,
+                        "created_at" =>Carbon::now(),
+                        "updated_at" =>Carbon::now(),
                     ]);
-                  $count_affiliate++;
+                    $count_affiliate++;
 
                 }else{
                     $data_loan =  $payment_agroup;
@@ -122,62 +117,92 @@ class ImportationController extends Controller
                     $count_no_exist++;
                 }
             }
-
-        }else{
-            abort(409, 'Incorrecto! Debe enviar C(Comando General) ó S(Senasir)');
+        }elseif($origin == 'E'){
+            $query = "SELECT loan_payment_copy_estacionales.identity_card as identity_card, loan_payment_copy_estacionales.identity_card_dh as identity_card_dh, sum(amount) as amount
+                    FROM loan_payment_copy_estacionales
+                    where loan_payment_copy_estacionales.period_id = '$period'
+                    group by loan_payment_copy_estacionales.identity_card, loan_payment_copy_estacionales.identity_card_dh";
+            $payment_agroups = DB::select($query);
+            $this->delete_agroups_payments($period, $origin);
+            foreach($payment_agroups as $payment_agroup){
+                $affiliate_id = $this->serch_id($payment_agroup->identity_card);
+                if($affiliate_id != 0){
+                    DB::table("loan_payment_group_estacionales")
+                    ->insert([
+                        "affiliate_id" => $affiliate_id,
+                        "period_id" => $period,
+                        "identity_card" =>$payment_agroup->identity_card,
+                        "identity_card_dh" =>$payment_agroup->identity_card_dh,
+                        "amount" => $payment_agroup->amount,
+                        "amount_balance" => $payment_agroup->amount,
+                        "created_at" =>Carbon::now(),
+                        "updated_at" =>Carbon::now(),
+                    ]);
+                    $count_affiliate++;
+                }else{
+                    $data_loan =  $payment_agroup;
+                    array_push($data, $data_loan);
+                    $count_no_exist++;
+                }
             }
+        }else{
+            abort(409, 'Incorrecto! Debe enviar C(Comando General) ó S(Senasir) ó E(Estacional)');
         }
-
         //verificar exixtencia de afiliados
-            if($count_no_exist > 0){
-                DB::rollback();
-                $delete_copy = $this->delete_copy_payments($period,$origin);
-                Log::info('Cantidad de registros no existentes: '.$count_no_exist);
-
-
-               $data_cabeceraC=array(array("NRO de CARNET", "MONTO TOTAL"));
-               $data_cabeceraS=array(array("MATRÍCULA", "MATRÍCULA D_H", "MONTO TOTAL"));
-
-               foreach ($data as $row){
-                   if($origin == 'C'){
-                        array_push($data_cabeceraC, array($row->identity_card, $row->amount));
-                   }else{
-                        array_push($data_cabeceraS, array($row->registration, $row->registration_dh, $row->amount));
-                   }
-               }
-               $last_period = LoanPaymentPeriod::find($period);
-               $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
-               if($origin == 'C'){
+        if($count_no_exist > 0){
+            DB::rollback();
+            $delete_copy = $this->delete_copy_payments($period,$origin);
+            Log::info('Cantidad de registros no existentes: '.$count_no_exist);
+            $data_cabeceraC=array(array("NRO de CARNET", "MONTO TOTAL"));
+            $data_cabeceraS=array(array("MATRÍCULA", "MATRÍCULA D_H", "MONTO TOTAL"));
+            $data_cabeceraE=array(array("CI", "CI_DH", "MONTO TOTAL"));
+            foreach ($data as $row){
+                if($origin == 'C'){
+                    array_push($data_cabeceraC, array($row->identity_card, $row->amount));
+                }elseif($origin == 'S'){
+                    array_push($data_cabeceraS, array($row->registration, $row->registration_dh, $row->amount));
+                }elseif($origin == 'E'){
+                    array_push($data_cabeceraE, array($row->identity_card, $row->identity_card_dh, $row->amount));
+                }
+            }
+            $last_period = LoanPaymentPeriod::find($period);
+            $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
+            if($origin == 'C'){
                 $export = new ArchivoPrimarioExport($data_cabeceraC);
                 $file_name = $origin.'_'.$last_date.'.xls';
                 $base_path = 'errorValidacion_Command/'.'Command_'.$last_date;
                 Excel::store($export,$base_path.'/'.$file_name, 'ftp');
-               }else{
+            }elseif($origin == 'S'){
                 $export = new ArchivoPrimarioExport($data_cabeceraS);
                 $file_name = $origin.'_'.$last_date.'.xls';
                 $base_path = 'errorValidacion_Senasir/'.'Senasir_'.$last_date;
                 Excel::store($export,$base_path.'/'.$file_name, 'ftp');
-               }
-               $count_affiliate = 0;
-                return  response()->json(['message' =>'Validación de datos incorrecto!','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
-            }else{
-                if($count_affiliate > 0){
-                    $validado =true;
-                    DB::commit();
-                    return  response()->json(['message' =>'Validación de datos realizado con exito!','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
-
-                }else{
-                    //DB::commit();
-                    $delete_copy = $this->delete_copy_payments($period,$origin);
-                    return  response()->json(['message' =>'Validación de datos incorrecto! no se encontraron datos por agrupar','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
-                }
+            }elseif($origin == 'S'){
+                $export = new ArchivoPrimarioExport($data_cabeceraE);
+                $file_name = $origin.'_'.$last_date.'.xls';
+                $base_path = 'errorValidacion_Estacional/'.'Estacional_'.$last_date;
+                Excel::store($export,$base_path.'/'.$file_name, 'ftp');
             }
+            $count_affiliate = 0;
+            return  response()->json(['message' =>'Validación de datos incorrecto!','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
+        }else{
+            if($count_affiliate > 0){
+                $validado =true;
+                DB::commit();
+                return  response()->json(['message' =>'Validación de datos realizado con exito!','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
+
+            }else{
+                //DB::commit();
+                $delete_copy = $this->delete_copy_payments($period,$origin);
+                return  response()->json(['message' =>'Validación de datos incorrecto! no se encontraron datos por agrupar','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
+            }
+        }
         } catch (\Exception $e) {
             DB::rollback();
-           //throw $e;
-           return ['message' => $e->getMessage()];
+        //throw $e;
+        return ['message' => $e->getMessage()];
         }
-   }
+    }
 
    //buscar id y ci
    public function serch_id($ci){
@@ -385,82 +410,89 @@ class ImportationController extends Controller
         try{
             $file_validate = Storage::disk('ftp')->get($request->location."/".$request->file_name);
             $file_validate = explode("\n",$file_validate);
-            $file_validate = $file_validate[0]; 
+            $file_validate = $file_validate[0];
             $base_path = $request->location."/".$request->file_name;
             $base_path ='ftp://'.env('FTP_HOST').env('FTP_ROOT').$base_path;
             $username =env('FTP_USERNAME');
             $password =env('FTP_PASSWORD');
+            if (!Storage::disk('ftp')->exists($request->location . '/' . $request->file_name)) {
+                return response()->json(['error' => 'El archivo no existe en el servidor FTP.'], 404);
+            }
             $this->delete_copy_payments($request->period_id, $request->type);
             if(LoanPaymentPeriod::whereId($request->period_id)->first()){
                 $drop = "drop table if exists payments_aux";
                 $drop = DB::select($drop);
                 if($request->type == 'C'){
-                   // if($file_validate == "CI:MONTO"){
-                        $temporary = "create temporary table payments_aux(period_id integer, identity_card varchar, amount float)";
-                        $temporary = DB::select($temporary);
-                        $copy = "copy payments_aux(identity_card, amount)
-                                FROM PROGRAM 'wget -q -O - $@  --user=$username --password=$password $base_path'
-                                WITH DELIMITER ':' CSV header;";
-                        $copy = DB::select($copy);
-                
-                        $update = "update payments_aux
-                                    set period_id = $request->period_id";
-                        $update = DB::select($update);
-
-                        $update2 = "update payments_aux
-                                    set identity_card = REPLACE(LTRIM(REPLACE(identity_card,'0',' ')),' ','0')";
-                        $update2 = DB::select($update2);
-
-                        $insert = "INSERT INTO loan_payment_copy_commands(period_id, identity_card, amount)
-                                    SELECT period_id, identity_card, amount FROM payments_aux;";
-                        $insert = DB::select($insert);
-                        DB::commit();
-
-                        $drop = "drop table if exists payments_aux";
-                        $drop = DB::select($drop);
-
-                        $consult = "select count(*) from loan_payment_copy_commands where period_id = $request->period_id";
-                        $consult = DB::select($consult);
-                        return $consult;
-                   /* }
-                    else{
-                    return false;
-                    }*/
+                    $temporary = "create temporary table payments_aux(period_id integer, identity_card varchar, amount float)";
+                    $temporary = DB::select($temporary);
+                    $copy = "copy payments_aux(identity_card, amount)
+                            FROM PROGRAM 'wget -O - $@  --user=$username --password=$password $base_path'
+                            WITH DELIMITER ':' CSV header;";
+                    $copy = DB::select($copy);
+                    $update = "update payments_aux
+                                set period_id = $request->period_id";
+                    $update = DB::select($update);
+                    $update2 = "update payments_aux
+                                set identity_card = REPLACE(LTRIM(REPLACE(identity_card,'0',' ')),' ','0')";
+                    $update2 = DB::select($update2);
+                    $insert = "INSERT INTO loan_payment_copy_commands(period_id, identity_card, amount)
+                                SELECT period_id, identity_card, amount FROM payments_aux;";
+                    $insert = DB::select($insert);
+                    DB::commit();
+                    $drop = "drop table if exists payments_aux";
+                    $drop = DB::select($drop);
+                    $consult = "select count(*) from loan_payment_copy_commands where period_id = $request->period_id";
+                    $consult = DB::select($consult);
+                    return $consult;
                 }
-                else{
-                    if($request->type == 'S'){
-                        //if($file_validate == "MATRICULA:MATRICULA_DH:MONTO"){
-                            $temporary = "create temporary table payments_aux(period_id integer, registration varchar, registration_dh varchar, amount float)";
-                            $temporary = DB::select($temporary);
-
-                            $copy = "copy payments_aux(registration, registration_dh, amount)
-                                    FROM PROGRAM 'wget -q -O - $@  --user=$username --password=$password $base_path'
-                                    WITH DELIMITER ':' CSV header;";
-                            $copy = DB::select($copy);
-
-                            $update = "update payments_aux
-                                        set period_id = $request->period_id";
-                            $update = DB::select($update);
-
-                            $insert = "INSERT INTO loan_payment_copy_senasirs(period_id, registration, registration_dh, amount)
-                                        SELECT period_id, registration, registration_dh, amount FROM payments_aux;";
-                            $insert = DB::select($insert);
-                            DB::commit();
-
-                            $drop = "drop table if exists payments_aux";
-                            $drop = DB::select($drop);
-
-                            $consult = "select count(*) from loan_payment_copy_senasirs where period_id = $request->period_id";
-                            $consult = DB::select($consult);
-                            return $consult;
-                       /* }
-                        else{
-                        return false;
-                        }*/
-                    }
-                    else{
-                        return "tipo inexistente";
-                    }
+                elseif($request->type == 'S'){
+                    $temporary = "CREATE TEMPORARY TABLE payments_aux (
+                        period_id INTEGER, 
+                        registration VARCHAR(255), 
+                        registration_dh VARCHAR(255), 
+                        amount FLOAT)";
+                    DB::statement($temporary);
+                    $copy = "copy payments_aux(registration, registration_dh, amount)
+                            FROM PROGRAM 'wget -q -O - $@ --user=$username --password=$password $base_path'
+                            WITH DELIMITER ':' CSV header;";
+                    $copy = DB::select($copy);
+                    $update = "update payments_aux
+                                set period_id = $request->period_id";
+                    $update = DB::statement($update);
+                    $insert = "INSERT INTO loan_payment_copy_senasirs(period_id, registration, registration_dh, amount)
+                                SELECT period_id, registration, registration_dh, amount FROM payments_aux;";
+                    $insert = DB::select($insert);
+                    DB::commit();
+                    $drop = "drop table if exists payments_aux";
+                    $drop = DB::statement($drop);
+                    $consult = "select count(*) from loan_payment_copy_senasirs where period_id = $request->period_id";
+                    $consult = DB::select($consult);
+                    return $consult;
+                }elseif($request->type == 'E'){
+                    $temporary = "CREATE TEMPORARY TABLE payments_aux (
+                        period_id INTEGER, 
+                        identity_card VARCHAR(255), 
+                        identity_card_dh VARCHAR(255), 
+                        amount FLOAT)";
+                    DB::statement($temporary);
+                    $copy = "copy payments_aux(identity_card, identity_card_dh, amount)
+                            FROM PROGRAM 'wget -q -O - $@ --user=$username --password=$password $base_path'
+                            WITH DELIMITER ':' CSV header;";
+                    $copy = DB::select($copy);
+                    $update = "update payments_aux
+                                set period_id = $request->period_id";
+                    $update = DB::statement($update);
+                    $insert = "INSERT INTO loan_payment_copy_estacionales(period_id, identity_card, identity_card_dh, amount)
+                                SELECT period_id, identity_card, identity_card_dh, amount FROM payments_aux;";
+                    $insert = DB::select($insert);
+                    DB::commit();
+                    $drop = "drop table if exists payments_aux";
+                    $drop = DB::statement($drop);
+                    $consult = "select count(*) from loan_payment_copy_estacionales where period_id = $request->period_id";
+                    $consult = DB::select($consult);
+                    return $consult;
+                }else{
+                    return "tipo inexistente";
                 }
             }else{
                 return "periodo inexistente";
@@ -474,36 +506,28 @@ class ImportationController extends Controller
     public function delete_copy_payments($period, $origin)
     {
         DB::beginTransaction();
-        try{
-            if(LoanPaymentPeriod::whereId($period)->first() && $origin == 'C' || LoanPaymentPeriod::whereId($period)->first() && $origin == 'S')
-            {
-                $count = 0;
-                if($origin == 'C'){
-                    $query = "delete
-                                from loan_payment_copy_commands
-                                where period_id = $period";
-                    $query = DB::select($query);
-                    DB::commit();
-                    return true;
-                }
-                if($origin == 'S'){
-                    $query = "delete
-                                from loan_payment_copy_senasirs
-                                where period_id = $period";
-                    $query = DB::select($query);
-                    DB::commit();
-                    return true;
-                }
+        try {
+            $loanPaymentPeriod = LoanPaymentPeriod::find($period);
+            
+            if ($loanPaymentPeriod && in_array($origin, ['C', 'S', 'E'])) {
+                $tables = [
+                    'C' => 'loan_payment_copy_commands',
+                    'S' => 'loan_payment_copy_senasirs',
+                    'E' => 'loan_payment_copy_estacionales',
+                ];
+                $query = "DELETE FROM {$tables[$origin]} WHERE period_id = $period";
+                DB::delete($query);
+                DB::commit();
+                return true;
             }
-            else
-                return false;
-        }
-        catch (Exception $e)
-        {
+            return false;
+        } catch (Exception $e) {
             DB::rollback();
             return $e;
         }
     }
+
+
     /**
     * Cargado del archivo csv de Pagos 
     * Realiza el copiado del archivo por ftp.
@@ -515,13 +539,14 @@ class ImportationController extends Controller
     public function upload_file_payment(Request $request){
         $request->validate([
             'file' => 'required',
-            'state'=> 'string|in:C,S',       
+            'state'=> 'string|in:C,S,E',
          ]);
          $result['validate'] = false;
         try {
             $extencion= strtolower($request->file->getClientOriginalExtension()); 
             $last_period_senasir = LoanPaymentPeriod::orderBy('id')->where('importation_type','SENASIR')->get()->last();
             $last_period_comand = LoanPaymentPeriod::orderBy('id')->where('importation_type','COMANDO')->get()->last();            
+            $last_period_season = LoanPaymentPeriod::orderBy('id')->where('importation_type','ESTACIONAL')->get()->last();            
         if($extencion == "csv"){
             $file_name_entry = $request->file->getClientOriginalName(); 
             $file_name_entry = explode(".csv",$file_name_entry);
@@ -534,12 +559,19 @@ class ImportationController extends Controller
                 $period_state = $last_period_comand->importation;
                 $new_file_name ="comando-".$last_date;
                 $period_id = $last_period_comand->id;
-            }else{
+            }elseif($request->state == "S"){
                 $last_date = Carbon::parse($last_period_senasir->year.'-'.$last_period_senasir->month)->format('Y-m'); 
                 $origin = "senasir-".$last_period_senasir->year;
                 $period_state = $last_period_senasir->importation;
                 $new_file_name ="senasir-".$last_date;
                 $period_id = $last_period_senasir->id;
+            }elseif($request->state == "E")
+            {
+                $last_date = Carbon::parse($last_period_season->year.'-'.$last_period_season->month)->format('Y-m'); 
+                $origin = "estacional-".$last_period_season->year;
+                $period_state = $last_period_season->importation;
+                $new_file_name ="estacional-".$last_date;
+                $period_id = $last_period_season->id;
             }
             if($file_name_entry == $new_file_name){
                 if($period_state == false){
@@ -586,7 +618,7 @@ class ImportationController extends Controller
     public function upload_fail_validated_group(Request $request){
 
         $request->validate([
-            'origin'=>'required|string|in:C,S',
+            'origin'=>'required|string|in:C,S,E',
             'period'=>'required|exists:loan_payment_periods,id'
         ]);
 
@@ -597,9 +629,12 @@ class ImportationController extends Controller
         if($origin == 'C'){
             $file_name = $origin.'_'.$last_date.'.xls';
             $base_path = 'errorValidacion_Command/'.'Command_'.$last_date;
-        }else{
+        }elseif($origin == 'S'){
             $file_name = $origin.'_'.$last_date.'.xls';
             $base_path = 'errorValidacion_Senasir/'.'Senasir_'.$last_date;
+        }elseif($origin == 'E'){
+            $file_name = $origin.'_'.$last_date.'.xls';
+            $base_path = 'errorValidacion_Estacional/'.'Estacional_'.$last_date;
         }
 
         if(Storage::disk('ftp')->has($base_path.'/'.$file_name)){
@@ -795,36 +830,28 @@ class ImportationController extends Controller
     public function delete_agroups_payments($period, $origin)
     {
         DB::beginTransaction();
-        try{
-            if(LoanPaymentPeriod::whereId($period)->first() && $origin == 'C' || LoanPaymentPeriod::whereId($period)->first() && $origin == 'S')
-            {
-                $count = 0;
-                if($origin == 'C'){
-                    $query = "delete
-                                from loan_payment_group_commands
-                                where period_id = $period";
-                    $query = DB::select($query);
-                    DB::commit();
-                    return true;
-                }
-                if($origin == 'S'){
-                    $query = "delete
-                                from loan_payment_group_senasirs
-                                where period_id = $period";
-                    $query = DB::select($query);
-                    DB::commit();
-                    return true;
-                }
+        try {
+            $loanPaymentPeriod = LoanPaymentPeriod::find($period);
+            if ($loanPaymentPeriod && in_array($origin, ['C', 'S', 'E'])) {
+                $tables = [
+                    'C' => 'loan_payment_group_commands',
+                    'S' => 'loan_payment_group_senasirs',
+                    'E' => 'loan_payment_group_estacionales',
+                ];
+                $query = "DELETE FROM {$tables[$origin]} WHERE period_id = ?";
+                DB::delete($query, [$period]);
+    
+                DB::commit();
+                return true;
             }
-            else
-                return false;
-        }
-        catch (Exception $e)
-        {
+    
+            return false;
+        } catch (Exception $e) {
             DB::rollback();
             return $e;
         }
     }
+    
 
     /**
     * Rollback datos de command o SENASIR
@@ -837,47 +864,39 @@ class ImportationController extends Controller
     public function rollback_copy_groups_payments(Request $request)
     {
         $request->validate([
-            'origin'=>'required|string|in:C,S',
-            'period'=>'required|exists:loan_payment_periods,id'
+            'origin' => 'required|string|in:C,S,E',
+            'period' => 'required|exists:loan_payment_periods,id'
         ]);
+
         DB::beginTransaction();
-        try{
-            $validated_rollback = false;
-            $period = $request->period;$origin = $request->origin;
-            $period = LoanPaymentPeriod::whereId($request->period)->first();
+        try {
+            $period = LoanPaymentPeriod::find($request->period);
+            $origin = $request->origin;
 
-            if($origin == 'C' && !$period->importation){
-                $this->delete_agroups_payments($period->id,$origin);
-                $this->delete_copy_payments($period->id,$origin);
+            // Validar si se puede realizar el rollback
+            if (!$period->importation) {
+                $this->delete_agroups_payments($period->id, $origin);
+                $this->delete_copy_payments($period->id, $origin);
+                $message = "Rollback realizado con éxito!";
                 $validated_rollback = true;
-
-            }
-            if($origin == 'S' && !$period->importation){
-                $this->delete_agroups_payments($period->id,$origin);
-                $this->delete_copy_payments($period->id,$origin);
-                $validated_rollback = true;
-            }
-
-            if(!$validated_rollback){
+            } else {
                 $message = "No se puede realizar el rollback";
-
-            }else{
-                $message = "Realizado con exito!";
+                $validated_rollback = false;
             }
 
             $rollback = [
-                'validated_rollback'=> $validated_rollback,
-                'message'=>$message
+                'validated_rollback' => $validated_rollback,
+                'message' => $message
             ];
+
             DB::commit();
             return $rollback;
-        }catch (Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollback();
             return $e;
         }
-
     }
+
      /**
     * Pasos y porcentage del proceso de importación 
     * Reporte para visualizar pasos de importacion.
@@ -888,7 +907,7 @@ class ImportationController extends Controller
     */
     public function  import_progress_bar(Request $request){
         $request->validate([
-            'origin'=>'required|string|in:C,S',
+            'origin'=>'required|string|in:C,S,E',
             'period_id'=>'required|exists:loan_payment_periods,id'
         ]);
         $origin = $request->origin;
@@ -968,7 +987,141 @@ class ImportationController extends Controller
                 $result['percentage'] = 30;
                 }
             }
-        }    
+        }
+        if($origin == 'E'){
+            $origin_name = 'estacional-';
+            $new_file_name = $origin_name.$last_date.'.csv';
+            $base_path = $base_path.$origin_name.$period->year.'/'.$new_file_name;
+            if(Storage::disk('ftp')->has($base_path)){
+                $result['file_name'] = $new_file_name;
+            }else{
+                $result['file_name'] = false;
+            }
+            $query = " select (count(*)>0) as num_reg, count(*) as num_tot_reg 
+            from loan_payment_copy_estacionales
+            where period_id = $request->period_id" ;
+            $query_step_1 = DB::select($query)[0]->num_reg;
+            $result['reg_copy'] = DB::select($query)[0]->num_tot_reg;
+            $query_grouped = " select (count(*)>0) as num_reg, count(*) as num_reg_group 
+            from loan_payment_group_estacionales
+            where period_id = $request->period_id" ;
+            $query_step_2 = DB::select($query_grouped)[0]->num_reg;
+            $result['reg_group'] = DB::select($query_grouped)[0]->num_reg_group;
+            $query_step_3 = $period->importation;
+            if($query_step_1 == true && $query_step_2 == true && $query_step_3 == true ){
+                $result['percentage'] = 100;
+                $result['query_step_3'] = true;
+            }else{ 
+                if($query_step_1 == true && $query_step_2 == true && $query_step_3 == false ){
+                    $result['percentage'] = 60;
+                    $result['query_step_2'] = true;
+                }elseif($query_step_1 == true && $query_step_2 == false && $query_step_3 == false ){
+                $result['query_step_1'] = true;
+                $result['percentage'] = 30;
+                }
+            }
+        }  
         return $result; 
+    }
+
+
+
+    /**
+    * Importar/registrar cobros de prestamos por complemento economico
+    * Importar/registrar cobros de prestamos por complemento economico
+    * @queryParam period required id_del periodo . Example: 1
+    * @authenticated
+    * @responseFile responses/importation/importation_estacional.200.json
+     */
+    public function importation_payment_estacional(Request $request){
+        $request->validate([
+            'origin'=>'string|in:E',
+            'period'=>'required|exists:loan_payment_periods,id'
+        ]);
+      DB::beginTransaction();
+      try{
+        // aumenta el tiempo máximo de ejecución de este script a 150 min:
+        ini_set('max_execution_time', 9000000);
+        // aumentar el tamaño de memoria permitido de este script:
+        ini_set('memory_limit', '96000M');
+        $period =LoanPaymentPeriod::find($request->period);
+        $procedure_modality_id = ProcedureModality::whereShortened('DES-ECO-COM')->first()->id;
+        $categorie_id = LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id;
+        $estacional_lender = 0;
+        if(!$period->importation){
+            $estimated_date = Carbon::create($period->year, $period->month, 1);
+            $estimated_date = Carbon::parse($estimated_date)->endOfMonth()->format('Y-m-d');
+            $query = "SELECT * FROM loan_payment_group_estacionales where period_id = '$period->id'";
+            $payment_agroups = DB::select($query);
+            foreach($payment_agroups as $payment_agroup){
+                $sw = false;
+                $amount_group = $payment_agroup->amount_balance;
+                if($amount_group > 0){
+                    $affiliate = Affiliate::find($payment_agroup->affiliate_id);
+                    if($affiliate->active_loans_estacional->count() > 0){
+                        $loans_lender = $affiliate->active_loans_estacional;
+                        //$loans_lender = $this->loan_lenders($payment_agroup->affiliate_id,$period);
+                        foreach($loans_lender as $loan_lender){
+                            $loan = Loan::find($loan_lender->id);
+                            if($amount_group > 0 && $loan->balance > 0 ){
+                            $payment = $loan->get_amount_payment($estimated_date,false,'T');
+                            if($amount_group >= $payment)
+                            $sw =true;
+                                if($amount_group > 0){
+                                    $form = (object)[
+                                        'procedure_modality_id' => $procedure_modality_id,
+                                        'affiliate_id' => $payment_agroup->affiliate_id,
+                                        'paid_by' => "T",
+                                        'categorie_id' => $categorie_id,
+                                        'estimated_date' => $estimated_date,
+                                        'voucher' => 'AUTOMÁTICO',
+                                        'estimated_quota' => $sw == true ? $payment:$amount_group,
+                                        'loan_payment_date' => Carbon::now(),
+                                        'liquidate' => false,
+                                        'description'=> 'Pago registrado',
+                                    ];
+                                    $registry_patment = $this->set_payment($form, $loan);
+                                    $amount_group = $amount_group - $registry_patment->estimated_quota;
+                                    $update = "UPDATE loan_payment_group_estacionales set amount_balance = $amount_group where id = $payment_agroup->id";
+                                    $update = DB::select($update);
+                                    $estacional_lender++;
+                                    $sw =false;
+                                    Log::info('Cantidad: '.$estacional_lender.' *Titularidad : Se registro el cobro en el loanPayments con id: '.$registry_patment->id. 'y codigo: '.$registry_patment->code);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $update_period = "UPDATE loan_payment_periods set importation = true where id = $period->id";
+            $update_period = DB::select($update_period);
+            Log::info('Se actualizo el estado del periodo en la columna importation  del id_periodo: '.$period->id);
+
+            $paids = [
+                'period'=>$period,
+                'paid_by_lenders' => $estacional_lender,
+                'message'=>"ESTACIONAL Importación realizada con exito! ".$period->month.'/'.$period->year,
+                'importation_validated'=> true
+            ];
+            LoanController::verify_loans();
+            DB::commit();
+            return $paids;
+
+        }else{
+            Log::info('No se puede volver a realizar la importación de cobros del periodo con id : '.$period->id.' por que ya se lo realizó anteriormente :)');
+            $paids = [
+                'period'=>$period,
+                'paid_by_lenders' => $estacional_lender,
+                'message'=>"SENASIR Error! Anteriormente ya realizó la importación del periodo: ".$period->month.'/'.$period->year,
+                'importation_validated'=> false
+            ];
+            return $paids;
+        }
+        }catch(Exception $e){
+            DB::rollback();
+            Log::info('ocurrio un error se realizó un rollback...');
+            return $e;
+        }
     }
 }

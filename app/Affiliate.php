@@ -279,6 +279,12 @@ class Affiliate extends Model
     {
       return $this->verify_balance($this->loans);
     }
+
+    public function getActiveLoansEstacionalAttribute()
+    {
+      return $this->loans->whereIn('procedure_modality_id', [95,96])->where('state_id', 3);
+    }
+
     public function current_loans()
     {
       $loan_state = LoanState::whereName('Vigente')->first();

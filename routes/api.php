@@ -124,6 +124,7 @@ Route::group([
         //IMPORTACION
         Route::get('agruped_payments', 'Api\V1\ImportationController@agruped_payments');
         Route::get('importation_payments_senasir', 'Api\V1\ImportationController@importation_payment_senasir');//senasir pagos
+        Route::get('importation_payments_estacional', 'Api\V1\ImportationController@importation_payment_estacional');//senasir pagos
         Route::get('upload_fail_validated_group', 'Api\V1\ImportationController@upload_fail_validated_group');
         Route::get('copy_payments', 'Api\V1\ImportationController@copy_payments');
         Route::get('create_payments_command', 'Api\V1\ImportationController@create_payments_command');
