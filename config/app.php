@@ -141,6 +141,7 @@ return [
         App\Providers\RecordModelServiceProvider::class,
         App\Providers\UserModelServiceProvider::class,
         App\Providers\AffiliateModelServiceProvider::class,
+        App\Providers\SpouseServiceProvider::class,
         App\Providers\RoleModelServiceProvider::class,
         App\Providers\LoanModelServiceProvider::class,
         App\Providers\ObservationModelServiceProvider::class,
