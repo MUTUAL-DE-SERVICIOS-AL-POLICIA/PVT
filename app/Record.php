@@ -30,6 +30,9 @@ class Record extends Model
                 case 'App\Affiliate':
                     $action .= $this->recordable->full_name;
                     break;
+                case 'App\Spouse':
+                    $action .= $this->recordable->full_name;
+                    break;
                 case 'App\User':
                     $action .= $this->recordable->username;
                     break;
