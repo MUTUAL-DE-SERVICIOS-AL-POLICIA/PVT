@@ -2252,26 +2252,30 @@ class LoanReportController extends Controller
    ->get();
 
    $File="PrestamosMoraPorPeriodos";
+
    $data_mora=array(
-       array("NUP","CÓDIGO PRÉSTAMO","ESTADO","NOMBRE COMPLETO PRESTATARIO","CI PRESTATARIO", "NUMERO DE TELEFONO"
-       ,"CUOTA PACTADA", "FECHA DE DESEMBOLSO","MONTO ULTIMA AMORTIZACIÓN","FECHA DE AMORTIZACION","DIAS TRANSCURRIDOS")
-   );
+    array("C.I.","NOMBRE COMPLETO","CATEGORIA","GRADO","NRO. DE CEL.", "PTMO"
+    ,"FECHA DESEMBOLSO", "TASA ANUAL", "FECHA DEL ULTIMO PAGO","CUOTA MENSUAL","SALDO ACTUAL", "MODALIDAD", "SUB-MODALIDAD","DIAS TRANSCURRIDOS")
+    );
    
    foreach($loans as $loan)
    {   
        array_push($data_mora, array(
-
-           $loan->affiliate_id,
-           $loan->code,
-           $loan->state->name,
-           $loan->loanBorrowers->first()->first_name." ".$loan->loanBorrowers->first()->second_name." ".$loan->loanBorrowers->first()->last_name." ".$loan->loanBorrowers->first()->mothers_last_name." ".$loan->loanBorrowers->first()->surname_husband,
-           $loan->loanBorrowers->first()->identity_card,
-           $loan->loanBorrowers->first()->cell_phone_number,
-           $loan->estimated_quota,
-           Carbon::parse($loan->disbursement_date)->format('Y-m-d'),
-           $loan->payments->isNotEmpty() ? $loan->payments->first()->estimated_quota : '',
-           $loan->payments->isNotEmpty() ? $loan->payments->first()->estimated_date : '',
-           $loan->payments->isNotEmpty() ? (Carbon::parse($final_date)->diffInDays(Carbon::parse($loan->payments->first()->estimated_date))) : (Carbon::parse($final_date)->diffInDays(Carbon::parse($loan->disbursement_date)->endOfDay()->format('Y-m-d'))),
+        $loan->loanBorrowers->first()->identity_card,
+        $loan->loanBorrowers->first()->full_name,
+        //colocar validación si es que el dato existe
+        $loan->loanBorrowers->first()->category ? $loan->loanBorrowers->first()->category->name : '',
+        $loan->loanBorrowers->first()->degree ? $loan->loanBorrowers->first()->degree->shortened : '',
+        $loan->loanBorrowers->first()->cell_phone_number,
+        $loan->code,
+        Carbon::parse($loan->disbursement_date)->format('Y-m-d'),
+        $loan->interest->annual_interest,
+        $loan->payments->isNotEmpty() ? Carbon::parse($loan->payments->first()->estimated_date)->format('Y-m-d') : '',
+        $loan->estimated_quota,
+        $loan->balance,
+        $loan->modality->procedure_type->second_name,
+        $loan->modality->shortened,
+        $loan->payments->isNotEmpty() ? (Carbon::parse($final_date)->diffInDays(Carbon::parse($loan->payments->first()->estimated_date))) : (Carbon::parse($final_date)->diffInDays(Carbon::parse($loan->disbursement_date)->endOfDay()->format('Y-m-d')))
            )
        );
    }

@@ -352,6 +352,7 @@ class LoanController extends Controller
         if(Auth::user()->can('print-contract-loan')){
             $print_docs = [];
             array_push($print_docs, $this->print_form(new Request([]), $loan, false));
+            array_push($print_docs, '');
             if($loan->modality->loan_modality_parameter->print_form_qualification_platform)
                 array_push($print_docs, $this->print_qualification(new Request([]), $loan, false));
             if($loan->modality->loan_modality_parameter->print_contract_platform)
