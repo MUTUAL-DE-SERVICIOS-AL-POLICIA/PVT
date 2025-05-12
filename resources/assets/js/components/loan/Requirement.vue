@@ -323,7 +323,7 @@ export default {
     
         }
       } catch (e) {
-        console.log(e);
+        this.toastr.error(e.type)
         this.status_click = false
       } finally {
         this.loading = false;

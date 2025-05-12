@@ -137,7 +137,7 @@ class LoanReportController extends Controller
                }
             }
                $export = new ArchivoPrimarioExport($data);
-               return Excel::download($export, $File.'.xls');
+               return Excel::download($export, $File.'.xlsx');
    }
 
    /** @group Reportes de Prestamos
@@ -353,7 +353,7 @@ class LoanReportController extends Controller
     }
 
                $export = new MultipleSheetExportPayment($data, $data_liq,'PRE-VIGENTE','PRE-LIQUIDADO');
-               return Excel::download($export, $File.'.xls');
+               return Excel::download($export, $File.'.xlsx');
    }
 
    /** @group Reportes de Prestamos
@@ -694,7 +694,7 @@ class LoanReportController extends Controller
             ));
         }
         $export = new MultipleSheetExportPaymentMora($data_mora_total,$data_mora_parcial,$data_mora,'MORA TOTAL','MORA PARCIAL','MORA');
-        return Excel::download($export, $File.'.xls');
+        return Excel::download($export, $File.'.xlsx');
   }
 
   /** @group Reportes de Prestamos
@@ -806,7 +806,7 @@ class LoanReportController extends Controller
         };
     }
     $export = new MultipleSheetExportPaymentMora($data->mora_total,$data->mora_parcial,$data->mora,'MORA TOTAL','MORA PARCIAL','MORA');
-    return Excel::download($export, $File.'.xls');
+    return Excel::download($export, $File.'.xlsx');
 
   }
 
@@ -1113,7 +1113,7 @@ class LoanReportController extends Controller
       }
 
          $file_name = $month.'-'.$year;
-         $extension = '.xls';
+         $extension = '.xlsx';
          $export = new FileWithMultipleSheetsReport($command_sheet_later, $command_sheet_before, $senasir_sheet_later, $senasir_sheet_before,$command_ancient,$senasir_ancient);
          return Excel::download($export, $file_name.$extension);
     }
@@ -1301,7 +1301,7 @@ class LoanReportController extends Controller
         }
         }
          $file_name = $month.'-'.$year;
-         $extension = '.xls';
+         $extension = '.xlsx';
          $export = new FileWithMultipleSheetsDefaulted($command_sheet_dafaulted, $senasir_sheet_defaulted);
          return Excel::download($export, $file_name.$extension);
     }
@@ -1778,7 +1778,7 @@ class LoanReportController extends Controller
             }
         }
         $file_name = $month.'-'.$year;
-         $extension = '.xls';
+         $extension = '.xlsx';
          $export = new SheetExportPayment($loan_sheets, "Prestamos PVT y SISMU");
          return Excel::download($export, $file_name.$extension);
     }
@@ -1799,7 +1799,7 @@ class LoanReportController extends Controller
         $loans = Loan::whereStateId(LoanState::whereName('En Proceso')->first()->id)->where('request_date', '<=', Carbon::parse($request->date)->endOfDay())->orderBy('wf_states_id')->get();
         $loans_array = collect([]);
         $date = "";
-        if($request->type == "xls")
+        if($request->type == "xlsx")
             $loan_sheets = array(
                 array("Nro de Prestamo", "Procedencia", "Fecha de Solicitud", "Solicitante", "Estado de Flujo", "Fecha de Derivacion", "Usuario", "Monto Solicitado", "Monto Desembolsado")
             );
@@ -1824,7 +1824,7 @@ class LoanReportController extends Controller
                 "procedence" => $loan->city->name,
             ]);
         }
-        if($request->type == "xls")
+        if($request->type == "xlsx")
         {
             foreach($loans_array as $loan)
             {
@@ -1841,7 +1841,7 @@ class LoanReportController extends Controller
                 ));
             }
             $file_name = $request->date;
-            $extension = '.xls';
+            $extension = '.xlsx';
             $export = new SheetExportPayment($loan_sheets, "Estado de Solicitudes de Prestamo");
             return Excel::download($export, $file_name.$extension);
         }
@@ -2194,7 +2194,7 @@ class LoanReportController extends Controller
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'Depositos en Tesoreria' ,'letter', $request->copies ?? 1, false);
         return $view;
     }
-    elseif($request->type == "xls")
+    elseif($request->type == "xlsx")
     {
         $loan_sheets = array(
                 array("Nro","Nro de Tramite", "Modalidad", "Sub Modalidad", "Sector","Categoría","Grado", "Nombre Completo", "C. I.", "Usuario", "Area", "Procedencia", "Fecha de Derivación", "Monto Solicitado", "Refinanciado", "Monto Desembolsado")
@@ -2222,7 +2222,7 @@ class LoanReportController extends Controller
             ));
         }
         $file_name = $request->date;
-        $extension = '.xls';
+        $extension = '.xlsx';
         $export = new SheetExportPayment($loan_sheets, "Estado de Solicitudes de Prestamo");
         return Excel::download($export, $file_name.$extension);
     }
@@ -2254,7 +2254,7 @@ class LoanReportController extends Controller
    $File="PrestamosMoraPorPeriodos";
 
    $data_mora=array(
-    array("CI AFFILIADO","NOMBRE COMPLETO AFILIADO","CATEGORIA","GRADO","NRO. DE CEL.", "PTMO"
+    array("C.I.","NOMBRE COMPLETO","CATEGORIA","GRADO","NRO. DE CEL.", "PTMO"
     ,"FECHA DESEMBOLSO", "TASA ANUAL", "FECHA DEL ULTIMO PAGO","CUOTA MENSUAL","SALDO ACTUAL", "MODALIDAD", "SUB-MODALIDAD","DIAS TRANSCURRIDOS")
     );
    
@@ -2281,7 +2281,7 @@ class LoanReportController extends Controller
    }
 
    $export = new ArchivoPrimarioExport($data_mora);
-   return Excel::download($export, $File.'.xls');
+   return Excel::download($export, $File.'.xlsx');
 
   }
 
@@ -2324,7 +2324,7 @@ class LoanReportController extends Controller
         }
     }
     $export = new ArchivoPrimarioExport($report_process_loan);
-    return Excel::download($export, $file.'.xls');
+    return Excel::download($export, $file.'.xlsx');
   }
 
   public function report_loans_income(Request $request)
@@ -2362,7 +2362,7 @@ class LoanReportController extends Controller
         );
     }
     $export = new ArchivoPrimarioExport($data_income);
-    return Excel::download($export, $File.'.xls');
+    return Excel::download($export, $File.'.xlsx');
     }
 
   public function report_loans_pay_partial() { 
@@ -2443,7 +2443,7 @@ class LoanReportController extends Controller
         );
     }
     $export = new ArchivoPrimarioExport($data_income);
-    return Excel::download($export, $File.'.xls');
+    return Excel::download($export, $File.'.xlsx');
   }
 
     public function affiliate_observation_report()
@@ -2471,6 +2471,6 @@ class LoanReportController extends Controller
         }
         $export = new ArchivoPrimarioExport($data_income);
         $File="Afiliados con observaciones";
-        return Excel::download($export, $File.'.xls');
+        return Excel::download($export, $File.'.xlsx');
     }
 }

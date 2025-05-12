@@ -289,6 +289,8 @@ class LoanController extends Controller
         })->pluck('id');
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         if (!$request->wf_states_id) abort(403, 'Debe crear un flujo de trabajo');
+        if(str_contains($procedure_modality->shortened,'EST-PAS-CON') && !Affiliate::find($request->lenders[0]['affiliate_id'])->spouses->count()>0)
+            abort(403, 'El afiliado no tiene esposa registrada para esta modalidad');
         // Guardar préstamo
         if(count(Affiliate::find($request->lenders[0]['affiliate_id'])->process_loans) >= LoanGlobalParameter::first()->max_loans_process && $request->remake_loan_id == null) abort(403, 'El afiliado ya tiene un préstamo en proceso');
         $saved = $this->save_loan($request);
@@ -350,6 +352,7 @@ class LoanController extends Controller
         if(Auth::user()->can('print-contract-loan')){
             $print_docs = [];
             array_push($print_docs, $this->print_form(new Request([]), $loan, false));
+            array_push($print_docs, '');
             if($loan->modality->loan_modality_parameter->print_form_qualification_platform)
                 array_push($print_docs, $this->print_qualification(new Request([]), $loan, false));
             if($loan->modality->loan_modality_parameter->print_contract_platform)

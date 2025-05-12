@@ -1867,10 +1867,6 @@ class AffiliateController extends Controller
         if(!($percentage >= $minLenderCategory && $percentage <= $maxLenderCategory))
             abort(403, 'El afiliado no tiene la categoria suficiente para esta modalidad');
 
-        if(str_contains($procedure_modality->shortened,'EST-PAS-CON'))
-            if(!$affiliate->spouses->count()>0)
-                abort(403, 'El afiliado no tiene esposa registrada');
-
         return response()->json(['status' => true, 'message' => 'Validations passed successfully'], 200);
     }
 }
