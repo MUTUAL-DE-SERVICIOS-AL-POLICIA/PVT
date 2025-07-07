@@ -1521,6 +1521,11 @@ class Loan extends Model
         return $data;
     }
 
+    public function one_borrower()
+    {
+        return $this->hasOne(LoanBorrower::class);
+    }
+
     public function getBorrowerGuarantorsAttribute()
     {
         $data = collect([]);

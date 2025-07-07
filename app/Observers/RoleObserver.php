@@ -10,11 +10,13 @@ class RoleObserver
 {
     public function pivotAttached(Role $object, $relationName, $pivotIds, $pivotIdsAttributes)
     {
+        $object->role_id = 1;
         Util::save_record($object, 'sistema', Util::pivot_action($relationName, $pivotIds, 'agregó'));
     }
 
     public function pivotDetached(Role $object, $relationName, $pivotIds)
     {
-        Util::save_record($object, 'sistema', Util::pivot_action($relationName, $pivotIds, 'eliminó'));
+        $object->role_id = 1;
+        Util::save_record($object, 'sistema', Util::pivot_action($relationName, $pivotIds, 'el  iminó'));
     }
 }

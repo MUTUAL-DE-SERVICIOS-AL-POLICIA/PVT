@@ -352,16 +352,16 @@ class LoanController extends Controller
         if(Auth::user()->can('print-contract-loan')){
             $print_docs = [];
             array_push($print_docs, $this->print_form(new Request([]), $loan, false));
-            array_push($print_docs, '');
-            if($loan->modality->loan_modality_parameter->print_form_qualification_platform)
-                array_push($print_docs, $this->print_qualification(new Request([]), $loan, false));
             if($loan->modality->loan_modality_parameter->print_contract_platform)
             {
+                array_push($print_docs, '');
                 $contract = $this->print_contract(new Request([]), $loan, false);
                 for($i=0; $i < 3; $i++){
                     array_push($print_docs, $contract);
                 }
             }
+            if($loan->modality->loan_modality_parameter->print_form_qualification_platform)
+                array_push($print_docs, $this->print_qualification(new Request([]), $loan, false));
             $loan->attachment = Util::pdf_to_base64($print_docs, $file_name,$information_loan, 'legal', $request->copies ?? 1);
         }else{
             $loan->attachment = Util::pdf_to_base64([
@@ -1707,6 +1707,19 @@ class LoanController extends Controller
     */
     public function bulk_update_state(LoansForm $request)
     {
+        $expectedStateId = Role::find($request->current_role_id)->wf_states->id;
+        $loans_pre = Loan::whereIn('id', $request->ids)->get();
+        $this->validate($request, [
+            'ids' => [
+                'array',
+                function ($attribute, $value, $fail) use ($loans_pre, $expectedStateId) {
+                    $states = $loans_pre->pluck('wf_states_id')->unique();
+                    if ($states->count() > 1 || $states->first() !== $expectedStateId) {
+                        $fail('El trámite no se encuentra en su rol.');
+                    }
+                },
+            ],
+        ]);
         if(!$request->user_id) 
             $user_id = null;
         else
@@ -1714,7 +1727,10 @@ class LoanController extends Controller
         $sequence = null;
         $from_role = $request->current_role_id;
         $to_state = WfState::find($request->next_state_id);
-        $loans_pre = Loan::whereIn('id', $request->ids)->where('wf_states_id', '!=', $to_state->id)->orderBy('code')->get();
+        if ($loans_pre->pluck('wf_states_id')->unique()->count() > 1 || 
+            $loans_pre->pluck('wf_states_id')->unique()->first() !== $expectedStateId)
+            abort(403, 'El trámite no se encuentra en su rol');
+        $from_state = WfState::find($expectedStateId);
         if (count(array_unique($loans_pre->pluck('wf_states_id')->toArray()))) 
             $from_state = WfState::find($loans_pre->first()->wf_states_id);
         if ($from_state)
@@ -1730,7 +1746,6 @@ class LoanController extends Controller
 
             Util::save_record($item, $flow_message['type'], $flow_message['message']);
         });
-        //$loans->update(array_merge($request->only('next_state_id'), ['validated' => false], ['user_id' => $user_id]));
         $loans = Loan::whereIn('id', $request->ids)->where('wf_states_id', '!=', $to_state->id)->update([
             'wf_states_id' => $request->next_state_id, 
             'validated' => false, 

@@ -140,8 +140,9 @@ export default {
           base64: true
         })
       } catch (e) {
-        console.error(e)
-        this.toastr.error("Ocurrió un error en la derivación...")
+        this.toastr.error('Operación Invalida.');
+        this.sheet = false;
+        this.bus.$emit('emitRefreshLoans');
       } finally {
         this.status_click = false;
       }

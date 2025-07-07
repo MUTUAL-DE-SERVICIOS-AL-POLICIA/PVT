@@ -195,7 +195,7 @@ class LoanPaymentController extends Controller
             foreach($loanPayments as $loanPayment)
             {
                     $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
+                    $loanPayment->wf_state = WfState::whereId($loanPayment->wf_states_id)->first();
                     $loanPayment->user = User::whereId($loanPayment->user_id)->first();
                     $loanPayment->modality;
                     $loanPayment->voucher_treasury;

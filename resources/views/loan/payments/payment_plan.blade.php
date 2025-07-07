@@ -187,35 +187,6 @@
             EN CASO DE TENER ALGUNA CONSULTA, FAVOR APERSONARSE POR EL ÁREA DE COBRANZAS
         </div>
     </div>
-
-    <div class="m-t-100">
-    <table>
-        <?php  
-         if($loan->payment_type->name == 'Efectivo'){ ?>
-         <tr class="align-top">
-            <td width="50%">
-            @include('partials.signature_box', [
-            'full_name' => $lender->full_name,
-            'identity_card' => $lender->identity_card_ext,
-            'position' => 'PRESTATARIO'
-            ])
-            </td>
-            <td width="50%">
-            @php($user = Auth::user())
-            @include('partials.signature_box', [
-            'full_name' => $user->full_name,
-            'position' => $user->position,
-            'employee' => true
-            ])
-            </td>
-        </tr>
-    </table>
-    <?php }?>
-    <div class="m-t-75">
-    
-    </div>
-</div>
 <?php ?>
-
 </body>
 </html>

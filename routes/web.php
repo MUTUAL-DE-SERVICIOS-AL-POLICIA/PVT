@@ -1,4 +1,6 @@
 <?php
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -11,8 +13,14 @@
 |
  */
 
-Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+ Route::get('/horizon-queues', function (Request $request) {
+    $endpoint = trim($request->query('t'));
+    if (!$endpoint) {
+        abort(403, 'Acceso no autorizado');
+    }
+    return redirect('/' . md5($endpoint));
+});
 
 Route::get('{any}', function () {
     return view('index');
-})->where('any', '^(?!.*(api|docs|logs)).*$')->name('index.php');
+})->where('any', '^(?!.*(api|docs)).*$')->name('index.php');

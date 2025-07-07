@@ -56,8 +56,8 @@
             </v-menu>
           </template>
 
-        <template v-slot:[`item.role_display_name`]="{ item }">
-          {{ item.role.display_name }}
+        <template v-slot:[`item.wf_state_name`]="{ item }">
+          {{ item.wf_state.name }}
         </template>
         <template v-slot:[`item.user_username`]="{ item }">
           {{ item.user ? item.user.username : '' }}
@@ -206,7 +206,7 @@ export default {
       },
       {
         text: "Ubicación área",
-        value: "role_display_name",
+        value: "wf_state_name",
         class: ["normal", "white--text"],
         align: "center",
         sortable: true,
