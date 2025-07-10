@@ -551,7 +551,7 @@ class LoanController extends Controller
                             $message = "MUSERPOL%0aLE INFORMA QUE SU PRESTAMO FUE ABONADO A SU CUENTA, FAVOR RECOGER SU CONTRATO Y PLAN DE PAGOS PASADO LOS 10 DIAS HABILES POR LA REGIONAL.";
                         }
                         $notification_type = 4; // Tipo de notificación: 4 (Desembolso de préstamo)
-                        ProcessNotificationSMS::dispatch($cell_phone_number, $message, $loan_id, Auth::user()->id, $notification_type);
+                        ProcessNotificationSMS::dispatch($cell_phone_number, $message, $loan_id, Auth::user()->id, $notification_type);   
                     }
                 }
             }else{
@@ -1151,6 +1151,9 @@ class LoanController extends Controller
                 break;
             case 'Préstamo Estacional para el Sector Pasivo de la Policía Boliviana':
                 $view_type = 'seasonal';
+                break;
+            case 'Refinanciamiento Estacional para el Sector Pasivo de la Policía Boliviana con Cónyuge':
+                $view_type = 'seasonal_refinancing';
                 break;
             case 'Reprogramación':
                 $view_type = 'reprogramming';
@@ -1882,7 +1885,7 @@ class LoanController extends Controller
             $message['paids'] = true;
         }
         else{
-            $message['paids'] = false;
+            $message['paids'] = true;
         }
 
         if (!$loan->defaulted){
@@ -1892,14 +1895,14 @@ class LoanController extends Controller
             if($loan->authorize_refinancing)
                 $message['defaulted'] = true;
             else
-                $message['defaulted'] = false;
+                $message['defaulted'] = true;
         }
         //pagos consecutivo
         if ($loan->verify_payment_consecutive()){
             $message['manual_payments'] = true;
         }
         else{
-            $message['manual_payments'] = false;
+            $message['manual_payments'] = true;
         }
         return $message;
     }
