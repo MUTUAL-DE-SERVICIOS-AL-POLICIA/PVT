@@ -10,6 +10,7 @@
 /public/css
 /public/fonts
 /public/storage
+/public/vendor/
 /storage/*.key
 /vendor
 /laradock/*
@@ -27,3 +28,5 @@ npm-debug.log
 app/Providers/HorizonServiceProvider.php
 composer.lock
 composer.json
+storage/framework/laravel-excel/
+stubs/
