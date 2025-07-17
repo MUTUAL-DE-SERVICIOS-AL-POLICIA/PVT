@@ -142,7 +142,7 @@ class SpouseController extends Controller
                 $guarantees = $spouse->affiliate->guarantees;
                 foreach($guarantees as $guarantee)
                 {
-                    if($guarantee->loan->state_id = LoanState::where('name','En Proceso')->first()->id && $guarantee->type = 'spouses')
+                    if($guarantee->loan->state_id = LoanState::where('name','En Proceso')->first()->id && $guarantee->type == 'spouses')
                     {
                         $guarantee->update([
                             'identity_card' => $request['identity_card'],

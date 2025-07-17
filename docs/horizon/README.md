@@ -83,6 +83,14 @@ ps aux | grep supervisord
 ```sh
 cp docs/horizon/laravel-worker.conf /etc/supervisord.d/
 cp docs/horizon/laravel-horizon.conf /etc/supervisord.d/
+cp docs/horizon/supervisord.conf /etc/
+cp docs/horizon/90-start-supervisor.sh /etc/my_init.d/90-start-supervisor.sh
+```
+
+* damos permiso de ejecución al archivo de configuración de supervisor
+
+```sh
+chmod +x /etc/my_init.d/90-start-supervisor.sh
 ```
 
 * Actualizamos las configuraciones
