@@ -282,7 +282,6 @@ class LoanController extends Controller
     public function store(LoanForm $request)
     {
         DB::beginTransaction();
-
     try {
         $roles = Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
@@ -656,6 +655,9 @@ class LoanController extends Controller
 
     private function save_loan(Request $request, $loan = null)
     {
+        $request->merge([
+            'loan_payment_procedures_id' => 2,
+        ]);
         $loan_copy = $loan;
         /** Verificando información de los titulares y garantes */
         if($request->lenders && $request->guarantors){
