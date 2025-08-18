@@ -1727,7 +1727,7 @@ class LoanReportController extends Controller
         $date = "";
         if($request->type == "xlsx")
             $loan_sheets = array(
-                array("Nro de Prestamo", "Procedencia", "Fecha de Solicitud", "Solicitante", "Estado de Flujo", "Fecha de Derivacion", "Usuario", "Monto Solicitado", "Monto Desembolsado")
+                array("Nro de Prestamo", "Procedencia", "Fecha de Solicitud", "Solicitante", "C.I.", "Estado de Flujo", "Fecha de Derivacion", "Usuario", "Monto Solicitado", "Monto Desembolsado")
             );
         foreach($loans as $loan)
         {
@@ -1759,6 +1759,7 @@ class LoanReportController extends Controller
                     $loan['procedence'],
                     $loan['request_date'],
                     $loan['lenders'][0]->fullname,
+                    $loan['lenders'][0]->identity_card,
                     $loan['wf_states'],
                     $loan['update_date'],
                     $loan['user'],

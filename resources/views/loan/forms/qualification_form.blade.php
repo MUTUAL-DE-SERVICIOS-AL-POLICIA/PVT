@@ -218,7 +218,7 @@
                     <td colspan="2"> COMPLEMENTO ECONÓMICO </td>
                 </tr>
                 <tr  class="w-100">
-                    <td class="w-50 text-left px-10">TOTAL LIQUIDO PAGABLE - ÚLTIMO SEMESTRE VENCIDO</td>
+                    <td class="w-50 text-left px-10">TOTAL IMPORTE COTIZABLE - ÚLTIMO SEMESTRE VENCIDO</td>
                     <td class="w-50 text-left px-10">
                         @if ($loan->loan_contribution_adjusts->isNotEmpty())
                             {{ Util::money_format($loan->loan_contribution_adjusts->first()->amount) }}

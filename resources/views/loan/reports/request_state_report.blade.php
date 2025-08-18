@@ -20,10 +20,11 @@
     @php ($total_dirbursement = 0)
     <table style="font-size:15px;" class="table-info w-100 text-center uppercase my-10">
         <tr class="bg-grey-darker text-s text-white">
-            <td style="font-size:80%;font-weight: bold;">Nro Ptmo</td>
+            <td style="font-size:80%;font-weight: bold;">Nro Prestamo</td>
             <td style="font-size:80%;font-weight: bold;">Procedencia</td>
             <td style="font-size:80%;font-weight: bold;">Fecha Sol.</td>
             <td style="font-size:80%;font-weight: bold;">Solicitante</td>
+            <td style="font-size:80%;font-weight: bold;">C.I.</td>
             <td style="font-size:80%;font-weight: bold;">Estado Flujo</td>
             <td style="font-size:80%;font-weight: bold;">Fecha derivacion</td>
             <td style="font-size:80%;font-weight: bold;">Usuario</td>
@@ -37,11 +38,10 @@
                     <td style="font-size:60%;">{{ $loan['code'] }}</td>
                     <td style="font-size:60%;">{{ $loan['procedence'] }}</td>
                     <td style="font-size:60%;">{{ $loan['request_date'] }}</td>
-                    <td style="font-size:60%;">
                     @foreach($loan['lenders'] as $lender)
-                        {{$lender->full_name}}<br>
+                        <td style="font-size:60%;">{{ $lender->full_name }}</td>
+                        <td style="font-size:60%;">{{ $lender->identity_card }}</td>
                     @endforeach
-                    </td>
                     <td style="font-size:60%;">{{ $loan['wf_states'] }}</td>
                     <td style="font-size:60%;">{{ $loan['update_date'] }}</td>
                     <td style="font-size:60%;">{{ $loan['user'] }}</td>
@@ -55,7 +55,7 @@
             @else
                 <tr class="bg-grey-darker text-s text-white">
                     <td style="font-size:60%;font-weight: bold;" colspan="3">Cantidad Por Estado de Flujo</td>
-                    <td style="font-size:60%;font-weight: bold;" colspan="1" align="right">{{ $c }}</td>
+                    <td style="font-size:60%;font-weight: bold;" colspan="2" align="right">{{ $c }}</td>
                     <td style="font-size:60%;font-weight: bold;" colspan="2">Sub Total por Estado de Flujo</td>
                     <td style="font-size:60%;font-weight: bold;" colspan="2" align="right">{{ Util::money_format($amount) }}</td>
                     <td style="font-size:60%;font-weight: bold;">{{ Util::money_format($amount_dirbursement) }}</td>
@@ -64,11 +64,10 @@
                     <td style="font-size:60%;">{{ $loan['code'] }}</td>
                     <td style="font-size:60%;">{{ $loan['procedence'] }}</td>
                     <td style="font-size:60%;">{{ $loan['request_date'] }}</td>
-                    <td style="font-size:60%;">
                     @foreach($loan['lenders'] as $lender)
-                        {{$lender->full_name}}<br>
+                        <td style="font-size:60%;">{{$lender->full_name}}</td>
+                        <td style="font-size:60%;">{{$lender->identity_card}}</td>
                     @endforeach
-                    </td>
                     <td style="font-size:60%;">{{ $loan['wf_states'] }}</td>
                     <td style="font-size:60%;">{{ $loan['update_date'] }}</td>
                     <td style="font-size:60%;">{{ $loan['user'] }}</td>
@@ -86,7 +85,7 @@
         @endforeach
         <tr class="bg-grey-darker text-s text-white"">
                     <td style="font-size:60%;font-weight: bold;" colspan="3">Cantidad Por Estado de Flujo</td>
-                    <td style="font-size:60%;font-weight: bold;" colspan="1" align="right">{{ $c }}</td>
+                    <td style="font-size:60%;font-weight: bold;" colspan="2" align="right">{{ $c }}</td>
                     <td style="font-size:60%;font-weight: bold;" colspan="2">Sub Total por Estado de Flujo</td>
                     <td style="font-size:60%;font-weight: bold;" colspan="2" align="right">{{ Util::money_format($amount) }}</td>
                     <td style="font-size:60%;font-weight: bold;" colspan="1" align="right">{{ Util::money_format($amount_dirbursement) }}</td>
@@ -94,7 +93,7 @@
         @php ($total = $total+$amount)
         @php ($total_dirbursement = $total_dirbursement+$amount_dirbursement)
         <tr class="bg-grey-darker text-s text-white">
-                    <td style="font-size:60%;font-weight: bold;" colspan="4">*** TOTAL GENERAL ***</td>
+                    <td style="font-size:60%;font-weight: bold;" colspan="5">*** TOTAL GENERAL ***</td>
                     <td style="font-size:60%;font-weight: bold;" colspan="2" align="right">{{ $cantidad }}</td>
                     <td style="font-size:60%;font-weight: bold;" colspan="2" align="right">{{ Util::money_format($total) }}</td>
                     <td style="font-size:60%;font-weight: bold;" colspan="2" align="right">{{ Util::money_format($total_dirbursement) }}</td>

@@ -122,7 +122,7 @@
                             :error-messages="errors"
                             dense
                             v-model="contribution[i].adjustment_amount"
-                            :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' : loanTypeSelected.id == 29 ? 'Liquido pagable último CE' :  'Monto ajuste'"
+                            :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' : loanTypeSelected.id == 29 ? 'Importe cotizable' :  'Monto ajuste'"
                             :outlined = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29) ? true : false"
                             :disabled = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29) ? false : true"
                           ></v-text-field>
