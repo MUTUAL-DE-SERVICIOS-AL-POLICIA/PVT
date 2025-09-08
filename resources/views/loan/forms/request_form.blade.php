@@ -93,7 +93,7 @@
                 <td class="data-row py-5">{{ $lender->affiliate_state ? $lender->affiliate_state->affiliate_state_type->name : $lender->affiliate->affiliate_state->affiliate_state_type->name }}</td>     
             </tr>
             <tr class="bg-grey-darker text-white">
-                <td class="w-60">ZOMA / BARRIO / URB.</td>
+                <td class="w-60">ZONA / BARRIO / URB.</td>
                 <td class="w-20">CALLE / AV. / CAM. / CARR.</td>
                 <td class="w-20">N° DOM.</td>
             </tr>
@@ -103,7 +103,7 @@
                 <td class="data-row py-5">{{$lender->address ? $lender->address->number_address : '' }}</td>
             </tr>
             <tr class="bg-grey-darker text-white">
-                <td>COND. / EDIF. / TORRRE (BLOQUE, PISO, N° DPTO)</td>
+                <td>COND. / EDIF. / TORRE (BLOQUE, PISO, N° DPTO)</td>
                 <td colspan="2">Teléfono(s)</td>
             </tr>
             <tr>
@@ -219,7 +219,7 @@
                 <td class="data-row py-5">{{$guarantor->affiliate_state ? $guarantor->affiliate_state->affiliate_state_type->name : 'Pasivo'}}</td>
             </tr>
             <tr class="bg-grey-darker text-white">
-                <td class="w-60">ZOMA / BARRIO / URB.</td>
+                <td class="w-60">ZONA / BARRIO / URB.</td>
                 <td class="w-20">CALLE / AV. / CAM. / CARR.</td>
                 <td class="w-20">N° DOM.</td>
             </tr>
@@ -229,7 +229,7 @@
                 <td class="data-row py-5">{{$guarantor->address ? $guarantor->address->number_address : '' }}</td>
             </tr>
             <tr class="bg-grey-darker text-white">
-                <td>COND. / EDIF. / TORRRE (BLOQUE, PISO, N° DPTO)</td>
+                <td>COND. / EDIF. / TORRE (BLOQUE, PISO, N° DPTO)</td>
                 <td colspan="2">Teléfono(s)</td>
             </tr>
             <tr>
