@@ -57,7 +57,7 @@
                     DEPARTAMENTO
                 </td>
                 <td style="text-align: center; font-weight: bold;">
-                    ZOMA / BARRIO / URB.
+                    ZONA / BARRIO / URB.
                 </td>
                 <td style="text-align: center; font-weight: bold;">
                     CALLE / AV. / CAM. / CARR.
@@ -74,7 +74,7 @@
             </tr>
             <tr class="bg-grey-darker text-white">
                 <td colspan="4" style="text-align: center; font-weight: bold;">
-                    COND. / EDIF. / TORRRE (BLOQUE, PISO, N° DPTO)
+                    COND. / EDIF. / TORRE (BLOQUE, PISO, N° DPTO)
                 </td>
             </tr>
             <tr>
