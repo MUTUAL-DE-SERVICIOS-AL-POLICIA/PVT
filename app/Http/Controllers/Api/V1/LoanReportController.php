@@ -2400,4 +2400,107 @@ class LoanReportController extends Controller
         $File="Afiliados con observaciones";
         return Excel::download($export, $File.'.xlsx');
     }
+
+    public function loan_with_penal_payment_report()
+    {
+        /*$headers = [
+            "C.I.","NOMBRE COMPLETO","CATEGORIA","GRADO","NRO. DE CEL.",
+            "PTMO","FECHA DESEMBOLSO","TASA ANUAL","CUOTA MENSUAL",
+            "SALDO ACTUAL","MODALIDAD","SUB-MODALIDAD"
+        ];*/
+        $headers = [
+            "N° DE PTMO", "FECHA DE DESEMBOLSO", "TASA DE INTERES", "CUOTA MENSUAL", "SALDO ACTUAL",
+            "CI_TIT.", "AP. PAT. TIT", "AP. MAT. TIT", "AP. ESPOSO", "1ER NOM. TIT", "2DO. NOM. TIT",
+            "MODALIDAD DE PTMO", "SUB MODALIDAD DE PTMO", "SALDO PLAN DE PAGOS", "ULT. FECHA AMORTIZACIÓN",
+            "CATEGORIA", "GRADO", "N° CEL. TIT."
+        ];
+        $loansConPenal = Loan::query()
+            ->where('state_id', 3)
+            ->whereHas('payments', function ($q) {
+                $q->whereNull('deleted_at')->where('penal_payment', '>', 0);
+            })
+            ->with([
+                'loanBorrowers' => function ($q) {
+                    $q->orderBy('id');
+                },
+                'interest',
+                'modality.procedure_type',
+            ])
+            ->get();
+
+        $file1 = [ $headers ];
+
+        foreach ($loansConPenal as $loan) {
+            $b = $loan->loanBorrowers->first();
+
+            $categoryName = ($b && $b->category) ? $b->category->name : '';
+            $degreeShort  = ($b && $b->degree)    ? $b->degree->shortened : '';
+
+            $file1[] = [
+                $loan->code,
+                $loan->disbursement_date ? Carbon::parse($loan->disbursement_date)->format('Y-m-d') : '',
+                optional($loan->interest)->annual_interest,
+                $loan->estimated_quota,
+                $loan->verify_balance(),
+                $b->identity_card ?? '',
+                $b->last_name ?? '',
+                $b->mothers_last_name ?? '',
+                $b->surname_husband ?? '',
+                $b->first_name ?? '',
+                $b->second_name ?? '',
+                optional(optional($loan->modality)->procedure_type)->second_name ?? '',
+                optional($loan->modality)->shortened ?? '',
+                $loan->loan_plan->where('estimated_date', '<=',Carbon::now())->sortByDesc('quota_number')->count() > 0 ? $loan->loan_plan->where('estimated_date', '<=',Carbon::now())->sortByDesc('quota_number')->first()->balance : $loan->balance,
+                $loan->last_payment_validated ? Carbon::parse($loan->last_payment_validated->estimated_date)->format('Y-m-d') : Carbon::parse($loan->disbursement_date)->format('Y-m-d'),
+                $categoryName,
+                $degreeShort,
+                $b->cell_phone_number ?? '',
+            ];
+        }
+        $loansSinPenal = Loan::query()
+            ->where('state_id', 3)
+            ->whereDoesntHave('payments', function ($q) {
+                $q->whereNull('deleted_at')->where('penal_payment', '>', 0);
+            })
+            ->with([
+                'loanBorrowers' => function ($q) {
+                    $q->orderBy('id');
+                },
+                'interest',
+                'modality.procedure_type',
+            ])
+            ->get();
+
+        $file2 = [ $headers ];
+
+        foreach ($loansSinPenal as $loan) {
+            $b = $loan->loanBorrowers->first();
+
+            $categoryName = ($b && $b->category) ? $b->category->name : '';
+            $degreeShort  = ($b && $b->degree)    ? $b->degree->shortened : '';
+
+            $file2[] = [
+                $loan->code,
+                $loan->disbursement_date ? Carbon::parse($loan->disbursement_date)->format('Y-m-d') : '',
+                optional($loan->interest)->annual_interest,
+                $loan->estimated_quota,
+                $loan->verify_balance(),
+                $b->identity_card ?? '',
+                $b->last_name ?? '',
+                $b->mothers_last_name ?? '',
+                $b->surname_husband ?? '',
+                $b->first_name ?? '',
+                $b->second_name ?? '',
+                optional(optional($loan->modality)->procedure_type)->second_name ?? '',
+                optional($loan->modality)->shortened ?? '',
+                $loan->loan_plan->where('estimated_date', '<=',Carbon::now())->sortByDesc('quota_number')->first() ? $loan->loan_plan->where('estimated_date', '<=',Carbon::now())->sortByDesc('quota_number')->first()->balance : $loan->balance,
+                $loan->last_payment_validated ? Carbon::parse($loan->last_payment_validated->estimated_date)->format('Y-m-d') : Carbon::parse($loan->disbursement_date)->format('Y-m-d'),
+                $categoryName,
+                $degreeShort,
+                $b->cell_phone_number ?? '',
+            ];
+        }
+        $export = new MultipleSheetExportPayment($file1, $file2,'Préstamos con penalidad','Péstamos sin penalidad');
+        return Excel::download($export, 'PrestamosConPagosPenales.xlsx');
+    }
 }

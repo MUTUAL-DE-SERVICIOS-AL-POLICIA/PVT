@@ -105,6 +105,7 @@ Route::group([
         //REPORTS
         Route::post('send_contract', 'Api\V1\SMSController@send_sms_for_contract');
             //loanReport
+        Route::get('loan_with_penal_payment_report', 'Api\V1\LoanReportController@loan_with_penal_payment_report');//reporte de prestamos con pagos penales
         Route::get('loan_tracking', 'Api\V1\LoanReportController@loan_tracking');//seguimiento de prestamos
         Route::get('list_loan_generate', 'Api\V1\LoanReportController@list_loan_generate');
         Route::get('report_loan_vigent', 'Api\V1\LoanReportController@report_loan_vigent');
@@ -415,6 +416,7 @@ Route::group([
         ], function () {
             Route::apiResource('address', 'Api\V1\AddressController')->only('destroy');
         });
+        Route::post('affiliates/{affiliate}/addresses/{address}/print','Api\V1\AddressController@print_address'); //Imprimir Direccion
 
         // Notas
         Route::group([

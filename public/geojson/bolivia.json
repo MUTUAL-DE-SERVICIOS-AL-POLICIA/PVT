@@ -1,0 +1,3053 @@
+[
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 1,
+    "provincia": "Cercado",
+    "mun": 1,
+    "municipio": "Trinidad",
+    "prov_mun": "Cercado, Trinidad"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 1,
+    "provincia": "Cercado",
+    "mun": 2,
+    "municipio": "San Javier",
+    "prov_mun": "Cercado, San Javier"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 2,
+    "provincia": "Vaca Diez",
+    "mun": 1,
+    "municipio": "Riberalta",
+    "prov_mun": "Vaca Diez, Riberalta"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 2,
+    "provincia": "Vaca Diez",
+    "mun": 2,
+    "municipio": "Guayaramerín",
+    "prov_mun": "Vaca Diez, Guayaramerín"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 3,
+    "provincia": "José Ballivián",
+    "mun": 1,
+    "municipio": "Reyes",
+    "prov_mun": "José Ballivián, Reyes"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 3,
+    "provincia": "José Ballivián",
+    "mun": 2,
+    "municipio": "San Borja",
+    "prov_mun": "José Ballivián, San Borja"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 3,
+    "provincia": "José Ballivián",
+    "mun": 3,
+    "municipio": "Santa Rosa",
+    "prov_mun": "José Ballivián, Santa Rosa"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 3,
+    "provincia": "José Ballivián",
+    "mun": 4,
+    "municipio": "Rurrenabaque",
+    "prov_mun": "José Ballivián, Rurrenabaque"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 4,
+    "provincia": "Yacuma",
+    "mun": 1,
+    "municipio": "Santa Ana de Yacuma",
+    "prov_mun": "Yacuma, Santa Ana de Yacuma"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 4,
+    "provincia": "Yacuma",
+    "mun": 2,
+    "municipio": "Exaltación",
+    "prov_mun": "Yacuma, Exaltación"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 5,
+    "provincia": "Moxos",
+    "mun": 1,
+    "municipio": "San Ignacio",
+    "prov_mun": "Moxos, San Ignacio"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 6,
+    "provincia": "Marban",
+    "mun": 1,
+    "municipio": "Loreto",
+    "prov_mun": "Marban, Loreto"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 6,
+    "provincia": "Marban",
+    "mun": 2,
+    "municipio": "San Andrés",
+    "prov_mun": "Marban, San Andrés"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 7,
+    "provincia": "Mamore",
+    "mun": 1,
+    "municipio": "San Joaquín",
+    "prov_mun": "Mamore, San Joaquín"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 7,
+    "provincia": "Mamore",
+    "mun": 2,
+    "municipio": "San Ramón",
+    "prov_mun": "Mamore, San Ramón"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 7,
+    "provincia": "Mamore",
+    "mun": 3,
+    "municipio": "Puerto Siles",
+    "prov_mun": "Mamore, Puerto Siles"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 8,
+    "provincia": "Itenez",
+    "mun": 1,
+    "municipio": "Magdalena",
+    "prov_mun": "Itenez, Magdalena"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 8,
+    "provincia": "Itenez",
+    "mun": 2,
+    "municipio": "Baures",
+    "prov_mun": "Itenez, Baures"
+  },
+  {
+    "dep": 1,
+    "departamento": "Beni",
+    "pro": 8,
+    "provincia": "Itenez",
+    "mun": 3,
+    "municipio": "Huacaraje",
+    "prov_mun": "Itenez, Huacaraje"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 1,
+    "provincia": "Oropeza",
+    "mun": 1,
+    "municipio": "Sucre",
+    "prov_mun": "Oropeza, Sucre"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 1,
+    "provincia": "Oropeza",
+    "mun": 2,
+    "municipio": "Yotala",
+    "prov_mun": "Oropeza, Yotala"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 1,
+    "provincia": "Oropeza",
+    "mun": 3,
+    "municipio": "Poroma",
+    "prov_mun": "Oropeza, Poroma"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 2,
+    "provincia": "Azurduy",
+    "mun": 1,
+    "municipio": "Azurduy",
+    "prov_mun": "Azurduy, Azurduy"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 2,
+    "provincia": "Azurduy",
+    "mun": 2,
+    "municipio": "Tarvita",
+    "prov_mun": "Azurduy, Tarvita"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 3,
+    "provincia": "Zudañez",
+    "mun": 1,
+    "municipio": "Zudáñez",
+    "prov_mun": "Zudañez, Zudáñez"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 3,
+    "provincia": "Zudañez",
+    "mun": 2,
+    "municipio": "Presto",
+    "prov_mun": "Zudañez, Presto"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 3,
+    "provincia": "Zudañez",
+    "mun": 3,
+    "municipio": "Mojocoya",
+    "prov_mun": "Zudañez, Mojocoya"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 3,
+    "provincia": "Zudañez",
+    "mun": 4,
+    "municipio": "Icla",
+    "prov_mun": "Zudañez, Icla"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 4,
+    "provincia": "Tomina",
+    "mun": 1,
+    "municipio": "Padilla",
+    "prov_mun": "Tomina, Padilla"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 4,
+    "provincia": "Tomina",
+    "mun": 2,
+    "municipio": "Tomina",
+    "prov_mun": "Tomina, Tomina"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 4,
+    "provincia": "Tomina",
+    "mun": 3,
+    "municipio": "Sopachuy",
+    "prov_mun": "Tomina, Sopachuy"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 4,
+    "provincia": "Tomina",
+    "mun": 4,
+    "municipio": "Villa Alcalá",
+    "prov_mun": "Tomina, Villa Alcalá"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 4,
+    "provincia": "Tomina",
+    "mun": 5,
+    "municipio": "El Villar",
+    "prov_mun": "Tomina, El Villar"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 5,
+    "provincia": "Hernando Siles",
+    "mun": 1,
+    "municipio": "Monteagudo",
+    "prov_mun": "Hernando Siles, Monteagudo"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 5,
+    "provincia": "Hernando Siles",
+    "mun": 2,
+    "municipio": "Huacareta",
+    "prov_mun": "Hernando Siles, Huacareta"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 6,
+    "provincia": "Yamparaez",
+    "mun": 1,
+    "municipio": "Tarabuco",
+    "prov_mun": "Yamparaez, Tarabuco"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 6,
+    "provincia": "Yamparaez",
+    "mun": 2,
+    "municipio": "Yamparaez",
+    "prov_mun": "Yamparaez, Yamparaez"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 7,
+    "provincia": "Nor Cinti",
+    "mun": 1,
+    "municipio": "Camargo",
+    "prov_mun": "Nor Cinti, Camargo"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 7,
+    "provincia": "Nor Cinti",
+    "mun": 2,
+    "municipio": "San Lucas",
+    "prov_mun": "Nor Cinti, San Lucas"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 7,
+    "provincia": "Nor Cinti",
+    "mun": 3,
+    "municipio": "Incahuasi",
+    "prov_mun": "Nor Cinti, Incahuasi"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 7,
+    "provincia": "Nor Cinti",
+    "mun": 4,
+    "municipio": "Villa Charcas",
+    "prov_mun": "Nor Cinti, Villa Charcas"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 8,
+    "provincia": "Belisario Boeto",
+    "mun": 1,
+    "municipio": "Villa Serrano",
+    "prov_mun": "Belisario Boeto, Villa Serrano"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 9,
+    "provincia": "Sud Cinti",
+    "mun": 1,
+    "municipio": "Villa Abecia",
+    "prov_mun": "Sud Cinti, Villa Abecia"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 9,
+    "provincia": "Sud Cinti",
+    "mun": 2,
+    "municipio": "Culpina",
+    "prov_mun": "Sud Cinti, Culpina"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 9,
+    "provincia": "Sud Cinti",
+    "mun": 3,
+    "municipio": "Las Carreras",
+    "prov_mun": "Sud Cinti, Las Carreras"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 10,
+    "provincia": "Luis Calvo",
+    "mun": 1,
+    "municipio": "Muyupampa",
+    "prov_mun": "Luis Calvo, Muyupampa"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 10,
+    "provincia": "Luis Calvo",
+    "mun": 2,
+    "municipio": "Huacaya",
+    "prov_mun": "Luis Calvo, Huacaya"
+  },
+  {
+    "dep": 2,
+    "departamento": "Chuquisaca",
+    "pro": 10,
+    "provincia": "Luis Calvo",
+    "mun": 3,
+    "municipio": "Macharetí",
+    "prov_mun": "Luis Calvo, Macharetí"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 1,
+    "provincia": "Cercado",
+    "mun": 1,
+    "municipio": "Cochabamba",
+    "prov_mun": "Cercado, Cochabamba"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 2,
+    "provincia": "Campero",
+    "mun": 1,
+    "municipio": "Aiquile",
+    "prov_mun": "Campero, Aiquile"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 2,
+    "provincia": "Campero",
+    "mun": 2,
+    "municipio": "Pasorapa",
+    "prov_mun": "Campero, Pasorapa"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 2,
+    "provincia": "Campero",
+    "mun": 3,
+    "municipio": "Omereque",
+    "prov_mun": "Campero, Omereque"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 3,
+    "provincia": "Ayopaya",
+    "mun": 1,
+    "municipio": "Independencia",
+    "prov_mun": "Ayopaya, Independencia"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 3,
+    "provincia": "Ayopaya",
+    "mun": 2,
+    "municipio": "Morochata",
+    "prov_mun": "Ayopaya, Morochata"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 3,
+    "provincia": "Ayopaya",
+    "mun": 3,
+    "municipio": "Cocapata",
+    "prov_mun": "Ayopaya, Cocapata"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 4,
+    "provincia": "Esteban Arze",
+    "mun": 1,
+    "municipio": "Tarata",
+    "prov_mun": "Esteban Arze, Tarata"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 4,
+    "provincia": "Esteban Arze",
+    "mun": 2,
+    "municipio": "Anzaldo",
+    "prov_mun": "Esteban Arze, Anzaldo"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 4,
+    "provincia": "Esteban Arze",
+    "mun": 3,
+    "municipio": "Arbieto",
+    "prov_mun": "Esteban Arze, Arbieto"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 4,
+    "provincia": "Esteban Arze",
+    "mun": 4,
+    "municipio": "Sacabamba",
+    "prov_mun": "Esteban Arze, Sacabamba"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 5,
+    "provincia": "Arani",
+    "mun": 1,
+    "municipio": "Arani",
+    "prov_mun": "Arani, Arani"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 5,
+    "provincia": "Arani",
+    "mun": 2,
+    "municipio": "Vacas",
+    "prov_mun": "Arani, Vacas"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 6,
+    "provincia": "Arque",
+    "mun": 1,
+    "municipio": "Arque",
+    "prov_mun": "Arque, Arque"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 6,
+    "provincia": "Arque",
+    "mun": 2,
+    "municipio": "Tacopaya",
+    "prov_mun": "Arque, Tacopaya"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 7,
+    "provincia": "Capinota",
+    "mun": 1,
+    "municipio": "Capinota",
+    "prov_mun": "Capinota, Capinota"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 7,
+    "provincia": "Capinota",
+    "mun": 2,
+    "municipio": "Santivañez",
+    "prov_mun": "Capinota, Santivañez"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 7,
+    "provincia": "Capinota",
+    "mun": 3,
+    "municipio": "Sicaya",
+    "prov_mun": "Capinota, Sicaya"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 8,
+    "provincia": "German Jordán",
+    "mun": 1,
+    "municipio": "Cliza",
+    "prov_mun": "German Jordán, Cliza"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 8,
+    "provincia": "German Jordán",
+    "mun": 2,
+    "municipio": "Toco",
+    "prov_mun": "German Jordán, Toco"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 8,
+    "provincia": "German Jordán",
+    "mun": 3,
+    "municipio": "Tolata",
+    "prov_mun": "German Jordán, Tolata"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 9,
+    "provincia": "Quillacollo",
+    "mun": 1,
+    "municipio": "Quillacollo",
+    "prov_mun": "Quillacollo, Quillacollo"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 9,
+    "provincia": "Quillacollo",
+    "mun": 2,
+    "municipio": "Sipesipe",
+    "prov_mun": "Quillacollo, Sipesipe"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 9,
+    "provincia": "Quillacollo",
+    "mun": 3,
+    "municipio": "Tiquipaya",
+    "prov_mun": "Quillacollo, Tiquipaya"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 9,
+    "provincia": "Quillacollo",
+    "mun": 4,
+    "municipio": "Vinto",
+    "prov_mun": "Quillacollo, Vinto"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 9,
+    "provincia": "Quillacollo",
+    "mun": 5,
+    "municipio": "Colcapirhua",
+    "prov_mun": "Quillacollo, Colcapirhua"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 10,
+    "provincia": "Chapare",
+    "mun": 1,
+    "municipio": "Sacaba",
+    "prov_mun": "Chapare, Sacaba"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 10,
+    "provincia": "Chapare",
+    "mun": 2,
+    "municipio": "Colomi",
+    "prov_mun": "Chapare, Colomi"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 10,
+    "provincia": "Chapare",
+    "mun": 3,
+    "municipio": "Villa Tunari",
+    "prov_mun": "Chapare, Villa Tunari"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 11,
+    "provincia": "Tapacarí",
+    "mun": 1,
+    "municipio": "Tapacarí",
+    "prov_mun": "Tapacarí, Tapacarí"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 12,
+    "provincia": "Carrasco",
+    "mun": 1,
+    "municipio": "Totora",
+    "prov_mun": "Carrasco, Totora"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 12,
+    "provincia": "Carrasco",
+    "mun": 2,
+    "municipio": "Pojo",
+    "prov_mun": "Carrasco, Pojo"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 12,
+    "provincia": "Carrasco",
+    "mun": 3,
+    "municipio": "Pocona",
+    "prov_mun": "Carrasco, Pocona"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 12,
+    "provincia": "Carrasco",
+    "mun": 4,
+    "municipio": "Chimoré",
+    "prov_mun": "Carrasco, Chimoré"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 12,
+    "provincia": "Carrasco",
+    "mun": 5,
+    "municipio": "Puerto Villarroel",
+    "prov_mun": "Carrasco, Puerto Villarroel"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 12,
+    "provincia": "Carrasco",
+    "mun": 6,
+    "municipio": "Entre Ríos",
+    "prov_mun": "Carrasco, Entre Ríos"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 13,
+    "provincia": "Mizque",
+    "mun": 1,
+    "municipio": "Mizque",
+    "prov_mun": "Mizque, Mizque"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 13,
+    "provincia": "Mizque",
+    "mun": 2,
+    "municipio": "Vila Vila",
+    "prov_mun": "Mizque, Vila Vila"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 13,
+    "provincia": "Mizque",
+    "mun": 3,
+    "municipio": "Alalay",
+    "prov_mun": "Mizque, Alalay"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 14,
+    "provincia": "Punata",
+    "mun": 1,
+    "municipio": "Punata",
+    "prov_mun": "Punata, Punata"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 14,
+    "provincia": "Punata",
+    "mun": 2,
+    "municipio": "Villa Rivero",
+    "prov_mun": "Punata, Villa Rivero"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 14,
+    "provincia": "Punata",
+    "mun": 3,
+    "municipio": "San Benito",
+    "prov_mun": "Punata, San Benito"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 14,
+    "provincia": "Punata",
+    "mun": 4,
+    "municipio": "Tacachi",
+    "prov_mun": "Punata, Tacachi"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 14,
+    "provincia": "Punata",
+    "mun": 5,
+    "municipio": "Cuchumuela",
+    "prov_mun": "Punata, Cuchumuela"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 15,
+    "provincia": "Bolívar",
+    "mun": 1,
+    "municipio": "Bolívar",
+    "prov_mun": "Bolívar, Bolívar"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 16,
+    "provincia": "Tiraque",
+    "mun": 1,
+    "municipio": "Tiraque",
+    "prov_mun": "Tiraque, Tiraque"
+  },
+  {
+    "dep": 3,
+    "departamento": "Cochabamba",
+    "pro": 16,
+    "provincia": "Tiraque",
+    "mun": 2,
+    "municipio": "Shinahota",
+    "prov_mun": "Tiraque, Shinahota"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 1,
+    "provincia": "Murillo",
+    "mun": 1,
+    "municipio": "La Paz",
+    "prov_mun": "Murillo, La Paz"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 1,
+    "provincia": "Murillo",
+    "mun": 2,
+    "municipio": "Palca",
+    "prov_mun": "Murillo, Palca"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 1,
+    "provincia": "Murillo",
+    "mun": 3,
+    "municipio": "Mecapaca",
+    "prov_mun": "Murillo, Mecapaca"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 1,
+    "provincia": "Murillo",
+    "mun": 4,
+    "municipio": "Achocalla",
+    "prov_mun": "Murillo, Achocalla"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 1,
+    "provincia": "Murillo",
+    "mun": 5,
+    "municipio": "El Alto",
+    "prov_mun": "Murillo, El Alto"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 2,
+    "provincia": "Omasuyos",
+    "mun": 1,
+    "municipio": "Achacachi",
+    "prov_mun": "Omasuyos, Achacachi"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 2,
+    "provincia": "Omasuyos",
+    "mun": 2,
+    "municipio": "Ancoraimes",
+    "prov_mun": "Omasuyos, Ancoraimes"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 2,
+    "provincia": "Omasuyos",
+    "mun": 3,
+    "municipio": "Chua Cocani",
+    "prov_mun": "Omasuyos, Chua Cocani"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 2,
+    "provincia": "Omasuyos",
+    "mun": 4,
+    "municipio": "Huarina",
+    "prov_mun": "Omasuyos, Huarina"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 2,
+    "provincia": "Omasuyos",
+    "mun": 5,
+    "municipio": "Santiago de Huata",
+    "prov_mun": "Omasuyos, Santiago de Huata"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 2,
+    "provincia": "Omasuyos",
+    "mun": 6,
+    "municipio": "Huatajata",
+    "prov_mun": "Omasuyos, Huatajata"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 3,
+    "provincia": "Pacajes",
+    "mun": 1,
+    "municipio": "Corocoro",
+    "prov_mun": "Pacajes, Corocoro"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 3,
+    "provincia": "Pacajes",
+    "mun": 2,
+    "municipio": "Caquiaviri",
+    "prov_mun": "Pacajes, Caquiaviri"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 3,
+    "provincia": "Pacajes",
+    "mun": 3,
+    "municipio": "Calacoto",
+    "prov_mun": "Pacajes, Calacoto"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 3,
+    "provincia": "Pacajes",
+    "mun": 4,
+    "municipio": "Comanche",
+    "prov_mun": "Pacajes, Comanche"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 3,
+    "provincia": "Pacajes",
+    "mun": 5,
+    "municipio": "Charaña",
+    "prov_mun": "Pacajes, Charaña"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 3,
+    "provincia": "Pacajes",
+    "mun": 6,
+    "municipio": "Waldo Ballivián",
+    "prov_mun": "Pacajes, Waldo Ballivián"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 3,
+    "provincia": "Pacajes",
+    "mun": 7,
+    "municipio": "Nazacara de Pacajes",
+    "prov_mun": "Pacajes, Nazacara de Pacajes"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 3,
+    "provincia": "Pacajes",
+    "mun": 8,
+    "municipio": "Callapa",
+    "prov_mun": "Pacajes, Callapa"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 4,
+    "provincia": "Camacho",
+    "mun": 1,
+    "municipio": "Puerto Acosta",
+    "prov_mun": "Camacho, Puerto Acosta"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 4,
+    "provincia": "Camacho",
+    "mun": 2,
+    "municipio": "Mocomoco",
+    "prov_mun": "Camacho, Mocomoco"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 4,
+    "provincia": "Camacho",
+    "mun": 3,
+    "municipio": "Pto. Carabuco",
+    "prov_mun": "Camacho, Pto. Carabuco"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 4,
+    "provincia": "Camacho",
+    "mun": 4,
+    "municipio": "Humanata",
+    "prov_mun": "Camacho, Humanata"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 4,
+    "provincia": "Camacho",
+    "mun": 5,
+    "municipio": "Escoma",
+    "prov_mun": "Camacho, Escoma"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 5,
+    "provincia": "Muñecas",
+    "mun": 1,
+    "municipio": "Chuma",
+    "prov_mun": "Muñecas, Chuma"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 5,
+    "provincia": "Muñecas",
+    "mun": 2,
+    "municipio": "Ayata",
+    "prov_mun": "Muñecas, Ayata"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 5,
+    "provincia": "Muñecas",
+    "mun": 3,
+    "municipio": "Aucapata",
+    "prov_mun": "Muñecas, Aucapata"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 6,
+    "provincia": "Larecaja",
+    "mun": 1,
+    "municipio": "Sorata",
+    "prov_mun": "Larecaja, Sorata"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 6,
+    "provincia": "Larecaja",
+    "mun": 2,
+    "municipio": "Guanay",
+    "prov_mun": "Larecaja, Guanay"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 6,
+    "provincia": "Larecaja",
+    "mun": 3,
+    "municipio": "Tacacoma",
+    "prov_mun": "Larecaja, Tacacoma"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 6,
+    "provincia": "Larecaja",
+    "mun": 4,
+    "municipio": "Quiabaya",
+    "prov_mun": "Larecaja, Quiabaya"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 6,
+    "provincia": "Larecaja",
+    "mun": 5,
+    "municipio": "Combaya",
+    "prov_mun": "Larecaja, Combaya"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 6,
+    "provincia": "Larecaja",
+    "mun": 6,
+    "municipio": "Tipuani",
+    "prov_mun": "Larecaja, Tipuani"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 6,
+    "provincia": "Larecaja",
+    "mun": 7,
+    "municipio": "Mapiri",
+    "prov_mun": "Larecaja, Mapiri"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 6,
+    "provincia": "Larecaja",
+    "mun": 8,
+    "municipio": "Teoponte",
+    "prov_mun": "Larecaja, Teoponte"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 7,
+    "provincia": "Franz Tamayo",
+    "mun": 1,
+    "municipio": "Apolo",
+    "prov_mun": "Franz Tamayo, Apolo"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 7,
+    "provincia": "Franz Tamayo",
+    "mun": 2,
+    "municipio": "Pelechuco",
+    "prov_mun": "Franz Tamayo, Pelechuco"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 8,
+    "provincia": "Ingavi",
+    "mun": 1,
+    "municipio": "Viacha",
+    "prov_mun": "Ingavi, Viacha"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 8,
+    "provincia": "Ingavi",
+    "mun": 2,
+    "municipio": "Guaqui",
+    "prov_mun": "Ingavi, Guaqui"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 8,
+    "provincia": "Ingavi",
+    "mun": 3,
+    "municipio": "Tiahuanacu",
+    "prov_mun": "Ingavi, Tiahuanacu"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 8,
+    "provincia": "Ingavi",
+    "mun": 4,
+    "municipio": "Desaguadero",
+    "prov_mun": "Ingavi, Desaguadero"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 8,
+    "provincia": "Ingavi",
+    "mun": 5,
+    "municipio": "San Andrés de Machaca",
+    "prov_mun": "Ingavi, San Andrés de Machaca"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 8,
+    "provincia": "Ingavi",
+    "mun": 6,
+    "municipio": "Jesús de Machaca",
+    "prov_mun": "Ingavi, Jesús de Machaca"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 8,
+    "provincia": "Ingavi",
+    "mun": 7,
+    "municipio": "Taraco",
+    "prov_mun": "Ingavi, Taraco"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 9,
+    "provincia": "Loayza",
+    "mun": 1,
+    "municipio": "Luribay",
+    "prov_mun": "Loayza, Luribay"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 9,
+    "provincia": "Loayza",
+    "mun": 2,
+    "municipio": "Sapahaqui",
+    "prov_mun": "Loayza, Sapahaqui"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 9,
+    "provincia": "Loayza",
+    "mun": 3,
+    "municipio": "Yaco",
+    "prov_mun": "Loayza, Yaco"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 9,
+    "provincia": "Loayza",
+    "mun": 4,
+    "municipio": "Malla",
+    "prov_mun": "Loayza, Malla"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 9,
+    "provincia": "Loayza",
+    "mun": 5,
+    "municipio": "Cairoma",
+    "prov_mun": "Loayza, Cairoma"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 10,
+    "provincia": "Inquisivi",
+    "mun": 1,
+    "municipio": "Inquisivi",
+    "prov_mun": "Inquisivi, Inquisivi"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 10,
+    "provincia": "Inquisivi",
+    "mun": 2,
+    "municipio": "Quime",
+    "prov_mun": "Inquisivi, Quime"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 10,
+    "provincia": "Inquisivi",
+    "mun": 3,
+    "municipio": "Cajuata",
+    "prov_mun": "Inquisivi, Cajuata"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 10,
+    "provincia": "Inquisivi",
+    "mun": 4,
+    "municipio": "Colquiri",
+    "prov_mun": "Inquisivi, Colquiri"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 10,
+    "provincia": "Inquisivi",
+    "mun": 5,
+    "municipio": "Ichoca",
+    "prov_mun": "Inquisivi, Ichoca"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 10,
+    "provincia": "Inquisivi",
+    "mun": 6,
+    "municipio": "Villa Libertad Licoma",
+    "prov_mun": "Inquisivi, Villa Libertad Licoma"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 11,
+    "provincia": "Sud Yungas",
+    "mun": 1,
+    "municipio": "Chulumani",
+    "prov_mun": "Sud Yungas, Chulumani"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 11,
+    "provincia": "Sud Yungas",
+    "mun": 2,
+    "municipio": "Irupana",
+    "prov_mun": "Sud Yungas, Irupana"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 11,
+    "provincia": "Sud Yungas",
+    "mun": 3,
+    "municipio": "Yanacachi",
+    "prov_mun": "Sud Yungas, Yanacachi"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 11,
+    "provincia": "Sud Yungas",
+    "mun": 4,
+    "municipio": "Palos Blancos",
+    "prov_mun": "Sud Yungas, Palos Blancos"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 11,
+    "provincia": "Sud Yungas",
+    "mun": 5,
+    "municipio": "La Asunta",
+    "prov_mun": "Sud Yungas, La Asunta"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 12,
+    "provincia": "Los Andes",
+    "mun": 1,
+    "municipio": "Pucarani",
+    "prov_mun": "Los Andes, Pucarani"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 12,
+    "provincia": "Los Andes",
+    "mun": 2,
+    "municipio": "Laja",
+    "prov_mun": "Los Andes, Laja"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 12,
+    "provincia": "Los Andes",
+    "mun": 3,
+    "municipio": "Batallas",
+    "prov_mun": "Los Andes, Batallas"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 12,
+    "provincia": "Los Andes",
+    "mun": 4,
+    "municipio": "Puerto Pérez",
+    "prov_mun": "Los Andes, Puerto Pérez"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 13,
+    "provincia": "Aroma",
+    "mun": 1,
+    "municipio": "Sica Sica",
+    "prov_mun": "Aroma, Sica Sica"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 13,
+    "provincia": "Aroma",
+    "mun": 2,
+    "municipio": "Umala",
+    "prov_mun": "Aroma, Umala"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 13,
+    "provincia": "Aroma",
+    "mun": 3,
+    "municipio": "Ayo Ayo",
+    "prov_mun": "Aroma, Ayo Ayo"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 13,
+    "provincia": "Aroma",
+    "mun": 4,
+    "municipio": "Calamarca",
+    "prov_mun": "Aroma, Calamarca"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 13,
+    "provincia": "Aroma",
+    "mun": 5,
+    "municipio": "Patacamaya",
+    "prov_mun": "Aroma, Patacamaya"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 13,
+    "provincia": "Aroma",
+    "mun": 6,
+    "municipio": "Colquencha",
+    "prov_mun": "Aroma, Colquencha"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 13,
+    "provincia": "Aroma",
+    "mun": 7,
+    "municipio": "Collana",
+    "prov_mun": "Aroma, Collana"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 14,
+    "provincia": "Nor Yungas",
+    "mun": 1,
+    "municipio": "Coroico",
+    "prov_mun": "Nor Yungas, Coroico"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 14,
+    "provincia": "Nor Yungas",
+    "mun": 2,
+    "municipio": "Coripata",
+    "prov_mun": "Nor Yungas, Coripata"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 15,
+    "provincia": "Abel Iturralde",
+    "mun": 1,
+    "municipio": "Ixiamas",
+    "prov_mun": "Abel Iturralde, Ixiamas"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 15,
+    "provincia": "Abel Iturralde",
+    "mun": 2,
+    "municipio": "San Buenaventura",
+    "prov_mun": "Abel Iturralde, San Buenaventura"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 16,
+    "provincia": "Bautista Saavedra",
+    "mun": 1,
+    "municipio": "Charazani",
+    "prov_mun": "Bautista Saavedra, Charazani"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 16,
+    "provincia": "Bautista Saavedra",
+    "mun": 2,
+    "municipio": "Curva",
+    "prov_mun": "Bautista Saavedra, Curva"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 17,
+    "provincia": "Manco Kapac",
+    "mun": 1,
+    "municipio": "Copacabana",
+    "prov_mun": "Manco Kapac, Copacabana"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 17,
+    "provincia": "Manco Kapac",
+    "mun": 2,
+    "municipio": "San Pedro de Tiquina",
+    "prov_mun": "Manco Kapac, San Pedro de Tiquina"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 17,
+    "provincia": "Manco Kapac",
+    "mun": 3,
+    "municipio": "Tito Yupanqui",
+    "prov_mun": "Manco Kapac, Tito Yupanqui"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 18,
+    "provincia": "Gualberto Villarroel",
+    "mun": 1,
+    "municipio": "San Pedro Cuarahuara",
+    "prov_mun": "Gualberto Villarroel, San Pedro Cuarahuara"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 18,
+    "provincia": "Gualberto Villarroel",
+    "mun": 2,
+    "municipio": "Papel Pampa",
+    "prov_mun": "Gualberto Villarroel, Papel Pampa"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 18,
+    "provincia": "Gualberto Villarroel",
+    "mun": 3,
+    "municipio": "Chacarilla",
+    "prov_mun": "Gualberto Villarroel, Chacarilla"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 19,
+    "provincia": "José Manuel Pando",
+    "mun": 1,
+    "municipio": "Santiago de Machaca",
+    "prov_mun": "José Manuel Pando, Santiago de Machaca"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 19,
+    "provincia": "José Manuel Pando",
+    "mun": 2,
+    "municipio": "Catacora",
+    "prov_mun": "José Manuel Pando, Catacora"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 20,
+    "provincia": "Caranavi",
+    "mun": 1,
+    "municipio": "Caranavi",
+    "prov_mun": "Caranavi, Caranavi"
+  },
+  {
+    "dep": 4,
+    "departamento": "La Paz",
+    "pro": 20,
+    "provincia": "Caranavi",
+    "mun": 2,
+    "municipio": "Alto Beni",
+    "prov_mun": "Caranavi, Alto Beni"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 1,
+    "provincia": "Cercado",
+    "mun": 1,
+    "municipio": "Oruro",
+    "prov_mun": "Cercado, Oruro"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 1,
+    "provincia": "Cercado",
+    "mun": 2,
+    "municipio": "Caracollo",
+    "prov_mun": "Cercado, Caracollo"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 1,
+    "provincia": "Cercado",
+    "mun": 3,
+    "municipio": "El Choro",
+    "prov_mun": "Cercado, El Choro"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 1,
+    "provincia": "Cercado",
+    "mun": 4,
+    "municipio": "Pari - Paria - Soracachi",
+    "prov_mun": "Cercado, Pari - Paria - Soracachi"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 2,
+    "provincia": "Abaroa",
+    "mun": 1,
+    "municipio": "Challapata",
+    "prov_mun": "Abaroa, Challapata"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 2,
+    "provincia": "Abaroa",
+    "mun": 2,
+    "municipio": "Quillacas",
+    "prov_mun": "Abaroa, Quillacas"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 3,
+    "provincia": "Carangas",
+    "mun": 1,
+    "municipio": "Corque",
+    "prov_mun": "Carangas, Corque"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 3,
+    "provincia": "Carangas",
+    "mun": 2,
+    "municipio": "Choque Cota",
+    "prov_mun": "Carangas, Choque Cota"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 4,
+    "provincia": "Sajama",
+    "mun": 1,
+    "municipio": "Curahuara de Carangas",
+    "prov_mun": "Sajama, Curahuara de Carangas"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 4,
+    "provincia": "Sajama",
+    "mun": 2,
+    "municipio": "Turco",
+    "prov_mun": "Sajama, Turco"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 5,
+    "provincia": "Litoral",
+    "mun": 1,
+    "municipio": "Huachacalla",
+    "prov_mun": "Litoral, Huachacalla"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 5,
+    "provincia": "Litoral",
+    "mun": 2,
+    "municipio": "Escara",
+    "prov_mun": "Litoral, Escara"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 5,
+    "provincia": "Litoral",
+    "mun": 3,
+    "municipio": "Cruz de Machacamarca",
+    "prov_mun": "Litoral, Cruz de Machacamarca"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 5,
+    "provincia": "Litoral",
+    "mun": 4,
+    "municipio": "Yunguyo de Litoral",
+    "prov_mun": "Litoral, Yunguyo de Litoral"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 5,
+    "provincia": "Litoral",
+    "mun": 5,
+    "municipio": "Esmeralda",
+    "prov_mun": "Litoral, Esmeralda"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 6,
+    "provincia": "Poopo",
+    "mun": 1,
+    "municipio": "Poopó",
+    "prov_mun": "Poopo, Poopó"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 6,
+    "provincia": "Poopo",
+    "mun": 2,
+    "municipio": "Pazña",
+    "prov_mun": "Poopo, Pazña"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 6,
+    "provincia": "Poopo",
+    "mun": 3,
+    "municipio": "Antequera",
+    "prov_mun": "Poopo, Antequera"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 7,
+    "provincia": "Pantaleon Dalence",
+    "mun": 1,
+    "municipio": "Huanuni",
+    "prov_mun": "Pantaleon Dalence, Huanuni"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 7,
+    "provincia": "Pantaleon Dalence",
+    "mun": 2,
+    "municipio": "Machacamarca",
+    "prov_mun": "Pantaleon Dalence, Machacamarca"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 8,
+    "provincia": "Ladislao Cabrera",
+    "mun": 1,
+    "municipio": "Salinas de García Mendoza",
+    "prov_mun": "Ladislao Cabrera, Salinas de García Mendoza"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 8,
+    "provincia": "Ladislao Cabrera",
+    "mun": 2,
+    "municipio": "Pampa Aullagas",
+    "prov_mun": "Ladislao Cabrera, Pampa Aullagas"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 9,
+    "provincia": "Sabaya",
+    "mun": 1,
+    "municipio": "Sabaya",
+    "prov_mun": "Sabaya, Sabaya"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 9,
+    "provincia": "Sabaya",
+    "mun": 2,
+    "municipio": "Coipasa",
+    "prov_mun": "Sabaya, Coipasa"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 9,
+    "provincia": "Sabaya",
+    "mun": 3,
+    "municipio": "Chipaya",
+    "prov_mun": "Sabaya, Chipaya"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 10,
+    "provincia": "Saucari",
+    "mun": 1,
+    "municipio": "Toledo",
+    "prov_mun": "Saucari, Toledo"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 11,
+    "provincia": "Tomas Barron",
+    "mun": 1,
+    "municipio": "Eucaliptus",
+    "prov_mun": "Tomas Barron, Eucaliptus"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 12,
+    "provincia": "Sur Carangas",
+    "mun": 1,
+    "municipio": "Santiago de Andamarca",
+    "prov_mun": "Sur Carangas, Santiago de Andamarca"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 12,
+    "provincia": "Sur Carangas",
+    "mun": 2,
+    "municipio": "Belén de Andamarca",
+    "prov_mun": "Sur Carangas, Belén de Andamarca"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 13,
+    "provincia": "San Pedro de Totora",
+    "mun": 1,
+    "municipio": "San Pedro de Totora",
+    "prov_mun": "San Pedro de Totora, San Pedro de Totora"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 14,
+    "provincia": "Sebastián Pagador",
+    "mun": 1,
+    "municipio": "Huari",
+    "prov_mun": "Sebastián Pagador, Huari"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 15,
+    "provincia": "Mejillones",
+    "mun": 1,
+    "municipio": "La Rivera",
+    "prov_mun": "Mejillones, La Rivera"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 15,
+    "provincia": "Mejillones",
+    "mun": 2,
+    "municipio": "Todos Santos",
+    "prov_mun": "Mejillones, Todos Santos"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 15,
+    "provincia": "Mejillones",
+    "mun": 3,
+    "municipio": "Carangas",
+    "prov_mun": "Mejillones, Carangas"
+  },
+  {
+    "dep": 5,
+    "departamento": "Oruro",
+    "pro": 16,
+    "provincia": "Nor Carangas",
+    "mun": 1,
+    "municipio": "Huayllamarca",
+    "prov_mun": "Nor Carangas, Huayllamarca"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 1,
+    "provincia": "Nicolás Suárez",
+    "mun": 1,
+    "municipio": "Cobija",
+    "prov_mun": "Nicolás Suárez, Cobija"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 1,
+    "provincia": "Nicolás Suárez",
+    "mun": 2,
+    "municipio": "Porvenir",
+    "prov_mun": "Nicolás Suárez, Porvenir"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 1,
+    "provincia": "Nicolás Suárez",
+    "mun": 3,
+    "municipio": "Bolpebra",
+    "prov_mun": "Nicolás Suárez, Bolpebra"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 1,
+    "provincia": "Nicolás Suárez",
+    "mun": 4,
+    "municipio": "Bella Flor",
+    "prov_mun": "Nicolás Suárez, Bella Flor"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 2,
+    "provincia": "Manuripi",
+    "mun": 1,
+    "municipio": "Puerto Rico",
+    "prov_mun": "Manuripi, Puerto Rico"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 2,
+    "provincia": "Manuripi",
+    "mun": 2,
+    "municipio": "San Pedro",
+    "prov_mun": "Manuripi, San Pedro"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 2,
+    "provincia": "Manuripi",
+    "mun": 3,
+    "municipio": "Filadelfia",
+    "prov_mun": "Manuripi, Filadelfia"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 3,
+    "provincia": "Madre de Dios",
+    "mun": 1,
+    "municipio": "Gonzalo Moreno",
+    "prov_mun": "Madre de Dios, Gonzalo Moreno"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 3,
+    "provincia": "Madre de Dios",
+    "mun": 2,
+    "municipio": "San Lorenzo",
+    "prov_mun": "Madre de Dios, San Lorenzo"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 3,
+    "provincia": "Madre de Dios",
+    "mun": 3,
+    "municipio": "Sena",
+    "prov_mun": "Madre de Dios, Sena"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 4,
+    "provincia": "Abuna",
+    "mun": 1,
+    "municipio": "Santa Rosa",
+    "prov_mun": "Abuna, Santa Rosa"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 4,
+    "provincia": "Abuna",
+    "mun": 2,
+    "municipio": "Ingavi",
+    "prov_mun": "Abuna, Ingavi"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 5,
+    "provincia": "Federico Román",
+    "mun": 1,
+    "municipio": "Nueva Esperanza",
+    "prov_mun": "Federico Román, Nueva Esperanza"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 5,
+    "provincia": "Federico Román",
+    "mun": 2,
+    "municipio": "Villa Nueva (Loma Alta)",
+    "prov_mun": "Federico Román, Villa Nueva (Loma Alta)"
+  },
+  {
+    "dep": 6,
+    "departamento": "Pando",
+    "pro": 5,
+    "provincia": "Federico Román",
+    "mun": 3,
+    "municipio": "Santos Mercado",
+    "prov_mun": "Federico Román, Santos Mercado"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 1,
+    "provincia": "Tomas Frias",
+    "mun": 1,
+    "municipio": "Potosí",
+    "prov_mun": "Tomas Frias, Potosí"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 1,
+    "provincia": "Tomas Frias",
+    "mun": 2,
+    "municipio": "Tinguipaya",
+    "prov_mun": "Tomas Frias, Tinguipaya"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 1,
+    "provincia": "Tomas Frias",
+    "mun": 3,
+    "municipio": "Yocalla",
+    "prov_mun": "Tomas Frias, Yocalla"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 1,
+    "provincia": "Tomas Frias",
+    "mun": 4,
+    "municipio": "Urmiri",
+    "prov_mun": "Tomas Frias, Urmiri"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 2,
+    "provincia": "Rafael Bustillo",
+    "mun": 1,
+    "municipio": "Uncía",
+    "prov_mun": "Rafael Bustillo, Uncía"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 2,
+    "provincia": "Rafael Bustillo",
+    "mun": 2,
+    "municipio": "Chayanta",
+    "prov_mun": "Rafael Bustillo, Chayanta"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 2,
+    "provincia": "Rafael Bustillo",
+    "mun": 3,
+    "municipio": "Llallagua",
+    "prov_mun": "Rafael Bustillo, Llallagua"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 2,
+    "provincia": "Rafael Bustillo",
+    "mun": 4,
+    "municipio": "Chuquiuta",
+    "prov_mun": "Rafael Bustillo, Chuquiuta"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 3,
+    "provincia": "Cornelio Saavedra",
+    "mun": 1,
+    "municipio": "Betanzos",
+    "prov_mun": "Cornelio Saavedra, Betanzos"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 3,
+    "provincia": "Cornelio Saavedra",
+    "mun": 2,
+    "municipio": "Chaquí",
+    "prov_mun": "Cornelio Saavedra, Chaquí"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 3,
+    "provincia": "Cornelio Saavedra",
+    "mun": 3,
+    "municipio": "Tacobamba",
+    "prov_mun": "Cornelio Saavedra, Tacobamba"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 4,
+    "provincia": "Chayanta",
+    "mun": 1,
+    "municipio": "Colquechaca",
+    "prov_mun": "Chayanta, Colquechaca"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 4,
+    "provincia": "Chayanta",
+    "mun": 2,
+    "municipio": "Ravelo",
+    "prov_mun": "Chayanta, Ravelo"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 4,
+    "provincia": "Chayanta",
+    "mun": 3,
+    "municipio": "Pocoata",
+    "prov_mun": "Chayanta, Pocoata"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 4,
+    "provincia": "Chayanta",
+    "mun": 4,
+    "municipio": "Ocurí",
+    "prov_mun": "Chayanta, Ocurí"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 5,
+    "provincia": "Charcas",
+    "mun": 1,
+    "municipio": "S.P. De Buena Vista",
+    "prov_mun": "Charcas, S.P. De Buena Vista"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 5,
+    "provincia": "Charcas",
+    "mun": 2,
+    "municipio": "Toro Toro",
+    "prov_mun": "Charcas, Toro Toro"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 6,
+    "provincia": "Nor Chichas",
+    "mun": 1,
+    "municipio": "Cotagaita",
+    "prov_mun": "Nor Chichas, Cotagaita"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 6,
+    "provincia": "Nor Chichas",
+    "mun": 2,
+    "municipio": "Vitichi",
+    "prov_mun": "Nor Chichas, Vitichi"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 7,
+    "provincia": "Alonso de Ibañez",
+    "mun": 1,
+    "municipio": "Villa de Sacaca",
+    "prov_mun": "Alonso de Ibañez, Villa de Sacaca"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 7,
+    "provincia": "Alonso de Ibañez",
+    "mun": 2,
+    "municipio": "Caripuyo",
+    "prov_mun": "Alonso de Ibañez, Caripuyo"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 8,
+    "provincia": "Sur Chichas",
+    "mun": 1,
+    "municipio": "Tupiza",
+    "prov_mun": "Sur Chichas, Tupiza"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 8,
+    "provincia": "Sur Chichas",
+    "mun": 2,
+    "municipio": "Atocha",
+    "prov_mun": "Sur Chichas, Atocha"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 9,
+    "provincia": "Nor Lípez",
+    "mun": 1,
+    "municipio": "Colcha \"K",
+    "prov_mun": "Nor Lípez, Colcha \"K"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 9,
+    "provincia": "Nor Lípez",
+    "mun": 2,
+    "municipio": "San Pedro de Quemes",
+    "prov_mun": "Nor Lípez, San Pedro de Quemes"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 10,
+    "provincia": "Sur Lípez",
+    "mun": 1,
+    "municipio": "San Pablo de Lipez",
+    "prov_mun": "Sur Lípez, San Pablo de Lipez"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 10,
+    "provincia": "Sur Lípez",
+    "mun": 2,
+    "municipio": "Mojinete",
+    "prov_mun": "Sur Lípez, Mojinete"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 10,
+    "provincia": "Sur Lípez",
+    "mun": 3,
+    "municipio": "San Antonio de Esmoruco",
+    "prov_mun": "Sur Lípez, San Antonio de Esmoruco"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 11,
+    "provincia": "José Maria Linares",
+    "mun": 1,
+    "municipio": "Puna",
+    "prov_mun": "José Maria Linares, Puna"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 11,
+    "provincia": "José Maria Linares",
+    "mun": 2,
+    "municipio": "Caiza \"D",
+    "prov_mun": "José Maria Linares, Caiza \"D"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 11,
+    "provincia": "José Maria Linares",
+    "mun": 3,
+    "municipio": "Ckochas",
+    "prov_mun": "José Maria Linares, Ckochas"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 12,
+    "provincia": "Antonio Quijarro",
+    "mun": 1,
+    "municipio": "Uyuni",
+    "prov_mun": "Antonio Quijarro, Uyuni"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 12,
+    "provincia": "Antonio Quijarro",
+    "mun": 2,
+    "municipio": "Tomave",
+    "prov_mun": "Antonio Quijarro, Tomave"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 12,
+    "provincia": "Antonio Quijarro",
+    "mun": 3,
+    "municipio": "Porco",
+    "prov_mun": "Antonio Quijarro, Porco"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 13,
+    "provincia": "Bernardino Bilbao Rioja",
+    "mun": 1,
+    "municipio": "Arampampa",
+    "prov_mun": "Bernardino Bilbao Rioja, Arampampa"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 13,
+    "provincia": "Bernardino Bilbao Rioja",
+    "mun": 2,
+    "municipio": "Acasio",
+    "prov_mun": "Bernardino Bilbao Rioja, Acasio"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 14,
+    "provincia": "Daniel Campos",
+    "mun": 1,
+    "municipio": "Llica",
+    "prov_mun": "Daniel Campos, Llica"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 14,
+    "provincia": "Daniel Campos",
+    "mun": 2,
+    "municipio": "Tahua",
+    "prov_mun": "Daniel Campos, Tahua"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 15,
+    "provincia": "Modesto Omiste",
+    "mun": 1,
+    "municipio": "Villazón",
+    "prov_mun": "Modesto Omiste, Villazón"
+  },
+  {
+    "dep": 7,
+    "departamento": "Potosi",
+    "pro": 16,
+    "provincia": "Enrique Baldivieso",
+    "mun": 1,
+    "municipio": "San Agustín",
+    "prov_mun": "Enrique Baldivieso, San Agustín"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 1,
+    "provincia": "Andrés Ibañez",
+    "mun": 1,
+    "municipio": "Santa Cruz de la Sierra",
+    "prov_mun": "Andrés Ibañez, Santa Cruz de la Sierra"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 1,
+    "provincia": "Andrés Ibañez",
+    "mun": 2,
+    "municipio": "Cotoca",
+    "prov_mun": "Andrés Ibañez, Cotoca"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 1,
+    "provincia": "Andrés Ibañez",
+    "mun": 3,
+    "municipio": "Porongo",
+    "prov_mun": "Andrés Ibañez, Porongo"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 1,
+    "provincia": "Andrés Ibañez",
+    "mun": 4,
+    "municipio": "La Guardia",
+    "prov_mun": "Andrés Ibañez, La Guardia"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 1,
+    "provincia": "Andrés Ibañez",
+    "mun": 5,
+    "municipio": "El Torno",
+    "prov_mun": "Andrés Ibañez, El Torno"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 2,
+    "provincia": "Warnes",
+    "mun": 1,
+    "municipio": "Warnes",
+    "prov_mun": "Warnes, Warnes"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 2,
+    "provincia": "Warnes",
+    "mun": 2,
+    "municipio": "Okinawa Uno",
+    "prov_mun": "Warnes, Okinawa Uno"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 3,
+    "provincia": "Velasco",
+    "mun": 1,
+    "municipio": "San Ignacio de Velasco",
+    "prov_mun": "Velasco, San Ignacio de Velasco"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 3,
+    "provincia": "Velasco",
+    "mun": 2,
+    "municipio": "San Miguel de Velasco",
+    "prov_mun": "Velasco, San Miguel de Velasco"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 3,
+    "provincia": "Velasco",
+    "mun": 3,
+    "municipio": "San Rafael",
+    "prov_mun": "Velasco, San Rafael"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 4,
+    "provincia": "Ichilo",
+    "mun": 1,
+    "municipio": "Buena Vista",
+    "prov_mun": "Ichilo, Buena Vista"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 4,
+    "provincia": "Ichilo",
+    "mun": 2,
+    "municipio": "San Carlos",
+    "prov_mun": "Ichilo, San Carlos"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 4,
+    "provincia": "Ichilo",
+    "mun": 3,
+    "municipio": "Yapacaní",
+    "prov_mun": "Ichilo, Yapacaní"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 4,
+    "provincia": "Ichilo",
+    "mun": 4,
+    "municipio": "San Juan de Yapacaní",
+    "prov_mun": "Ichilo, San Juan de Yapacaní"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 5,
+    "provincia": "Chiquitos",
+    "mun": 1,
+    "municipio": "San José de Chiquitos",
+    "prov_mun": "Chiquitos, San José de Chiquitos"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 5,
+    "provincia": "Chiquitos",
+    "mun": 2,
+    "municipio": "Pailón",
+    "prov_mun": "Chiquitos, Pailón"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 5,
+    "provincia": "Chiquitos",
+    "mun": 3,
+    "municipio": "Roboré",
+    "prov_mun": "Chiquitos, Roboré"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 6,
+    "provincia": "Sara",
+    "mun": 1,
+    "municipio": "Portachuelo",
+    "prov_mun": "Sara, Portachuelo"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 6,
+    "provincia": "Sara",
+    "mun": 2,
+    "municipio": "Santa Rosa del Sara",
+    "prov_mun": "Sara, Santa Rosa del Sara"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 6,
+    "provincia": "Sara",
+    "mun": 3,
+    "municipio": "Colpa Belgica",
+    "prov_mun": "Sara, Colpa Belgica"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 7,
+    "provincia": "Cordillera",
+    "mun": 1,
+    "municipio": "Lagunillas",
+    "prov_mun": "Cordillera, Lagunillas"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 7,
+    "provincia": "Cordillera",
+    "mun": 2,
+    "municipio": "Charagua",
+    "prov_mun": "Cordillera, Charagua"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 7,
+    "provincia": "Cordillera",
+    "mun": 3,
+    "municipio": "Cabezas",
+    "prov_mun": "Cordillera, Cabezas"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 7,
+    "provincia": "Cordillera",
+    "mun": 4,
+    "municipio": "Cuevo",
+    "prov_mun": "Cordillera, Cuevo"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 7,
+    "provincia": "Cordillera",
+    "mun": 5,
+    "municipio": "Gutiérrez",
+    "prov_mun": "Cordillera, Gutiérrez"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 7,
+    "provincia": "Cordillera",
+    "mun": 6,
+    "municipio": "Camiri",
+    "prov_mun": "Cordillera, Camiri"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 7,
+    "provincia": "Cordillera",
+    "mun": 7,
+    "municipio": "Boyuibe",
+    "prov_mun": "Cordillera, Boyuibe"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 8,
+    "provincia": "Vallegrande",
+    "mun": 1,
+    "municipio": "Vallegrande",
+    "prov_mun": "Vallegrande, Vallegrande"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 8,
+    "provincia": "Vallegrande",
+    "mun": 2,
+    "municipio": "Trigal",
+    "prov_mun": "Vallegrande, Trigal"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 8,
+    "provincia": "Vallegrande",
+    "mun": 3,
+    "municipio": "Moro Moro",
+    "prov_mun": "Vallegrande, Moro Moro"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 8,
+    "provincia": "Vallegrande",
+    "mun": 4,
+    "municipio": "Postrer Valle",
+    "prov_mun": "Vallegrande, Postrer Valle"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 8,
+    "provincia": "Vallegrande",
+    "mun": 5,
+    "municipio": "Pucara",
+    "prov_mun": "Vallegrande, Pucara"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 9,
+    "provincia": "Florida",
+    "mun": 1,
+    "municipio": "Samaipata",
+    "prov_mun": "Florida, Samaipata"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 9,
+    "provincia": "Florida",
+    "mun": 2,
+    "municipio": "Pampa Grande",
+    "prov_mun": "Florida, Pampa Grande"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 9,
+    "provincia": "Florida",
+    "mun": 3,
+    "municipio": "Mairana",
+    "prov_mun": "Florida, Mairana"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 9,
+    "provincia": "Florida",
+    "mun": 4,
+    "municipio": "Quirusillas",
+    "prov_mun": "Florida, Quirusillas"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 10,
+    "provincia": "Obispo Santiestevan",
+    "mun": 1,
+    "municipio": "Montero",
+    "prov_mun": "Obispo Santiestevan, Montero"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 10,
+    "provincia": "Obispo Santiestevan",
+    "mun": 2,
+    "municipio": "Gral. Saavedra",
+    "prov_mun": "Obispo Santiestevan, Gral. Saavedra"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 10,
+    "provincia": "Obispo Santiestevan",
+    "mun": 3,
+    "municipio": "Mineros",
+    "prov_mun": "Obispo Santiestevan, Mineros"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 10,
+    "provincia": "Obispo Santiestevan",
+    "mun": 4,
+    "municipio": "Fernández Alonso",
+    "prov_mun": "Obispo Santiestevan, Fernández Alonso"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 10,
+    "provincia": "Obispo Santiestevan",
+    "mun": 5,
+    "municipio": "San Pedro",
+    "prov_mun": "Obispo Santiestevan, San Pedro"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 11,
+    "provincia": "Ñuflo de Chávez",
+    "mun": 1,
+    "municipio": "Concepción",
+    "prov_mun": "Ñuflo de Chávez, Concepción"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 11,
+    "provincia": "Ñuflo de Chávez",
+    "mun": 2,
+    "municipio": "San Javier",
+    "prov_mun": "Ñuflo de Chávez, San Javier"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 11,
+    "provincia": "Ñuflo de Chávez",
+    "mun": 3,
+    "municipio": "San Ramón",
+    "prov_mun": "Ñuflo de Chávez, San Ramón"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 11,
+    "provincia": "Ñuflo de Chávez",
+    "mun": 4,
+    "municipio": "San Julián",
+    "prov_mun": "Ñuflo de Chávez, San Julián"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 11,
+    "provincia": "Ñuflo de Chávez",
+    "mun": 5,
+    "municipio": "San Antonio de Lomerío",
+    "prov_mun": "Ñuflo de Chávez, San Antonio de Lomerío"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 11,
+    "provincia": "Ñuflo de Chávez",
+    "mun": 6,
+    "municipio": "Cuatro Cañadas",
+    "prov_mun": "Ñuflo de Chávez, Cuatro Cañadas"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 12,
+    "provincia": "Angel Sandoval",
+    "mun": 1,
+    "municipio": "San Matías",
+    "prov_mun": "Angel Sandoval, San Matías"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 13,
+    "provincia": "Manuel Maria Caballero",
+    "mun": 1,
+    "municipio": "Comarapa",
+    "prov_mun": "Manuel Maria Caballero, Comarapa"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 13,
+    "provincia": "Manuel Maria Caballero",
+    "mun": 2,
+    "municipio": "Saipina",
+    "prov_mun": "Manuel Maria Caballero, Saipina"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 14,
+    "provincia": "German Busch",
+    "mun": 1,
+    "municipio": "Puerto Suarez",
+    "prov_mun": "German Busch, Puerto Suarez"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 14,
+    "provincia": "German Busch",
+    "mun": 2,
+    "municipio": "Puerto Quijarro",
+    "prov_mun": "German Busch, Puerto Quijarro"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 14,
+    "provincia": "German Busch",
+    "mun": 3,
+    "municipio": "Carmen Rivero Torrez",
+    "prov_mun": "German Busch, Carmen Rivero Torrez"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 15,
+    "provincia": "Guarayos",
+    "mun": 1,
+    "municipio": "Ascensión de Guarayos",
+    "prov_mun": "Guarayos, Ascensión de Guarayos"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 15,
+    "provincia": "Guarayos",
+    "mun": 2,
+    "municipio": "Urubichá",
+    "prov_mun": "Guarayos, Urubichá"
+  },
+  {
+    "dep": 8,
+    "departamento": "Santa Cruz",
+    "pro": 15,
+    "provincia": "Guarayos",
+    "mun": 3,
+    "municipio": "El Puente",
+    "prov_mun": "Guarayos, El Puente"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 1,
+    "provincia": "Cercado",
+    "mun": 1,
+    "municipio": "Tarija",
+    "prov_mun": "Cercado, Tarija"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 2,
+    "provincia": "Aniceto Arce",
+    "mun": 1,
+    "municipio": "Padcaya",
+    "prov_mun": "Aniceto Arce, Padcaya"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 2,
+    "provincia": "Aniceto Arce",
+    "mun": 2,
+    "municipio": "Bermejo",
+    "prov_mun": "Aniceto Arce, Bermejo"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 3,
+    "provincia": "Gran Chaco",
+    "mun": 1,
+    "municipio": "Yacuiba",
+    "prov_mun": "Gran Chaco, Yacuiba"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 3,
+    "provincia": "Gran Chaco",
+    "mun": 2,
+    "municipio": "Caraparí",
+    "prov_mun": "Gran Chaco, Caraparí"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 3,
+    "provincia": "Gran Chaco",
+    "mun": 3,
+    "municipio": "Villamontes",
+    "prov_mun": "Gran Chaco, Villamontes"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 4,
+    "provincia": "Aviles",
+    "mun": 1,
+    "municipio": "Uriondo",
+    "prov_mun": "Aviles, Uriondo"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 4,
+    "provincia": "Aviles",
+    "mun": 2,
+    "municipio": "Yunchará",
+    "prov_mun": "Aviles, Yunchará"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 5,
+    "provincia": "Méndez",
+    "mun": 1,
+    "municipio": "Villa San Lorenzo",
+    "prov_mun": "Méndez, Villa San Lorenzo"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 5,
+    "provincia": "Méndez",
+    "mun": 2,
+    "municipio": "El Puente",
+    "prov_mun": "Méndez, El Puente"
+  },
+  {
+    "dep": 9,
+    "departamento": "Tarija",
+    "pro": 6,
+    "provincia": "Burnet O' Oconnor",
+    "mun": 1,
+    "municipio": "Entre Ríos",
+    "prov_mun": "Burnet O' Oconnor, Entre Ríos"
+  }
+]

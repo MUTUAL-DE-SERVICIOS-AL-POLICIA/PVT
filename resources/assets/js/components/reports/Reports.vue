@@ -378,6 +378,15 @@ export default {
         type: "xls",
         permissions: 'show-report-loans'
       },
+      {
+        id: 23,
+        name: "Rep. de Préstamos Vigentes con/sin Pagos Penales",
+        tab: 0,
+        criterios: [],
+        service: "/loan_with_penal_payment_report",
+        type: "xls",
+        permissions: 'show-report-loans'
+      },
     ],
     this.type_institution= [
       { value:"C", name:"Comando" },
