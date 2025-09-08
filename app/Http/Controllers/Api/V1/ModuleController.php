@@ -104,4 +104,19 @@ class ModuleController extends Controller
     {
         return $module->procedure_types()->where('name','LIKE', '%Amortización%')->get();
     }
+
+    public function get_workflows(Module $module)
+    {
+        return $module->workflows;
+    }
+
+    public function get_loan_workflows(Module $module)
+    {
+        return $module->loan_workflows;
+    }
+    
+    public function get_payment_workflows(Module $module)
+    {
+        return $module->amortization_workflows;
+    }
 }

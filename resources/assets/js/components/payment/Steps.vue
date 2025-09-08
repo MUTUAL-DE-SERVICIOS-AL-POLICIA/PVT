@@ -170,7 +170,8 @@ export default {
             state: this.data_payment.refinanciamiento,
             description:this.data_payment.glosa,
             liquidate : this.data_payment.liquidate,
-            categorie_id:this.data_payment.categori_id
+            categorie_id:this.data_payment.categori_id,
+            role_id : this.$store.getters.rolePermissionSelected.id
           })
              if(res.status==201 || res.status == 200){
               this.status_click = false

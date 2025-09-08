@@ -108,10 +108,16 @@
         "title": "Destino de Préstamos",
         "icon": "mdi-currency-usd-circle",
         "params": {}
-      }, {
-        "href": "procedureTypeWorkflow",
-        "title": "Flujo de trabajo",
-        "icon": "mdi-chart-timeline-variant",
+      },{
+        "href": "workFlowByArea",
+        "title": "Flujo del Trámite",
+        "icon": "mdi-clipboard-flow",
+        "params": {}
+      },
+      {
+        "href": "modalityFlow",
+        "title": "Asignar Flujo a Modalidad",
+        "icon": "mdi-relation-one-to-one",
         "params": {}
       }
     ]

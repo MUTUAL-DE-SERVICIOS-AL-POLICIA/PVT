@@ -1,4 +1,5 @@
-<td class="data-row py-5">{{ $procedure->code }}</td>
+<td class="data-row py-4">{{ $procedure->code }}</td>
+<td class="data-row py-4">{{ $procedure->procedure_modality->shortened }}</td>
 <td class="data-row py-5">{{ $procedure->borrower[0]->title }} {{ $procedure->borrower[0]->full_name }}</td>
 <td class="data-row py-5">{{ $procedure->borrower[0]->identity_card_ext }}</td>
 @php ($created_at = Carbon::parse($procedure->created_at))

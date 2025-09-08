@@ -35,6 +35,8 @@ Route::group([
         Route::apiResource('liquid_calificated', 'Api\V1\CalculatorController')->only('store');
         Route::post('simulator','Api\V1\CalculatorController@simulator');
         Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
+        Route::apiResource('wf_state', 'Api\V1\WfStatesController')->only('index', 'show');
+        Route::post('wf_states_filtered', 'Api\V1\WfStatesController@wf_states_filtered');
         Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
         Route::apiResource('loan_global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::get('last_loan_global_parameter', 'Api\V1\LoanGlobalParameterController@get_last_global_parameter');
@@ -49,13 +51,14 @@ Route::group([
         Route::apiResource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index', 'show');
         Route::apiResource('kinship', 'Api\V1\KinshipController')->only('index','show');
         Route::get('procedure_type/{procedure_type}/modality', 'Api\V1\ProcedureTypeController@get_modality');
-        Route::get('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@get_flow');
         Route::post('procedure_type/modality/loan', 'Api\V1\ProcedureTypeController@get_modality_loan');//Mostrar Todas las modalidades de Préstamos Según Reglamento
-        Route::get('affiliate_loan_modality/{affiliate}/{procedure_type}','Api\V1\AffiliateController@get_sub_modality_affiliate');//Mostrar las sub modalidades a las que el afiliado puede acceder
+        Route::post('affiliate_loan_modality/{affiliate}/{procedure_type}','Api\V1\AffiliateController@get_sub_modality_affiliate');//Mostrar las sub modalidades a las que el afiliado puede acceder
         Route::get('procedure_modality_parameters/{procedure_modality}', 'Api\V1\ProcedureModalityController@get_loan_modality_parameter_remake'); //obtiene los parametros para rehacer tramite
         Route::get('validate_affiliate_modality/{affiliate}/{procedure_modality}','Api\V1\AffiliateController@validate_affiliate_modality');//Mostrar las sub modalidades a las que el afiliado puede acceder
         Route::apiResource('payment_type', 'Api\V1\PaymentTypeController')->only('index', 'show');
         Route::apiResource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
+        Route::post('asign_flow/{procedure_modality}', 'Api\V1\ProcedureModalityController@asign_flow');
+        Route::get('get_loan_modalities', 'Api\V1\ProcedureTypeController@get_loan_modalities');
         Route::get('procedure_modality/{procedure_modality}/loan_modality_parameter', 'Api\V1\ProcedureModalityController@get_loan_modality_parameter');
         Route::apiResource('module', 'Api\V1\ModuleController')->only('index', 'show');
         Route::get('module/{module}/role', 'Api\V1\ModuleController@get_roles');
@@ -63,9 +66,17 @@ Route::group([
         Route::get('module/{module}/observation_type', 'Api\V1\ModuleController@get_observation_types');
         Route::get('module/{module}/observation_type_affiliate/{affiliate}', 'Api\V1\AffiliateObservationController@get_observation_types_affiliate');
         Route::get('module/{module}/modality_loan', 'Api\V1\ModuleController@get_modality_types');
+        //nuevos flujos 
+        Route::get('module/{module}/workflows', 'Api\V1\ModuleController@get_loan_workflows');
+        Route::get('module/{module}/workflows_payment', 'Api\V1\ModuleController@get_payment_workflows');
+        Route::apiResource('workflow', 'Api\V1\WorkflowController');
+        // flujos
+        Route::apiResource('wf_sequence', 'Api\V1\WfSequenceController');
+        Route::post('get_sequence', 'Api\V1\WfSequenceController@get_sequence');
+        //
         Route::get('module/{module}/amortization_loan', 'Api\V1\ModuleController@get_amortization_types');
-        Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
-        Route::patch('loan_payments', 'Api\V1\LoanPaymentController@bulk_update_role');
+        Route::patch('loans', 'Api\V1\LoanController@bulk_update_state');
+        Route::patch('loan_payments', 'Api\V1\LoanPaymentController@bulk_update_state');
         Route::get('record_payment', 'Api\V1\RecordController@record_loan_payment');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
@@ -94,6 +105,7 @@ Route::group([
         //REPORTS
         Route::post('send_contract', 'Api\V1\SMSController@send_sms_for_contract');
             //loanReport
+        Route::get('loan_with_penal_payment_report', 'Api\V1\LoanReportController@loan_with_penal_payment_report');//reporte de prestamos con pagos penales
         Route::get('loan_tracking', 'Api\V1\LoanReportController@loan_tracking');//seguimiento de prestamos
         Route::get('list_loan_generate', 'Api\V1\LoanReportController@list_loan_generate');
         Route::get('report_loan_vigent', 'Api\V1\LoanReportController@report_loan_vigent');
@@ -286,7 +298,7 @@ Route::group([
             Route::post('loan/{affiliate_id}/validate_affiliate', 'Api\V1\LoanController@validate_affiliate');
             //Route::get('calculate_percentage', 'Api\V1\LoanController@calculate_percentage');
             Route::get('my_loans', 'Api\V1\LoanController@my_loans');
-            Route::post('procedure_brother', 'Api\V1\LoanController@procedure_brother');
+            Route::post('procedure_ref_rep', 'Api\V1\LoanController@procedure_ref_rep');
             Route::post('release_loan/{loan}', 'Api\V1\LoanController@release_loan');
         });
         Route::group([
@@ -404,6 +416,7 @@ Route::group([
         ], function () {
             Route::apiResource('address', 'Api\V1\AddressController')->only('destroy');
         });
+        Route::post('affiliates/{affiliate}/addresses/{address}/print','Api\V1\AddressController@print_address'); //Imprimir Direccion
 
         // Notas
         Route::group([
@@ -421,7 +434,6 @@ Route::group([
         Route::group([
             'middleware' => 'permission:update-setting'
         ], function () {
-            Route::patch('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@set_flow');
             Route::patch('procedure_type/{procedure_type}/loan_destiny', 'Api\V1\ProcedureTypeController@set_loan_destinies');
         });
 

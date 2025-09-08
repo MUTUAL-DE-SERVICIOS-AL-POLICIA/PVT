@@ -16,9 +16,9 @@
     @php ( $c = 0 )
     @php ( $total_amount = 0 )
     @php ( $total_amount2 = 0 )
-    @for ($i = 0 ; $i < sizeof($roles) ; $i++)
-    @php ($count = json_encode($roles[$i]->count))
-    <div class="darker text-s">{{ $loans[$c]['role'] }}</div>
+    @for ($i = 0 ; $i < sizeof($wf_states) ; $i++)
+    @php ($count = json_encode($wf_states[$i]->count))
+    <div class="darker text-s">{{ $loans[$c]['wf_states'] }}</div>
         <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
             <tr class="bg-grey-darker text-s text-white">
                 <td style="font-size:80%;font-weight: bold;">Nro</td>

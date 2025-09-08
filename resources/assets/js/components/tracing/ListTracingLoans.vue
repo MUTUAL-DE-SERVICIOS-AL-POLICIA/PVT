@@ -94,8 +94,8 @@
               <span :class="searching.city_loan? 'primary--text' : ''">{{ header.text }}</span>
             </template>
 
-            <template v-slot:[`header.name_role_loan`]="{ header }">
-              <span :class="searching.name_role_loan? 'primary--text' : ''">{{ header.text }}</span>
+            <template v-slot:[`header.name_wf_state_loan`]="{ header }">
+              <span :class="searching.name_wf_state_loan? 'primary--text' : ''">{{ header.text }}</span>
             </template>
 
             <template v-slot:[`header.user_loan`]="{ header }">
@@ -244,7 +244,7 @@
             <template slot="body.prepend">
               <tr v-if="show_filter">
                   <td><v-text-field placeholder="Dpto." spellcheck="false" class="filter-text" v-model="searching.city_loan" @keydown.enter="search_loans()"></v-text-field></td>
-                  <td><v-text-field placeholder="Área" spellcheck="false" class="filter-text" v-model="searching.name_role_loan" @keydown.enter="search_loans()"></v-text-field></td>
+                  <td><v-text-field placeholder="Área" spellcheck="false" class="filter-text" v-model="searching.name_wf_state_loan" @keydown.enter="search_loans()"></v-text-field></td>
                   <td><v-text-field placeholder="Usuario" spellcheck="false" class="filter-text" v-model="searching.user_loan" @keydown.enter="search_loans()"></v-text-field></td>
                   <td><v-text-field placeholder="Cod. Préstamo" spellcheck="false" class="filter-text" v-model="searching.code_loan" @keydown.enter="search_loans()"></v-text-field></td>
                   <td><v-text-field placeholder="C.I." spellcheck="false" class="filter-text" v-model="searching.identity_card_borrower" @keydown.enter="search_loans()"></v-text-field></td>
@@ -274,7 +274,7 @@ export default {
     return {
       searching: {
         city_loan:"",
-        name_role_loan:"",
+        name_wf_state_loan:"",
         user_loan:"",
         code_loan: "",
         identity_card_borrower: "",
@@ -286,7 +286,7 @@ export default {
       dialog_regenerate_plan:false,
       headers: [
         { text: 'Dpto', value: 'city_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '10%', sortable: false},
-        { text: 'Área', value: 'name_role_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%',sortable: false},
+        { text: 'Área', value: 'name_wf_state_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%',sortable: false},
         { text: 'Usuario',value:'user_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%',sortable: false},
         { text: 'Cód. Préstamo', value: 'code_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '15%',sortable: true},
         { text: 'CI Prestatario', value: 'identity_card_borrower',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%',sortable: false},
@@ -361,7 +361,7 @@ export default {
         let res = await axios.get(`loan_tracking`, {
           params: {
             city_loan:this.searching.city_loan,
-            name_role_loan:this.searching.name_role_loan,
+            name_wf_state_loan:this.searching.name_wf_state_loan,
             user_loan:this.searching.user_loan,
             code_loan: this.searching.code_loan,
             identity_card_borrower: this.searching.identity_card_borrower,
@@ -400,7 +400,7 @@ export default {
         data: this.datos,
         params: {
             city_loan:this.searching.city_loan,
-            name_role_loan:this.searching.name_role_loan,
+            name_wf_state_loan:this.searching.name_wf_state_loan,
             user_loan:this.searching.user_loan,
             code_loan: this.searching.code_loan,
             identity_card_borrower: this.searching.identity_card_borrower,
@@ -430,7 +430,7 @@ export default {
 
     clearAll() {
       this.searching.city_loan = "",
-      this.searching.name_role_loan = "",
+      this.searching.name_wf_state_loan = "",
       this.searching.user_loan = "",
       this.searching.code_loan = "",
       this.searching.identity_card_borrower = "",

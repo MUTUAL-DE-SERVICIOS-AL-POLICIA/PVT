@@ -44,7 +44,7 @@ class LoanFlowEvent implements ShouldBroadcastNow
         return [
             'data' => [
                 'derived' => $this->loans,
-                'role_id' => $this->loans[0]->role_id
+                'wf_states_id' => $this->loans[0]->wf_states_id
             ]
         ];
     }

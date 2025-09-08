@@ -19,17 +19,18 @@
       <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
     </template>
 
-    <!--<template v-slot:item.procedure_modality_id="{ item }">
+    <template v-slot:item.modality="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <span v-on="on">{{ searchProcedureModality(item, 'shortened') }}</span>
+          <span v-on="on">{{ item.modality.shortened}}</span>
         </template>
-        <span>{{ searchProcedureModality(item, 'name') }}</span>
+        <span>{{ item.modality.name}}</span>
       </v-tooltip>
-    </template>-->
+    </template>
+
     <template v-slot:[`item.affiliate`]="{ item }">
      {{ item.borrower[0] ? item.borrower[0].full_name_borrower: ""}}
-    </template>
+    </template> 
 
     <template v-slot:[`item.role_id`]="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
@@ -183,10 +184,9 @@ export default {
       type: Array,
       required: true
     },
-    procedureTypeSelected:{
-      type:Number,
+    workflowTypesCount:{
+      type: Array,
       required: true,
-      default: 0
     }
   },
   computed: {
@@ -211,8 +211,15 @@ export default {
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
+      }, 
+      {
+        text: 'Modalidad',
+        value: 'modality',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
       },
-           {
+      {
         text: 'Nombre',
         value: 'affiliate',
         class: ['normal', 'white--text'],
@@ -272,7 +279,7 @@ export default {
         printDocs: []
   }),
   watch: {
-    procedureTypeSelected(newVal, oldVal) {
+    workflowTypesCount(newVal, oldVal) {
       if(newVal != oldVal)
         this.selectedLoans = []
     },
@@ -296,18 +303,6 @@ export default {
     this.docsLoans()
   },
   methods: {
-    searchProcedureModality(item, attribute = null) {
-      let procedureModality = this.procedureModalities.find(o => o.id == item.procedure_modality_id)
-      if (procedureModality) {
-        if (attribute) {
-          return procedureModality[attribute]
-        } else {
-          return procedureModality
-        }
-      } else {
-        return null
-      }
-    },
     updateOptions($event) {
       if (this.options.page != $event.page || this.options.itemsPerPage != $event.itemsPerPage || this.options.sortBy != $event.sortBy || this.options.sortDesc != $event.sortDesc) this.$emit('update:options', $event)
     },
@@ -339,13 +334,6 @@ export default {
         this.headers = this.headers.filter(o => o.value != 'procedure_modality_id')
       } else {
         if (!this.headers.some(o => o.value == 'role_id')) {
-         /* this.headers.unshift({
-            text: 'Modalidad',
-            class: ['normal', 'white--text'],
-            align: 'center',
-            value: 'procedure_modality_id',
-            sortable: true
-          })*/
           this.headers.unshift({
             text: 'Área',
             class: ['normal', 'white--text'],
@@ -361,9 +349,6 @@ export default {
       if (this.permissionSimpleSelected.includes("print-payment-loan")) {
         docs.push({ id: 5, title: "Registro de cobro", icon: "mdi-file-check-outline" });
       }
-      /*if (this.permissionSimpleSelected.includes("print-payment-voucher")) {
-        docs.push({ id: 6, title: "Registro de pago", icon: "mdi-cash-multiple" });
-      } */ 
       else {
         console.log("Se ha producido un error durante la generación de la impresión");
       }

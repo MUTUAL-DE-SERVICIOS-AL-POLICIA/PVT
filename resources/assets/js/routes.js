@@ -3,7 +3,6 @@ import Profile from '@/components/login/Profile'
 import DashboardIndex from '@/components/dashboard/Index'
 import UserIndex from '@/components/user/Index'
 import RoleIndex from '@/components/role/Index'
-import ProcedureTypeWorkflow from '@/components/procedure_type/Workflow'
 import ProcedureTypeLoanDestiny from '@/components/procedure_type/LoanDestiny'
 import AffiliateIndex from '@/components/affiliate/Index'
 import AffiliateAdd from '@/components/affiliate/Add'
@@ -24,6 +23,8 @@ import ListTracingLoans from '@/components/tracing/ListTracingLoans'
 import TracingAdd from '@/components/tracing/Add'
 import FundRotaryList from '@/components/fund_rotary/ListEntry'
 import SismuIndex from '@/components/sismu/Index'
+import WorkFlowByArea from '@/components/procedure_type/WorkFlowByArea'
+import ModalityFlow from '@/components/procedure_type/ModalityFlow'
 
 export const routes = [
   {
@@ -78,6 +79,7 @@ export const routes = [
       requiresAuth: true
     }
   },
+  //Adminsitracion
   {
     path: '/user',
     name: 'userIndex',
@@ -93,13 +95,6 @@ export const routes = [
       requiresAuth: true
     }
   }, {
-    path: '/procedure_type/workflow',
-    name: 'procedureTypeWorkflow',
-    component: ProcedureTypeWorkflow,
-    meta: {
-      requiresAuth: true
-    }
-  }, {
     path: '/procedure_type/loan_destiny',
     name: 'procedureTypeLoanDestiny',
     component: ProcedureTypeLoanDestiny,
@@ -107,6 +102,22 @@ export const routes = [
       requiresAuth: true
     }
   }, {
+    path: '/procedure_type/workflow_area',
+    name: 'workFlowByArea',
+    component: WorkFlowByArea,
+    meta: {
+      requiresAuth: true
+    }, 
+  }, {
+    path: '/procedure_type/modality_flow',
+    name: 'modalityFlow',
+    component: ModalityFlow,
+    meta: {
+      requiresAuth: true
+    }, 
+  },
+  // 
+  {
     path: '/affiliate',
     name: 'affiliateIndex',
     component: AffiliateIndex,

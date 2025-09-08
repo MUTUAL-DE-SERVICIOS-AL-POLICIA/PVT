@@ -9,6 +9,7 @@ use App\RoleSequence;
 use App\Role;
 use App\Http\Requests\RoleSequenceForm;
 use Util;
+use App\ProcedureModality;
 
 /** @group Tipos de trámites
 * Trámites agrupados por tipo de acuerdo a un filtro de modalidad
@@ -146,33 +147,40 @@ class ProcedureTypeController extends Controller
             ['name', 'not like', '%Reprogramación%'],
             ['name', 'not like', '%Refinanciamiento%']
         ];
-
-        $modules_sismu = [
-            ['name', 'like', '%Refinanciamiento%'],
-            ['name', 'not like', '%Reprogramación%'],
-            ['name', 'not like', '%Hipotecario%']
-        ];
-
+    
+        $modules_sismu = function ($query) {
+            $query->where('name', 'ILIKE', '%Corto Plazo%')
+                  ->orWhere('name', 'ILIKE', '%Largo Plazo%');
+        };
+    
         $modules_reprogramming = [
             ['name', 'like', '%Reprogramación%'],
             ['name', 'not like', '%Refinanciamiento%'],
         ];
+    
+        $query = ProcedureType::where('module_id', 6);
+        
+        if ($request->refinancing && !$request->reprogramming) {
+            $query->where($modules_sismu);
+        } elseif ($request->reprogramming && !$request->refinancing) {
+            foreach ($modules_reprogramming as $condition) {
+                $query->where(...$condition);
+            }
+        } else {
+            foreach ($modules_default as $condition) {
+                $query->where(...$condition);
+            }
+        }
+        
+        return $query->get();
+    }  
 
-        $conditions = $modules_default;
-
-        if ($request->refinancing && $request->reprogramming === false) 
-            $conditions = $modules_sismu;
-
-        if ($request->reprogramming && $request->refinancing === false) 
-            $conditions = $modules_reprogramming;
-
-        $modules = ProcedureType::where('module_id', 6)
-            ->where(function ($query) use ($conditions) {
-                foreach ($conditions as $condition) {
-                    call_user_func_array([$query, 'where'], $condition);
-                }
-            })
-            ->get();
-        return $modules;
+    public function get_loan_modalities()
+    {
+        $procedure_types = ProcedureType::whereModuleId(6)->get();
+        foreach ($procedure_types as $procedure_type) {
+            $procedure_type->procedure_modalities = ProcedureModality::whereProcedureTypeId($procedure_type->id)->whereIsValid(true)->get();
+        }
+        return $procedure_types;
     }
 }

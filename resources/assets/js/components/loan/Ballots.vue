@@ -122,7 +122,7 @@
                             :error-messages="errors"
                             dense
                             v-model="contribution[i].adjustment_amount"
-                            :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' : loanTypeSelected.id == 29 ? 'Liquido pagable último CE' :  'Monto ajuste'"
+                            :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' : loanTypeSelected.id == 29 ? 'Importe cotizable' :  'Monto ajuste'"
                             :outlined = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29) ? true : false"
                             :disabled = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29) ? false : true"
                           ></v-text-field>
@@ -380,11 +380,7 @@ export default {
       return this.$route.params.hash == 'refinancing'
     },
     reprogramming() {
-      if(this.$route.params.hash == 'reprogramming'){
-        return true
-      }else{
-        return false
-      }
+      return this.$route.params.hash == 'reprogramming'
     },
     remake() {
       if(this.$route.params.hash == 'remake'){
@@ -425,7 +421,10 @@ export default {
       try {
         this.choose_diff_month = false
         this.number_diff_month = 1
-        let resp =await axios.get(`affiliate_loan_modality/${id}/${this.loanTypeSelected.id}`)
+        let resp =await axios.post(`affiliate_loan_modality/${id}/${this.loanTypeSelected.id}`,{
+          refinancing: this.refinancing?true:false, //Caso: T casos sismu, F nuevo tramite
+          reprogramming: this.reprogramming?true:false //Caso: T casos sismu, F nuevo tramite
+        })
         if(resp.data ==''){
           this.loan_detail.not_exist_modality = true
           this.submodalities = []

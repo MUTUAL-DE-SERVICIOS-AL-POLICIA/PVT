@@ -37,7 +37,6 @@ class LoanPayment extends Model
         'state_id',
         'voucher',
         'paid_by',
-        'role_id',
         'affiliate_id',
         'loan_payment_date',
         'validated',
@@ -46,17 +45,12 @@ class LoanPayment extends Model
         'categorie_id',
         'initial_affiliate',
         'state_affiliate',
+        'wf_states_id'
     ];
 
     function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        /*if (!$this->code) {
-            $latest_payments = DB::table('loan_payments')->orderBy('id', 'desc')->latest()->first();
-            if (!$latest_payments) $latest_payments = (object)['id' => 0];
-            $this->code = implode(['PAY', str_pad($latest_payments->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
-        }*/
-        //$this->code = implode(['PAY', str_pad($correlative, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
     }
 
     public function loan()
@@ -281,5 +275,10 @@ class LoanPayment extends Model
         $last_kardex_loan = $this->loan->payment_kardex_last();
         if($last_kardex_loan->id == $this->id) $is_last = true;
         return $is_last;
+    }
+
+    public function currentState()
+    {
+        return $this->belongsTo(WfState::class, 'wf_states_id');
     }
 }

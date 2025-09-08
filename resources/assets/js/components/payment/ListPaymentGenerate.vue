@@ -298,7 +298,7 @@ data () {
         let res = await axios.get(`loan_tracking`, {
           params: {
             city_loan:this.searching.city_loan,
-            name_role_loan:this.searching.name_role_loan,
+            name_wf_state_loan:this.searching.name_wf_state_loan,
             user_loan:this.searching.user_loan,
             code_loan: this.searching.code_loan,
             identity_card_borrower: this.searching.identity_card_borrower,

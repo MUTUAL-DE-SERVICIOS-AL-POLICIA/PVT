@@ -22,3 +22,8 @@ yarn-error.log
 npm-debug.log
 !/public/docs/collection.json
 /storage/logs/*
+/config/horizon.php
+/config/app.php
+app/Providers/HorizonServiceProvider.php
+composer.lock
+composer.json

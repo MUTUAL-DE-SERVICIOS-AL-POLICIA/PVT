@@ -20,7 +20,7 @@ class RoleController extends Controller
     */
     public function index(Request $request)
     {
-        $query = Role::orderBy('name');
+        $query = Role::where('module_id',6)->orderBy('name');
         if ($request->has('name')) $query = $query->whereName($request->name);
         return $query->get();
     }

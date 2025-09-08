@@ -283,7 +283,7 @@
                 <span>Editar registro </span>
               </v-tooltip>
 
-              <v-tooltip bottom v-if="permissionSimpleSelected.includes('delete-movement-fund-rotatory')">
+              <!-- <v-tooltip bottom v-if="permissionSimpleSelected.includes('delete-movement-fund-rotatory')">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-if="item.is_last==true"
@@ -296,7 +296,7 @@
                   </v-btn>
                 </template>
                 <span>Anular registro</span>
-              </v-tooltip>
+              </v-tooltip> -->
 
             </template>
           </v-data-table>

@@ -1731,8 +1731,8 @@ class AffiliateController extends Controller
     * @urlParam procedure_type required ID de la modalidad. Example: 12
     * @authenticated
     */
-    public function get_sub_modality_affiliate(Affiliate $affiliate,ProcedureType $procedure_type){
-
+    public function get_sub_modality_affiliate(Affiliate $affiliate,ProcedureType $procedure_type, request $request)
+    {
         $affiliate_state = $affiliate->affiliate_state;                      //Estado   del Afiliado en la Policia
         $affiliate_state_type = $affiliate_state->affiliate_state_type;      //Tipo del Estado del Afiliado
 
@@ -1744,21 +1744,21 @@ class AffiliateController extends Controller
         $b = 'procedure_modality_id';
 
         $sector_active = collect([              //Colección de prestamos para afiliados al sector activo
-            [$a => 9, $b => 32],                    //Anticipo Sector Activo
-            [$a => 10, $b => 36],                   //Corto Plazo Sector Activo
-            [$a => 12, $b => 81],                   //Largo Plazo con Garantía Personal Sector Activo con un Garante
-            [$a => 12, $b => 43],                   //Largo Plazo con Garantía Personal Sector Activo con dos Garantes
-            [$a => 12, $b => 46],                   //Largo Plazo con Pago Oportuno
-            [$a => 28, $b => 93],                   //Préstamo al Sector Activo con Garantía del Beneficio Fondo de Retiro Policial Solidario Menor
-            [$a => 28, $b => 94],                   //Préstamo al Sector Activo con Garantía del Beneficio Fondo de Retiro Policial Solidario Mayor
-            [$a => 11, $b => 40],                   //Refinanciamiento de Préstamo a Corto Plazo Sector Activo
-            [$a => 13, $b => 82],                   //Refinanciamiento Largo Plazo con Garantía Personal Sector Activo con un Garante
-            [$a => 13, $b => 47],                   //Refinanciamiento Largo Plazo con Garantía Personal Sector Activo con dos Garantes
-            [$a => 13, $b => 50],                   //Refinanciamiento Largo Plazo con Pago Oportuno
-            [$a => 24, $b => 73],                   //Reprogramación Corto Plazo Sector Activo
-            [$a => 26, $b => 83],                   //Reprogramación Largo Plazo con Garantía Personal Sector Activo con un Garante
-            [$a => 26, $b => 84],                   //Reprogramación Largo Plazo con Garantía Personal Sector Activo con dos Garantes
-            [$a => 26, $b => 85],                   //Reprogramación Largo Plazo con Pago Oportuno
+            $request->refinancing ? null : [$a => 9, $b => 32],                    //Anticipo Sector Activo
+            $request->refinancing ? null : [$a => 10, $b => 36],                   //Corto Plazo Sector Activo
+            $request->refinancing ? null : [$a => 12, $b => 81],                   //Largo Plazo con Garantía Personal Sector Activo con un Garante
+            $request->refinancing ? null : [$a => 12, $b => 43],                   //Largo Plazo con Garantía Personal Sector Activo con dos Garantes
+            $request->refinancing ? null : [$a => 12, $b => 46],                   //Largo Plazo con Pago Oportuno
+            $request->refinancing ? null : [$a => 28, $b => 93],                   //Préstamo al Sector Activo con Garantía del Beneficio Fondo de Retiro Policial Solidario Menor
+            $request->refinancing ? null : [$a => 28, $b => 94],                   //Préstamo al Sector Activo con Garantía del Beneficio Fondo de Retiro Policial Solidario Mayor
+            $request->refinancing ? [$a => 10, $b => 40] : null,                   //Refinanciamiento de Préstamo a Corto Plazo Sector Activo
+            $request->refinancing ? [$a => 12, $b => 82] : null,                   //Refinanciamiento Largo Plazo con Garantía Personal Sector Activo con un Garante
+            $request->refinancing ? [$a => 12, $b => 47] : null,                   //Refinanciamiento Largo Plazo con Garantía Personal Sector Activo con dos Garantes
+            $request->refinancing ? [$a => 12, $b => 50] : null,                   //Refinanciamiento Largo Plazo con Pago Oportuno
+            $request->reprogramming ? [$a => 10, $b => 73] : null,                   //Reprogramación Corto Plazo Sector Activo
+            $request->reprogramming ? [$a => 12, $b => 83] : null,                   //Reprogramación Largo Plazo con Garantía Personal Sector Activo con un Garante
+            $request->reprogramming ? [$a => 12, $b => 84] : null,                   //Reprogramación Largo Plazo con Garantía Personal Sector Activo con dos Garantes
+            $request->reprogramming ? [$a => 12, $b => 85] : null,                   //Reprogramación Largo Plazo con Pago Oportuno
         ]);
 
         $sector_availability = collect([        //Coleción de préstamos para afiliados en disponibilidad
@@ -1768,32 +1768,32 @@ class AffiliateController extends Controller
             [$a => 12, $b => 65],                   //Largo Plazo con Garantía Personal en Disponibilidad con dos Garantes
             [$a => 28, $b => 93],                   //Préstamo al Sector Activo con Garantía del Beneficio Fondo de Retiro Policial Solidario Menor
             [$a => 28, $b => 94],                   //Préstamo al Sector Activo con Garantía del Beneficio Fondo de Retiro Policial Solidario Mayor
-            [$a => 11, $b => 66],                   //Refinanciamiento de Préstamo a Corto Plazo en Disponibilidad
-            [$a => 24, $b => 73],                   //Reprogramación Corto Plazo en Disponibilidad
+            $request->refinancing ? [$a => 10, $b => 66] : null,                   //Refinanciamiento de Préstamo a Corto Plazo en Disponibilidad
+            $request->reprogramming ? [$a => 10, $b => 74] : null,                   //Reprogramación Corto Plazo en Disponibilidad
         ]);
 
         $sector_pasive_senasir = collect([      //Coleción de préstamos para afiliados al sector pasivo senasir
-            [$a => 9, $b => 35],                    //Anticipo Sector Pasivo SENASIR
-            [$a => 10, $b => 39],                   //Corto Plazo Sector Pasivo SENASIR
-            [$a => 12, $b => 45],                   //Largo Plazo con Garantía Personal Sector Pasivo SENASIR
-            [$a => 29, $b => 96],                   //Préstamo Estacional para el Sector Pasivo de la Policía Boliviana
-            [$a => 29, $b => 95],                   //Préstamo Estacional para el Sector Pasivo de la Policía Boliviana con Cónyuge
-            [$a => 11, $b => 42],                   //Refinanciamiento de Préstamo a Corto Plazo Sector Pasivo SENASIR
-            [$a => 13, $b => 49],                   //Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR
-            [$a => 24, $b => 76],                   //Reprogramación Corto Plazo Sector Pasivo SENASIR
-            [$a => 26, $b => 87],                   //Reprogramación Largo Plazo Sector Pasivo SENASIR
+            $request->refinancing ? null : [$a => 9, $b => 35],                    //Anticipo Sector Pasivo SENASIR
+            $request->refinancing ? null : [$a => 10, $b => 39],                   //Corto Plazo Sector Pasivo SENASIR
+            $request->refinancing ? null : [$a => 12, $b => 45],                   //Largo Plazo con Garantía Personal Sector Pasivo SENASIR
+            $request->refinancing ? null : [$a => 29, $b => 96],                   //Préstamo Estacional para el Sector Pasivo de la Policía Boliviana
+            $request->refinancing ? null : [$a => 29, $b => 95],                   //Préstamo Estacional para el Sector Pasivo de la Policía Boliviana con Cónyuge
+            $request->refinancing ? [$a => 10, $b => 42] : null,                   //Refinanciamiento de Préstamo a Corto Plazo Sector Pasivo SENASIR
+            $request->refinancing ? [$a => 12, $b => 49] : null,                   //Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR
+            $request->reprogramming ? [$a => 10, $b => 76] : null,                   //Reprogramación Corto Plazo Sector Pasivo SENASIR
+            $request->reprogramming ? [$a => 12, $b => 87] : null,                   //Reprogramación Largo Plazo Sector Pasivo SENASIR
         ]);
 
         $sector_pasive_gestora = collect([      //Coleción de préstamos para afiliados al sector pasivo gestora
-            [$a => 9, $b => 67],                    //Anticipo Sector Pasivo Gestora Pública
-            [$a => 10, $b => 68],                   //Corto Plazo Sector Pasivo Gestora Pública
-            [$a => 12, $b => 70],                   //Largo Plazo con Garantía Personal Sector Pasivo Gestora Pública
-            [$a => 29, $b => 96],                   //Préstamo Estacional para el Sector Pasivo de la Policía Boliviana
-            [$a => 29, $b => 95],                   //Préstamo Estacional para el Sector Pasivo de la Policía Boliviana con Cónyuge
-            [$a => 11, $b => 69],                   //Refinanciamiento de Préstamo a Corto Plazo sector Pasivo Gestora Pública
-            [$a => 13, $b => 71],                   //Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública
-            [$a => 24, $b => 75],                   //Reprogramación Corto Plazo Sector Pasivo Gestora Pública
-            [$a => 26, $b => 86],                   //Reprogramación Largo Plazo Sector Pasivo Gestora Pública
+            $request->refinancing ? null : [$a => 9, $b => 67],                    //Anticipo Sector Pasivo Gestora Pública
+            $request->refinancing ? null : [$a => 10, $b => 68],                   //Corto Plazo Sector Pasivo Gestora Pública
+            $request->refinancing ? null : [$a => 12, $b => 70],                   //Largo Plazo con Garantía Personal Sector Pasivo Gestora Pública
+            $request->refinancing ? null : [$a => 29, $b => 96],                   //Préstamo Estacional para el Sector Pasivo de la Policía Boliviana
+            $request->refinancing ? null : [$a => 29, $b => 95],                   //Préstamo Estacional para el Sector Pasivo de la Policía Boliviana con Cónyuge
+            $request->refinancing ? [$a => 10, $b => 69] : null,                   //Refinanciamiento de Préstamo a Corto Plazo sector Pasivo Gestora Pública
+            $request->refinancing ? [$a => 12, $b => 71] : null,                   //Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública
+            $request->refinancing ? [$a => 10, $b => 75] : null,                   //Reprogramación Corto Plazo Sector Pasivo Gestora Pública
+            $request->refinancing ? [$a => 12, $b => 86] : null,                   //Reprogramación Largo Plazo Sector Pasivo Gestora Pública
         ]);
 
         $data = collect();
@@ -1866,10 +1866,6 @@ class AffiliateController extends Controller
 
         if(!($percentage >= $minLenderCategory && $percentage <= $maxLenderCategory))
             abort(403, 'El afiliado no tiene la categoria suficiente para esta modalidad');
-
-        if(str_contains($procedure_modality->shortened,'EST-PAS-CON'))
-            if(!$affiliate->spouses->count()>0)
-                abort(403, 'El afiliado no tiene esposa registrada');
 
         return response()->json(['status' => true, 'message' => 'Validations passed successfully'], 200);
     }

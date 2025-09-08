@@ -378,6 +378,15 @@ export default {
         type: "xls",
         permissions: 'show-report-loans'
       },
+      {
+        id: 23,
+        name: "Rep. de Préstamos Vigentes con/sin Pagos Penales",
+        tab: 0,
+        criterios: [],
+        service: "/loan_with_penal_payment_report",
+        type: "xls",
+        permissions: 'show-report-loans'
+      },
     ],
     this.type_institution= [
       { value:"C", name:"Comando" },
@@ -442,7 +451,7 @@ export default {
               final_date: this.report_inputs.final_date,
               date: this.report_inputs.date,
               origin: this.report_inputs.origin,
-              type:'xls',
+              type:'xlsx',
               year: this.criteria_date.year,
               month: this.criteria_date.month
             },
@@ -453,7 +462,7 @@ export default {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute("download", this.report_selected.name + ".xls");
+                link.setAttribute("download", this.report_selected.name + ".xlsx");
                 document.body.appendChild(link);
                 link.click();
                 this.clearInputs();

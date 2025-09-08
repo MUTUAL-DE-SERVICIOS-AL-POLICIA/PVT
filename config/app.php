@@ -141,6 +141,7 @@ return [
         App\Providers\RecordModelServiceProvider::class,
         App\Providers\UserModelServiceProvider::class,
         App\Providers\AffiliateModelServiceProvider::class,
+        App\Providers\SpouseServiceProvider::class,
         App\Providers\RoleModelServiceProvider::class,
         App\Providers\LoanModelServiceProvider::class,
         App\Providers\ObservationModelServiceProvider::class,
@@ -154,6 +155,7 @@ return [
         App\Providers\MovementConceptServiceProvider::class,
         App\Providers\LoanGuaranteeRegisterServiceProvider::class,
         App\Providers\LoanTrackingServiceProvider::class,
+        App\Providers\WorkflowModelServiceProvider::class,
 
         /*
         * Application Service Providers...

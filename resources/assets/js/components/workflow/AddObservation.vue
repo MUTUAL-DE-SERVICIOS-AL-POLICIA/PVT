@@ -30,7 +30,7 @@
                           dense
                           v-model="valArea"
                           :items="areas"
-                          item-text="display_name"
+                          item-text="name"
                           item-value="id"
                           @change="searchUserFlow()"
                         ></v-select>
@@ -168,17 +168,27 @@ export default {
               message:this.observation.message})
               if(this.observation.accion=='devolver'){
                 let res1 = await axios.patch(`loan/${id}`, {
-                role_id: this.valArea,
+                current_role_id:  this.$store.getters.rolePermissionSelected.id,
+                wf_states_id: this.valArea,
                 user_id: this.user_id_previous
                 })
                  this.toastr.success("Se devolvio el tramite correctamente.")
               }else if(this.observation.accion=='anular'){
-                let res2 = await axios.delete(`loan/${id}`)
+                let res2 = await axios.delete(`loan/${id}`,{
+                  data: {
+                    current_role_id: this.$store.getters.rolePermissionSelected.id
+                  }
+                })
+                console.log(this.$store.getters.rolePermissionSelected.id)
                 let code = res2.data.code
                 this.toastr.success("El trámite " + code + " fue anulado correctamente.")
               }
               else if(this.observation.accion=='anular_anticipo'){
-                let res2 = await axios.post(`loan_advance/${id}`)
+                let res2 = await axios.post(`loan_advance/${id}`,{
+                  data: {
+                    current_role_id: this.$store.getters.rolePermissionSelected.id
+                  }
+                })
                 let code = res2.data.code
                 this.toastr.success("El trámite " + code + " fue anulado correctamente.")
               }
@@ -208,7 +218,7 @@ export default {
         let res = await axios.get(`loan/${id}/flow`)
         this.flow = res.data
         this.length_previus = this.flow.previous.length
-        this.areas = this.$store.getters.roles.filter(o =>
+        this.areas = this.$store.getters.wfStates.filter(o =>
           this.flow.previous.includes(o.id)
         )
       } catch (e) {

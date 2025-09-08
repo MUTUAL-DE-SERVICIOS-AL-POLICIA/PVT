@@ -115,8 +115,8 @@
     </template>
   </v-data-table>
 </template>
-<script>
 
+<script>
 export default {
   name: 'workflow-list',
   props: {
@@ -153,15 +153,15 @@ export default {
       type: Array,
       required: true
     },
-    procedureTypeSelected:{
-      type:Number,
+    workflowSelected: {
+      type: Number,
       required: true,
       default: 0
     }
   },
-  computed:{
-      //permisos del selector global por rol
-    permissionSimpleSelected () {
+  computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected() {
       return this.$store.getters.permissionSimpleSelected
     },
     fullname(item) {
@@ -172,7 +172,7 @@ export default {
     selectedLoans: [],
     headers: [
       {
-        text: 'Correlativo',
+        text: 'Código',
         value: 'code',
         class: ['normal', 'white--text'],
         align: 'center',
@@ -230,55 +230,43 @@ export default {
         printDocs: []
   }),
   watch: {
-    procedureTypeSelected(newVal, oldVal) {
-      if(newVal != oldVal)
+    workflowSelected(newVal, oldVal) {
+      if (newVal != oldVal) 
         this.selectedLoans = []
     },
     selectedLoans(val) {
       this.bus.$emit('selectLoans', this.selectedLoans)
-      if (val.length) {
-        this.$emit('allowFlow', true)
-      } else {
-        this.$emit('allowFlow', false)
-      }
+      this.$emit('allowFlow', val.length > 0)
     },
     tray(val) {
       if (typeof val === 'string') this.updateHeader()
     }
   },
   mounted() {
-    this.bus.$on('emitRefreshLoans', val => {
+    this.bus.$on('emitRefreshLoans', () => {
       this.selectedLoans = []
-    }),
+    })
     this.docsLoans()
   },
   methods: {
-    itemRowBackground: function (item) {
-      if(item.validated === true && item.user_id != null){
+    itemRowBackground(item) {
+      if (item.validated && item.user_id != null) 
         return 'style-1'
-      }else if(item.validated === false && item.user_id != null){
+      else if (!item.validated && item.user_id != null) 
         return 'style-2'
-      }else{
+      else
         return 'style-3'
-      }
     },
     searchProcedureModality(item, attribute = null) {
       let procedureModality = this.procedureModalities.find(o => o.id == item.procedure_modality_id)
-      if (procedureModality) {
-        if (attribute) {
-          return procedureModality[attribute]
-        } else {
-          return procedureModality
-        }
-      } else {
-        return null
-      }
+      return procedureModality ? (attribute ? procedureModality[attribute] : procedureModality) : null
     },
     updateOptions($event) {
-      if (this.options.page != $event.page || this.options.itemsPerPage != $event.itemsPerPage || this.options.sortBy != $event.sortBy || this.options.sortDesc != $event.sortDesc) this.$emit('update:options', $event)
+      if (this.options.page != $event.page || this.options.itemsPerPage != $event.itemsPerPage || this.options.sortBy != $event.sortBy || this.options.sortDesc != $event.sortDesc) {
+        this.$emit('update:options', $event);
+      }
     },
-    async imprimir(id, item)
-    {
+    async imprimir(id, item) {
       try {
         let res
         if(id==1){
@@ -292,81 +280,68 @@ export default {
             this.toastr.error("El préstamo no se encuentra desembolsado.")
         }
         printJS({
-            printable: res.data.content,
-            type: res.data.type,
-            documentTitle: res.data.file_name,
-            base64: true
+          printable: res.data.content,
+          type: res.data.type,
+          documentTitle: res.data.file_name,
+          base64: true
         })
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
-        console.log(e)
+        console.error(e)
       }
     },
     updateHeader() {
-      if (this.tray != 'all') {
-        this.headers = this.headers.filter(o => o.value != 'role_id')
-        //this.headers = this.headers.filter(o => o.value != 'procedure_modality_id')
-      } else {
-        if (!this.headers.some(o => o.value == 'role_id')) {
-          /*this.headers.unshift({
-            text: 'Modalidad',
-            class: ['normal', 'white--text'],
-            align: 'center',
-            value: 'procedure_modality_id',
-            sortable: true
-          })*/
-          this.headers.unshift({
-            text: 'Área',
-            class: ['normal', 'white--text'],
-            align: 'center',
-            value: 'role_id',
-            sortable: true
-          })
-        }
+      if (this.tray !== 'all') {
+        this.headers = this.headers.filter(o => o.value !== 'role_id')
+      } else if (!this.headers.some(o => o.value === 'role_id')) {
+        this.headers.unshift({
+          text: 'Área',
+          class: ['normal', 'white--text'],
+          align: 'center',
+          value: 'role_id',
+          sortable: true
+        })
       }
     },
-
-    docsLoans(){
-      let docs =[]
-      if(this.permissionSimpleSelected.includes('print-contract-loan')){
-        docs.push(
-          { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
-          { id: 2, title: 'Solicitud', icon: 'mdi-file'})
-      }
-      if(this.permissionSimpleSelected.includes('print-payment-plan')){
-        docs.push(
-          { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'})
-      }
-      else{
-        console.log("Se ha producido un error durante la generación de la impresión")
-      }
-      this.printDocs=docs
-    },
-
-    async freeLoan(id, code){
+    docsLoans() {
       try {
-          //this.loading = true;
-            let res = await axios.patch(`loan/${id}`, {
-              user_id: null,
-              validated: false
-            });
-            console.log(res)
-            //this.sheet = false;
-            this.bus.$emit('emitRefreshLoans');
-            this.toastr.success("El trámite "+ code +" fue liberado" )
+        let docs = []
+          if (this.permissionSimpleSelected.includes('print-contract-loan')) {
+            docs.push(
+              { id: 1, title: 'Contrato', icon: 'mdi-file-document' },
+              { id: 2, title: 'Solicitud', icon: 'mdi-file' }
+            )
+          }
+          if (this.permissionSimpleSelected.includes('print-payment-plan')) {
+            docs.push({ id: 3, title: 'Plan de pagos', icon: 'mdi-cash' })
+          }
+      
+      this.printDocs = docs        
       } catch (e) {
-        console.log(e)
-        this.toastr.error("Ocurrió un error en la liberación del trámite...")
+        this.toastr.error("Se ha producido un error durante la generación de la impresión")
+        console.error(e)
       }
-    }
-
+    },
+    async freeLoan(id, code) {
+      try {
+        await axios.patch(`loan/${id}`, {
+          user_id: null,
+          validated: false
+        });
+        this.bus.$emit('emitRefreshLoans');
+        this.toastr.success(`El trámite ${code} fue liberado`);
+      } catch (e) {
+        console.error(e);
+        this.toastr.error("Ocurrió un error en la liberación del trámite...");
+      }
+    },
   }
 }
-
 </script>
+
 <style>
 th.text-start {
-  background-color: #757575;
+  background-color: #757575
 }
 .style-1 {
   background-color: #8BC34A

@@ -26,6 +26,7 @@ use Util;
 use App\LoanBorrower;
 use App\LoanGuarantor;
 use App\LoanProcedure;
+use App\WfState;
 
 /** @group Importacion de datos C o S
 * Importacion de datos Comando  o Senasir
@@ -788,7 +789,7 @@ class ImportationController extends Controller
                                     'loan_payment_date' => Carbon::now(),
                                     'liquidate' => false,
                                     'state_affiliate'=> "ACTIVO",
-                                    'description'=> 'Pago registrado',
+                                    'description' => 'Pago registrado',
                                 ];
                                 $loan_payment = $this->set_payment($form, $loan_calculate);
                                 $amount = $amount - $loan_payment->estimated_quota;
@@ -983,7 +984,7 @@ class ImportationController extends Controller
             $payment = $loan->next_payment2($request->affiliate_id, $request->estimated_date, $request->paid_by, $request->procedure_modality_id, $request->estimated_quota, $request->liquidate);
             $payment->description = $request->description;
             $payment->state_id = LoanPaymentState::whereName('Pagado')->first()->id;
-            $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
+            $payment->wf_states_id = WfState::whereName('Archivo')->whereModuleId(6)->first()->id;
             $payment->procedure_modality_id = $request->procedure_modality_id;
             $payment->voucher = $request->voucher;
             $payment->affiliate_id = $request->affiliate_id;
@@ -1000,7 +1001,7 @@ class ImportationController extends Controller
             $payment->categorie_id = $request->categorie_id;
 
             $payment->paid_by = $request->paid_by;
-            $payment->validated = true;
+            $payment->validated = false;
             $payment->user_id = auth()->id();
             $payment->loan_payment_date = $request->loan_payment_date;
 
@@ -1023,7 +1024,7 @@ class ImportationController extends Controller
             $payment = $loan->next_payment_season($request->affiliate_id, $request->estimated_date, $request->paid_by, $request->procedure_modality_id, $request->estimated_quota, $request->liquidate);
             $payment->description = $request->description;
             $payment->state_id = LoanPaymentState::whereName('Pagado')->first()->id;
-            $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
+            $payment->wf_states_id = WfState::whereName('Archivo')->whereModuleId(6)->first()->id;
             $payment->procedure_modality_id = $request->procedure_modality_id;
             $payment->voucher = $request->voucher;
             $payment->affiliate_id = $request->affiliate_id;
@@ -1036,7 +1037,7 @@ class ImportationController extends Controller
             $payment->categorie_id = $request->categorie_id;
 
             $payment->paid_by = $request->paid_by;
-            $payment->validated = true;
+            $payment->validated = false;
             $payment->user_id = auth()->id();
             $payment->loan_payment_date = $request->loan_payment_date;
 

@@ -2685,6 +2685,11 @@ cyclist@^1.0.1:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha512-NJGVKPS81XejHcLhaLJS7plab0fK3slPh11mESeeDq2W4ZI5kUKK/LRRdVDvjJseojbPB7ZwjnyOybg3Igea/A==
 
+d3-queue@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/d3-queue/-/d3-queue-2.0.3.tgz#07fbda3acae5358a9c5299aaf880adf0953ed2c2"
+  integrity sha512-ejbdHqZYEmk9ns/ljSbEcD6VRiuNwAkZMdFf6rsUb3vHROK5iMFd8xewDQnUVr6m/ba2BG63KmR/LySfsluxbg==
+
 d@1, d@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/d/-/d-1.0.1.tgz#8698095372d58dbee346ffd0c7093f99f8f9eb5a"
@@ -4959,6 +4964,13 @@ leaflet-geosearch@^3.0.6:
   optionalDependencies:
     "@googlemaps/js-api-loader" "^1.14.3"
     leaflet "^1.6.0"
+
+leaflet-image@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/leaflet-image/-/leaflet-image-0.4.0.tgz#e84f22ff6288f09b9b0e2f51a4850a9f07968cc1"
+  integrity sha512-J/vLCHiYNXlcQ/SZbHhj/VF5k3thxTryWijoqMO9sB20KV7hlMNUZDgxcDzXnfjk4hcYcFfGbveVc1tyQ9FgYw==
+  dependencies:
+    d3-queue "2.0.3"
 
 leaflet@^1.2.0, leaflet@^1.6.0:
   version "1.9.3"

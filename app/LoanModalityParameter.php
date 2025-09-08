@@ -37,7 +37,9 @@ class LoanModalityParameter extends Model
         'loan_month_term',
         'coverage_percentage',
         'eval_percentage',
-        'suggested_debt_index'
+        'suggested_debt_index',
+        'modality_refinancing_id',
+        'modlaity_reprogramming_id'
     ];
 
     public function getDecimalIndexAttribute()
@@ -58,5 +60,15 @@ class LoanModalityParameter extends Model
     public function loan_procedure()
     {
         return $this->hasOne(LoanProcedure::class, 'id', 'loan_procedure_id');
+    }
+
+    public function refinancing_modality()
+    {
+        return $this->hasOne(Proceduremodality::class, 'id', 'modality_refinancing_id');
+    }
+
+    public function reprogramming_modality()
+    {
+        return $this->hasOne(Proceduremodality::class, 'id', 'modality_reprogramming_id');
     }
 }

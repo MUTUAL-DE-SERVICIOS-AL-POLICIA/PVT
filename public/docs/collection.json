@@ -1584,26 +1584,6 @@
 					"response": []
 				},
 				{
-					"name": "Flujo de trabajo",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}/{{endpoint}}/1/flow",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"{{endpoint}}",
-								"1",
-								"flow"
-							]
-						},
-						"description": "get_flow"
-					},
-					"response": []
-				},
-				{
 					"name": "Lista de observaciones",
 					"request": {
 						"method": "GET",
@@ -2714,55 +2694,6 @@
 							]
 						},
 						"description": "get_loan_destinies"
-					},
-					"response": []
-				},
-				{
-					"name": "Obtener flujo de trabajo",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}/{{endpoint}}/9/flow",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"{{endpoint}}",
-								"9",
-								"flow"
-							]
-						},
-						"description": "get_flow"
-					},
-					"response": []
-				},
-				{
-					"name": "Actualizar flujo de trabajo",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"workflow\": [\n\t    {\n\t        \"role_id\": 81,\n\t        \"next_role_id\": 73\n\t    },\n\t    {\n\t        \"role_id\": 73,\n\t        \"next_role_id\": 82\n\t    }\n\t]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/{{endpoint}}/9/flow",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"{{endpoint}}",
-								"9",
-								"flow"
-							]
-						},
-						"description": "set_flow"
 					},
 					"response": []
 				},

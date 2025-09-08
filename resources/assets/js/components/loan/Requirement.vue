@@ -143,6 +143,7 @@
         >Crear Trámite</v-btn>
       </v-col>
     </v-row>
+    <pre></pre>
     </v-form>
   </ValidationObserver>
   </v-container>
@@ -241,6 +242,9 @@ export default {
       }else{
         return this.$route.query.loan_id //PVT si es refi repro nuevo
       }
+    },
+    wf_states_id(){
+      return this.$store.getters.rolePermissionSelected.wf_states_id
     }
   },
   methods: {
@@ -299,7 +303,9 @@ export default {
               documents: this.selected.concat(this.itemsOpc.concat(this.radios.filter(Boolean))),
               notes: this.otherDocuments,
               user_id: this.$store.getters.id,
-              remake_loan_id: this.$route.params.hash == 'remake' ? this.$route.query.loan_id : 0
+              remake_loan_id: this.$route.params.hash == 'remake' ? this.$route.query.loan_id : 0,
+              wf_states_id: this.wf_states_id
+
             });
             if(res.status==201 || res.status == 200){
               this.status_click = false
@@ -317,7 +323,7 @@ export default {
     
         }
       } catch (e) {
-        console.log(e);
+        this.toastr.error(e.type)
         this.status_click = false
       } finally {
         this.loading = false;

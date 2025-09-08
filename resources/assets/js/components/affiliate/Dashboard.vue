@@ -515,7 +515,7 @@ export default {
                       this.toastr.error("El préstamo se encuentra en MORA")
                     }
                 }else{
-                  this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
+                  this.toastr.error("El saldo es inferior al monto permitido para refinanciamiento")
                 }
               }else{
                 this.toastr.error("No tiene el 25% pagado de su préstamo para acceder a un refinanciamiento")

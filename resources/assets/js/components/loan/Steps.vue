@@ -540,7 +540,8 @@ export default {
       this.formatContributions()
       try {
         let res = await axios.post(`liquid_calificated`,{
-          liquid_calification: this.contributions_aux
+          liquid_calification: this.contributions_aux,
+          modality_id: this.modalidad.id
         })
 
         this.liquid_calificated = res.data
@@ -701,9 +702,9 @@ export default {
         }
           //Si es PVT refinanciamiento existe un cambio en el id de modalidad
         if(this.refinancing || this.reprogramming){
-          let res3 = await axios.post(`procedure_brother/`,{
-            reference_modality_id: res.data.modality.id,    //submodalidad PVT Corto Plazo Sector Activo
-            type: this.refinancing? 'refinancing' : 'reprogramming'
+          let res3 = await axios.post(`procedure_ref_rep/`,{
+            type: this.refinancing? 'REF' : 'REP',
+            loan_id: res.data.id
           })
           this.modalities = [res3.data[0].procedure_type]
           this.loanTypeSelected.id = res3.data[0].procedure_type_id

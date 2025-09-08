@@ -26,7 +26,8 @@ class LoansForm extends FormRequest
     {
         return [
             'ids' => ['required', 'array', 'min:1', 'exists:loans,id'],
-            'role_id' => ['required', 'integer', 'exists:roles,id', new LoanRole($this->ids)]
+            'current_role_id' => ['required', 'integer', 'exists:roles,id'],
+            'next_state_id' => ['required', 'integer', 'exists:wf_states,id'],
         ];
     }
 }

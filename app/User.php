@@ -52,9 +52,9 @@ class User extends Authenticatable implements JWTSubject
             'id' => $this->id,
             'username' => $this->username,
             'user' => $this->full_name,
-            'roles' => array_values(array_filter($this->roles()->pluck('name')->toArray())),
+            'roles' => array_values(array_filter($this->roles()->where('module_id',6)->pluck('name')->toArray())),
             'permissions' => array_values(array_filter($this->allPermissions()->pluck('name')->toArray())),
-            'city_id' => $this->city ? $this->city->id : null
+            'city_id' => $this->city ? $this->city->id : null,
         ];
     }
 
@@ -94,6 +94,11 @@ class User extends Authenticatable implements JWTSubject
     public function roles()
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function wf_states()
+    {
+        return $this->belongsToMany(WfState::class);
     }
 
     public function permissions()

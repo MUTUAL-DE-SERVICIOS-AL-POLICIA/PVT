@@ -90,7 +90,7 @@
             respectivos en la suma de Bs.{{ Util::money_format($loan->refinancing_balance) }} (<span class="uppercase">
             {{ Util::money_format($loan->refinancing_balance, true) }} Bolivianos</span>), para lo cual el PRESTATARIO reconoce de 
             manera expresa el saldo anterior de la deuda correspondiente al préstamo contraído con anterioridad, que asciende a la 
-            suma de Bs.{{ $loan->balance_parent_refi()}} (<span class="uppercase">{{ Util::money_format($loan->balance_parent_refi(), true) }} 
+            suma de Bs.{{ Util::money_format($loan->balance_parent_refi())}} (<span class="uppercase">{{ Util::money_format($loan->balance_parent_refi(), true) }} 
             Bolivianos</span>), montos que hacen un total efectivo de Bs.{{ Util::money_format($loan->amount_approved) }} 
             <span class="uppercase">({{ Util::money_format($loan->amount_approved, true) }} Bolivianos)</span>, que representa la nueva obligación 
             contraída sujeta a cumplimiento, en función a la operación de refinanciamiento.

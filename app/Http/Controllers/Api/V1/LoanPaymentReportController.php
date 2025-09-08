@@ -124,7 +124,7 @@ class LoanPaymentReportController extends Controller
                   };
                }
                $export = new MultipleSheetExportPayment($data->discount_comand,$data->discount_senasir,'DES-COMANDO','DES-SENASIR');
-               return Excel::download($export, $File.'.xls');
+               return Excel::download($export, $File.'.xlsx');
   }
 
   /** @group Reportes de amortizaciones 
@@ -222,7 +222,7 @@ class LoanPaymentReportController extends Controller
                    ));
                }
     $export = new ArchivoPrimarioExport($data);
-    return Excel::download($export, $File.'.xls');
+    return Excel::download($export, $File.'.xlsx');
 }
 
   /** @group Reportes de amortizaciones 
@@ -341,7 +341,7 @@ class LoanPaymentReportController extends Controller
     }
 
     $export = new MultipleSheetExportPayment($data->cash,$data->dep_banc,'EFECTIVO','DEP EN CTA');
-    return Excel::download($export, $File . '.xls');
+    return Excel::download($export, $File . '.xlsx');
   }
 
   /** @group Reportes de amortizaciones 
@@ -451,7 +451,7 @@ public function report_amortization_ajust(Request $request){
             };
     }
     $export = new MultipleSheetExportPayment($data->adjust,$data->refinancing,'AJUSTE-CONT','REFINANCIAMIENTO');
-    return Excel::download($export, $File.'.xls');
+    return Excel::download($export, $File.'.xlsx');
   }
  /** @group Reportes de amortizaciones 
    * Reporte de amortizaciones por complemento y fondo de retiro  
@@ -618,7 +618,7 @@ public function report_amortization_ajust(Request $request){
       }
 
       $export = new MultipleSheetExportPayment($data, $data_fondo, 'COM-ECO', 'FRP');
-      return Excel::download($export, $File.'.xls');
+      return Excel::download($export, $File.'.xlsx');
   }
     /** @group Reportes de amortizaciones 
    * Reporte de amortizaciones pendientes de confirmacion deacuerdo al comprobante de generacion
@@ -712,7 +712,7 @@ public function report_amortization_ajust(Request $request){
                  ));
              }
              $export = new ArchivoPrimarioExport($data);
-             return Excel::download($export, $File.'.xls');
+             return Excel::download($export, $File.'.xlsx');
   }
 
 /**

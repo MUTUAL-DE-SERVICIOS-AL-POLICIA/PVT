@@ -1,7 +1,10 @@
 export default class AmortizationLoan {
   constructor() {
-    this.resource = `module/6/amortization_loan` 
+    //this.resource = `module/6/amortization_loan` 
+    this.resource = `module/6/workflows_payment`
+    console.log(this.resource)
   }
+
 
   async get(id = null, params = {}) {
     try {

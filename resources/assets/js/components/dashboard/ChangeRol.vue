@@ -2,8 +2,22 @@
   <div>
     <Appbar/>
     <section class="px-6">
-      <v-row class="justify-center my-4">
-        <strong class="grey--text text-h5">Plataforma Virtual de Trámites</strong><br>
+      <v-row class="justify-center align-center my-4">
+        <v-col cols="auto" class="ml-auto"></v-col>
+        <v-col cols="auto">
+          <strong class="grey--text text-h5">Plataforma Virtual de Trámites</strong>
+        </v-col>
+        <v-col cols="auto" class="ml-auto">
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn @click="openHorizon" v-bind="attrs" v-on="on" color="secondary" small>
+                <span class="mr-2">Visor de Sms's</span>
+                <v-icon small>mdi-open-in-new</v-icon>
+              </v-btn>
+            </template>
+            <span>Ir al Visor de Sms's</span>
+          </v-tooltip>
+        </v-col>
       </v-row>
       <v-row>
         <v-col cols="3" v-for="(item, index) in rolesPermissionsItems" :key="index" class="pa-2">
@@ -81,7 +95,23 @@ export default {
       else
         this.$router.push("sismu")
       
-		}
+		},
+    goToHorizon() {
+      const tokenType = this.$store.getters.tokenType;
+      const accessToken = this.$store.getters.accessToken;
+
+      if (!tokenType || !accessToken) {
+        alert('No hay sesión activa. Por favor, inicia sesión.');
+        return;
+      }
+      const token = `${accessToken}`;
+      const encodedToken = encodeURIComponent(token);
+      const queue = `muserpol`;
+      window.open(`/horizon-queues?t=${queue}`, '_blank');
+    },
+    openHorizon() {
+      this.goToHorizon()
+    }
   },
 }
 </script>

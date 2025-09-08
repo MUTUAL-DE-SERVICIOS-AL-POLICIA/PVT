@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Affiliate;
 use Util;
+use Illuminate\Support\Str;
 use App\ProcedureModality;
 use App\Loan;
 use App\Http\Requests\CalculatorForm;
@@ -59,7 +60,9 @@ class CalculatorController extends Controller
     * @responseFile responses/calculator/store.200.json
     */
     public function store(CalculatorForm $request)
-    {$type = true;
+    {
+        $type = true;
+        $modality = ProcedureModality::findOrFail($request->modality_id);
         $liquid_calification = $request->liquid_calification;
         $liquid_calificated = collect([]);
         foreach($liquid_calification as $liq){
@@ -72,6 +75,7 @@ class CalculatorController extends Controller
                     if (!$parent_loan) abort(404);
                     $parent_lender = $parent_loan->borrower->first();
                     if(!$parent_lender) abort(403,'El afiliado no es titular del préstamo');
+                    if($modality && !Str::contains($modality->name, 'Gestora'))
                         $parent_quota = $parent_loan->next_payment()->estimated_quota * $parent_lender->payment_percentage/100;
                 }else{
                     if (array_key_exists('sismu', $liq)) {

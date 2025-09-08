@@ -160,8 +160,7 @@ class LoanForm extends FormRequest
             }
             case 'PUT':
             case 'PATCH':{
-                $rules['role_id'] = ['integer', 'exists:roles,id', new LoanRole($this->loan->id)];
-                $rules['validated'] = [new LoanValidated($this->loan)];
+                $rules['current_role_id'] = ['integer', 'exists:roles,id'];
                 return $rules;
             }
         }

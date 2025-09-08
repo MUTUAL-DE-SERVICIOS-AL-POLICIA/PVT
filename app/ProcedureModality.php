@@ -19,7 +19,8 @@ class ProcedureModality extends Model
         'procedure_type_id',
         'name',
         'shortened',
-        'is_valid'
+        'is_valid',
+        'workflow_id'
     ];
 
     public function getLoanModalityParameterAttribute()
@@ -70,5 +71,10 @@ class ProcedureModality extends Model
     public function getCurrentInterestAttribute()
     {
         return $this->loan_interests()->first();
+    }
+
+    public function workflow()
+    {
+        return $this->belongsTo(Workflow::class);
     }
 }

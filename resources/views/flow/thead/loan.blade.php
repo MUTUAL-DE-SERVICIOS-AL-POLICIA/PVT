@@ -1,5 +1,6 @@
 <td class="w-5">Nº</td>
-<td class="w-20">Código</td>
+<td class="w-15">Código</td>
+<td class="w-15">Modalidad</td>
 <td class="w-25">Solicitante</td>
 <td class="w-10">CI del solicitante</td>
 <td class="w-10">Fecha de solicitud</td>

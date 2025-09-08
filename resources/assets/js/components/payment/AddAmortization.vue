@@ -829,7 +829,7 @@ export default {
           estimated_quota:this.data_payment.pago_total,
           liquidate : this.data_payment.liquidate,
           procedure_modality_id:this.data_payment.procedure_modality_id,
-          categorie_id :this.data_payment.categori_id
+          categorie_id :this.data_payment.categori_id,
         })
         console.log(this.data_payment)
           this.payment_detail = res.data

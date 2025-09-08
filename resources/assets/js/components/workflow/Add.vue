@@ -896,8 +896,7 @@ export default {
         }
         this.setBreadcrumbs()
         this.getAddress(this.affiliate.id)
-
-        this.role(this.loan.role_id)
+        this.wf_state(this.loan.wf_states_id)
         if(this.loan.user_id != null){
           this.user(this.loan.user_id)
         }
@@ -1010,7 +1009,8 @@ export default {
       try {
             this.loading_btn_plan = true
             let res1 = await axios.patch(`loan/${this.loan.id}`, {
-            date_signal:true
+            date_signal:true,
+            current_role_id: this.$store.getters.rolePermissionSelected.id
           })
           this.loan.disbursement_date= this.$moment(res1.data.disbursement_date).format('YYYY-MM-DD')
            let res = await axios.get(`loan/${item}/print/plan`)
@@ -1060,10 +1060,10 @@ export default {
         console.log(e)
       }
     },
-    async role(role_id){
+    async wfState(wf_states_id){
       try {
-        let res = await axios.get(`role/${role_id}`)
-        this.role_name = res.data.display_name
+        let res = await axios.get(`wf_state/${wf_states_id}`)
+        this.wf_state_name = res.data.name
       } catch (e) {
         console.log(e)
       }
