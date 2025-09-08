@@ -416,6 +416,7 @@ Route::group([
         ], function () {
             Route::apiResource('address', 'Api\V1\AddressController')->only('destroy');
         });
+        Route::post('affiliates/{affiliate}/addresses/{address}/print','Api\V1\AddressController@print_address'); //Imprimir Direccion
 
         // Notas
         Route::group([

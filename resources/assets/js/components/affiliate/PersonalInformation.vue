@@ -1,7 +1,132 @@
 <template>
   <v-container fluid>
     <v-row justify="center">
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="12" class="ma-0 pa-0">
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              fab
+              dark
+              x-small
+              :color="'error'"
+              top
+              right
+              absolute                       
+              style="margin-top: 15px; margin-right:80px"
+              @click.stop="resetForm()"
+              v-show="editable"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </template>
+          <div>
+            <span>Cancelar</span>
+          </div>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              fab
+              dark
+              x-small
+              :color="editable ? 'danger' : 'success'"
+              top
+              right
+              absolute
+               style="margin-top: 15px;margin-right:20px"
+              @click.stop="saveAffiliate()"
+            >
+              <v-icon v-if="editable">mdi-check</v-icon>
+              <v-icon v-else>mdi-pencil</v-icon>
+            </v-btn>
+          </template>
+          <div>
+            <span v-if="editable">Guardar</span>
+            <span v-else>Editar</span>
+          </div>
+        </v-tooltip>
+      </v-col>
+      <v-col cols="12" md="12">
+        <v-container class="ma-0 pa-0">
+          <ValidationObserver ref="observer">
+            <v-form>
+              <v-card>
+                <v-col cols="12" md="12" class="py-2">
+                  <v-row>
+                    <v-col cols="12">
+                      <v-toolbar-title>TELÉFONOS</v-toolbar-title>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="12" md="4" class="py-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    vid="celular1"
+                    name="celular1"
+                    rules="min:11|max:11|required"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="getCelular[0]"
+                      label="Celular 1"
+                      @change="updateCelular()"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      :disabled="editable && !permission.secondary"
+                      v-mask="'(###)-#####'"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-col>
+                <v-col cols="12" md="4" class="py-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    vid="celular"
+                    name="celular2"
+                    rules="min:11|max:11"
+                  >
+                    <v-text-field
+                      class="text-right"
+                      :error-messages="errors"
+                      dense
+                      v-model="getCelular[1]"
+                      label="Celular 2"
+                      @change="updateCelular()"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      :disabled="editable && !permission.secondary"
+                      v-mask="'(###)-#####'"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-col>
+                <v-col cols="12" md="4" class="py-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    vid="teléfono"
+                    name="teléfono"
+                    rules="min:11|max:11"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="affiliate.phone_number"
+                      label="Fijo"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      :disabled="editable && !permission.secondary"
+                      v-mask="'(#) ###-###'"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-col>
+                  </v-row>
+                </v-col>
+
+              </v-card>
+            </v-form>
+          </ValidationObserver>
+        </v-container>
+      </v-col>
+      <v-col cols="12" md="12">
         <v-container class="ma-0 pa-0">
           <v-card>
             <v-row class="ma-0 pa-0">
@@ -15,7 +140,8 @@
                       fab
                       dark
                       x-small
-                      v-on="on"
+                      top left absolute
+                      style="margin-top: 25px; margin-left:130px"
                       color="info"
                       @click.stop="bus.$emit('openDialog', { edit:true })"
                     >
@@ -37,9 +163,11 @@
                   <template v-slot:item="props">
                     <tr>
                       <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
+                      <td>{{ props.item.zone }}</td>
+                      <td>{{ props.item.street }}</td>
+                      <td>{{ props.item.housing_unit }}</td>
+                      <td>{{ props.item.number_address }}</td>
                       <td>{{ props.item.description }}</td>
-                      <!--*<td>{{ props.item.street }}</td>
-                      <td>{{ props.item.number_address }}</td>-->
                       <td v-show="editable && permission.secondary">
                         <v-btn
                           text
@@ -65,124 +193,6 @@
             </v-row>
           </v-card>
         </v-container>
-      </v-col>
-      <v-col cols="12" md="3">
-        <v-container class="ma-0 pa-0">
-          <ValidationObserver ref="observer">
-            <v-form>
-              <v-card>
-                <v-col cols="12" class="py-2">
-                  <v-toolbar-title>TELÉFONOS</v-toolbar-title>
-                </v-col>
-                <v-col cols="12" class="py-0">
-                  <ValidationProvider
-                    v-slot="{ errors }"
-                    vid="celular1"
-                    name="celular1"
-                    rules="min:11|max:11|required"
-                  >
-                    <v-text-field
-                      :error-messages="errors"
-                      dense
-                      v-model="getCelular[0]"
-                      label="Celular 1"
-                      @change="updateCelular()"
-                      :readonly="!editable || !permission.secondary"
-                      :outlined="editable && permission.secondary"
-                      :disabled="editable && !permission.secondary"
-                      v-mask="'(###)-#####'"
-                    ></v-text-field>
-                  </ValidationProvider>
-                </v-col>
-                <v-col cols="12" class="py-0">
-                  <ValidationProvider
-                    v-slot="{ errors }"
-                    vid="celular"
-                    name="celular2"
-                    rules="min:11|max:11"
-                  >
-                    <v-text-field
-                      class="text-right"
-                      :error-messages="errors"
-                      dense
-                      v-model="getCelular[1]"
-                      label="Celular 2"
-                      @change="updateCelular()"
-                      :readonly="!editable || !permission.secondary"
-                      :outlined="editable && permission.secondary"
-                      :disabled="editable && !permission.secondary"
-                      v-mask="'(###)-#####'"
-                    ></v-text-field>
-                  </ValidationProvider>
-                </v-col>
-                <v-col cols="12" class="py-0">
-                  <ValidationProvider
-                    v-slot="{ errors }"
-                    vid="teléfono"
-                    name="teléfono"
-                    rules="min:11|max:11"
-                  >
-                    <v-text-field
-                      :error-messages="errors"
-                      dense
-                      v-model="affiliate.phone_number"
-                      label="Fijo"
-                      :readonly="!editable || !permission.secondary"
-                      :outlined="editable && permission.secondary"
-                      :disabled="editable && !permission.secondary"
-                      v-mask="'(#) ###-###'"
-                    ></v-text-field>
-                  </ValidationProvider>
-                </v-col>
-              </v-card>
-            </v-form>
-          </ValidationObserver>
-        </v-container>
-      </v-col>
-      <v-col cols="12" md="1" class="ma-0 pa-0">
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              x-small
-              :color="'error'"
-              bottom
-              right
-              v-on="on"
-              style="margin-right: 45px;"
-              @click.stop="resetForm()"
-              v-show="editable"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </template>
-          <div>
-            <span>Cancelar</span>
-          </div>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              x-small
-              :color="editable ? 'danger' : 'success'"
-              bottom
-              right
-              v-on="on"
-              style="margin-right: -9px; margin-top:10px;"
-              @click.stop="saveAffiliate()"
-            >
-              <v-icon v-if="editable">mdi-check</v-icon>
-              <v-icon v-else>mdi-pencil</v-icon>
-            </v-btn>
-          </template>
-          <div>
-            <span v-if="editable">Guardar</span>
-            <span v-else>Editar</span>
-          </div>
-        </v-tooltip>
       </v-col>
     </v-row>
     <AddStreet :bus="bus" :cities="cities" />
@@ -216,12 +226,15 @@ export default {
     editable: false,
     cities: [],
     headers: [
-      { text: "Ciudad", align: "left", value: "city_address_id" },
-      { text: "Zona", align: "left", value: "description" },
-      //{ text: "Calle", align: "left", value: "street" },
-      //{ text: "Nro", align: "left", value: "number_address" },
-      { text: "Acciones", align: "center" }
-    ],
+        { text: "Dpto", align: "center", class: ["normal", "white--text"], value: "city_address_id", sortable: true },
+        { text: "Zona / Barrio / Urbanización", align: "center", class: ["normal", "white--text"], value: "zone", sortable: false },
+        { text: "Calle / Avenida / Camino/Carretera", align: "center", class: ["normal", "white--text"], value: "street", sortable: false},
+        { text: "Condominio / Edificio / Torre", align: "center", class: ["normal", "white--text"], value: "housing_unit", sortable: false},
+        { text: 'N° Domicilio', align: 'center', class: ["normal", "white--text"], value: 'number_address', sortable: false},
+        { text: 'Referencia', align: 'center', class: ["normal", "white--text"], value: 'number_address', sortable: false },
+        { text: "Activo", align: "center", value: "" , class: ["normal", "white--text"], sortable: false },
+        { text: "Acciones", align: "center", class: ["normal", "white--text"], sortable: false }
+      ],
     city: [],
     cityTypeSelected: null,
     bus: new Vue()

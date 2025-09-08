@@ -3,83 +3,7 @@
     <ValidationObserver ref="observer">
       <v-form>
         <v-row justify="center">
-          <v-col cols="12">
-            <v-toolbar-title>INFORMACIÓN ADICIONAL DEL PRESTATARIO</v-toolbar-title>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-col cols="12">
-              <v-toolbar-title>DOMICILIO</v-toolbar-title>
-            </v-col>
-            <v-col cols="12">
-              <v-tooltip top v-if="editable && permission.secondary">
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    fab
-                    dark
-                    x-small
-                    v-on="on"
-                    color="info"
-                    @click.stop="bus.$emit('openDialog', { edit: true })"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </template>
-                <span>Añadir Dirección</span>
-              </v-tooltip>
-            </v-col>
-            <v-col cols="12">
-              <v-data-table
-                :headers="headers"
-                :items="addresses"
-                hide-default-footer
-                class="elevation-1"
-                v-if="cities.length > 0"
-                :key="refreshAddressTable"
-              >
-                <template v-slot:item="props">
-                  <tr>
-                    <td>
-                      {{ props.item.city_address_id != null? cities.find((o) => o.id == props.item.city_address_id).name : '' }}
-                    </td>
-                    <td>{{ props.item.description }}</td>
-                    <!--<td>{{ props.item.street }}</td>
-                      <td>{{ props.item.number_address }}</td>-->
-                    <td>
-                      <v-radio-group
-                        :value="id_street"
-                        @change=" (v) => { $emit('update:id_street', v) } "
-                      >
-                        <v-radio
-                          :value="props.item.id"
-                          :disabled="!editable || !permission.secondary"
-                        ></v-radio>
-                      </v-radio-group>
-                    </td>
-                    <td v-show="editable && permission.secondary">
-                      <v-btn
-                        text
-                        icon
-                        color="warning"
-                        @click.stop="
-                          bus.$emit('openDialog', {
-                            ...props.item,
-                            ...{ edit: true },
-                          })
-                        "
-                      >
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                      <v-btn :disabled="props.item.id===id_street" text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`), currentItem=props.item">
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                    </td>
-                  </tr>
-                </template>
-              </v-data-table>
-            </v-col>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-container class="py-0">
+          <v-col cols="12" md="12">
               <v-row>
                 <v-col cols="12">
                   <v-toolbar-title>TELÉFONOS</v-toolbar-title>
@@ -206,12 +130,86 @@
                   </ValidationProvider>
                 </v-col>-->
               </v-row>
-            </v-container>
+          </v-col>
+          <v-col cols="12" md="12">
+
+              <v-toolbar-title class="mb-3">DOMICILIO</v-toolbar-title>
+              <v-tooltip top v-if="editable && permission.secondary">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    x-small
+                    v-on="on"
+                    color="info"
+                    left
+                    absolute
+                    @click.stop="bus.$emit('openDialog', { edit: true })"
+                    style="margin-left: 140px; margin-top: -40px"
+                  >
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </template>
+                <span>Añadir Dirección</span>
+              </v-tooltip>
+
+              <v-data-table
+                dense
+                :headers="headers"
+                :items="addresses"
+                hide-default-footer
+                class="elevation-1"
+                v-if="cities.length > 0"
+                :key="refreshAddressTable"
+              >
+                <template v-slot:item="props">
+                  <tr>
+                    <td>
+                      {{ props.item.city_address_id != null? cities.find((o) => o.id == props.item.city_address_id).name : '' }}
+                    </td>
+                    <td>{{ props.item.zone }}</td>
+                    <td>{{ props.item.street }}</td>
+                    <td>{{ props.item.housing_unit }}</td>
+                    <td>{{ props.item.number_address }}</td>
+                    <td>{{ props.item.description }}</td>
+                    <td>
+                      <v-radio-group
+                        :value="id_street"
+                        @change=" (v) => { $emit('update:id_street', v) } "
+                      >
+                        <v-radio
+                          :value="props.item.id"
+                          :disabled="!editable || !permission.secondary"
+                        ></v-radio>
+                      </v-radio-group>
+                    </td>
+                    <td v-show="editable && permission.secondary">
+                      <v-btn
+                        text
+                        icon
+                        color="warning"
+                        @click.stop="
+                          bus.$emit('openDialog', {
+                            ...props.item,
+                            ...{ edit: true },
+                          })
+                        "
+                      >
+                        <v-icon>mdi-pencil</v-icon>
+                      </v-btn>
+                      <v-btn :disabled="props.item.id===id_street" text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`), currentItem=props.item">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                    </td>
+                  </tr>
+                </template>
+              </v-data-table>
+  
           </v-col>
         </v-row>
       </v-form>
     </ValidationObserver>
-    <AddStreet :bus="bus" :cities="cities" />
+    <AddStreet :bus="bus" :cities="cities" :affiliate="affiliate"/>
     <RemoveItem :bus="bus" />
   </v-container>
 </template>
@@ -262,11 +260,14 @@ export default {
         { name: "VALIDADO", value: "VALIDADO" },
       ],
       headers: [
-        { text: "Ciudad", align: "left", value: "city_address_id" },
-        { text: "Zona", align: "left", value: "description" },
-        { text: "Activo", align: "left", value: "" },
-        //{ text: 'Nro', align: 'left', value: 'number_address' },
-        { text: "Acciones", align: "center" },
+        { text: "Dpto", align: "center", class: ["normal", "white--text"], value: "city_address_id", sortable: true },
+        { text: "Zona / Barrio / Urbanización", align: "center", class: ["normal", "white--text"], value: "zone", sortable: false },
+        { text: "Calle / Avenida / Camino/Carretera", align: "center", class: ["normal", "white--text"], value: "street", sortable: false},
+        { text: "Condominio / Edificio / Torre", align: "center", class: ["normal", "white--text"], value: "housing_unit", sortable: false},
+        { text: 'N° Domicilio', align: 'center', class: ["normal", "white--text"], value: 'number_address', sortable: false},
+        { text: 'Referencia', align: 'center', class: ["normal", "white--text"], value: 'number_address', sortable: false },
+        { text: "Activo", align: "center", value: "" , class: ["normal", "white--text"], sortable: false },
+        { text: "Acciones", align: "center", class: ["normal", "white--text"], sortable: false }
       ],
       civil_statuses: [
         { name: "Soltero", value: "S" },
@@ -333,6 +334,15 @@ export default {
         this.loading = false;
       }
     },
+    async printAddress() {
+      let res = await axios.get(`affiliates/${this.affiliate.id}/addresses/${48962}/print`)
+      printJS({
+        printable: res.data.content,
+        type: res.data.type,
+        file_name: res.data.file_name,
+        base64: true
+      })
+    },
     async getCities() {
       try {
         this.loading = true;
@@ -381,3 +391,11 @@ export default {
   },
 };
 </script>
+<style>
+.v-data-table td,
+.v-data-table th {
+  padding: 4px 8px !important; /* menos espacio */
+
+}
+
+</style>

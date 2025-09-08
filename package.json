@@ -22,6 +22,7 @@
     "laravel-mix-purgecss": "^5.0.0",
     "leaflet": "^1.6.0",
     "leaflet-geosearch": "^3.0.6",
+    "leaflet-image": "^0.4.0",
     "lodash": "^4.17.15",
     "moment": "^2.26.0",
     "moment-business-days": "^1.2.0",

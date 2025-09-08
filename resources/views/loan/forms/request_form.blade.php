@@ -93,11 +93,21 @@
                 <td class="data-row py-5">{{ $lender->affiliate_state ? $lender->affiliate_state->affiliate_state_type->name : $lender->affiliate->affiliate_state->affiliate_state_type->name }}</td>     
             </tr>
             <tr class="bg-grey-darker text-white">
-                <td>Domicilio actual</td>
+                <td class="w-60">ZONA / BARRIO / URB.</td>
+                <td class="w-20">CALLE / AV. / CAM. / CARR.</td>
+                <td class="w-20">N° DOM.</td>
+            </tr>
+            <tr>
+                <td class="data-row py-5">{{$lender->address ? $lender->address->zone : '' }}</td>
+                <td class="data-row py-5">{{$lender->address ? $lender->address->street : '' }}</td>
+                <td class="data-row py-5">{{$lender->address ? $lender->address->number_address : '' }}</td>
+            </tr>
+            <tr class="bg-grey-darker text-white">
+                <td>COND. / EDIF. / TORRE (BLOQUE, PISO, N° DPTO)</td>
                 <td colspan="2">Teléfono(s)</td>
             </tr>
             <tr>
-                <td class="data-row py-5">{{ $lender->address ? $lender->address->full_address : '' }}</td>
+                <td class="data-row py-5">{{ $lender->address ? $lender->address->housing_unit : '' }}</td>
                 <td class="data-row py-5" colspan="2">
                 @if ($lender->phone_number != "" && $lender->phone_number != null)
                     <div>{{ $lender->phone_number }}</div>
@@ -209,11 +219,21 @@
                 <td class="data-row py-5">{{$guarantor->affiliate_state ? $guarantor->affiliate_state->affiliate_state_type->name : 'Pasivo'}}</td>
             </tr>
             <tr class="bg-grey-darker text-white">
-                <td>Domicilio actual</td>
+                <td class="w-60">ZONA / BARRIO / URB.</td>
+                <td class="w-20">CALLE / AV. / CAM. / CARR.</td>
+                <td class="w-20">N° DOM.</td>
+            </tr>
+            <tr>
+                <td class="data-row py-5">{{$guarantor->address ? $guarantor->address->zone : '' }}</td>
+                <td class="data-row py-5">{{$guarantor->address ? $guarantor->address->street : '' }}</td>
+                <td class="data-row py-5">{{$guarantor->address ? $guarantor->address->number_address : '' }}</td>
+            </tr>
+            <tr class="bg-grey-darker text-white">
+                <td>COND. / EDIF. / TORRE (BLOQUE, PISO, N° DPTO)</td>
                 <td colspan="2">Teléfono(s)</td>
             </tr>
             <tr>
-                <td class="data-row py-5">{{ $guarantor->address ? $guarantor->address->full_address : '' }}</td>
+                <td class="data-row py-5">{{ $guarantor->address ? $guarantor->address->housing_unit : '' }}</td>
                 <td class="data-row py-5" colspan="2">
                 @if ($guarantor->phone_number != "" && $guarantor->phone_number != null)
                     <div>{{ $guarantor->phone_number }}</div>
