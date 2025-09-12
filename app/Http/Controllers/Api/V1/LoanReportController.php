@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Module;
 use Util;
 use DB;
+use Log;
+use Illuminate\Support\Str;
 use App\Affiliate;
 use App\City;
 use App\User;
@@ -29,6 +31,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Exports\FileWithMultipleSheetsReport;
 use App\Exports\FileWithMultipleSheetsDefaulted;
 use App\Record;
+use App\Exports\LoansByStateExport;
+
 
 class LoanReportController extends Controller
 {
@@ -148,115 +152,21 @@ class LoanReportController extends Controller
    * @authenticated
    * @responseFile responses/report_loans/loan_desembolsado.200.json
    */
-
     public function report_loan_state_cartera(Request $request)
     {
-        ini_set('max_execution_time', 9000); // 150 min
-        ini_set('memory_limit', '2048M');    // 2 GB
-
-        // Fechas
-        $File="ListadoPrestamosVigenteLiquidado";
-        $initial_date = $request->has('initial_date')
-            ? Carbon::parse($request->input('initial_date'))->startOfDay()
-            : Carbon::now()->startOfDay();
-
+        ini_set('max_execution_time', 9000);
+        ini_set('memory_limit', '2048M');
+        DB::connection()->disableQueryLog();
         $final_date = $request->has('final_date')
             ? Carbon::parse($request->input('final_date'))->endOfDay()
             : Carbon::now()->endOfDay();
 
-        // Estados "Vigente" y "Liquidado"
-        $states = LoanState::whereIn('name', ['Vigente', 'Liquidado'])->pluck('id');
-
-        // Pre-cargar relaciones
-        $list_loan = Loan::with([
-            'one_borrower.degree',
-            'one_borrower.affiliate_state.affiliate_state_type',
-            'modality.procedure_type',
-            'interest',
-            'city',
-            'guarantors.degree',
-            'state'
-        ])
-        ->whereIn('state_id', $states)
-        ->whereBetween('disbursement_date', [$initial_date, $final_date])
-        ->get();
-        $data = array("NUP","NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
-                "INDICE DE ENDEUDAMIENTO", "SECTOR", "PRODUCTO", 
-                "PLAZO DEL PRESTAMO", "CUOTA", "TASA ANUAL DE INTERES", "DEPARTAMENTO", "***",
-                "CI PRESTATARO", "MATRICULA PRESTATARIO", "APELLIDO PATERNO PRESTATARIO", "APELLIDO MATERNO PRESTATARIO", "APE. CASADA PRESTATARIO", "1er NOMPRE PRESTATARIO", "2DO NOMBRE PRESTATARIO", "GRADO PRESTATARIO", "Nro CELULAR", "***",
-                "CI GAR 1", "MATRICULA GAR 1", "APELLIDO PATERNO GAR 1", "APELLIDO MATERNO GAR 1", "APE. CASADA GAR 1", "1er NOMPRE GAR 1", "2DO NOMBRE GAR 1", "GRADO GAR 1", "Nro CELULAR GAR 1", "***",
-                "CI GAR 2", "MATRICULA GAR 2", "APELLIDO PATERNO GAR 2", "APELLIDO MATERNO GAR 2", "APE. CASADA GAR 2", "1er NOMPRE GAR 2", "2DO NOMBRE GAR 2", "GRADO GAR 2", "Nro CELULAR GAR 2", "***",
-                "NRO. CBTE. CONTABLE", "CAPITAL PAGADO A FECHA DE CORTE", "SALDO A LA FECHA DE CORTE", "MONTO DESEMBOLSADO",
-                "MONTO REFINANCIADO", "LIQUIDO DESEMBOLSADO", "ESTADO PTMO", "AMPLIACION",
-                "FECHA ULTIMO PAGO DE INTERES", "NRO CUENTA SIGEP");
-        $data = array($data);
-        $data_vigente = $data_liq = $data;
-        foreach ($list_loan as $loan) {
-            $borrower = $loan->one_borrower;
-            $guarantor1 = $loan->guarantors[0] ?? null;
-            $guarantor2 = $loan->guarantors[1] ?? null;
-            $status_guarantor1 = $status_guarantor2 = false;
-            $status_guarantor1 = isset($loan->guarantors[0]);
-            $status_guarantor2 = isset($loan->guarantors[1]);
-            $lastPayment = $loan->last_payment_date($final_date);
-            $capitalPaid = $lastPayment
-                ? ($loan->amount_approved) - $lastPayment->previous_balance + $lastPayment->capital_payment
-                : 0;
-            $remainingBalance = $lastPayment
-                ? $lastPayment->previous_balance - $lastPayment->capital_payment
-                : $loan->amount_approved;
-            $refinanced = $loan->balance_parent_refi();
-            $netDisbursed = $loan->amount_approved - $refinanced;                
-            $data = array_merge([
-                $loan->affiliate_id,
-                $loan->code,
-                Carbon::parse($loan->request_date)->format('d/m/Y'),
-                Carbon::parse($loan->disbursement_date)->format('d/m/Y'),
-                $borrower->indebtedness_calculated,
-                $borrower->affiliate_state->affiliate_state_type->name ?? '',
-                $loan->modality->procedure_type->name ?? '',
-                $loan->loan_term,
-                Util::money_format($loan->estimated_quota),
-                $loan->interest->annual_interest,
-                $loan->city->name,
-                "***",
-                $borrower->identity_card,
-                $borrower->registration,
-                $borrower->last_name,
-                $borrower->mothers_last_name,
-                $borrower->surname_husband,
-                $borrower->first_name,
-                $borrower->second_name,
-                $borrower->degree->shortened ?? '',
-                $this->cleanPhone($borrower->cell_phone_number),
-                "***",
-            ],
-                $this->guarantorData($guarantor1, $status_guarantor1),
-                ["***"],
-                $this->guarantorData($guarantor2, $status_guarantor2),
-                ["***"],
-                [
-                    $loan->num_accounting_voucher,
-                    Util::money_format($capitalPaid),
-                    Util::money_format($remainingBalance),
-                    Util::money_format($loan->amount_approved),
-                    Util::money_format($refinanced),
-                    Util::money_format($netDisbursed),
-                    $loan->state->name,
-                    $loan->parent_reason,
-                    optional($lastPayment)->loan_payment_date ?? '',
-                    $loan->number_payment_type
-                ]
-            );
-            if ($loan->state->name === 'Vigente') {
-                array_push($data_vigente, $data);
-            } elseif ($loan->state->name === 'Liquidado') {
-                array_push($data_liq, $data);
-            }
-        }
-        $export = new MultipleSheetExportPayment($data_vigente, $data_liq,'PRE-VIGENTE','PRE-LIQUIDADO');
-        return Excel::download($export, $File.'.xlsx');
-        return $data;
+        app()->instance('suppress-db-log', true);
+        
+        $filename = 'ListadoPrestamosVigenteLiquidado';
+        $export = new LoansByStateExport($final_date);
+        return Excel::download($export, $filename.'.xlsx');
+        app()->forgetInstance('suppress-db-log');
     }
 
     private function cleanPhone($number)
