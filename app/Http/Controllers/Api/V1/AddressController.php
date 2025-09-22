@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 /** @group Direcciones
 * Datos de las direcciones de los afiliados y de aquellas relacionadas con los trámites
@@ -95,5 +96,51 @@ class AddressController extends Controller
         sleep(1);
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, $file_name, 'legal', $request->copies ?? 1);
         return $view;
+    }
+
+    public function resolve_url(Request $request)
+    {
+
+        $url = $request->query('url');
+
+        if (!$url) {
+            return response()->json(['error' => 'Falta el parámetro url'], 400);
+        }
+
+        try {
+            // 1️ Resolver short URL (goo.gl, maps.app.goo.gl)
+            if (preg_match('/goo\.gl|maps\.app\.goo\.gl/', $url)) {
+                $response = Http::withOptions(['allow_redirects' => true])
+                                ->get($url);
+                $url = (string) $response->effectiveUri();
+            }
+
+            // 2️ Patrones para extraer coordenadas
+            $patterns = [
+                '/@(-?\d+\.\d+),(-?\d+\.\d+)/',
+                '/\/search\/(-?\d+\.\d+)[,|%2C]\+?(-?\d+\.\d+)/i',
+                '/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/',
+                '/\/dir\/(-?\d+\.\d+)[,|%2C]\+?(-?\d+\.\d+)/i',
+                '/[?&]q=loc:(-?\d+\.\d+),(-?\d+\.\d+)/i'
+            ];
+
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $url, $matches)) {
+                    return response()->json([
+                        'lat' => (float) $matches[1],
+                        'lng' => (float) $matches[2],
+                        'final_url' => $url
+                    ]);
+                }
+            }
+
+            return response()->json(['error' => 'No se encontraron coordenadas'], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error procesando la URL',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }
