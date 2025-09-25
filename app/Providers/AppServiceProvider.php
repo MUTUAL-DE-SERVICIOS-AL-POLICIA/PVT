@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Carbon\Carbon;
+use Illuminate\Database\Events\QueryExecuted;
+use Log;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,11 +52,18 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         // DATABASE eloquent logs
-        DB::listen(function($query) {
-            \Log::channel('database')->info(
+        DB::listen(function (QueryExecuted $query) {
+        // 👇 si existe la bandera, NO loguear
+            if (app()->bound('suppress-db-log') && app('suppress-db-log') === true) {
+                return;
+            }
+
+            Log::channel('database')->info(
                 $query->sql,
-                $query->bindings,
-                $query->time
+                [
+                    'bindings' => $query->bindings,
+                    'time_ms'  => $query->time,
+                ]
             );
         });
     }
