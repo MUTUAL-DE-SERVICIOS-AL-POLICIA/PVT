@@ -417,6 +417,7 @@ Route::group([
             Route::apiResource('address', 'Api\V1\AddressController')->only('destroy');
         });
         Route::post('affiliates/{affiliate}/addresses/{address}/print','Api\V1\AddressController@print_address'); //Imprimir Direccion
+        Route::get('resolve_map_url', 'Api\V1\AddressController@resolve_url'); //Obtener URL de mapa
 
         // Notas
         Route::group([
