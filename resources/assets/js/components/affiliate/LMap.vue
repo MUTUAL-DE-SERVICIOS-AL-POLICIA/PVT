@@ -243,7 +243,7 @@ export default {
       }
       this.address.latitude = lat;
       this.address.longitude = lng
-      //this.address.image = 'miimagen'; // Limpiar imagen al mover el marcador
+
       if (!this.map) return;
 
 
@@ -293,7 +293,7 @@ export default {
         this.latInput = this.lat;
         this.lngInput = this.lng;
         this.direccionSeleccionada = ubicacion.display_name;
-        this.map.setView([this.lat, this.lng], 16);
+        this.map.setView([this.lat, this.lng], 17);
         this.colocarMarcador(this.lat, this.lng);
       } else {
         this.toastr.error('Dirección no encontrada dentro del departamento seleccionado');
@@ -305,7 +305,7 @@ export default {
       if (!this.latInput || !this.lngInput) return;
       this.lat = parseFloat(this.latInput);
       this.lng = parseFloat(this.lngInput);
-      this.map.setView([this.lat, this.lng], 16);
+      this.map.setView([this.lat, this.lng], 17);
       this.colocarMarcador(this.lat, this.lng);
       this.obtenerDireccion(this.lat, this.lng);
       console.log('entro2')
@@ -415,25 +415,26 @@ export default {
       this.provinciasFiltradas = [...new Set(provincias)];
     },
 
-    procesarURL() {
-      const coordenadas = this.extraerCoordenadasDesdeURL(this.url);
-      if (!coordenadas) {
-        this.toastr.error('No se pudieron extraer coordenadas de la URL.');
-        return;
-      }
-      const [lat, lng] = coordenadas;
-      this.map.setView([lat, lng], 17);
-      this.colocarMarcador(lat, lng);
-      this.obtenerDireccion(lat, lng);
-    },
+    async procesarURL() {
+      try {
+        const { data } = await axios.get('/resolve_map_url', {
+          params: { url: this.url }
+        });
 
-    extraerCoordenadasDesdeURL(url) {
-      const regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
-      const match = url.match(regex);
-      if (match) {
-        return [parseFloat(match[1]), parseFloat(match[2])];
+        // Si el backend no encuentra coordenadas
+        if (!data.lat || !data.lng) {
+          this.toastr.error('No se pudieron extraer coordenadas de la URL.');
+          return;
+        }
+        console.log('Coordenadas extraídas:', [data.lat, data.lng]);
+
+        this.map.setView([data.lat, data.lng], 17);
+        this.colocarMarcador(data.lat, data.lng);
+        this.obtenerDireccion(data.lat, data.lng);
+      } catch (e) {
+        console.e('Error al procesar URL:', error);
+        this.toastr.error('Ocurrió un error al obtener las coordenadas.');
       }
-      return null;
     },
 
     limpiarCampos() {
