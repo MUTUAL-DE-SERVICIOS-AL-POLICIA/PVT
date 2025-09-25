@@ -13,8 +13,6 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithTitle;
-
-// Opción B: autosize + eventos de hoja
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -162,20 +160,19 @@ class LoansSheetExport implements
             }, 'qualification_username')
 
             // === Garantes (hasta 2) como JSON (evita 1 query por préstamo) ===
-            ->selectSub(<<<'SQL'
+            ->selectSub("
                 SELECT COALESCE(
-                  json_agg(row_to_json(t) ORDER BY t.id),
-                  '[]'::json
+                json_agg(row_to_json(t) ORDER BY t.id),
+                '[]'::json
                 )
                 FROM (
-                  SELECT id_affiliate, type_affiliate_spouse_loan, id
-                  FROM view_loan_guarantors
-                  WHERE id_loan = loans.id
-                  ORDER BY id
-                  LIMIT 2
+                SELECT id_affiliate, type_affiliate_spouse_loan, id
+                FROM view_loan_guarantors
+                WHERE id_loan = loans.id
+                ORDER BY id
+                LIMIT 2
                 ) t
-                SQL
-                , 'guarantors_json')
+            ", 'guarantors_json')
 
             ->where('state_id', $this->stateId)
             ->where('disbursement_date', '<=', $fd)
@@ -501,7 +498,6 @@ class LoansSheetExport implements
                       ->setHorizontal(Alignment::HORIZONTAL_CENTER)
                       ->setVertical(Alignment::VERTICAL_CENTER)
                       ->setWrapText(true);
-
             },
         ];
     }
