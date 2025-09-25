@@ -154,8 +154,6 @@ export default {
     },
 
     async saveAddress() {
-      console.log(this.address)
-
 
       let image = this.address.image
       try {
@@ -169,13 +167,7 @@ export default {
           this.toastr.success('Domicilio Adicionado')
           this.bus.$emit('saveAddress', res.data)
         }
-        console.log(res.data)
 
-        //const url = `/affiliates/${8}/addresses/${4776}/print`;
-
-        console.log(this.address.image)
-        console.log(image)
-        console.log(res.data.id)
         let res2 = await axios.post(`/affiliates/${this.affiliate.id}/addresses/${res.data.id}/print`, {
           imagen: image
         }); // el backend retorna PDF en base64
