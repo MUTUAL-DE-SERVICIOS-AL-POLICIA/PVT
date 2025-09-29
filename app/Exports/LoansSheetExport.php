@@ -159,6 +159,14 @@ class LoansSheetExport implements
                   ->limit(1);
             }, 'qualification_username')
 
+            // quota del titular
+            ->selectSub(function ($q) {
+                $q->from('loan_borrowers')
+                ->select('quota_treat')
+                ->whereColumn('loan_borrowers.loan_id', 'loans.id')
+                ->limit(1); // si es 1:1 alcanza
+            }, 'quota_treat_sql')
+
             // === Garantes (hasta 2) como JSON (evita 1 query por préstamo) ===
             ->selectSub("
                 SELECT COALESCE(
@@ -212,7 +220,7 @@ class LoansSheetExport implements
     private function cleanPhone($v)
     {
         if (!$v) return '';
-        return preg_replace('/\D+/', '', $v);
+        return str_replace(['(', ')', '-'], '', $v);
     }
 
     private function getAffiliateById($id)
@@ -283,7 +291,7 @@ class LoansSheetExport implements
             if (!$pmId) return 0;
 
             if (!array_key_exists($pmId, $this->loanModalityTermCache)) {
-                $row = \App\LoanModalityParameter::where('procedure_modality_id', $pmId)
+                $row = \App\LoanModalityParameter::where('id', $pmId)
                     ->select('loan_month_term')->first();
                 $this->loanModalityTermCache[$pmId] = $row ? (int)$row->loan_month_term : null;
             }
@@ -343,8 +351,8 @@ class LoansSheetExport implements
         $refinanced   = $loan->balance_parent_refi();
         $netDisbursed = ($loan->amount_approved ?? 0) - ($refinanced ?? 0);
 
-        // Cuota estimada (cálculo local)
-        $quota = $this->computeEstimatedQuota($loan);
+        // Cuota estimada
+        $quota = (float) ($loan->quota_treat_sql ?? 0);
 
         // Datos del prestatario (solo para afiliados)
         $gradoTitular     = $isAffiliate ? data_get($person, 'degree.name', '') : '';
