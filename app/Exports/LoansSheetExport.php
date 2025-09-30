@@ -13,8 +13,6 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithTitle;
-
-// Opción B: autosize + eventos de hoja
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -161,21 +159,28 @@ class LoansSheetExport implements
                   ->limit(1);
             }, 'qualification_username')
 
+            // quota del titular
+            ->selectSub(function ($q) {
+                $q->from('loan_borrowers')
+                ->select('quota_treat')
+                ->whereColumn('loan_borrowers.loan_id', 'loans.id')
+                ->limit(1); // si es 1:1 alcanza
+            }, 'quota_treat_sql')
+
             // === Garantes (hasta 2) como JSON (evita 1 query por préstamo) ===
-            ->selectSub(<<<'SQL'
+            ->selectSub("
                 SELECT COALESCE(
-                  json_agg(row_to_json(t) ORDER BY t.id),
-                  '[]'::json
+                json_agg(row_to_json(t) ORDER BY t.id),
+                '[]'::json
                 )
                 FROM (
-                  SELECT id_affiliate, type_affiliate_spouse_loan, id
-                  FROM view_loan_guarantors
-                  WHERE id_loan = loans.id
-                  ORDER BY id
-                  LIMIT 2
+                SELECT id_affiliate, type_affiliate_spouse_loan, id
+                FROM view_loan_guarantors
+                WHERE id_loan = loans.id
+                ORDER BY id
+                LIMIT 2
                 ) t
-                SQL
-                , 'guarantors_json')
+            ", 'guarantors_json')
 
             ->where('state_id', $this->stateId)
             ->where('disbursement_date', '<=', $fd)
@@ -215,7 +220,7 @@ class LoansSheetExport implements
     private function cleanPhone($v)
     {
         if (!$v) return '';
-        return preg_replace('/\D+/', '', $v);
+        return str_replace(['(', ')', '-'], '', $v);
     }
 
     private function getAffiliateById($id)
@@ -286,7 +291,7 @@ class LoansSheetExport implements
             if (!$pmId) return 0;
 
             if (!array_key_exists($pmId, $this->loanModalityTermCache)) {
-                $row = \App\LoanModalityParameter::where('procedure_modality_id', $pmId)
+                $row = \App\LoanModalityParameter::where('id', $pmId)
                     ->select('loan_month_term')->first();
                 $this->loanModalityTermCache[$pmId] = $row ? (int)$row->loan_month_term : null;
             }
@@ -346,8 +351,8 @@ class LoansSheetExport implements
         $refinanced   = $loan->balance_parent_refi();
         $netDisbursed = ($loan->amount_approved ?? 0) - ($refinanced ?? 0);
 
-        // Cuota estimada (cálculo local)
-        $quota = $this->computeEstimatedQuota($loan);
+        // Cuota estimada
+        $quota = (float) ($loan->quota_treat_sql ?? 0);
 
         // Datos del prestatario (solo para afiliados)
         $gradoTitular     = $isAffiliate ? data_get($person, 'degree.name', '') : '';
@@ -501,7 +506,6 @@ class LoansSheetExport implements
                       ->setHorizontal(Alignment::HORIZONTAL_CENTER)
                       ->setVertical(Alignment::VERTICAL_CENTER)
                       ->setWrapText(true);
-
             },
         ];
     }
