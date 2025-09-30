@@ -1721,4 +1721,30 @@ class Loan extends Model
         $pay_for_eval = $this->loan_term - 3;
         return $this->loan_plan->where('quota_number', $pay_for_eval)->first()->balance;
     }
+
+    public function expiration_date()
+    {
+        if($this->disbursement_date)
+            return Carbon::parse($this->disbursement_date)->startOfMonth()->addMonths($this->loan_term)->endOfMonth()->format('d-m-Y');
+        else
+            return null;
+    }
+
+    public function platform_user()
+    {
+        $id_platform = Role::where('module_id', 6)->whereDisplayName('Plataforma')->first()->id;
+        return $this->records()->where('action', 'ilike', '%registró%')->whereRoleId($id_platform)->orderBy('created_at', 'desc')->first()->user ?? null;
+    }
+
+    public function qualification_user()
+    {
+        $id_qualification = Role::where('module_id', 6)->whereDisplayName('Calificación')->first()->id;
+        return $this->records()->where('action', 'ilike', '%de Calificación%')->whereRoleId($id_qualification)->orderBy('created_at', 'desc')->first()->user ?? null;
+    }
+
+    public function plan_payment_balance_in_date($date)
+    {
+        $date = Carbon::parse($date)->endOfDay();
+        return $this->loan_plan->where('estimated_date', '<=', $date)->sortByDesc('quota_number')->first()->balance ?? $this->amount_approved;
+    }
 }
