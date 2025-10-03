@@ -318,6 +318,8 @@ Route::group([
             Route::post('switch_guarantor_lender', 'Api\V1\LoanController@switch_guarantor_lender');
             Route::post('update_number_payment_type', 'Api\V1\LoanController@update_number_payment_type');
             Route::post('authorize_refinancing', 'Api\V1\LoanController@authorize_refinancing');
+            // Rutas para reprogramación de préstamos
+            Route::post('validate_reprogramming/{loan}', 'Api\V1\LoanController@validate_reprogramming');
         });
         Route::group([
             'middleware' => 'permission:delete-loan'

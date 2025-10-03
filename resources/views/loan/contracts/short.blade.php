@@ -363,6 +363,79 @@
         </table>
     </div>
 </div>
+@elseif($modality_name == 'Reprogramación Corto Plazo Sector Activo' || 
+        $modality_name == 'Reprogramación Corto Plazo en Disponibilidad' || 
+        $modality_name == 'Reprogramación Corto Plazo Sector Pasivo Gestora Pública' || 
+        $modality_name == 'Reprogramación Corto Plazo Sector Pasivo SENASIR' ||
+        $modality_name == 'Reprogramación del Refinanciamiento Corto Plazo Sector Activo' ||
+        $modality_name == 'Reprogramación del Refinanciamiento Corto Plazo en Disponibilidad' || 
+        $modality_name == 'Reprogramación del Refinanciamiento Corto Plazo Sector Pasivo Gestora Pública' ||
+        $modality_name == 'Reprogramación del Refinanciamiento Corto Plazo Sector Pasivo SENASIR')
+
+<div class="block text-justify">
+    <div>
+        Conste en la presente Adenda al contrato de préstamo por {{ ucfirst($title) }}, que al solo reconocimiento de firmas y rúbricas será elevado a 
+        Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor y contenido de las siguientes cláusulas 
+        y condiciones:
+    </div>
+    <div>
+        <b>
+            <b>PRIMERA.- (DE LAS PARTES):</b> Intervienen en el presente contrato, por una parte como acreedor la Mutual de Servicios 
+        al Policía (MUSERPOL), representada legalmente por el {{ $employees[0]['position'] }} {{ $employees[0]['name'] }} 
+        con C.I. {{ $employees[0]['identity_card'] }} y su {{ $employees[1]['position'] }} {{ $employees[1]['name'] }} con 
+        C.I. {{ $employees[1]['identity_card'] }}, que para fines de este contrato en adelante se denominará MUSERPOL o ACREEDOR 
+        con domicilio en la Z. Sopocachi, Av. 6 de Agosto Nº 2354 y por otra parte como PRESTATARIO
+
+        @if (count($lenders) == 1)
+            @php 
+                $lender = $lenders[0];
+                $male_female = Util::male_female($lender->gender) ;
+            @endphp
+            <span>
+                {{ $lender->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $lender->full_name }}, con C.I. {{ $lender->identity_card }}, 
+                {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, 
+                vecin{{ $male_female }} de {{ $lender->address->cityName() }} y con domicilio especial en {{ $lender->address->full_address }}, 
+                en adelante denominad{{ $male_female }} PRESTATARIO.
+            </span>
+        @endif
+        </b>
+    </div>
+    <div>
+        <b>SEGUNDA.- (DEL ANTECEDENTE):</b> Mediante contrato de préstamo {{ $parent_loan->code }} de fecha {{}} con fecha de desembolso 
+        {{ Carbon::parse($parent_loan->disbursement_date)->isoFormat('LL') }}, 
+        suscrito entre la MUSERPOL y el PRESTATARIO, se otorgo un prestamo por la suma de Bs.{{ Util::money_format($parent_loan->amount_approved) }} 
+        (<span class="uppercase">{{ Util::money_format($parent_loan->amount_approved, true) }} Bolivianos)</span>, con la generalidad de sus bienes,
+        derechos y acciones habidas y por haber, presentes y futuros; programados a un plazo de {{ $parent_loan->loan_term }} de pago para el cumplimiento de obligación,
+         con una amortización mensual de Bs {{ Util::money_format($parent_loan->estimated_quota) }} (<span class="uppercase">{{ Util::money_format($parent_loan->estimated_quota, true) }} BOLIVIANOS)</span>.<br>
+         El mencionado préstamo mantiene un saldo deudor a reprogramar de Bs.{{ Util::money_format($loan->reprogramming_balance) }} el cual se encuentra en el kardex
+         entregado por la MUSERPOL al PRESTATARIO en la presente fecha y la cual forma parte de este contrato.
+    </div>
+    <div>
+        <b>TERCERA.- (DEL OBJETO):</b> El objeto del presente es la suscripción de la adenda modificatoria del contrato señalado en los antecedentes de la clausula
+        segunda, para lo cual de acuerdo a la solicitud del PRESTATARIO de fecha {{ Carbon::parse($loan->request_date)->isoFormat('LL') }},
+        misma que se encuentra respaldada con los documentos adjuntados, la Mutual de Servicios al Policia (MUSERPOL) en estricta sujeción con los previsto
+        en el art. 67 y 68 del Reglamento de Préstamos, procede a reprogramar el préstamo descrito en la clausula precedente bajjo los siguientes terminos y condiciones 
+        que se establecen en la presente adenda.<br>
+        Consiguientemente el ACREEDOR Y LA MUSERPOL, acuerdan reprogramar y modificar la obligación original de la siguiente manera:CLAUSULA (PLAZO Y CUOTA DE AMORTIZACIÓN) de acuerdo a lo siguiente:
+    </div>
+    <div>
+        <b>3.1.-(PLAZO).-</b> Se reprograma el plazo de vigencia del préstamo señalado en la clausula segunda por el plazo de {{ $loan->loan_term }}, computables apartir de la presente Adenda
+    </div>
+    <div>
+        <b>3.2.-(CUOTA DE AMORTIZACIÓN).-</b> La amortización del pago a capital e intereses mensual y constantes que el prestatario efectuara a partir de la fecha de la suscripción de la presente adenda es de Bs. {{ $loan->estimated_quota}} (<span class="uppercase">{{ Util::money_format($loan->estimated_quota, true) }} BOLIVIANOS)</span>.
+    </div>
+    <div>
+        <b>CUARTA.- (DE LAS CONDICIONES Y CLAUSULAS ACORDADAS):</b> En cuanto a las demas clausulas y condiciones establecidas en el contrato de prestamos señalado en la clausula segunda se la presente adenda, 
+         se mantienen plenamente vigentes y con pleno valor legal siendo de cumplimiento obligatorio para el PRESTATARIO yla MUSERPOL, no admitiendo por tanto ningun de sobre entendimiento, 
+         conclusiones e interpretaciones contrarias, consto¿ituyendose la presente de unica y exclusiva modificacion de los puntos 3.1 y 3.2 señalados en la clausula precedente, por lo que 
+         la presente adenda forma parte integrante e indivisible del contrato antes mencionado.
+    </div>
+    <div>
+        <b>QUINTA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de ACREEDOR la Mutual de Servicios al Policía (MUSERPOL), representada por su {{ $employees[0]['position'] }} {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} {{ $employees[1]['name'] }} 
+        y por otra parte en calidad de PRESTATARIO el señor {{ $lender->full_name }} de generales ya señaladas; damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándonos a su fiel y estricto cumplimiento. En señal de lo cual suscribimos la presente adenda al contrato de préstamo de dinero 
+        en manifestación de nuestra libre y espontanea voluntad y sin que medie vicio de consentimiento alguno.
+    </div>
+</div>
 
 @else
 <div class="block text-justify">

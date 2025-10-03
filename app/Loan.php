@@ -100,14 +100,7 @@ class Loan extends Model
                 if (substr($this->parent_loan->code, -3) != substr($this->parent_reason, 0, 3))
                     $this->code = Loan::find($this->parent_loan_id)->code . " - " . substr($this->parent_reason, 0, 3);
                 else
-                    $this->code = $this->parent_loan->code;
-            } else {
-                /*$correlative = 0;
-                if($status != null)
-                {
-                    $correlative = Util::Correlative('loan');
-                }
-                $this->code = implode(['PTMO', str_pad($correlative, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);*/
+                    $this->code = 'R-'.$this->parent_loan->code;
             }
         }
     }
