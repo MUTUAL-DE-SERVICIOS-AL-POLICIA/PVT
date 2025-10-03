@@ -183,7 +183,7 @@
                     <span v-if="item.state.name == 'Vigente'">
                     <v-tooltip
                     left
-                    v-if="item.modality.procedure_type.name != 'Préstamo Anticipo' && permissionSimpleSelected.includes('create-loan')"
+                    v-if="item.refinancing && permissionSimpleSelected.includes('create-loan')"
                     >
                     <template v-slot:activator="{ on }">
                       <v-btn
@@ -203,10 +203,10 @@
                     </v-tooltip>
                     </span>
 
-                    <!-- <span v-if="item.state.name == 'Vigente'">
+                    <span v-if="item.state.name == 'Vigente'">
                     <v-tooltip
                     left
-                    v-if="(item.modality.procedure_type.name == 'Préstamo a Largo Plazo' || item.modality.procedure_type.name == 'Préstamo Hipotecario')
+                    v-if="(item.reprogramming)
                           && permissionSimpleSelected.includes('create-loan') "
                     >
                       <template v-slot:activator="{ on }">
@@ -225,7 +225,7 @@
                       </template>
                       <span>Reprogramacion</span>
                     </v-tooltip>
-                    </span> -->
+                    </span>
                     <v-progress-linear
                       :color="item.default_alert_state ? 'error' : 'info'"
                       height="15"
@@ -535,32 +535,13 @@ export default {
     },
     async validateReprogrammingLoan(a_id, l_id){
       try {
-        let res = await axios.post(`loan/${a_id}/validate_affiliate`)
-        this.validate_affiliate = res.data.validate
-        if(this.validate_affiliate == true){
-          let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
-            type_procedure: false
-          })
-          let validate = res.data
-          if(this.loan_affiliate.process_loans < this.global_parameters.max_loans_process){
-            if(this.loan_affiliate.disbursement_loans <= this.global_parameters.max_loans_active){
-              if(validate.paids){
-                if(validate.defaulted){
-                  this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
-                }else{
-                  this.toastr.error("El préstamo se encuentra en MORA")
-                }
-              }else{
-                this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
-              }
-            }else{
-              this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos vigentes. Actualemnte ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos vigentes.")
-            }
-          }else{
-            this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_process +" trámite en proceso. Actualmente ya tiene "+ this.loan_affiliate.process_loans+ " préstamos en proceso.")
-          }
+        
+        let res = await axios.post(`validate_reprogramming/${l_id}`)
+        if(res.data.status == false){
+          this.toastr.error(res.data.message)
+          return
         }else{
-          this.toastr.error(this.validate_affiliate)
+          this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
         }
       } catch (e) {
         console.log(e)

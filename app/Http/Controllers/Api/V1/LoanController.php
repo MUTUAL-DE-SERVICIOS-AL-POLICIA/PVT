@@ -104,6 +104,10 @@ class LoanController extends Controller
         $loan->borrower = $loan->borrower;
         $loan->borrowerguarantors = $loan->borrowerguarantors;
         $loan->paid_by_guarantors = $loan->paid_by_guarantors();
+        $loan->refinancing = false;
+        $loan->reprogramming = false;
+        if($loan->procedure_modality->loan_modality_parameter->modality_refinancing_id <> null) $loan->refinancing = true;
+        if($loan->procedure_modality->loan_modality_parameter->modality_reprogramming_id <> null) $loan->reprogramming = true;
         return $loan;
     }
 
@@ -2734,5 +2738,39 @@ class LoanController extends Controller
         }catch(\Exception $e){
             return $e;
         }
+    }
+
+    public function validate_reprogramming(Loan $loan)
+    {
+        $message = [];
+        $status = true;
+        $modality_reprogramming = null;
+        if($loan->affiliate->dead)
+        {
+            $status = false;
+            $message = 'El afiliado se encuentra fallecido, no se puede reprogramar';
+        }elseif($loan->defaulted)
+        {
+            $status = false;
+            $message = 'El prestamo tiene intereses adeudados, no se puede reprogramar';
+        }elseif(!$loan->modality->loan_modality_parameter->reprogramming_modality)
+        {
+            $status = false;
+            $message = 'Esta modalidad de prestamo no se puede reprogramar';
+        }elseif(($loan->amount_approved - $loan->balance) <= $loan->get_min_amount_for_refinancing())
+        {
+            $status = false;
+            $message = 'El monto aprobado del prestamo es menor al monto minimo para reprogramar';
+            
+        }else{
+            $modality_reprogramming = $loan->modality->loan_modality_parameter->reprogramming_modality;
+            $modality_reprogramming->loan_modality_parameter = $modality_reprogramming->loan_modality_parameter;
+            $message = 'El prestamo se puede reprogramar';
+        }
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'modality_reprogramming' => $modality_reprogramming
+        ], 200);
     }
 }
