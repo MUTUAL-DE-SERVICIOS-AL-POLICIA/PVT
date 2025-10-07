@@ -70,6 +70,7 @@ class LoanController extends Controller
         $loan->indebtedness_calculated = $loan->indebtedness_calculated;
         $loan->liquid_qualification_calculated = $loan->liquid_qualification_calculated;
         $loan->balance = $loan->balance;
+        $loan->balance_for_reprogramming = $loan->balance_for_reprogramming();
         $loan->estimated_quota = $loan->estimated_quota;
         $loan->defaulted = $loan->defaulted;
         $loan->observed = $loan->observed;
@@ -227,7 +228,6 @@ class LoanController extends Controller
     * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
-    * @bodyParam property_id integer ID de bien inmueble. Example: 4
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 2
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [294,283,296,305,306,307,308,309,310,311,312,313,284,44,274]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
@@ -288,6 +288,15 @@ class LoanController extends Controller
         DB::beginTransaction();
 
     try {
+        if($request->parent_reason == 'REPROGRAMACIÓN')
+        {
+            if(!$request->parent_loan_id) abort(403, 'el prestamo no cuenta con un préstamo padre');
+            $loan_parent = Loan::find($request->parent_loan_id);
+            if($loan_parent->balance_for_reprogramming() == 0 || $loan_parent->balance_for_reprogramming() != $request->amount_requested)
+                abort(403, 'El saldo del préstamo padre es diferente al monto solicitado');
+            if($loan_parent->reprogrammed_active_process_loans()->count()>0)
+                abort(403, 'El préstamo padre ya tiene un préstamo de reprogramación en proceso');
+        }
         $roles = Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id');
@@ -390,7 +399,7 @@ class LoanController extends Controller
     * @responseFile responses/loan/show.200.json
     */
     public function show(Loan $loan)
-    {   
+    {
         if (Auth::user()->can('show-all-loan') || Auth::user()->can('show-loan') || Auth::user()->can('show-payment-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loan->role_id)) {
@@ -429,7 +438,6 @@ class LoanController extends Controller
     * @bodyParam num_accounting_voucher string numero de comprobante contable.Example: 107
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
-    * @bodyParam property_id integer ID de bien inmueble. Example: 4
     * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
     * @bodyParam destiny_id integer ID destino de Préstamo. Example: 1
@@ -712,9 +720,18 @@ class LoanController extends Controller
             }
             else
             {
-                $correlative = Util::Correlative('loan');
-                $code = implode(['PTMO', str_pad($correlative, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
-                $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $disbursable->id,'amount_approved' => $request->amount_requested]));
+                if($request->parent_reason && $request->parent_reason == 'REPROGRAMACIÓN' && $request->parent_loan_id)
+                {
+                    $parent_loan = Loan::find($request->parent_loan_id);
+                    $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $parent_loan->affiliate_id,'amount_approved' => $request->amount_requested]));
+                    $code = "R-".$parent_loan->code;
+                }
+                else
+                {
+                    $correlative = Util::Correlative('loan');
+                    $code = implode(['PTMO', str_pad($correlative, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+                    $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $disbursable->id,'amount_approved' => $request->amount_requested]));
+                }
                 $loan->code = $code;
             }
             $loan_procedure = LoanProcedure::where('is_enable', true)->first()->id;
@@ -2762,7 +2779,17 @@ class LoanController extends Controller
             $status = false;
             $message = 'El monto aprobado del prestamo es menor al monto minimo para reprogramar';
             
-        }else{
+        }elseif($loan->last_payment->penal_payment > 0 || $loan->last_payment->interest_payment > 0 || $loan->last_payment->capital_payment != $loan->verify_balance())
+        {
+            $status = false;
+            $message = 'verificar el pendiente de reprogramación';
+        }
+        elseif($loan->reprogrammed_active_process_loans()->count() > 0)
+        {
+            $status = false;
+            $message = 'El prestamo ya tiene una reprogramación en proceso';
+        }
+        else{
             $modality_reprogramming = $loan->modality->loan_modality_parameter->reprogramming_modality;
             $modality_reprogramming->loan_modality_parameter = $modality_reprogramming->loan_modality_parameter;
             $message = 'El prestamo se puede reprogramar';

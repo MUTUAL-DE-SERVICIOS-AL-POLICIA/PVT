@@ -66,7 +66,6 @@ class Loan extends Model
         'guarantor_amortizing',
         'payment_type_id',
         'number_payment_type',
-        'property_id',
         'destiny_id',
         'financial_entity_id',
         'validated',
@@ -119,11 +118,6 @@ class Loan extends Model
     {
         $this->attributes['procedure_modality_id'] = $id;
         $this->attributes['interest_id'] = $this->modality->current_interest->id;
-    }
-
-    public function loan_property()
-    {
-        return $this->belongsTo(LoanProperty::class, 'property_id', 'id');
     }
 
     public function notes()
@@ -1739,5 +1733,24 @@ class Loan extends Model
     {
         $date = Carbon::parse($date)->endOfDay();
         return $this->loan_plan->where('estimated_date', '<=', $date)->sortByDesc('quota_number')->first()->balance ?? $this->amount_approved;
+    }
+
+    public function balance_for_reprogramming()
+    {
+        $payment = $this->last_payment;
+        if($payment)
+        {
+            if (Str::of($payment->categorie->name)->lower()->contains(Str::of('repro')->lower()) && 
+            Str::of($payment->modality->name)->lower()->contains(Str::of('repro')->lower()))
+                return $payment->capital_payment;
+        }
+        return 0;
+    }
+
+    public function reprogrammed_active_process_loans()
+    {
+        $loan_states = LoanState::whereNotIn('name',['Anulado'])->get()->pluck('id');
+        return Loan::where('parent_loan_id', $this->id)
+                    ->whereIn('state_id', $loan_states)->get();
     }
 }

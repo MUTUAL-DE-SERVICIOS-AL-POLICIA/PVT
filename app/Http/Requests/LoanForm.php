@@ -44,11 +44,6 @@ class LoanForm extends FormRequest
                 'parent_loan_id' => null,
             ]);
         }
-        if($this->property_id==0 && $this->has('property_id')){
-            $this->merge([
-                'property_id' => null,
-            ]);
-        }
         if($this->financial_entity_id==0 && $this->has('financial_entity_id')){
             $this->merge([
                 'financial_entity_id' => null,
@@ -106,7 +101,6 @@ class LoanForm extends FormRequest
             'lenders.*.contributionable_ids.*' => ['integer','min:1'],
             'lenders.*.contributionable_type'  => ['string','required','in:contributions,aid_contributions,loan_contribution_adjusts'],
             'lenders.*.loan_contributions_adjust_ids'  => ['array','nullable','exists:loan_contribution_adjusts,id'],
-            'property_id' => ['nullable', $hypothecary? 'required':'nullable','exists:loan_properties,id'],
             'guarantors' => ['array',new LoanParameterGuarantor($procedure_modality)],
             'guarantors.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
             'guarantors.*.payment_percentage' => ['required', 'numeric'],
