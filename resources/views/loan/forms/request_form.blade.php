@@ -36,7 +36,7 @@
                 @if ($loan->parent_reason && !$loan->parent_loan_id)
                 <td class="data-row py-5">{{ $loan->data_loan->code }}</td>
                 @endif
-                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">@if($loan->parent_reason == "REPROGRAMACIÓN") {{$loan->parent_reason}} @endif {{ $loan->modality->name }}</td>
+                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}"> {{ $loan->modality->name }}</td>
             </tr>
             <tr class="bg-grey-darker text-white">
                 <td>Monto solicitado</td>

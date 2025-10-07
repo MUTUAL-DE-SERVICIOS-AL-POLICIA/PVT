@@ -281,4 +281,9 @@ class LoanPayment extends Model
     {
         return $this->belongsTo(WfState::class, 'wf_states_id');
     }
+
+    public function categorie()
+    {
+        return $this->belongsTo(LoanPaymentCategorie::class, 'categorie_id');
+    }
 }
