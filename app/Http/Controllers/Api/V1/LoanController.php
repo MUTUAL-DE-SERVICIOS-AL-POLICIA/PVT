@@ -548,6 +548,18 @@ class LoanController extends Controller
                     $authorized_disbursement = true;
                 } 
                 if($authorized_disbursement){
+                    if($loan->parent_reason == 'REPROGRAMACIÓN')
+                    {
+                        if(!$loan->parent_loan_id) abort(403, 'el prestamo no cuenta con un préstamo padre');
+                        $loan_parent = Loan::find($loan->parent_loan_id);
+                        if($loan_parent->reprogrammed_active_process_loans()->count()>0 && $loan_parent->reprogrammed_active_process_loans()->first()->id != $loan->id)
+                            abort(403, 'El préstamo padre ya tiene un préstamo de reprogramación en proceso');
+                        if($loan->parent_loan->last_payment_validated->state->name != 'Pagado')
+                            abort(403, 'El préstamo padre aun tiene pagos pendientes por validar');
+                        if($loan->parent_loan->state->name == 'Vigente')
+                            abort(403, 'El préstamo padre aun se encuentra vigente');
+                    }
+
                     $loan['disbursement_date'] = Carbon::now();
                     $state_id = LoanState::whereName('Vigente')->first()->id;
                     $loan['state_id'] = $state_id;

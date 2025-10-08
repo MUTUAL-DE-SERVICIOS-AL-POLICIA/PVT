@@ -308,6 +308,29 @@
                   <span>Generar plan de pagos</span>
                 </div>
               </v-tooltip>
+            </v-card-title><div>{{ loan.modality.shortened }}</div>
+            <v-card-title class="pa-0" v-if="permissionSimpleSelected.includes('print-payment-plan-reprogramming')
+            && (loan.modality.shortened || '').toUpperCase().startsWith('REP')">  
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    x-small
+                    color="dark"
+                    top
+                    right
+                    absolute
+                    v-on="on"
+                    style="margin-top: 25px;"
+                    @click="imprimir($route.params.id)"
+                  >
+                    <v-icon>mdi-printer</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Generar el nuevo plan de pagos</span>
+                </div>
+              </v-tooltip>
             </v-card-title>
 
             <v-card-title class="pa-0" v-if="permissionSimpleSelected.includes('print-qualification-form')">
@@ -752,7 +775,7 @@ export default {
       if(newVal!=oldVal){
         this.getloan(this.$route.params.id)
       }
-    }
+    },
   },
   computed: {
     //permisos del selector global por rol
@@ -989,7 +1012,7 @@ export default {
       try {
         if(this.removeAccents(this.loan.disbursement_date)!='Fecha invalida')
         {
-          let res = await axios.get(`loan/${item}/print/plan`)
+            let res = await axios.get(`loan/${item}/print/plan`)
             printJS({
               printable: res.data.content,
               type: res.data.type,
@@ -1002,7 +1025,6 @@ export default {
         }
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
-        console.log(e)
       }
     },
      async generatePlan(item) {
@@ -1024,8 +1046,7 @@ export default {
           this.dialog=false
       } catch (e) {
         this.loading_btn_plan = false
-        this.toastr.error("Ocurrió un error en la impresión.")
-        console.log(e)
+        this.toastr.error(e.type[0] || "Ocurrió un error en la impresión.")
       }
     },
     async printQualificationForm(item) {
