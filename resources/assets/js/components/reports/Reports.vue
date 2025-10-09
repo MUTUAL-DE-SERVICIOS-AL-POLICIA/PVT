@@ -233,7 +233,7 @@ export default {
         id: 7,
         name: "Rep. Préstamos del estado de cartera",
         tab: 0,
-        criterios: ["initial_date", "final_date"],
+        criterios: ["final_date"],
         service: "/report_loan_state_cartera",
         type: "xls",
         permissions: 'show-report-loans'
