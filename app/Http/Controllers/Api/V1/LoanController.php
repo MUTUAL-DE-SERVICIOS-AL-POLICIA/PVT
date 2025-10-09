@@ -59,6 +59,7 @@ use App\Jobs\ProcessNotificationSMS;
 use App\LoanGuaranteeRetirementFund;
 use App\Observation;
 use App\WfState;
+use App\LoanModalityParameter;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -107,8 +108,9 @@ class LoanController extends Controller
         $loan->paid_by_guarantors = $loan->paid_by_guarantors();
         $loan->refinancing = false;
         $loan->reprogramming = false;
-        if($loan->procedure_modality->loan_modality_parameter->modality_refinancing_id <> null) $loan->refinancing = true;
-        if($loan->procedure_modality->loan_modality_parameter->modality_reprogramming_id <> null) $loan->reprogramming = true;
+        $loan_parameters = LoanModalityParameter::where('procedure_modality_id', $loan->procedure_modality_id)->where('loan_procedure_id', $loan->loan_procedure_id)->first();
+        if($loan_parameters->modality_refinancing_id <> null) $loan->refinancing = true;
+        if($loan_parameters->modality_reprogramming_id <> null) $loan->reprogramming = true;
         return $loan;
     }
 
@@ -737,6 +739,7 @@ class LoanController extends Controller
                     $parent_loan = Loan::find($request->parent_loan_id);
                     $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $parent_loan->affiliate_id,'amount_approved' => $request->amount_requested]));
                     $code = "R-".$parent_loan->code;
+                    $loan->refinancing_balance = $parent_loan->balance_for_reprogramming();
                 }
                 else
                 {
