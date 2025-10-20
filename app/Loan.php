@@ -1753,4 +1753,9 @@ class Loan extends Model
         return Loan::where('parent_loan_id', $this->id)
                     ->whereIn('state_id', $loan_states)->get();
     }
+
+    public function balance_parent_repro()
+    {
+        return $this->parent_loan_id ? $this->parent_loan->balance_for_reprogramming() : 0;
+    }
 }

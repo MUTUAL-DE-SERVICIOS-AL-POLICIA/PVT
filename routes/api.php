@@ -152,7 +152,6 @@ Route::group([
         Route::get('get_list_year', 'Api\V1\LoanPaymentPeriodController@get_list_year');//listado de meses por gestion
         Route::apiResource('periods', 'Api\V1\LoanPaymentPeriodController')->only('index', 'show', 'store', 'update', 'destroy');//cambiar a cobranzas
         //Route::post('loan/update_loan_affiliates', 'Api\V1\LoanController@update_loan_affiliates');
-        Route::post('committee_session/{loan}', 'Api\V1\LoanController@committee_session');
         Route::get('record_affiliate_history', 'Api\V1\RecordController@record_affiliate_history');
         Route::Post('loan_sismu', 'Api\V1\SismuController@getLoanSismu');
         Route::Post('update_balance_sismu', 'Api\V1\SismuController@update_balance');

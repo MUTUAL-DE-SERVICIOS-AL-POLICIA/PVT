@@ -318,7 +318,11 @@ class Util
 
     public static function save_record($object, $type, $action, $recordable = null)
     {
-        $role_id = $object->role_id;
+        if($object->role_id)
+            $role_id = $object->role_id;
+        elseif($object->wf_states_id)
+            $role_id = $object->currentState->role_id;
+
         if ($action) {
             $record_type = RecordType::whereName($type)->first();
             if ($record_type) {
