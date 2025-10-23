@@ -155,6 +155,15 @@ class update_loan_modality_parameters_seeder extends Seeder
                 'name' => 'Reprogramación del Refinanciamiento Largo Plazo con Garantía Personal Sector Pasivo SENASIR'
             ]);
 
+            DB::table('permissions')->insert([
+                [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                    'name' => 'print-payment-plan-reprogramming',
+                    'display_name' => 'Imprimir plan de pagos de reprogramaciones'
+                ]
+            ]);
+
             DB::commit();
         } catch (\Exception $e){
             DB::rollBack();
