@@ -59,12 +59,15 @@
         ({{ Util::money_format($loan->parent_loan->amount_approved, true) }}</span> Bolivianos),
         con la generalidad de sus bienes, derechos y acciones habidos y por haber, presentes y @if(count($guarantors)>0)futuros,@else futuros; @endif
         @if(count($guarantors)>0) así como la garantía personal,
+        @php $c = 0; @endphp
         @foreach($parent_loan_guarantors as $key => $guarantor)
             <span>
+                @if($c > 0) y @endif
+                @php $c++; @endphp
             {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $guarantor->full_name }}, con C.I. {{ $guarantor->identity_card }}, 
             {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $guarantor->city_birth->name }}, 
             vecin{{ Util::male_female($guarantor->gender) }} de {{ $guarantor->address->cityName() }} y con domicilio especial en 
-            {{ $guarantor->address->full_address }} {{ "(garante Nº ".($key+1).")" }},
+            {{ $guarantor->address->full_address }}{{ count($guarantors) > 1 ? " (garante Nº ".($key+1).")" : '' }},
             </span>
         @endforeach
         @endif
@@ -108,16 +111,21 @@
             @if (count($lenders) == 1)
                 {{ $lender->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $lender->full_name }} de generales ya @if(count($guarantors)>0)señaladas; @else señaladas,  @endif
             @endif
-            @if(count($guarantors) > 0)asímismo en calidad de garantes personales
+            @if(count($guarantors)>0)
+                @if(count($guarantors) > 1)
+                    <span>asimismo en calidad de garantes personales</span>
+                @else
+                    <span>asimismo en calidad de garante personal</span>
+                @endif
+            @endif
             @foreach($guarantors as $key => $guarantor)
                 <span>
                     {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $guarantor->full_name }}, con C.I. 
                     {{ $guarantor->identity_card }}, {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de 
                     {{ $guarantor->city_birth->name }}, vecin{{ Util::male_female($guarantor->gender) }} de {{ $guarantor->address->cityName() }} y con 
-                    domicilio especial en {{ $guarantor->address->full_address }} {{ "(garante Nº ".($key+1).")" }},
+                    domicilio especial en {{ $guarantor->address->full_address }}{{ count($guarantors) > 1 ? " (garante Nº ".($key+1).")" : '' }},
                 </span>
             @endforeach
-            @endif
             damos plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su ﬁel y estricto cumplimiento. 
             En señal de lo cual suscribimos el presente contrato de préstamo de dinero en manifestación de nuestra libre y espontánea voluntad 
             y sin que medie vicio de consentimiento alguno.
@@ -125,7 +133,7 @@
     </div><br><br>
     <div class="text-center">
         <p class="center">
-        La Paz, {{ Carbon::parse($loan->request_date)->isoFormat('LL') }}
+        La Paz, {{ Carbon::now()->isoFormat('LL') }}
         </p>
     </div>
 </div>
