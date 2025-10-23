@@ -43,7 +43,11 @@
 
             </tr>
             <tr>
-                <td class="data-row py-5">{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
+                @if ($loan->parent_reason == 'REPROGRAMACIÓN')
+                    <td class="data-row py-5"> {{ Util::money_format($loan->parent_loan->amount_approved)}} <span class="capitalize">Bs.</span></td>
+                @else
+                    <td class="data-row py-5">{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
+                @endif
                 @if ($loan->modality->procedure_type_id != 29)
                     @php ($term_text = $loan->loan_term == 1 ? 'mes' : 'meses')
                 @else
@@ -55,7 +59,11 @@
                         <div class="font-bold">Cuenta Entidad financiera</div>
                         <div>{{ $loan->number_payment_type }}</div>
                     @else
-                        {{ $loan->payment_type->name}}
+                        @if($loan->parent_reason == 'REPROGRAMACIÓN')
+                            {{ $loan->parent_loan->payment_type->name }}
+                        @else
+                            {{ $loan->payment_type->name }}
+                        @endif
                     @endif
                 </td>
                 <!--<td class="data-row py-5">{{ Carbon::parse($loan->disbursement_date)->format('d/m/y') }}</td>-->
@@ -68,13 +76,27 @@
             <tr>
                 <td>{{ $loan->interest->annual_interest}}</td>
                 <td>{{ Util::money_format($loan->estimated_quota) }}</td>
-                <td>{{ Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s') }}</td>
+                @if ($loan->parent_reason == 'REPROGRAMACIÓN')
+                    <td>{{ Carbon::parse($loan->parent_loan->disbursement_date)->format('d/m/Y H:i:s') }}</td>
+                @else
+                    <td>{{ Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s') }}</td>
+                @endif
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td>Certificación Presupuestaria contable</td>
+                @if($loan->parent_reason == 'REPROGRAMACIÓN')
+                    <td>Monto Reprogramado</td>
+                    <td>Fecha de Reprogramación</td>
+                @endif
             </tr>
             <tr>
-                <td>{{$loan->num_accounting_voucher ? $loan->num_accounting_voucher: 0}}</td>
+                @if ($loan->parent_reason == 'REPROGRAMACIÓN')
+                    <td>{{$loan->parent_loan->num_accounting_voucher ? $loan->parent_loan->num_accounting_voucher: 0}}</td>
+                    <td>{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
+                    <td>{{ Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s') }}</td>
+                @else
+                    <td>{{$loan->num_accounting_voucher ? $loan->num_accounting_voucher: 0}}</td>
+                @endif
             </tr>
         </table>
     </div>

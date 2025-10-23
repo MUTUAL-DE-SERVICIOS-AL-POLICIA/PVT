@@ -465,8 +465,8 @@ class LoansSheetExport implements
             $fmtMoney($refinanced),                                  // MONTO REFINANCIADO
             ($loan->parent_reason === 'REFINANCIAMIENTO') ? 'SI' : 'NO', // AMPLIACION
             $fmtMoney($netDisbursed),                                // LIQUIDO DESEMBOLSADO
-            ($loan->parent_reason === 'REPROGRAMACION') ? 'SI' : 'NO',   // REPROGRAMACIÓN
-            ($loan->parent_reason === 'REPROGRAMACION') ? $fmtMoney($loan->amount_approved) : '0,00', // MONTO REPROGRAMADO
+            ($loan->parent_reason === 'REPROGRAMACIÓN') ? 'SI' : 'NO',   // REPROGRAMACIÓN
+            ($loan->parent_reason === 'REPROGRAMACIÓN') ? $fmtMoney($loan->amount_approved) : '0,00', // MONTO REPROGRAMADO
             $fmtMoney($remaining),                                   // SALDO A LA FECHA DE CORTE
             $fmtMoney($loan->balance),                               // SALDO SEGÚN PLAN DE PAGOS
             $fmtMoney($capitalPaid),                                 // CAP. PAGADO A FECHA DE CORTE
