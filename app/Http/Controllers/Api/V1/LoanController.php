@@ -2743,11 +2743,17 @@ class LoanController extends Controller
         $message = [];
         $status = true;
         $modality_reprogramming = null;
-        if($loan->affiliate->dead)
-        {
+        $affiliate = true;
+        if($loan->one_borrower->type == 'spouses')
+            $affiliate = false;
+        if($affiliate && $loan->affiliate->dead){
             $status = false;
-            $message = 'El afiliado se encuentra fallecido, no se puede reprogramar';
-        }elseif($loan->defaulted)
+            $message = 'El afiliado se encuentra fallecido, no se puede reprogramar';    
+        }elseif(!$affiliate && $loan->affiliate->spouses->first()->dead){
+            $status = false;
+            $message = 'El prestatario se encuentra fallecido, no se puede reprogramar';    
+        }
+        elseif($loan->defaulted)
         {
             $status = false;
             $message = 'El prestamo tiene intereses adeudados, no se puede reprogramar';
