@@ -78,7 +78,8 @@ class Loan extends Model
         'affiliate_id',
         'loan_procedure_id',
         'authorize_refinancing',
-        'wf_states_id'
+        'wf_states_id',
+        'contract_signature_date'
     ];
 
     function __construct(array $attributes = [])

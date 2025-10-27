@@ -239,6 +239,7 @@ class LoanController extends Controller
     * @bodyParam remake_loan_id integer ID del prestamo que se esta rehaciendo. Example: 1
     * @bodyParam delivery_contract_date string Fecha de entrega del contrato al afiliado. Example: 2021-04-05
     * @bodyParam return_contract_date string Fecha de devolución del contrato del afiliado. Example: 2021-04-07
+    * @bodyParam contract_signature_date string Fecha de devolución del contrato del afiliado. Example: 2021-04-07
     * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer required ID del afiliado. Example: 47461
     * @bodyParam lenders[0].payment_percentage numeric required porcentage de pago del afiliado. Example: 50.6
@@ -1164,6 +1165,8 @@ class LoanController extends Controller
             'parent_loan' => $parent_loan,
             'file_title' => $file_title,
         ];
+        if($loan->parent_reason == 'REPROGRAMACIÓN' && !$loan->parent_loan->contract_signature_date)
+                abort(409, 'El préstamo original no tiene fecha de firma de contrato, no se puede generar el contrato de reprogramación.');
         if ($loan->parent_reason === 'REPROGRAMACIÓN' && optional($loan->parent_loan)->guarantors) {
             $data['parent_loan_guarantors'] = $loan->parent_loan->guarantors;
         }
@@ -2775,6 +2778,10 @@ class LoanController extends Controller
         {
             $status = false;
             $message = 'El prestamo ya tiene una reprogramación en proceso';
+        }
+        elseif(!$loan->contract_signature_date){
+            $status = false;
+            $message = 'El prestamo no cuenta con una fecha de firma de contrato, no se puede reprogramar';
         }
         else{
             $modality_reprogramming = $loan->modality->loan_modality_parameter->reprogramming_modality;
