@@ -53,7 +53,7 @@
     </div>
     <div>
         <b>SEGUNDA.- (DEL ANTECEDENTE):</b> Mediante contrato de préstamo N° {{ $loan->parent_loan->code }} de fecha 
-        {{ Carbon::parse($loan->parent_loan->request_date)->isoFormat('LL') }}
+        {{ Carbon::parse($loan->parent_loan->contract_signature_date)->isoFormat('LL') }}
         suscrito entre MUSERPOL y el PRESTATARIO, se otorgó un préstamo por la suma de 
         {{ Util::money_format($loan->parent_loan->amount_approved) }} <span class="uppercase">
         ({{ Util::money_format($loan->parent_loan->amount_approved, true) }}</span> Bolivianos),
