@@ -122,4 +122,27 @@ class AuthController extends Controller
     {
         return Auth::Guard('api');
     }
+
+    public function setSelectedRole(Request $request)
+    {
+        $request->validate([
+            'role_id' => 'required|integer',
+        ]);
+
+        session(['selected_role_id' => $request->role_id]);
+
+        return response()->json([
+            'message' => 'Rol seleccionado correctamente.',
+            'selected_role_id' => session('selected_role_id'),
+        ]);
+    }
+
+    public function clearSelectedRole()
+    {
+        session()->forget('selected_role_id');
+
+        return response()->json([
+            'message' => 'Rol eliminado de la sesión.',
+        ]);
+    }
 }
