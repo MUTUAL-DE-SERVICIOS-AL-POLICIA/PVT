@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Ldap;
+use Illuminate\Http\Request;
 
 /** @group Autenticación
 * Abre el acceso a la aplicación mediante llaves JSON WebToken de tipo Bearer
