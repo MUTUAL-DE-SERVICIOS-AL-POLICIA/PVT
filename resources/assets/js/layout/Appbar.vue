@@ -34,7 +34,7 @@
           color="white"
           outlined
           class="mx-3"
-          @click="$router.push('/changeRol')">
+          @click="returnChangeRol()">
           <v-icon>mdi-keyboard-return</v-icon>
         </v-btn>
     </div>
@@ -93,6 +93,10 @@ export default {
         this.rolePermissionSelected = this.rolesPermissionsItems[0]
       }
     },
+    async returnChangeRol() {
+      let res = await axios.post(`role/clear`)
+      this.$router.push('/changeRol')
+    }
   },
   computed: {
     ...mapGetters(['rolePermissionSelected']),
