@@ -93,7 +93,7 @@
                   <v-col cols="12" md="7" class="py-0 my-0">
                     <v-row>
                       <v-col cols="12" md="12" class="py-0 my-0 pb-1 uppercase"> COMPROBANTE DE PAGO <b>{{contribution[i].month}}</b></v-col>
-                      <v-col cols="12" md="3" class="py-0 my-0" v-if="!isCommission && !isEstacional">
+                      <v-col cols="12" md="3" class="py-0 my-0" v-if="!isCommission && !isEstacional && !reprogramming">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Comprobante de pago"
@@ -129,7 +129,7 @@
                         </ValidationProvider>
                       </v-col>
                       <!-- TOTAL Y DESCRIPCIÓN (si aplica) -->
-                      <template v-if="!isCommission && !isEstacional">
+                      <template v-if="!isCommission && !isEstacional && !reprogramming">
                         <v-col cols="12" md="2" class="py-0 my-0" >
                           <b style="text-align: center">= {{(parseFloat(contribution[i].adjustment_amount) + parseFloat(contribution[i].payable_liquid)) | money}}</b>
                         </v-col>
@@ -158,8 +158,8 @@
 
                   <v-col cols="12" md="5" class="py-0 my-0">
                     <v-row class="py-0 my-0">
-                      <v-col cols="12" md="12" class="py-0 my-0" v-if="!isCommission && !isEstacional"> BONOS </v-col>
-                      <template v-if="isActive">
+                      <v-col cols="12" md="12" class="py-0 my-0" v-if="!isCommission && !isEstacional && !reprogramming"> BONOS </v-col>
+                      <template v-if="isActive && !reprogramming">
                         <v-col cols="12" md="3" class="py-0 my-0">
                           <ValidationProvider
                             v-slot="{ errors }"
@@ -229,7 +229,7 @@
                           </ValidationProvider>
                         </v-col>
                      </template> 
-                      <v-col cols="12" :md="isPassive && !isEstacional ? 4 : 3" class="py-0 my-0" v-if="isPassive && !isEstacional">
+                      <v-col cols="12" :md="isPassive && !isEstacional && !reprogramming ? 4 : 3" class="py-0 my-0" v-if="isPassive && !isEstacional && !reprogramming">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Renta dignidad"
@@ -670,6 +670,7 @@ export default {
     adjustmentLabel(contrib) {
       if (this.isCommission) return 'Liquido pagable'
       if (this.isEstacional) return 'Importe cotizable'
+      if (this.reprogramming) return 'Ingresos'
       return 'Monto ajuste'
     },
     isAdjustment(contrib) {
@@ -677,13 +678,9 @@ export default {
       return !(
         parseFloat(contrib.payable_liquid) == 0 &&
         !this.isCommission &&
-        !this.isEstacional
+        !this.isEstacional &&
+        !this.reprogramming
       )
-    },
-    toFloat(value) {
-      // convierte cadenas o null a número seguro (0 si inválido)
-      const n = parseFloat(value)
-      return Number.isFinite(n) ? n : 0
     },
   }
 }
