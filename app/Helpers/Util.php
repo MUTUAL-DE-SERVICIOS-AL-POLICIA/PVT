@@ -318,6 +318,7 @@ class Util
 
     public static function save_record($object, $type, $action, $recordable = null)
     {
+        $role_id = null;
         if($object->role_id)
             $role_id = $object->role_id;
         elseif($object->wf_states_id)
@@ -326,14 +327,12 @@ class Util
         if ($action) {
             $record_type = RecordType::whereName($type)->first();
             if ($record_type) {
-                $role = Auth::user()->roles()->whereHas('module', function($query) {
-                    return $query->whereName('prestamos');
-                })->orderBy('name')->first();
+                $role = Auth::user()->getSelectedRoleId();
                 $record = $object->records()->make([
                     'action' => $action
                 ]);
                 $record->record_type()->associate($record_type);
-                $record->role_id = $role_id ? $role_id : $role->id;
+                $record->role_id = $role_id ? $role_id : $role;
                 if ($recordable) $record->recordable()->associate($recordable);
                 $record->save();
             }
