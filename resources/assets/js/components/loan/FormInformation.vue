@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-card>
       <v-row justify="center">
-        <v-col cols="12">
+        <v-col cols="12" v-if="!this.reprogramming">
           <ValidationObserver ref="observerDestiny">
             <v-form>
               <v-container>
@@ -25,15 +25,6 @@
                       ></v-select>
                     </ValidationProvider>
                   </v-col>
-                  <!--<v-col cols="12" md="3" class="py-0" v-show="visible">
-                      <v-text-field
-                        label="Entidad Financiera"
-                        class="py-0"
-                        dense
-                        v-model="entity"
-                        readonly
-                      ></v-text-field>
-                  </v-col>-->
 
                   <v-col cols="12" md="3" class="py-0" v-show="visible">
                     <ValidationProvider
@@ -163,117 +154,6 @@
               </v-container>
             </v-form>
           </ValidationObserver>
-
-          <!--Referencia personal-->
-          <!-- <ValidationObserver ref="observerPerRef">
-            <v-form>
-              <v-container class="py-0" v-show="modalidad_personal_reference">
-                <v-row>
-                  <v-col cols="12" md="12">
-                    <v-toolbar-title>REFERENCIA PERSONAL</v-toolbar-title>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <ValidationProvider
-                      v-slot="{ errors }"
-                      vid="first_name"
-                      name="Primer Nombre"
-                      rules="required|alpha_spaces|min:3|max:20"
-                    >
-                      <v-text-field
-                        :error-messages="errors"
-                        v-model="personal_reference.first_name"
-                        dense
-                        label="Primer Nombre"
-                      ></v-text-field>
-                    </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <ValidationProvider
-                      v-slot="{ errors }"
-                      vid="second_name"
-                      name="Primer Nombre"
-                      rules="alpha_spaces|min:3|max:20"
-                    >
-                      <v-text-field
-                        :error-messages="errors"
-                        v-model="personal_reference.second_name"
-                        dense
-                        label="Segundo Nombre"
-                      ></v-text-field>
-                    </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <ValidationProvider
-                      v-slot="{ errors }"
-                      name="Primer Apellido"
-                      rules="alpha_spaces|min:3|max:20"
-                    >
-                      <v-text-field
-                        :error-messages="errors"
-                        v-model="personal_reference.last_name"
-                        dense
-                        label="Primer Apellido"
-                      ></v-text-field>
-                    </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <ValidationProvider
-                      v-slot="{ errors }"
-                      name="Segundo Apellido"
-                      :rules="(personal_reference.last_name == null || personal_reference.last_name == '')? 'required' : ''+'alpha_spaces|min:3|max:20'"
-                    >
-                      <v-text-field
-                        :error-messages="errors"
-                        v-model="personal_reference.mothers_last_name"
-                        dense
-                        label="Segundo Apellido"
-                      ></v-text-field>
-                    </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <ValidationProvider
-                      v-slot="{ errors }"
-                      name="Teléfono"
-                      rules="min:11|max:11"
-                    >
-                      <v-text-field
-                        :error-messages="errors"
-                        v-model="personal_reference.phone_number"
-                        dense
-                        label="Teléfono"
-                        v-mask="'(#) ###-###'"
-                      ></v-text-field>
-                    </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <ValidationProvider
-                      v-slot="{ errors }"
-                      name="Celular"
-                      rules="min:11|max:11"
-                    >
-                      <v-text-field
-                        :error-messages="errors"
-                        v-model="personal_reference.cell_phone_number"
-                        dense
-                        label="Celular"
-                        v-mask="'(###)-#####'"
-                      ></v-text-field>
-                    </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="6">
-                    <ValidationProvider v-slot="{ errors }" name="Direccion" rules="required">
-                      <v-text-field
-                        :error-messages="errors"
-                        dense
-                        v-model="personal_reference.address"
-                        label="Dirección"
-                        ></v-text-field>
-                      </ValidationProvider>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-form>
-          </ValidationObserver> -->
         </v-col>
           <ReferencePerson
           v-show="modalidad_personal_reference"
@@ -380,11 +260,13 @@ export default {
       }
     }
   },
+
   beforeMount() {
     this.getCities();
     this.getPaymentTypes();
   },
-    computed: {
+
+  computed: {
     //Metodo para obtener Permisos por rol
     permissionSimpleSelected () {
       return this.$store.getters.permissionSimpleSelected
@@ -412,6 +294,12 @@ export default {
       } else {
         return this.permissionSimpleSelected.includes("create-affiliate")
       }
+    },
+    reprogramming() {
+      return this.$route.params.hash == 'reprogramming'
+    },
+    remake() {
+      return this.$route.params.hash === 'remake'
     },
   },
   methods: {
@@ -482,17 +370,6 @@ export default {
         this.loading = false
       }
     },
-    /*async getEntityAffiliate() {
-      try {
-        this.loading = true
-        let res = await axios.get(`financial_entity/${this.affiliate.financial_entity_id}`)
-        this.entity = res.data.name
-      } catch (e) {
-        console.log(e)
-      }finally {
-          this.loading = false
-        }
-    },*/
     async getEntity() {
       try {
         this.loading = true;
@@ -505,49 +382,6 @@ export default {
         this.loading = false;
       }
     },
-    // async savePersonalReference1()
-    // {
-    //   try{
-    //     if (this.modalidad_personal_reference) {
-    //       this.reference = []
-    //       if (this.editedIndexPerRef == -1){
-    //         let res = await axios.post(`personal_reference`, {
-    //           city_identity_card_id:this.personal_reference.city_identity_card_id,
-    //           identity_card:this.personal_reference.identity_card,
-    //           last_name:this.personal_reference.last_name,
-    //           mothers_last_name:this.personal_reference.mothers_last_name,
-    //           first_name:this.personal_reference.first_name,
-    //           second_name:this.personal_reference.second_name,
-    //           phone_number:this.personal_reference.phone_number,
-    //           cell_phone_number:this.personal_reference.cell_phone_number,
-    //           address:this.personal_reference.address
-    //         })
-    //         this.editedIndexPerRef = res.data.id
-    //         this.reference.push(res.data.id)
-    //       }else{
-    //         let res = await axios.patch(`personal_reference/${this.editedIndexPerRef}`,
-    //         {
-    //           city_identity_card_id:this.personal_reference.city_identity_card_id,
-    //           identity_card:this.personal_reference.identity_card,
-    //           last_name:this.personal_reference.last_name,
-    //           mothers_last_name:this.personal_reference.mothers_last_name,
-    //           first_name:this.personal_reference.first_name,
-    //           second_name:this.personal_reference.second_name,
-    //           phone_number:this.personal_reference.phone_number,
-    //           cell_phone_number:this.personal_reference.cell_phone_number,
-    //           address:this.personal_reference.address
-    //         })
-    //         this.reference.push(res.data.id)
-    //       }
-    //       this.loan_detail.reference = this.reference
-    //     }
-    //   } catch (e) {
-    //     console.log(e)
-    //      this.$refs.observer.setErrors(e)
-    //   } finally {
-    //     this.loading = false
-    //   }
-    // },
     async savePersonalReference() {
       try {
         let ids_reference = []
@@ -639,45 +473,42 @@ export default {
       this.affiliate.financial_entity_id = null
       this.affiliate.account_number= null
     },
-     async validateStepsFive(){
-
+    async validateStepsFive() {
       try {
-        if(!this.editable){
+        if (this.editable) {
+          this.toastr.error("Por favor guarde los datos de la entidad financiera.");
+          return;
+        }
+
+        if (!this.reprogramming) {
           this.val_destiny = await this.$refs.observerDestiny.validate();
-          if (this.val_destiny ) {
-            if(this.modalidad_personal_reference){
-              if(this.reference_person.length >=1){
-              // this.val_per_ref = await this.$refs.observerPerRef.validate();
-              // if(this.val_per_ref){
-                  this.savePersonalReference()
-                  this.savePCosigner()
-                  this.nextStepBus(5)
-              // }else{
-              //     console.log("no pasa")
-              // }
-              }else {
-                this.toastr.error("Registre por lo menos una persona de referencia")
-              }
-            }else{
-              this.savePersonalReference()
-              this.savePCosigner()
-              this.nextStepBus(5)
-            }
-          }else{
-            console.log("no pasa")
+          if (!this.val_destiny) {
+            console.log("Falta el registro de algunos campos");
+            return;
           }
-        }else{
-          this.toastr.error("Por favor guarde los datos de la entidad financiera.")
         }
 
-
-      }catch (e) {
-        this.$refs.observerDestiny.setErrors(e);
-        if(this.modalidad_personal_reference){
-        this.$refs.observerPerRef.setErrors(e)
+        if (this.modalidad_personal_reference) {
+          if (this.reference_person.length < 1) {
+            this.toastr.error("Registre por lo menos una persona de referencia");
+            return;
+          }
         }
+
+        await this.savePersonalReference();
+        await this.savePCosigner();
+        this.nextStepBus(5);
+
+      } catch (e) {
+        if (this.$refs.observerDestiny) {
+          this.$refs.observerDestiny.setErrors(e);
+        }
+        if (this.modalidad_personal_reference && this.$refs.observerPerRef) {
+          this.$refs.observerPerRef.setErrors(e);
+        }
+        console.error("Ocurrio un error", e);
       }
-     }
+    }
   }
 };
 </script>

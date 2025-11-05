@@ -853,7 +853,7 @@ export default {
         }
         this.setBreadcrumbs()
         this.getAddress(this.affiliate.id)
-        this.wf_state(this.loan.wf_states_id)
+        this.wfState(this.loan.wf_states_id)
         if(this.loan.user_id != null){
           this.user(this.loan.user_id)
         }
