@@ -26,24 +26,41 @@ class AddTypeAdjustToContributionAdjustsTable extends Migration
 
         DB::statement("
             ALTER TABLE role_user 
-            RENAME COLUMN user_type TO role_active;");
+            RENAME COLUMN user_type TO role_active;
+        ");
 
-        DB::statement("UPDATE role_user
+        DB::statement("
+            ALTER TABLE role_user
+            ALTER COLUMN role_active TYPE boolean
+            USING (
+                CASE
+                    WHEN role_active IN ('1', 'true', 't', 'yes', 'y', 'activo', 'active') THEN true
+                    ELSE false
+                END
+            );
+        ");
+
+        DB::statement("
+            UPDATE role_user
             SET role_active = false
-            WHERE role_active IS NULL;");
+            WHERE role_active IS NULL;
+        ");
 
         DB::statement("
             ALTER TABLE role_user
-            ALTER COLUMN role_active SET DEFAULT false;");
-        
+            ALTER COLUMN role_active SET DEFAULT false;
+        ");
+
         DB::statement("
             ALTER TABLE role_user
-            ALTER COLUMN role_active SET NOT NULL;");
+            ALTER COLUMN role_active SET NOT NULL;
+        ");
 
         DB::statement("
             CREATE UNIQUE INDEX role_user_one_active_per_user
             ON role_user(user_id)
-            WHERE role_active = true;");
+            WHERE role_active = true;
+        ");
     }
 
     /**
