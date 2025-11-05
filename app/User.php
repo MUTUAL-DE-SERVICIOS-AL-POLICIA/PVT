@@ -55,6 +55,7 @@ class User extends Authenticatable implements JWTSubject
             'roles' => array_values(array_filter($this->roles()->where('module_id',6)->pluck('name')->toArray())),
             'permissions' => array_values(array_filter($this->allPermissions()->pluck('name')->toArray())),
             'city_id' => $this->city ? $this->city->id : null,
+            'active_role_id' => $this->getSelectedRoleId(),
         ];
     }
 
@@ -177,5 +178,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function loan_tracking() {
         return $this->hasMany(LoanTracking::class);
+    }
+
+    public function getSelectedRoleId()
+    {
+        return $this->roles()
+            ->wherePivot('role_active', true)
+            ->value('roles.id');
     }
 }

@@ -77,6 +77,13 @@ class AuthController extends Controller
                 }
             }
         }
+        $allowed_user = Auth::user();
+        if ($allowed_user) {
+            $allowed_user->roles()->updateExistingPivot(
+                $allowed_user->roles()->pluck('roles.id')->toArray(),
+                ['role_active' => false]
+            );
+        }
         if ($token) {
             \Log::channel('access')->info("Usuario ".Auth::user()->username." autenticado desde la dirección ".request()->ip());
             //return $token;
@@ -124,26 +131,40 @@ class AuthController extends Controller
         return Auth::Guard('api');
     }
 
-    public function setSelectedRole(Request $request)
+    public function setActiveRole(Request $request)
     {
         $request->validate([
-            'role_id' => 'required|integer',
+            'role_id' => 'required|exists:roles,id',
         ]);
 
-        session(['selected_role_id' => $request->role_id]);
+        $user = Auth::user();
+        $user->roles()->updateExistingPivot(
+            $user->roles()->pluck('roles.id')->toArray(),
+            ['role_active' => false]
+        );
+        $user->roles()->updateExistingPivot(
+            $request->role_id,
+            ['role_active' => true]
+        );
 
         return response()->json([
-            'message' => 'Rol seleccionado correctamente.',
-            'selected_role_id' => session('selected_role_id'),
+            'message' => 'Rol activo actualizado',
         ]);
     }
 
     public function clearSelectedRole()
     {
-        session()->forget('selected_role_id');
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'No autenticado'], 401);
+        }
+        $user->roles()->updateExistingPivot(
+            $user->roles()->pluck('roles.id')->toArray(),
+            ['role_active' => false]
+        );
 
         return response()->json([
-            'message' => 'Rol eliminado de la sesión.',
+            'message' => 'Rol activo eliminado correctamente.',
         ]);
     }
 }

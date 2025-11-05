@@ -23,7 +23,7 @@ Route::group([
     Route::group([
         'middleware' => 'auth'
     ], function () {
-        Route::post('role/select', 'Api\V1\AuthController@setSelectedRole');
+        Route::post('role/select', 'Api\V1\AuthController@setActiveRole');
         Route::post('role/clear', 'Api\V1\AuthController@clearSelectedRole');
         Route::apiResource('user', 'Api\V1\UserController');//->only('index', 'show', 'update');
         if (!env("LDAP_AUTHENTICATION")) Route::apiResource('user', 'Api\V1\UserController')->only('update');
