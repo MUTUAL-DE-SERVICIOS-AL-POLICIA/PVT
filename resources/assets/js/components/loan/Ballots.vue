@@ -93,7 +93,7 @@
                   <v-col cols="12" md="7" class="py-0 my-0">
                     <v-row>
                       <v-col cols="12" md="12" class="py-0 my-0 pb-1 uppercase"> COMPROBANTE DE PAGO <b>{{contribution[i].month}}</b></v-col>
-                      <v-col cols="12" md="3" class="py-0 my-0" v-if="!isCommission && !isEstacional && !reprogramming">
+                      <v-col cols="12" md="3" class="py-0 my-0" v-if="!isCommission && !isEstacional && !reprogramming && parent_reason !='REPROGRAMACIÓN'">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Comprobante de pago"
@@ -111,7 +111,7 @@
                           ></v-text-field>
                         </ValidationProvider>
                       </v-col>
-                      <v-col cols="12" class="py-0 my-0" :md="isCommission || isEstacional ? 4 : 2">
+                      <v-col cols="12" class="py-0 my-0" :md="isCommission || isEstacional || reprogramming? 4 : 2">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Monto ajuste"
@@ -277,7 +277,6 @@
   </v-flex>
 </template>
 <script>
-import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
 
 export default {
   name: "ballots",
@@ -311,10 +310,6 @@ export default {
     procedureLoan: {
       type: Object,
       required: true
-    },
-    contrib_codebtor: {
-      type: Array,
-      required:true
     },
     loan_detail: {
       type: Object,
@@ -352,10 +347,13 @@ export default {
       type: Boolean,
       required: true
     },
+    data_loan_parent_aux:{
+      type: Object,
+      required: true
+    },
 
   },
   components: {
-    BallotsHipotecary,
   },
   mounted() {
     //this.getModalityLoan()
@@ -375,7 +373,7 @@ export default {
       return this.$route.params.hash == 'refinancing'
     },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming'
+      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason =='REPROGRAMACIÓN'
     },
     remake() {
       return this.$route.params.hash === 'remake'

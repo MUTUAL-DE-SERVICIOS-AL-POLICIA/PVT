@@ -159,11 +159,6 @@
           v-show="modalidad_personal_reference"
             :reference_person="reference_person"
           />
-          <CoDebtor
-            v-show="this.modalidad_max_cosigner > 0"
-            :personal_codebtor="personal_codebtor"
-            :modalidad_max_cosigner.sync="modalidad_max_cosigner"
-          />
       </v-row>
     </v-card>
     <v-container>
@@ -183,12 +178,10 @@
   </v-container>
 </template>
 <script>
-import CoDebtor from "@/components/loan/CoDebtor";
 import ReferencePerson from "@/components/loan/ReferencePerson";
 export default {
   name: "loan-information",
   components: {
-    CoDebtor,
     ReferencePerson
   },
   props: {
@@ -218,14 +211,14 @@ export default {
       type: Object,
       required: true
     },
-    personal_codebtor: {
-      type: Array,
-      required: true
-    },
     modalidad_max_cosigner: {
       type: Number,
       required: true,
       default:0
+    },
+    data_loan_parent_aux: {
+      type: Object,
+      required: true
     }
   },
   data: () => ({
@@ -296,7 +289,7 @@ export default {
       }
     },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming'
+      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason =='REPROGRAMACIÓN'
     },
     remake() {
       return this.$route.params.hash === 'remake'
@@ -403,38 +396,6 @@ export default {
         this.loan_detail.reference = ids_reference
         console.log(this.loan_detail.reference)
         }
-      } catch (e) {
-        this.dialog = false
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async savePCosigner() {
-      try {
-        let ids_codebtor=[]
-        for (let i = 0; i < this.personal_codebtor.length; i++) {
-          let res = await axios.post(`personal_reference`, {
-            city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
-            identity_card: this.personal_codebtor[i].identity_card,
-            last_name: this.personal_codebtor[i].last_name,
-            mothers_last_name: this.personal_codebtor[i].mothers_last_name,
-            first_name: this.personal_codebtor[i].first_name,
-            second_name: this.personal_codebtor[i].second_name,
-            phone_number: this.personal_codebtor[i].phone_number,
-            cell_phone_number: this.personal_codebtor[i].cell_phone_number,
-            address: this.personal_codebtor[i].address,
-            civil_status: this.personal_codebtor[i].civil_status,
-            gender: this.personal_codebtor[i].gender,
-            cosigner: true,
-            city_birth_id: this.personal_codebtor[i].city_birth_id
-          })
-          ids_codebtor.push(res.data.id)
-          console.log(this.personal_codebtor.length)
-          console.log(ids_codebtor)
-        }
-        this.loan_detail.cosigners = ids_codebtor
-        console.log(this.loan_detail.cosigners)
       } catch (e) {
         this.dialog = false
         console.log(e)

@@ -276,7 +276,7 @@ export default {
       return this.$route.params.hash == 'refinancing'
     },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming'
+      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason =='REPROGRAMACIÓN'
     },
     remake() {
       return this.$route.params.hash == 'remake'

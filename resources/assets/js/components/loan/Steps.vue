@@ -53,7 +53,6 @@
               :procedureLoan.sync="procedureLoan"
               :modalidad.sync="modalidad"
               :affiliate.sync="affiliate"
-              :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
               :data_loan.sync="data_loan"
               :edit_refi_repro.sync="edit_refi_repro"
@@ -63,6 +62,7 @@
               :global_parameters ="global_parameters"
               :affiliate_data.sync="affiliate_data"
               :is_loading.sync="is_loading"
+              :data_loan_parent_aux.sync="data_loan_parent_aux"
             />
             <v-container>
               <v-row>
@@ -74,7 +74,6 @@
                     Siguiente
                   </v-btn>
                 </v-col>
-                  <!--{{contrib_codebtor}}-->
               </v-row>
             </v-container>
           </v-card>
@@ -84,7 +83,6 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <v-card class="ma-3">
               <BallotsResult ref="BallotsResult"
-                v-show="modalidad.procedure_type_name != 'Préstamo Hipotecario' && modalidad.procedure_type_name != 'Refinanciamiento Préstamo Hipotecario'"
                 :data_sismu.sync="data_sismu"
                 :lenders.sync="lenders"
                 :calculator_result.sync="calculator_result"
@@ -97,17 +95,6 @@
                   <v-col cols="12">Resultado para el Préstamo</v-col>
                 </template>
               </BallotsResult>
-              <BallotsResultHipotecary
-                v-show="modalidad.procedure_type_name == 'Préstamo Hipotecario' || modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'"
-                :data_sismu.sync="data_sismu"
-                :calculator_result.sync="calculator_result"
-                :loan_detail.sync="loan_detail"
-                :data_loan_parent_aux.sync="data_loan_parent_aux"
-                :modalidad.sync="modalidad"
-                :liquid_calificated.sync="liquid_calificated"
-                :lenders.sync="lenders"
-                :lenders_aux.sync="lenders_aux"
-              />
             </v-card>
             <v-container>
               <v-row>
@@ -129,14 +116,7 @@
         <v-stepper-content :key="`${3}-content`" :step="3" >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-            <HipotecaryData ref="HipotecaryData"
-              v-show="modalidad.procedure_type_name=='Préstamo Hipotecario' || modalidad.procedure_type_name=='Refinanciamiento Préstamo Hipotecario'"
-              :loan_detail.sync="loan_detail"
-              :loan_property="loan_property"
-              :bus="bus"
-            />
             <Guarantor
-             v-show="modalidad.procedure_type_name != 'Préstamo Hipotecario' && modalidad.procedure_type_name != 'Refinanciamiento Préstamo Hipotecario'"
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
             :loan_detail.sync="loan_detail"
@@ -146,7 +126,7 @@
             :modalidad_id.sync="modalidad.id"
             :calculator_result_amount_requested.sync="calculator_result.amount_requested"
             :calculator_result.sync ="calculator_result"/>
-          <v-container v-show="modalidad.procedure_type_name!='Préstamo Hipotecario' && modalidad.procedure_type_name!='Refinanciamiento Préstamo Hipotecario'">
+          <v-container>
             <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer> <v-spacer></v-spacer>
               <v-col>
@@ -196,8 +176,8 @@
             :procedureLoan.sync="procedureLoan"
             :destino.sync="destino"
             :bus="bus"
-            :personal_codebtor="personal_codebtor"
             :modalidad_max_cosigner.sync="modalidad.max_cosigner"
+            :data_loan_parent_aux.sync="data_loan_parent_aux"
           />
         </v-card>
       </v-stepper-content>
@@ -234,8 +214,6 @@ import BallotsResult from '@/components/loan/BallotsResult'
 import PersonalInformation from '@/components/affiliate/PersonalInformation'
 import FormInformation from '@/components/loan/FormInformation'
 import Guarantor from '@/components/loan/Guarantor'
-import HipotecaryData from '@/components/loan/HipotecaryData'
-import CoDebtor from '@/components/loan/CoDebtor'
 export default {
   name: "loan-steps",
   props: {
@@ -263,8 +241,6 @@ export default {
     FormInformation,
     BallotsResult,
     Guarantor,
-    CoDebtor,
-    HipotecaryData
   },
   data: () => ({
     bus: new Vue(),
@@ -284,8 +260,6 @@ export default {
     data_loan_parent:[],
     modalidad:{},
     procedureLoan:{},
-    personal_codebtor:[],
-    contrib_codebtor: [],
     contributions_aux: [],
     liquid_calificated:[
       {
@@ -328,7 +302,7 @@ export default {
       return this.$route.params.hash == 'refinancing'
     },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming'
+      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason =='REPROGRAMACIÓN'
     },
     type_sismu() {
       if(this.$route.query.type_sismu){
@@ -490,7 +464,6 @@ export default {
    //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
     formatContributions() {
       let array_lender = []
-      let array_codebtors = []
       let contributions_lender =[]
       //Armar contribuciones del titular
       for (let i = 0; i < this.contributions.length; i++) {
@@ -510,28 +483,7 @@ export default {
         parent_loan_id: this.data_loan_parent_aux.parent_loan_id,
         contributions: contributions_lender
       }
-      //Armar contribuciones del codeudor afiliado
-      for (let i = 0; i < this.contrib_codebtor.length; i++) {
-        let contributions_codebtor=[]
-        for (let j = 0; j < this.contrib_codebtor[i].contribution.length; j++) {
-          contributions_codebtor.push({
-            payable_liquid: parseFloat(this.contrib_codebtor[i].contribution[j].payable_liquid) + parseFloat(this.contrib_codebtor[i].contribution[j].adjustment_amount),
-            border_bonus: this.contrib_codebtor[i].contribution[j].border_bonus,
-            east_bonus: this.contrib_codebtor[i].contribution[j].east_bonus,
-            position_bonus: this.contrib_codebtor[i].contribution[j].position_bonus,
-            public_security_bonus: this.contrib_codebtor[i].contribution[j].public_security_bonus
-          })
-        }
-        array_codebtors[i] = {
-          affiliate_id: this.contrib_codebtor[i].id_affiliate,
-          sismu: this.data_sismu.type_sismu || (this.remake && this.data_loan.data_loan != null),
-          quota_sismu: this.data_sismu.quota_sismu,
-          parent_loan_id: this.data_loan_parent_aux.parent_loan_id,
-          contributions: contributions_codebtor
-        }
-      }
-      //concatenar array del titular y codeudores
-      this.contributions_aux = array_lender.concat(array_codebtors)
+      this.contributions_aux = array_lender
     },
 
     //TAB1 Obtener liquido para calificación
@@ -545,80 +497,6 @@ export default {
 
         this.liquid_calificated = res.data
 
-         if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario')
-          {
-            // if(this.loan_detail.net_realizable_value<=this.modalidad.maximun_amoun)
-            //   {
-            //     this.amount_requested=this.loan_detail.net_realizable_value
-            //   }
-            //   else{
-            //     this.amount_requested=this.modalidad.maximun_amoun
-            //   }
-            //   let res1 = await axios.post(`simulator`, {
-            //   procedure_modality_id:this.modalidad.id,
-            //   amount_requested: !this.reprogramming ? this.calculator_result.amount_requested : this.data_loan_parent_aux.balance_for_reprogramming,
-            //   months_term:  this.modalidad.maximum_term,
-            //   guarantor: false,
-            //   liquid_qualification_calculated_lender: 0,
-            //   liquid_calculated:this.liquid_calificated
-            //   })
-
-            //   this.calculator_result = res1.data
-
-            //   if( this.calculator_result.amount_maximum_suggested<this.amount_requested && !this.reprogramming){
-            //     this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
-            //     this.loan_detail.amount_requested=this.calculator_result.amount_maximum_suggested
-            //   }else{
-            //     this.calculator_result.montos= this.amount_requested
-            //     this.loan_detail.amount_requested= this.amount_requested
-            //   }
-
-            //   this.lenders=res.data
-
-            //   for(let i = 0; i < this.lenders.length; i++ ){
-            //     //Armar el nombre de los lenders
-            //     if(i > 0)
-            //     {
-            //       let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
-            //       this.lenders_aux.push(res4.data.full_name)
-            //     }
-            //     //obtener las contribuciones para hipotecario de contrib_codebtor, i=0 es lender de ballots
-            //     this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
-            //     this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtnes_calculated
-            //     this.lenders[i].quota_treat=this.calculator_result.affiliates[i].quota_calculated_estimated
-            //     if(i == 0){
-            //     this.lenders[i].contributionable_type= this.contributionable_type
-            //     this.lenders[i].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
-            //     this.lenders[i].contributionable_ids=this.contributionable_ids
-            //     }else{
-            //     this.lenders[i].contributionable_type= this.contrib_codebtor[i-1].contributionable_type
-            //     this.lenders[i].loan_contributions_adjust_ids=this.contrib_codebtor[i-1].loan_contributions_adjust_ids
-            //     this.lenders[i].contributionable_ids=this.contrib_codebtor[i-1].contributionable_ids
-            //     }
-
-            //   }
-
-            //   this.loan_detail.minimum_term=this.modalidad.minimum_term
-            //   this.loan_detail.maximum_term=this.modalidad.maximum_term
-            //   this.loan_detail.minimun_amoun=this.modalidad.minimun_amoun
-            //   this.loan_detail.maximun_amoun=this.modalidad.maximun_amoun
-
-            //   this.loan_detail.months_term=this.modalidad.maximum_term
-            //   this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
-            //   this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
-            //   this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
-            //   this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-            //   this.loan_detail.is_valid=this.calculator_result.is_valid
-            //   for(let j = 0; j < this.liquid_calificated.length; j++ ){
-            //     if(this.liquid_calificated[j].livelihood_amount==false)
-            //     {
-            //       this.data_sismu.livelihood_amount=this.liquid_calificated[j].livelihood_amount
-            //     }else{
-            //       this.data_sismu.livelihood_amount=true
-            //     }
-            //  }
-            }
-            else{
               this.data_sismu.livelihood_amount=this.liquid_calificated[0].livelihood_amount
               console.log(this.calculator_result )
 
@@ -658,7 +536,7 @@ export default {
               this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
               this.loan_detail.is_valid=this.calculator_result.is_valid
               this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-          }
+          
       } catch (e) {
         console.log(e)
       } finally {
@@ -785,17 +663,8 @@ export default {
           }
           //validar otros casos
           if(continuar && !this.type_sismu){
-            if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
-              if(this.loan_detail.net_realizable_value >= this.modalidad.minimun_amoun){
-                 this.saveAdjustment()
-                this.liquidCalificated()
-                this.nextStep(1)
-              }else{
-                this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.modalidad.minimun_amoun+ " correspondiente a la modalidad")
-              }
-            }else{
                 if(this.remake){
-                  if(this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Corto Plazo' || this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Largo Plazo' ||  this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo Hipotecario'){
+                  if(this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Corto Plazo' || this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Largo Plazo'){
                     if(this.data_sismu.quota_sismu > 0 && this.data_loan.data_loan != null ){
                       this.saveAdjustment()
                       this.liquidCalificated()
@@ -820,21 +689,8 @@ export default {
                   this.liquidCalificated()
                   this.nextStep(1)
                 }
-            }
+            
           }else if(continuar && this.type_sismu){
-            if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
-              if(this.loan_detail.net_realizable_value >= this.modalidad.minimun_amoun){
-                if(this.data_sismu.quota_sismu > 0){
-                  this.saveAdjustment()
-                  this.liquidCalificated()
-                  this.nextStep(1)
-                }else{
-                  this.toastr.error("Introduzca la CUOTA del SISMU")
-                }
-              }else{
-                this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.modalidad.minimun_amoun+ " correspondiente a la modalidad")
-              }
-            }else{
                   if(this.data_sismu.quota_sismu > 0 || (this.remake && this.data_loan.data_loan != null) ){
                   this.saveAdjustment()
                   this.liquidCalificated()
@@ -843,7 +699,7 @@ export default {
                 }else{
                   this.toastr.error("Introduzca la CUOTA del SISMU")
                 }
-            }
+            
           }
         }else{
           this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
@@ -933,15 +789,6 @@ export default {
                 }
               }
               }else{
-                if(this.modalidad.procedure_type_name=='Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
-                  if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
-                  {
-                    this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
-                  }
-                  else{
-                    this.nextStep(2)
-                  }
-                }else{
                   if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum)
                   {
                     this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
@@ -949,7 +796,7 @@ export default {
                   else{
                     this.nextStep(2)
                   }
-                }
+                
             }
           }
         }
