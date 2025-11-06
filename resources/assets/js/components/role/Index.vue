@@ -105,6 +105,7 @@
               ></v-pagination>
             </v-row>
           </v-card-text>
+          <div><pre>{{ $store.getters }}</pre></div>
         </v-card>
       </v-card>
     </v-card-text>
@@ -176,7 +177,7 @@ export default {
   methods: {
     async switchPermission(id) {
       try {
-        if (this.$store.getters.permissions.includes('update-role')) {
+        if (this.$store.getters.permissionSimpleSelected.includes('update-role')) {
           this.loading = true
           if (this.selectedPermissions.includes(id)) {
             this.selectedPermissions = this.selectedPermissions.filter(o => o != id)

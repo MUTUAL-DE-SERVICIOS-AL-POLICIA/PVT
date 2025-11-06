@@ -11,7 +11,7 @@
                     <v-container class="py-0 my-0 teal--text">
                       <v-row>
                         <v-col cols="12" md="3" class="py-0 my-0 text-center">
-                          <strong>MODALIDAD DEL PRÉSTAMO{{!isCommission && !isEstacional}} {{ lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29 }}</strong><br>
+                          <strong>MODALIDAD DEL PRÉSTAMO</strong><br>
                           <v-row>
                             <v-col cols="12" md="12" class="py-0 -my-0 mt-4">
                           <v-select

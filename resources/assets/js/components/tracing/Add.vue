@@ -394,7 +394,7 @@ export default {
         this.loading = true
         let res = await axios.get(`procedure_modality/${id}`)
         this.procedure_types = res.data
-        /*console.log(this.procedure_types)*/ } catch (e) {
+      } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
@@ -422,7 +422,6 @@ export default {
         this.observations = res.data
 
         for (this.i = 0; this.i < this.observations.length; this.i++) {
-           //console.log(this.observations[this.i].user_id)
           let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
           )
           this.observations[this.i].user_name = res1.data.username
