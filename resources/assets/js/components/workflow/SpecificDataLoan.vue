@@ -116,20 +116,6 @@
                                   <v-col cols="12" md="4" class="py-0">
                                     <p><b>CALCULO DE CUOTA: </b> {{loan.estimated_quota | moneyString}} Bs.</p>
                                   </v-col>
-                                  <v-col cols="12" md="12" >
-                                    <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
-                                      <div v-if="procedure_type.name === 'Préstamo Hipotecario'">
-                                        <v-progress-linear></v-progress-linear><br>
-                                          <p style="color:teal"><b>CODEUDOR</b></p>
-                                          <div v-for="(lenders,i) in loan.lenders" :key="i">
-                                            <div  v-if="(lenders,i)>0">
-                                              <p><b>PROMEDIO LIQUIDO PAGABLE:</b> {{lenders.payable_liquid_calculated | money}}</p>
-                                              <p><b>TOTAL BONOS:</b> {{lenders.bonus_calculated | money}}</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </v-col>
                                   <v-progress-linear></v-progress-linear>
                                   <BallotsAdjust :ballots="loan.borrower[0].ballots"/>
                                   <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear>
@@ -688,156 +674,6 @@
                                       <p v-if="loan.guarantors.length==0" style="color:teal"><b> NO TIENE GARANTES </b></p>
                                     </ul>
                                     </v-col>
-                                    <v-col cols="12" md="12" v-if="loan.modality.procedure_type.name == 'Préstamo Hipotecario' || loan.modality.procedure_type.name == 'Refinanciamiento Préstamo Hipotecario'">
-                                      <p style="color:teal"><b>GARANTIA HIPOTECARIA </b></p>
-                                      <v-tooltip >
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="'error'"
-                                            top
-                                            right
-                                            absolute
-                                            v-on="on"
-                                            style="margin-right: 45px; "
-                                            @click.stop="resetForm()"
-                                            v-show="edit_hipotecari"
-                                          >
-                                            <v-icon>mdi-close</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span>Cancelar</span>
-                                        </div>
-                                      </v-tooltip>
-                                      <v-tooltip top  v-if="permissionSimpleSelected.includes('update-warranty-hipotecary') || permissionSimpleSelected.includes('update-values-commercial-rescue') && $route.query.workTray != 'tracingLoans'">
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="edit_hipotecari ? 'danger' : 'success'"
-                                            top
-                                            right
-                                            absolute
-                                            v-on="on"
-                                            style="margin-right: -9px;"
-                                            @click.stop="editLoanHipotecaryProperti()"
-                                          >
-                                            <v-icon v-if="edit_hipotecari">mdi-check</v-icon>
-                                            <v-icon v-else>mdi-pencil</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span v-if="edit_hipotecari">Guardar</span>
-                                          <span v-else>Editar</span>
-                                        </div>
-                                      </v-tooltip>
-                                      <v-row>
-                                        <v-progress-linear></v-progress-linear><br>
-                                        <v-col cols="12" md="4">
-                                        <v-select
-                                          dense
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :items="city"
-                                          item-text="name"
-                                          item-value="id"
-                                          label="CIUDAD"
-                                          v-model="loan_properties.real_city_id"
-                                        ></v-select>
-                                      </v-col>
-                                      <v-col cols="12" md="4">
-                                        <v-text-field
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :label="'UBICACION'"
-                                          dense
-                                          v-model="loan_properties.location"
-                                        ></v-text-field>
-                                      </v-col>
-                                      <v-col cols="12" md="4">
-                                        <v-text-field
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :label="'NUMERO DE LOTE'"
-                                          dense
-                                          v-model="loan_properties.land_lot_number"
-                                        ></v-text-field>
-                                      </v-col>
-                                      <v-col cols="12" md="1">
-                                        <v-text-field
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :label="'SUPERFICIE'"
-                                          dense
-                                          v-model="loan_properties.surface"
-                                        ></v-text-field>
-                                      </v-col>
-                                      <v-col cols="12" md="3">
-                                      <v-select
-                                        :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                        :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                        dense
-                                        :items="items_measurement"
-                                        item-text="name"
-                                        item-value="value"
-                                        label="Unidad de medida"
-                                        v-model="loan_properties.measurement"
-                                      ></v-select>
-                                      </v-col>
-                                      <v-col cols="12" md="4">
-                                        <v-text-field
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :label="'CODIGO CATASTRAL'"
-                                          dense
-                                          v-model="loan_properties.cadastral_code"
-                                        ></v-text-field>
-                                      </v-col>
-                                      <v-col cols="12" md="4">
-                                        <v-text-field
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :label="'NRO MATRICULA'"
-                                          dense
-                                          v-model="loan_properties.registration_number"
-                                        ></v-text-field>
-                                      </v-col>
-                                      <v-col cols="12" md="4">
-                                        <v-text-field
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :label="'NRO FOLIO REAL'"
-                                          dense
-                                          v-model="loan_properties.real_folio_number"
-                                        ></v-text-field>
-                                      </v-col>
-                                      <v-col cols="12" md="4">
-                                        <p><b>VNR: </b>{{ loan_properties.net_realizable_value}} </p>
-                                      </v-col>
-                                       <v-col cols="12" md="6">
-                                        <v-text-field
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-values-commercial-rescue')"
-                                          :readonly="!edit_hipotecari  && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
-                                          :label="'VALOR COMERCIAL'"
-                                          dense
-                                          v-model="loan_properties.commercial_value"
-                                        ></v-text-field>
-                                      </v-col>
-                                       <v-col cols="12" md="6">
-                                        <v-text-field
-                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-values-commercial-rescue')"
-                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
-                                          :label="'VALOR DE RESCATE HIPOTECARIO'"
-                                          dense
-                                          v-model="loan_properties.rescue_value"
-                                        ></v-text-field>
-                                      </v-col>
-                                    </v-row>
-                                    </v-col>
                                     <v-col cols="12" md="12" v-if="loan.modality.procedure_type.second_name == 'Fondo de Retiro'">
                                       <v-row>
                                         <p style="color:teal"><b>GARANTIA DEL FONDO DE RETIRO POLICIAL SOLIDARIO</b> </p>
@@ -986,156 +822,6 @@
                           </v-card>
                         </v-tab-item>
 
-                        <v-tab>DATOS CODEUDOR</v-tab>
-                          <v-tab-item >
-                            <v-card flat tile>
-                              <v-card-text>
-                              <p style="color:teal" v-if="loan.cosigners.length>0"><b>CODEUDOR NO AFILIADO</b></p>
-                              <v-progress-linear v-if="loan.cosigners.length>0"></v-progress-linear><br>
-                              <v-data-table
-                                v-if="loan.cosigners.length>0"
-                                :headers="headers"
-                                :items="loan.cosigners"
-                                >
-                                <template v-slot:top>
-                                  <v-dialog v-model="dialog_codeptor" max-width="500px" >
-                                    <v-card>
-                                      <v-card-title>
-                                        <span style="color:teal" class="headline">EDITAR CODEUDOR</span>
-                                      </v-card-title>
-                                       <v-progress-linear></v-progress-linear>
-                                        <v-card-text class="py-0">
-                                          <v-container class="py-0">
-                                            <v-row >
-                                              <v-col cols="12" sm="6" md="4">
-                                                <v-text-field
-                                                  dense
-                                                  v-model="editedItem1.first_name"
-                                                  label="Primer Nombre"
-                                                ></v-text-field>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="4" >
-                                                <v-text-field
-                                                  dense
-                                                  v-model="editedItem1.second_name"
-                                                  label="Segundo Nombre"
-                                                ></v-text-field>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="4" >
-                                                <v-text-field
-                                                  dense
-                                                  v-model="editedItem1.last_name"
-                                                  label="Primer Apellido"
-                                                ></v-text-field>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="4">
-                                                <v-text-field
-                                                  dense
-                                                  v-model="editedItem1.mothers_last_name"
-                                                  label="Segundo Apellido"
-                                                ></v-text-field>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="4" >
-                                                <v-select
-                                                  v-model="editedItem1.city_identity_card_id"
-                                                  dense
-                                                  :items="city"
-                                                  item-text="name"
-                                                  item-value="id"
-                                                  label="Ciudad de Expedición"
-                                                ></v-select>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="4" >
-                                                <v-select
-                                                  dense
-                                                  :items="genders"
-                                                  item-text="name"
-                                                  item-value="value"
-                                                  v-model="editedItem1.gender"
-                                                  label="Género"
-                                                ></v-select>
-                                              </v-col>
-                                               <v-col cols="12" sm="6" md="4" >
-                                                  <v-select
-                                                    dense
-                                                    :items="civil_statuses"
-                                                    item-text="name"
-                                                    item-value="value"
-                                                    label="Estado civil"
-                                                    v-model="editedItem1.civil_status"
-                                                  ></v-select>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="4" >
-                                                <v-select
-                                                  v-model="editedItem1.city_birth_id"
-                                                  dense
-                                                  :items="city"
-                                                  item-text="name"
-                                                  item-value="id"
-                                                  label="Ciudad de Nacimiento"
-                                                ></v-select>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="4" >
-                                                <v-text-field
-                                                  dense
-                                                  v-model="editedItem1.phone_number"
-                                                  label="Teléfono"
-                                                  v-mask="'(#) ###-###'"
-                                                ></v-text-field>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="4" >
-                                                <v-text-field
-                                                  dense
-                                                  v-model="editedItem1.cell_phone_number"
-                                                  label="Celular"
-                                                  v-mask="'(###)-#####'"
-                                                ></v-text-field>
-                                              </v-col>
-                                              <v-col cols="12" sm="6" md="8">
-                                                <v-text-field
-                                                  dense
-                                                  v-model="editedItem1.address"
-                                                  label="Direccion"
-                                                ></v-text-field>
-                                              </v-col>
-                                            </v-row>
-                                          </v-container>
-                                        </v-card-text>
-                                        <v-card-actions>
-                                          <v-spacer></v-spacer>
-                                          <v-btn
-                                            color="red"
-                                            text
-                                            @click="closeCodeptor"
-                                          >
-                                            Cancelar
-                                          </v-btn>
-                                          <v-btn
-                                            color="success"
-                                            text
-                                            @click="saveCodeptor()"
-                                          >
-                                            Guardar
-                                          </v-btn>
-                                        </v-card-actions>
-                                      </v-card>
-                                    </v-dialog>
-                                </template>
-                                <template v-slot:[`item.actions`]="{ item }" v-if="permissionSimpleSelected.includes('update-reference-cosigner') && $route.query.workTray != 'tracingLoans'">
-                                  <v-icon
-                                    small
-                                    class="mr-2"
-                                    @click="editItem1(item)"
-                                  >
-                                    mdi-pencil
-                                  </v-icon>
-                                </template>
-                              </v-data-table>
-                             <p v-if="loan.cosigners.length==0" style="color:teal"> <b>NO TIENE CODEUDORES</b></p>
-                            </v-card-text>
-                            </v-card>
-                          </v-tab-item>
-
                           <v-tab>DESEMBOLSO</v-tab>
                             <v-tab-item >
                               <v-card flat tile>
@@ -1215,7 +901,7 @@
                                       <v-tooltip top v-if="permissionSimpleSelected.includes('update-reference-cosigner')">
                                         <template v-slot:activator="{ on }">
                                           <v-btn
-                                            v-if="loan.payment_type.name=='Depósito Bancario'"
+                                            v-if="loan.payment_type && loan.payment_type.name =='Depósito Bancario'"
                                             fab
                                             dark
                                             x-small
@@ -1238,12 +924,12 @@
                                       </v-tooltip>
                                       <v-progress-linear></v-progress-linear><br>
                                       <v-col cols="12" md="4">
-                                        <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type.name}}</p>
+                                        <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type ? loan.payment_type.name : 'Sin registro'}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="3" v-if="loan.payment_type.name=='Depósito Bancario' && edit_number_payment_type == false">
+                                      <v-col cols="12" md="3" v-if="loan.payment_type && loan.payment_type.name =='Depósito Bancario' && edit_number_payment_type == false">
                                         <p><b>ENTIDAD FINANCIERA:</b>{{' '+financial_account}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="3" v-if="loan.payment_type.name=='Depósito Bancario' && edit_number_payment_type == true">
+                                      <v-col cols="12" md="3" v-if="loan.payment_type && loan.payment_type.name =='Depósito Bancario' && edit_number_payment_type == true">
                                         <v-select
                                           dense
                                           :loading="loading"
@@ -1254,10 +940,10 @@
                                           v-model="loan.financial_entity_id"
                                         ></v-select>
                                       </v-col>
-                                      <v-col cols="12" md="3" v-if="loan.payment_type.name=='Depósito Bancario' && edit_number_payment_type == false">
+                                      <v-col cols="12" md="3" v-if="loan.payment_type && loan.payment_type.name =='Depósito Bancario' && edit_number_payment_type == false">
                                         <p><b>NUMERO DE CUENTA:</b>{{' '+loan.number_payment_type}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'&& edit_number_payment_type == true">
+                                      <v-col cols="12" md="3" v-show="loan.payment_type && loan.payment_type.name =='Depósito Bancario'&& edit_number_payment_type == true">
                                         <v-text-field
                                           dense
                                           label="NUMERO DE CUENTA"
@@ -1265,7 +951,7 @@
                                           :outlined="true"
                                         ></v-text-field>
                                       </v-col>
-                                      <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
+                                      <v-col cols="12" md="3" v-show="loan.payment_type && loan.payment_type.name =='Depósito Bancario'">
                                         <p><b>CUENTA SIGEP:</b> {{' '+loan.borrower[0].sigep_status}}</p>
                                       </v-col>
                                        <v-col cols="12" md="4">
@@ -1398,7 +1084,7 @@ export default {
       edit_return_date_regional : false,
       edit_delivery_date_regional : false,
       edit_date_contract: false,
-      edit_hipotecary: false,
+
       edit_disbursement: false,
       edit_update_loan_affiliates: false,
       reload: false,
@@ -1569,7 +1255,6 @@ created(){
     },
     //Metodo para limpiar los campos
     resetForm() {
-      this.edit_hipotecari = false
       this.edit_disbursement = false
       this.qualification_edit = false
       this.edit_update_loan_affiliates = false
@@ -1838,33 +1523,7 @@ created(){
         this.loading = false
       }
     },
-    //Metodo para editar datos de la propiedad hipotecaria
-      async editLoanHipotecaryProperti(){
-      try {
-        if (!this.edit_hipotecari) {
-          this.edit_hipotecari = true
-         } else {
-          let res = await axios.patch(`loan_property/${this.loan_properties.id}`, {
-            location:this.loan_properties.location,
-            land_lot_number:this.loan_properties.land_lot_number,
-            real_city_id:this.loan_properties.real_city_id,
-            surface:this.loan_properties.surface,
-            measurement:this.loan_properties.measurement,
-            cadastral_code:this.loan_properties.cadastral_code,
-            registration_number:this.loan_properties.registration_number,
-            real_folio_number:this.loan_properties.real_folio_number,
-            commercial_value :this.loan_properties.commercial_value,
-            rescue_value :this.loan_properties.rescue_value
-          })
-            this.toastr.success('Se registró correctamente.')
-            this.edit_hipotecari = false
-        }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
+
     //Metodo para obtener los tipos de pago
     async getPaymentTypes() {
       try {
