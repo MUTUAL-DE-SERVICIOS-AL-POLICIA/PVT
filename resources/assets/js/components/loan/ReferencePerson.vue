@@ -254,7 +254,6 @@ export default {
 
   watch: {
     dialog(val) {
-      console.log("entro aqui" + val);
       val || this.close();
     }
   },
@@ -290,12 +289,8 @@ export default {
               this.reference_person[this.editedIndex],
               this.editedItem
             );
-            console.log(this.editedIndex); //obtener el indice
-            console.log(this.editedItem); //obtener el objeto
           } else {
             this.reference_person.push(this.editedItem);
-            console.log("nuevo editedIndex " + this.editedItem);
-            console.log(this.editedItem);
           }
           this.close();
         }
@@ -307,7 +302,6 @@ export default {
       try {
         let res = await axios.get('kinship')
         this.kinships = res.data
-        console.log(this.kinships)
       } catch (e) {
         console.log(e)
       }

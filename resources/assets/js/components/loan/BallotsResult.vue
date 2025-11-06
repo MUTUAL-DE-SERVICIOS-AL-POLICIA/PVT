@@ -60,7 +60,7 @@
              <v-text-field
                 class="py-0"
                 dense
-                :readonly="true"
+                :readonly=true
                 label="Cuota"
                 v-model="data_loan_parent_aux.estimated_quota"
             ></v-text-field>
@@ -100,13 +100,13 @@
                             v-on:keyup.enter="simulator()"
                           ></v-text-field>
                         </ValidationProvider>
-                        <ValidationProvider v-slot="{ errors }" name="Monto Reprogramado" :rules="'min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
+                        <ValidationProvider v-slot="{ errors }" name="Monto Solicitado" :rules="'min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
                           <v-text-field
                             v-if="reprogramming"
                             class="py-0"
                             :error-messages="errors"
-                            label="Monto Reprogramado"
-                            readonly="true"
+                            label="Monto Solicitado"
+                            :readonly=true
                             v-model ="data_loan_parent_aux.balance_for_reprogramming"
                             v-on:keyup.enter="simulator()"
                           ></v-text-field>
@@ -139,6 +139,7 @@
                               <p style="color:teal" class="font-weight-black" >LIQUIDO PARA CALIFICACION: {{ liquid.liquid_qualification_calculated | money}}</p>
                             </template>
                               <p v-show="liquid_calificated[0].guarantees.length==0">GARANTIAS: {{liquid_calificated[0].guarantees.length}}</p>
+                              <p class="success--text" v-if="reprogramming" > MONTO A SER REPROGRAMADO: {{data_loan_parent_aux.balance_for_reprogramming | money}} </p>
                               </li>
                             </ul>
                         </fieldset>

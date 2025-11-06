@@ -358,7 +358,6 @@ export default {
         if(n==2)
         {
           this.$refs.BallotsResult.simulator()
-          console.log('aqui fuera')
         }
         this.e1 = n + 1
       }
@@ -402,7 +401,6 @@ export default {
       try {
       this.loan_contributions_adjust_ids = []
       this.contributionable_ids = []
-      console.log(this.contributionable_ids)
 
       this.contributions.forEach(async (item, i) => {
         //Verificar si el afiliado es pasivo para introducir su contribución
@@ -446,13 +444,9 @@ export default {
             description: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 && !this.reprogramming ? this.contributions[i].adjustment_description : this.loanTypeSelected.id == 'Comision' ? 'Liquido pagable por Comisión' : this.loanTypeSelected.id == 29 ? 'Liquido pagable último Complemento Económico' : this.reprogramming ? 'Reprogramación de préstamo' : this.contributions[i].adjustment_description
           })
           this.contributions[i].loan_contributions_adjust_id = res.data.id
-          console.log(this.contributions[i].loan_contributions_adjust_id)
           if (this.loan_contributions_adjust_ids.indexOf(this.contributions[i].loan_contributions_adjust_id) === -1) {
             this.loan_contributions_adjust_ids.push(this.contributions[i].loan_contributions_adjust_id)
           }
-
-        }else{
-          console.log('No tiene ajuste')
         }
       })
       }
@@ -498,7 +492,6 @@ export default {
         this.liquid_calificated = res.data
 
               this.data_sismu.livelihood_amount=this.liquid_calificated[0].livelihood_amount
-              console.log(this.calculator_result )
 
               let res1 = await axios.post(`simulator`, {
               procedure_modality_id:this.modalidad.id,

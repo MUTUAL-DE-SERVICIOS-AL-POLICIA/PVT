@@ -83,7 +83,6 @@ export default {
           item.permissions = item.permissions.map(item => ({display_name: item.display_name, name: item.name }))
         })
         this.rolesPermissionsItems =  aux_rolesPermissionsItems
-        //console.log(this.rolesPermissionsItems)
       } catch (e) {
         console.log(e)
       }

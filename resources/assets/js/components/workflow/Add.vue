@@ -906,7 +906,7 @@ export default {
         this.observations = res.data
 
         for (this.i = 0; this.i < this.observations.length; this.i++) {
-           console.log("ww"+this.observations[this.i].user_id)
+
           let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
           )
           this.observations[this.i].user_name = res1.data.username
@@ -986,7 +986,7 @@ export default {
     async printQualificationForm(item) {
       try {
         let res = await axios.get(`loan/${item}/print/qualification`)
-        console.log("plan " + item)
+
         printJS({
           printable: res.data.content,
           type: res.data.type,
@@ -1010,7 +1010,6 @@ export default {
       try {
         let res = await axios.get(`user/${user_id}`)
         this.user_name = res.data.username
-        //console.log(this.user_name)
       } catch (e) {
         console.log(e)
       }
@@ -1117,17 +1116,17 @@ export default {
           else
           {
             if(this.permissionSimpleSelected.includes('validate-submitted-documents')==true && this.loan.modality.procedure_type.second_name == 'Anticipo'){
-              console.log(this.val_docs.valid)
+
               if(this.val_docs.valid){ 
-                console.log("es Calific y validado"+this.val_docs.valid)
+
                 this.bus.$emit('openDialog', { edit: false, accion: 'validar' })           
 
               }else{ 
-                console.log(this.val_docs.valid +"es Calific y no valido"+ this.loan.modality.procedure_type.second_name)
+                
                 this.toastr.error('Existen documentos sin validar.')
               }
             }else{
-              console.log("no es CAlific o no correponde")
+
               this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
             }
           }

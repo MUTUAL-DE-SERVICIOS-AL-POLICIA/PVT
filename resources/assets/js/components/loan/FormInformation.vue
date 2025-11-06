@@ -332,7 +332,6 @@ export default {
         this.loading = true;
         let res = await axios.get(`payment_type`);
         this.payment_types = res.data;
-        console.log(this.payment_types + "este es el tipo de desembolso");
       } catch (e) {
         console.log(e);
       } finally {
@@ -356,7 +355,6 @@ export default {
         this.loading = true
         let res = await axios.get(`procedure_type/${this.procedureLoan.procedure_id}/loan_destiny`)
         this.destino = res.data
-        console.log(this.destino+'estos son los destinos');
       } catch (e) {
         console.log(e)
       } finally {
@@ -391,10 +389,8 @@ export default {
               kinship_id: this.reference_person[i].kinship_id
           })
           ids_reference.push(res.data.id)
-          console.log(this.reference_person.length)
         }
         this.loan_detail.reference = ids_reference
-        console.log(this.loan_detail.reference)
         }
       } catch (e) {
         this.dialog = false
@@ -444,7 +440,7 @@ export default {
         if (!this.reprogramming) {
           this.val_destiny = await this.$refs.observerDestiny.validate();
           if (!this.val_destiny) {
-            console.log("Falta el registro de algunos campos");
+            this.toastr.error("Falta el registro de algunos campos");
             return;
           }
         }
@@ -457,7 +453,6 @@ export default {
         }
 
         await this.savePersonalReference();
-        await this.savePCosigner();
         this.nextStepBus(5);
 
       } catch (e) {
