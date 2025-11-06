@@ -482,6 +482,69 @@
                                       </v-tooltip>
                                     </div>
                                   </v-col>
+                                  <v-col cols="12" md="3">
+                                  </v-col>
+                                  <v-col cols="12" md="3">
+                                      <v-text-field
+                                        dense
+                                        v-model="loan.contract_signature_date"
+                                        label="FECHA FIRMA CONTRATO"
+                                        hint="Día/Mes/Año"
+                                        type="date"
+                                        :clearable="edit_date_contract"
+                                        :outlined="edit_date_contract"
+                                        :readonly="!edit_date_contract"
+                                      ></v-text-field>
+                                    </v-col>
+                                      <v-col cols="12" md="3" v-if="permissionSimpleSelected.includes('registration-date-contract')">
+                                      <div>
+                                      <v-tooltip top>
+                                        <template v-slot:activator="{ on }">
+                                          <v-btn
+                                            fab
+                                            dark
+                                            x-small
+                                            :color="'error'"
+                                            top
+                                            right
+                                            v-on="on"
+                                            style="margin-right: 45px;"
+                                            @click.stop="resetForm()"
+                                            v-show="edit_date_contract"
+                                          >
+                                            <v-icon>mdi-close</v-icon>
+                                          </v-btn>
+                                        </template>
+                                        <div>
+                                          <span>Cancelar</span>
+                                        </div>
+                                      </v-tooltip>
+                                      <v-tooltip top>
+                                        <template v-slot:activator="{ on }">
+                                          <v-btn
+                                            fab
+                                            dark
+                                            x-small
+                                            :color="edit_date_contract? 'danger' : 'success'"
+                                            top
+                                            right
+                                            v-on="on"
+                                            style="margin-right: 10px;"
+                                            @click.stop="editDateContract()"
+                                          >
+                                            <v-icon v-if="edit_date_contract">mdi-check</v-icon>
+                                            <v-icon v-else>mdi-pencil</v-icon>
+                                          </v-btn>
+                                        </template>
+                                        <div>
+                                          <span v-if="edit_date_contract">Guardar Fecha Contrato</span>
+                                          <span v-else>Editar Fecha Contrato</span>
+                                        </div>
+                                      </v-tooltip>
+                                    </div>
+                                    </v-col>
+                                      <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-date-contract')">
+                                    </v-col>
                               </v-row>
                             </v-col>
                           </v-card-text>
@@ -1334,6 +1397,7 @@ export default {
       edit_delivery_date : false,
       edit_return_date_regional : false,
       edit_delivery_date_regional : false,
+      edit_date_contract: false,
       edit_hipotecary: false,
       edit_disbursement: false,
       edit_update_loan_affiliates: false,
@@ -1515,6 +1579,7 @@ created(){
       this.edit_delivery_date = false
       this.edit_return_date_regional = false
       this.edit_delivery_date_regional = false
+      this.edit_date_contract = false
       this.reload = true
       if(this.loan_refinancing.type_sismu==true){
         this.loan_refinancing.balance= this.loan.balance_parent_loan_refinancing
@@ -1636,6 +1701,24 @@ created(){
           })
             this.toastr.success('Se registró correctamente.')
             this.edit_return_date_regional = false
+         }
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async editDateContract(){
+      try {
+        if (!this.edit_date_contract) {
+          this.edit_date_contract = true
+        } else {
+            let res = await axios.patch(`loan/${this.loan.id}`, {
+              contract_signature_date: this.loan.contract_signature_date,
+              current_role_id: this.$store.getters.rolePermissionSelected.id
+          })
+            this.toastr.success('Se registró correctamente.')
+            this.edit_date_contract = false
          }
       } catch (e) {
         console.log(e)
