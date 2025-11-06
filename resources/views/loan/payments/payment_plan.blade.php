@@ -55,7 +55,7 @@
                 @endif
                 <td class="data-row py-5">{{ $loan->loan_term }} <span class="capitalize">{{ $term_text }}</span></td>
                 <td class="data-row py-5">
-                    @if($loan->payment_type->name=='Deposito Bancario')
+                    @if( $loan->parent_reason != 'REPROGRAMACIÓN' && $loan->payment_type->name=='Deposito Bancario')
                         <div class="font-bold">Cuenta Entidad financiera</div>
                         <div>{{ $loan->number_payment_type }}</div>
                     @else
