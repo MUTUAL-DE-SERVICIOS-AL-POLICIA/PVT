@@ -725,7 +725,11 @@ class LoanController extends Controller
             if (Auth::user()->can('update-loan')) {
                 $loan->fill(array_merge($request->except($exceptions)));
             }
-            if (in_array('validated', $exceptions)) $loan->validated = $request->validated;
+            if (in_array('validated', $exceptions)){
+                if($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->parent_loan->last_payment_validated->state->name != 'Pagado' && $loan->currentState->name == 'Cobranzas Corte')
+                    return abort(409, 'El prestamo a reprogramar aun cuenta con pagos pendientes por validar');
+                $loan->validated = $request->validated;
+            }
             if ($request->has('role_id')) {
                 if ($request->role_id != $loan->role_id) {
                     $loan->role()->associate(Role::find($request->role_id));

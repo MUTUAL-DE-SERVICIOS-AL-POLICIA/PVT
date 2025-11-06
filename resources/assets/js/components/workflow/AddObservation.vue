@@ -197,7 +197,7 @@ export default {
           }
           this.dialog = false
       } catch (e) {
-        console.log(e)
+        this.toastr.error(e.response.data.message)
       } finally {
         this.loading = false
       }
