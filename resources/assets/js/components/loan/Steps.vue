@@ -577,7 +577,8 @@ export default {
         if(this.refinancing || this.reprogramming){
           let res3 = await axios.post(`procedure_ref_rep/`,{
             type: this.refinancing? 'REF' : 'REP',
-            loan_id: res.data.id
+            loan_id: res.data.id,
+            remake: this.remake
           })
           this.modalities = [res3.data[0].procedure_type]
           this.loanTypeSelected.id = res3.data[0].procedure_type_id
