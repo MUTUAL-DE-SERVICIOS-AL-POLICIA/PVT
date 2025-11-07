@@ -71,7 +71,7 @@
             <span>Anular trámite</span>
           </v-tooltip>
 
-          <div v-if="loan.modality.procedure_type.second_name == 'Anticipo'">
+          <div >
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -270,7 +270,7 @@
                <v-tooltip top >
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    v-show="loan.modality.procedure_type.second_name == 'Anticipo' && removeAccents(loan.disbursement_date) != 'Fecha invalida' "
+                    v-show="removeAccents(loan.disbursement_date) != 'Fecha invalida' "
                     fab
                     x-small
                     color="success"
@@ -667,7 +667,8 @@ export default {
       intereses: {},
       state: {},
       user:{},
-      guarantors:[]
+      guarantors:[],
+      modality:{}
     },
     loan_refinancing:{},
     datos: {},
@@ -853,7 +854,7 @@ export default {
         }
         this.setBreadcrumbs()
         this.getAddress(this.affiliate.id)
-        this.wfState(this.loan.wf_states_id)
+        //this.wfState(this.loan.wf_states_id)
         if(this.loan.user_id != null){
           this.user(this.loan.user_id)
         }
@@ -1001,7 +1002,7 @@ export default {
     async wfState(wf_states_id){
       try {
         let res = await axios.get(`wf_state/${wf_states_id}`)
-        this.wf_state_name = res.data.name
+        this.wf_state_name = res.data
       } catch (e) {
         console.log(e)
       }

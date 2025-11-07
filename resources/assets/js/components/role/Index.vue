@@ -105,7 +105,6 @@
               ></v-pagination>
             </v-row>
           </v-card-text>
-          <div><pre>{{ $store.getters }}</pre></div>
         </v-card>
       </v-card>
     </v-card-text>
