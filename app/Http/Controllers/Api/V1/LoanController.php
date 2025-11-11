@@ -92,6 +92,7 @@ class LoanController extends Controller
         if($loan->parent_loan){
             $loan->parent_loan->balance = $loan->parent_loan->balance;
             $loan->parent_loan->estimated_quota = $loan->parent_loan->estimated_quota;
+            $loan->parent_loan->balance_for_reprogramming = $loan->parent_loan->balance_for_reprogramming();
         }
         $loan->intereses=$loan->interest;
         if($loan->parent_reason=='REFINANCIAMIENTO'){
