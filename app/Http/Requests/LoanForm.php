@@ -82,8 +82,6 @@ class LoanForm extends FormRequest
             'amount_requested' => ['numeric', 'min:0', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'city_id' => ['integer', 'exists:cities,id'],
             'loan_term' => ['integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
-            'payment_type_id' => ['integer', 'exists:payment_types,id'],
-            'destiny_id' => ['integer', 'exists:loan_destinies,id', new LoanDestiny($procedure_modality)],
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
@@ -142,6 +140,11 @@ class LoanForm extends FormRequest
             'delivery_contract_date' => ['nullable', 'date_format:"Y-m-d"'],
             'return_contract_date' => ['nullable', 'date_format:"Y-m-d"']
         ];
+        if($this->parent_reason == 'REPROGRAMACIÓN')
+        {
+            $rules['payment_type_id'] = ['integer','exists:payment_types,id'];
+            $rules['destiny_id']      = ['integer','exists:loan_destinies,id', new LoanDestiny($procedure_modality)];
+        }
         switch ($this->method()) {
             case 'POST': {
                 foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference? 11:10 ) as $key => $rule) {
