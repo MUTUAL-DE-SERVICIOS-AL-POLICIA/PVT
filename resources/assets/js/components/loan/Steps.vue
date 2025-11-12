@@ -256,7 +256,9 @@ export default {
     modalities: [],
 
     lenders:[],
-    data_loan_parent_aux:{},
+    data_loan_parent_aux:{
+      parent_reason: null,
+    },
     data_loan_parent:[],
     modalidad:{},
     procedureLoan:{},
@@ -537,6 +539,8 @@ export default {
       }
     },
     //Obtener información del trámite en el caso que se refinanciamiento, reporgramación y rehacer
+    //parent_loan->prestamo padre PVT, siempre el padre 
+    //data_loan->prestamo padre sismu
     async getLoan(id) {
       try {
         let res = await axios.get(`loan/${id}`)
@@ -545,7 +549,7 @@ export default {
          this.data_loan_parent_aux.guarantors=res.data.borrowerguarantors
          this.data_loan_parent_aux.parent_reason = res.data.parent_reason
 
-        if(this.refinancing || this.reprogramming){//Casos nuevo de refi repro
+        if(this.refinancing || this.$route.params.hash == 'reprogramming' ){//Casos nuevo de refi repro
           this.data_loan_parent_aux.parent_loan_id = res.data.id
           this.data_loan_parent_aux.code= res.data.code
           this.data_loan_parent_aux.disbursement_date= this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
@@ -553,9 +557,10 @@ export default {
           this.data_loan_parent_aux.loan_term= res.data.loan_term
           this.data_loan_parent_aux.balance= res.data.balance
           this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
-          this.data_loan_parent_aux.balance_for_reprogramming= res.data.balance_for_reprogramming
+          this.data_loan_parent_aux.balance_for_reprogramming = res.data.balance_for_reprogramming //solo para repro
 
         } else if(this.remake && res.data.parent_loan != null && res.data.data_loan == null){//Para PVT
+          console.log("ENTRO REMAKE PVT")
           this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
           this.data_loan_parent_aux.code = res.data.parent_loan.code
           this.data_loan_parent_aux.disbursement_date= this.$moment(res.data.parent_loan.disbursement_date).format('YYYY-MM-DD')
@@ -563,6 +568,7 @@ export default {
           this.data_loan_parent_aux.loan_term = res.data.parent_loan.loan_term
           this.data_loan_parent_aux.balance = res.data.parent_loan.balance
           this.data_loan_parent_aux.estimated_quota = res.data.parent_loan.estimated_quota
+          this.data_loan_parent_aux.balance_for_reprogramming = res.data.amount_approved //solo para repro
 
         } else if(this.remake && res.data.parent_loan == null && res.data.data_loan != null){//Para sismu
           this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
@@ -573,8 +579,8 @@ export default {
           this.data_loan_parent_aux.balance = res.data.data_loan.balance
           this.data_loan_parent_aux.estimated_quota = res.data.data_loan.estimated_quota
         }
-          //Si es PVT refinanciamiento existe un cambio en el id de modalidad
-        if(this.refinancing || this.reprogramming){
+          //Si es PVT refinanciamiento o reprogramación nuevo existe un cambio en el id de modalidad
+        if(this.refinancing || this.$route.params.hash == 'reprogramming'){
           let res3 = await axios.post(`procedure_ref_rep/`,{
             type: this.refinancing? 'REF' : 'REP',
             loan_id: res.data.id,

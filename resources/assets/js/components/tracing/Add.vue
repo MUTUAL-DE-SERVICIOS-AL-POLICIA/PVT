@@ -179,6 +179,7 @@
       <FormTracing
           :loan.sync="loan"
           :loan_refinancing.sync="loan_refinancing"
+          :loan_reprogramming.sync="loan_reprogramming"
           :loan_properties.sync="loan_properties"
           :procedure_types.sync="procedure_types"
           :observations.sync="observations"
@@ -231,7 +232,8 @@ export default {
       ],
       modality:{
         procedure_type:{
-          name: null
+          name: null,
+          second_name: null
         }
       },
       payment_type: {
@@ -243,6 +245,7 @@ export default {
     },
     city:[],
     loan_refinancing:{},
+    loan_reprogramming: {},
     observations: [],
     observation_type: [],
     loan_properties: {},
@@ -341,7 +344,18 @@ export default {
             this.loan_refinancing.balance_parent_loan_refinancing = this.loan.balance_parent_loan_refinancing
             this.loan_refinancing.amount_approved = this.loan.amount_approved
             this.loan_refinancing.refinancing_balance = this.loan.refinancing_balance
-
+        
+        if(this.loan.parent_reason == 'REPROGRAMACIÓN'){
+            this.loan_reprogramming.reprogramming = true
+            this.loan_reprogramming.code = this.loan.parent_loan.code
+            this.loan_reprogramming.amount_approved  = this.loan.parent_loan.amount_approved
+            this.loan_reprogramming.loan_term  = this.loan.parent_loan.loan_term
+            this.loan_reprogramming.balance  = this.loan.parent_loan.balance
+            this.loan_reprogramming.estimated_quota = this.loan.parent_loan.estimated_quota
+            this.loan_reprogramming.disbursement_date = this.loan.parent_loan.disbursement_date
+            this.loan_reprogramming.balance_for_reprogramming = this.loan.parent_loan.balance_for_reprogramming
+            console.log('reprogra')
+        }
         let res1 = await axios.get(`affiliate/${this.loan.affiliate_id}`)
         this.affiliate = res1.data
 

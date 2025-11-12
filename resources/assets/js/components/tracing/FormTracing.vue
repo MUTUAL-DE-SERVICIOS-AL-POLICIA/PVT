@@ -235,11 +235,11 @@
                                     <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type ? loan.payment_type.name : 'Sin registro'}}</p>
                                   </v-col>
 
-                                  <v-col cols="12" md="6" class="py-2" v-show="loan.payment_type && loan.payment_type.name=='Depósito Bancario'">
+                                  <v-col cols="12" md="6" class="py-2" v-if="loan.payment_type && loan.payment_type.name=='Depósito Bancario'">
                                     <p><b>ENTIDAD FINANCIERA:</b> {{loan.payment_type.name}}</p>
                                   </v-col>
 
-                                  <v-col cols="12" md="6" class="py-2" v-show="loan.payment_type && loan.payment_type.name=='Depósito Bancario'">
+                                  <v-col cols="12" md="6" class="py-2" v-if="loan.payment_type && loan.payment_type.name=='Depósito Bancario'">
                                     <p><b>CUENTA SIGEP:</b> {{loan.borrower[0].sigep_status}}</p>
                                   </v-col>
 
@@ -297,6 +297,34 @@
                                   <p class="success--text"><b>Monto del Refinanciamiento:</b> {{loan_refinancing.refinancing_balance | money}}</p>
                                 </v-col>
                               </v-row>
+                              <template v-if="loan_reprogramming.reprogramming">                                  
+                                  <v-col cols="12" md="6" class="pb-0">
+                                    <p style="color:teal"><b>REPROGRAMACIÓN - DATOS DEL PRÉSTAMO PADRE</b></p>
+                                  </v-col>
+                                  <v-row>
+                                    <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Codigo Ptmo Padre:</b>{{' '+loan_reprogramming.code}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="3" class="py-2" >
+                                    <p><b>Monto Ptmo Padre:</b> {{loan_reprogramming.amount_approved | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Plazo Ptmo Padre:</b>{{' '+loan_reprogramming.loan_term}}</p>
+                                  </v-col>
+                                   <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Cuota Ptmo Padre:</b> {{loan_reprogramming.estimated_quota | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p><b>Fecha Desembolso Ptmo Padre:</b> {{loan_reprogramming.disbursement_date | date}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p><b>Saldo Ptmo Padre:</b> {{loan_reprogramming.balance | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p class="success--text"><b>Monto reprogramado:</b> {{loan_reprogramming.balance_for_reprogramming | money}}</p>
+                                  </v-col>
+                                  </v-row>
+                                </template>
                             </v-card-text>
                           </v-card>
                         </v-tab-item>
@@ -438,6 +466,10 @@ export default {
   name: "specific-data-loan",
   props: {
     loan_refinancing: {
+      type: Object,
+      required: true
+    },
+    loan_reprogramming: {
       type: Object,
       required: true
     },
