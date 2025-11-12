@@ -21,49 +21,20 @@
                                     <p style="color:teal"><b>TITULAR</b></p>
                                   </v-col>
                                   <v-col cols="12" md="1" class="py-0" >
-                                <div v-if="permissionSimpleSelected.includes('update-loan-calculations') " >
-                                  <v-tooltip top >
-                                    <template v-slot:activator="{ on }">
-                                      <v-btn
-                                        fab
-                                        dark
-                                        x-small
-                                        :color="'error'"
-                                        top
-                                        right
-                                        v-on="on"
-                                        @click.stop="resetForm()"
-                                        v-show="qualification_edit"
-                                      >
-                                      <v-icon>mdi-close</v-icon>
-                                      </v-btn>
-                                    </template>
-                                    <div>
-                                      <span>Cancelar</span>
-                                    </div>
-                                  </v-tooltip>
-                                  <v-tooltip top >
-                                    <template v-slot:activator="{ on }">
-                                      <v-btn
-                                        fab
-                                        dark
-                                        x-small
-                                        :color="qualification_edit ? 'danger' : 'success'"
-                                        top
-                                        right
-                                        v-on="on"
-                                        @click.stop="editSimulator()"
-                                      >
-                                        <v-icon v-if="qualification_edit">mdi-check</v-icon>
-                                        <v-icon v-else>mdi-pencil</v-icon>
-                                      </v-btn>
-                                    </template>
-                                    <div>
-                                      <span v-if="qualification_edit">Guardar Montos</span>
-                                      <span v-else>Editar</span>
-                                    </div>
-                                  </v-tooltip>
-                                  </div>
+                                    <EditCancelButton
+                                      :editing="qualification_edit"
+                                      :permission="permissionSimpleSelected.includes('update-loan-calculations')"
+                                      :onCancel="resetForm"
+                                      :onEdit="editSimulator"
+                                      iconEditing="mdi-check"
+                                      iconCancel="mdi-close"
+                                      iconDefault="mdi-pencil"
+                                      textEditing="Guardar Montos"
+                                      textCancel="Cancelar"
+                                      textDefault="Editar"
+                                      :cancelStyle="{ }"
+                                      :editStyle="{ }"
+                                    />
                                   </v-col>
                                   <v-progress-linear color="blue-grey lighten-3"></v-progress-linear>
                                   <v-col cols="12" md="4" v-show="!qualification_edit" class="pb-0">
@@ -117,57 +88,31 @@
                                     <p><b>CALCULO DE CUOTA: </b> {{loan.estimated_quota | moneyString}} Bs.</p>
                                   </v-col>
                                   <v-progress-linear></v-progress-linear>
-                                  <BallotsAdjust :ballots="loan.borrower[0].ballots"/>
+                                  <BallotsAdjust 
+                                    v-if="loan.parent_reason != 'REPROGRAMACIÓN'" 
+                                    :ballots="loan.borrower[0].ballots"
+                                  />
                                   <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear>
                                     <v-col cols="12" md="6" class="pb-0" v-show="loan_refinancing.refinancing">
                                     <p style="color:teal"><b>DATOS DEL PRÉSTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</b></p>
                                   </v-col>
-                                <v-col cols="12" md="6" class="py-0" v-show="loan_refinancing.refinancing">
-                                <div  v-if="permissionSimpleSelected.includes('update-refinancing-balance') && $route.query.workTray != 'tracingLoans'">
-                                  <v-tooltip top >
-                                    <template v-slot:activator="{ on }">
-                                      <v-btn
-                                        fab
-                                        dark
-                                        x-small
-                                        :color="'error'"
-                                        top
-                                        right
-                                        v-on="on"
-                                        @click.stop="resetForm()"
-                                        v-show="collection_edit"
-                                      >
-                                        <v-icon>mdi-close</v-icon>
-                                      </v-btn>
-                                    </template>
-                                    <div>
-                                      <span>Cancelar</span>
-                                    </div>
-                                  </v-tooltip>
-                                  <v-tooltip top >
-                                    <template v-slot:activator="{ on }">
-                                      <v-btn
-                                        fab
-                                        dark
-                                        x-small
-                                        :color="collection_edit ? 'danger' : 'success'"
-                                        top
-                                        right
-                                        v-on="on"
-                                        @click.stop="editRefinancing()"
-                                      >
-                                        <v-icon v-if="collection_edit">mdi-check</v-icon>
-                                        <v-icon v-else>mdi-calculator</v-icon>
-                                      </v-btn>
-                                    </template>
-                                    <div>
-                                      <span v-if="collection_edit">Actualizar el Saldo</span>
-                                      <span v-else>Editar Saldo Refinanciamiento</span>
-                                    </div>
-                                  </v-tooltip>
-                                  </div>
+                                  <v-col cols="12" md="6" class="py-0" v-show="loan_refinancing.refinancing">
+                                    <EditCancelButton
+                                      :editing="collection_edit"
+                                      :permission="permissionSimpleSelected.includes('update-refinancing-balance') && $route.query.workTray != 'tracingLoans'"
+                                      :onCancel="resetForm"
+                                      :onEdit="editRefinancing"
+                                      iconEditing="mdi-check"
+                                      iconCancel="mdi-close"
+                                      iconDefault="mdi-calculator"
+                                      textEditing="Actualizar el Saldo"
+                                      textCancel="Cancelar"
+                                      textDefault="Editar Saldo Refinanciamiento"
+                                      :cancelStyle="{ }"
+                                      :editStyle="{ }"
+                                    />
                                   </v-col>
-                                  <v-progress-linear v-show="loan_refinancing.refinancing" color="blue-grey lighten-3"></v-progress-linear  >
+                                 
                                   <v-row v-show="loan_refinancing.refinancing">
                                   <v-col cols="12" md="3" class="py-2">
                                     <p><b>Codigo Ptmo Padre:</b>{{' '+loan_refinancing.code}}</p>
@@ -221,6 +166,35 @@
                                     <p class="success--text"><b>Monto del Refinanciamiento:</b> {{loan_refinancing.refinancing_balance | money}}</p>
                                   </v-col>
                                   </v-row>
+                                  <template v-if="loan.parent_reason == 'REPROGRAMACIÓN'">                                  
+                                    <v-col cols="12" md="6" class="pb-0">
+                                    <p style="color:teal"><b>REPROGRAMACIÓN - DATOS DEL PRÉSTAMO PADRE</b></p>
+                                  </v-col>
+                                  <v-row>
+                                    <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Codigo Ptmo Padre:</b>{{' '+loan.parent_loan.code}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="3" class="py-2" >
+                                    <p><b>Monto Ptmo Padre:</b> {{loan.parent_loan.amount_approved | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Plazo Ptmo Padre:</b>{{' '+loan.parent_loan.loan_term}}</p>
+                                  </v-col>
+                                   <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Cuota Ptmo Padre:</b> {{loan.parent_loan.estimated_quota | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p><b>Fecha Desembolso Ptmo Padre:</b> {{loan.parent_loan.disbursement_date | date}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p><b>Saldo Ptmo Padre:</b> {{loan.parent_loan.balance | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p class="success--text"><b>Monto reprogramado:</b> {{loan.parent_loan.balance_for_reprogramming | money}}</p>
+                                  </v-col>
+                                  </v-row>
+                                </template>
+
                                   <v-progress-linear></v-progress-linear>
                                   <v-col cols="12" md="12" class="pb-0" >
                                     <p style="color:teal"><b>DATOS DEL CONTRATO</b></p>
@@ -237,52 +211,20 @@
                                         :readonly="!edit_delivery_date"
                                       ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') ">
-                                      <div>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="'error'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 45px;"
-                                            @click.stop="resetForm()"
-                                            v-show="edit_delivery_date"
-                                          >
-                                            <v-icon>mdi-close</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span>Cancelar</span>
-                                        </div>
-                                      </v-tooltip>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="edit_delivery_date ? 'danger' : 'success'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 10px;"
-                                            @click.stop="editDateDelivery()"
-                                          >
-                                            <v-icon v-if="edit_delivery_date">mdi-check</v-icon>
-                                            <v-icon v-else>mdi-pencil</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span v-if="edit_delivery_date">Guardar Fecha Entrega</span>
-                                          <span v-else>Editar Fecha Entrega</span>
-                                        </div>
-                                      </v-tooltip>
-                                    </div>
+                                    <v-col cols="12" md="3" v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                      <EditCancelButton
+                                        :editing="edit_delivery_date"
+                                        :permission="''"
+                                        :onCancel="resetForm"
+                                        :onEdit="editDateDelivery"
+                                        iconEditing="mdi-check"
+                                        iconCancel="mdi-close"
+                                        iconDefault="mdi-pencil"
+                                        textEditing="Guardar Fecha Entrega"
+                                        textDefault="Editar Fecha Entrega"
+                                        :cancelStyle="{ marginRight: '45px'}"
+                                        :editStyle="{ marginRight: '10px'}"
+                                      />
                                     </v-col>
                                      <v-col cols="12" md="3"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                     </v-col>
@@ -297,52 +239,20 @@
                                         :readonly="!edit_return_date"
                                       ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3" v-show="removeAccents(loan.delivery_contract_date) != 'Fecha invalida'"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts')">
-                                      <div >
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="'error'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 45px;"
-                                            @click.stop="resetForm()"
-                                            v-show="edit_return_date"
-                                          >
-                                            <v-icon>mdi-close</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span>Cancelar</span>
-                                        </div>
-                                      </v-tooltip>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="edit_return_date ? 'danger' : 'success'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 10px;"
-                                            @click.stop="editDateReturn()"
-                                          >
-                                            <v-icon v-if="edit_return_date">mdi-check</v-icon>
-                                            <v-icon v-else>mdi-pencil</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span v-if="edit_return_date">Guardar Fecha Recepcion</span>
-                                          <span v-else>Editar Fecha Recepcion</span>
-                                        </div>
-                                      </v-tooltip>
-                                    </div>
+                                    <v-col cols="12" md="3" v-show="removeAccents(loan.delivery_contract_date) != 'Fecha invalida'" v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                      <EditCancelButton
+                                        :editing="edit_return_date"
+                                        :permission="''"
+                                        :onCancel="resetForm"
+                                        :onEdit="editDateReturn"
+                                        iconEditing="mdi-check"
+                                        iconCancel="mdi-close"
+                                        iconDefault="mdi-pencil"
+                                        textEditing="Guardar Fecha Recepción"
+                                        textDefault="Editar Fecha Recepción"
+                                        :cancelStyle="{ marginRight: '45px'}"
+                                        :editStyle="{ marginRight: '10px'}"
+                                      />
                                   </v-col>
                                   <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                   </v-col>
@@ -361,51 +271,19 @@
                                       ></v-text-field>
                                     </v-col>
                                       <v-col cols="12" md="3" v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts')">
-                                      <div>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="'error'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 45px;"
-                                            @click.stop="resetForm()"
-                                            v-show="edit_delivery_date_regional"
-                                          >
-                                            <v-icon>mdi-close</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span>Cancelar</span>
-                                        </div>
-                                      </v-tooltip>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="edit_delivery_date_regional? 'danger' : 'success'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 10px;"
-                                            @click.stop="editDateDeliveryRegional()"
-                                          >
-                                            <v-icon v-if="edit_delivery_date_regional">mdi-check</v-icon>
-                                            <v-icon v-else>mdi-pencil</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span v-if="edit_delivery_date_regional">Guardar Fecha Entrega Regional</span>
-                                          <span v-else>Editar Fecha Entrega Regional</span>
-                                        </div>
-                                      </v-tooltip>
-                                    </div>
+                                        <EditCancelButton
+                                          :editing="edit_delivery_date_regional"
+                                          :permission="''"
+                                          :onCancel="resetForm"
+                                          :onEdit="editDateDeliveryRegional"
+                                          iconEditing="mdi-check"
+                                          iconCancel="mdi-close"
+                                          iconDefault="mdi-pencil"
+                                          textEditing="Guardar Fecha Entrega Regional"
+                                          textDefault="Editar Fecha Entrega Regional"
+                                          :cancelStyle="{ marginRight: '45px'}"
+                                          :editStyle="{ marginRight: '10px'}"
+                                        />
                                     </v-col>
                                       <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                     </v-col>
@@ -422,53 +300,21 @@
                                       ></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="3" v-show="removeAccents(loan.regional_delivery_contract_date) != 'Fecha invalida'" v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
-                                      <div >
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="'error'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 45px;"
-                                            @click.stop="resetForm()"
-                                            v-show="edit_return_date_regional"
-                                          >
-                                            <v-icon>mdi-close</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span>Cancelar</span>
-                                        </div>
-                                      </v-tooltip>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="edit_return_date_regional ? 'danger' : 'success'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 10px;"
-                                            @click.stop="editDateReturnRegional()"
-                                          >
-                                            <v-icon v-if="edit_return_date_regional">mdi-check</v-icon>
-                                            <v-icon v-else>mdi-pencil</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span v-if="edit_return_date_regional">Guardar Fecha Recepcion</span>
-                                          <span v-else>Editar Fecha Recepcion</span>
-                                        </div>
-                                      </v-tooltip>
-                                    </div>
-                                  </v-col>
-                                  <v-col cols="12" md="3">
+                                      <EditCancelButton
+                                          :editing="edit_return_date_regional"
+                                          :permission="''"
+                                          :onCancel="resetForm"
+                                          :onEdit="editDateReturnRegional"
+                                          iconEditing="mdi-check"
+                                          iconCancel="mdi-close"
+                                          iconDefault="mdi-pencil"
+                                          textEditing="Guardar Fecha Recepcion"
+                                          textDefault="Guardar Fecha Recepcion"
+                                          :cancelStyle="{ marginRight: '45px'}"
+                                          :editStyle="{ marginRight: '10px'}"
+                                        />
+                                    </v-col>
+                                  <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                   </v-col>
                                   <v-col cols="12" md="3">
                                       <v-text-field
@@ -483,53 +329,19 @@
                                       ></v-text-field>
                                     </v-col>
                                       <v-col cols="12" md="3" v-if="permissionSimpleSelected.includes('registration-date-contract')">
-                                      <div>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="'error'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 45px;"
-                                            @click.stop="resetForm()"
-                                            v-show="edit_date_contract"
-                                          >
-                                            <v-icon>mdi-close</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span>Cancelar</span>
-                                        </div>
-                                      </v-tooltip>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            fab
-                                            dark
-                                            x-small
-                                            :color="edit_date_contract? 'danger' : 'success'"
-                                            top
-                                            right
-                                            v-on="on"
-                                            style="margin-right: 10px;"
-                                            @click.stop="editDateContract()"
-                                          >
-                                            <v-icon v-if="edit_date_contract">mdi-check</v-icon>
-                                            <v-icon v-else>mdi-pencil</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <div>
-                                          <span v-if="edit_date_contract">Guardar Fecha Contrato</span>
-                                          <span v-else>Editar Fecha Contrato</span>
-                                        </div>
-                                      </v-tooltip>
-                                    </div>
-                                    </v-col>
-                                      <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-date-contract')">
+                                        <EditCancelButton
+                                          :editing="edit_date_contract"
+                                          :permission="''"
+                                          :onCancel="resetForm"
+                                          :onEdit="editDateContract"
+                                          iconEditing="mdi-check"
+                                          iconCancel="mdi-close"
+                                          iconDefault="mdi-pencil"
+                                          textEditing="Editar Fecha Contrato"
+                                          textDefault="Guardar Fecha Recepcion"
+                                          :cancelStyle="{ marginRight: '45px'}"
+                                          :editStyle="{ marginRight: '10px'}"
+                                        />
                                     </v-col>
                               </v-row>
                             </v-col>
@@ -1024,12 +836,14 @@
 import BallotsAdjust from "@/components/workflow/BallotsAdjust"
 import GuaranteesTable from "@/components/workflow/GuaranteesTable"
 import common from "@/plugins/common"
+import EditCancelButton from '@/components/shared/EditCancelButton.vue'
 
 export default {
   name: "specific-data-loan",
   components:{
     BallotsAdjust,
-    GuaranteesTable
+    GuaranteesTable,
+    EditCancelButton
   },
   props: {
     loan_refinancing: {
