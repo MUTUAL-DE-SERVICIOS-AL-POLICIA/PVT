@@ -153,7 +153,7 @@
 
           <strong>Ubicación trámite:</strong> <br />
 
-          <v-icon x-small color="orange">mdi-folder-information</v-icon>{{role_name}} <br>
+          <v-icon x-small color="orange">mdi-folder-information</v-icon>{{wf_state_name}} <br>
           <v-icon x-small color="blue" v-if="user_name != null">mdi-file-account</v-icon> {{user_name}}</h6>
 
           </template>
@@ -229,8 +229,14 @@ export default {
           city_identity_card: {}
         }
       ],
-      modality:{},
-      payment_type: {},
+      modality:{
+        procedure_type:{
+          name: null
+        }
+      },
+      payment_type: {
+        name: null
+      },
       personal_references:[],
       cosigners:[],
       guarantors:[]
@@ -243,7 +249,7 @@ export default {
     procedure_types: {},
     vertical: true,
     tab: "tab-1",
-    role_name: null,
+    wf_state_name: null,
     user_name: null,
     loading_print_solicitude:false,
     loading_print_contract:false,
@@ -304,7 +310,6 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.loan = res.data
-        this.loan.state.name = res.data.state.name
 
         if(this.loan.parent_reason=='REFINANCIAMIENTO')
         {
@@ -339,15 +344,12 @@ export default {
 
         let res1 = await axios.get(`affiliate/${this.loan.affiliate_id}`)
         this.affiliate = res1.data
-        if (this.loan.property_id != null) {
-          this.getLoanproperty(this.loan.property_id)
-        }
+
         this.getProceduretype(this.loan.procedure_modality_id)
         this.borrower = this.loan.borrower[0]
         this.setBreadcrumbs()
-        //this.getAddress(this.affiliate.id)
 
-        this.role(this.loan.role_id)
+        this.wfState(this.loan.wf_states_id)
         if(this.loan.user_id != null){
           this.user(this.loan.user_id)
         }
@@ -369,25 +371,7 @@ export default {
         this.loading = false
       }
     },
-    //Metodo para sacar detalle de la propiedad
-    async getLoanproperty(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`loan_property/${id}`)
-        this.loan_properties = res.data
-        for(let i=0; i<= this.city.length ; i++ )
-        {
-          if(this.city[i].id == this.loan_properties.real_city_id)
-          {
-           this.loan_properties.city_properties = this.city[i].name
-          }
-        }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
+
     //Metodo para sacar el procedure
     async getProceduretype(id) {
       try {
@@ -432,10 +416,10 @@ export default {
         this.loading = false
       }
     },
-    async role(role_id){
+    async wfState(wf_states_id){
       try {
-        let res = await axios.get(`role/${role_id}`)
-        this.role_name = res.data.display_name
+        let res = await axios.get(`wf_state/${wf_states_id}`)
+        this.wf_state_name = res.data.name
       } catch (e) {
         console.log(e)
       }

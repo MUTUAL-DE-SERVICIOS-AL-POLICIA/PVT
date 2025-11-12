@@ -2,7 +2,6 @@
   <v-container fluid>
     <ValidationObserver ref="observer">
       <v-form>
-        <div><pre>{{  }}</pre></div>
         <v-row justify="center">
           <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
               <v-text-field
@@ -90,25 +89,14 @@
                             v-on:keyup.enter="simulator()"
                           ></v-text-field>
                         </ValidationProvider>
-                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
+                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="reprogramming? '':'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
                           <v-text-field
-                            v-if="!reprogramming"
                             class="py-0"
                             :error-messages="errors"
                             label="Monto Solicitado"
                             v-model ="calculator_result.amount_requested"
                             v-on:keyup.enter="simulator()"
-                          ></v-text-field>
-                        </ValidationProvider>
-                        <ValidationProvider v-slot="{ errors }" name="Monto Solicitado" :rules="'min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
-                          <v-text-field
-                            v-if="reprogramming"
-                            class="py-0"
-                            :error-messages="errors"
-                            label="Monto Solicitado"
-                            :readonly=true
-                            v-model ="data_loan_parent_aux.balance_for_reprogramming"
-                            v-on:keyup.enter="simulator()"
+                            :readonly="reprogramming"
                           ></v-text-field>
                         </ValidationProvider>
                         <center>
@@ -131,15 +119,13 @@
                         <fieldset class="py-0">
                           <ul style="list-style: none" >
                             <li v-for="(liquid,i) in liquid_calificated" :key="i" >
-                              <template v-if="!reprogramming">
-                              <p>PROMEDIO LIQUIDO PAGABLE: {{liquid.payable_liquid_calculated | money}}</p>
+                              <p>{{reprogramming ? 'PROMEDIO LIQUIDO PAGABLE' : 'INGRESO'}}: {{liquid.payable_liquid_calculated | money}}</p>
                               <p class="error--text "> TOTAL BONOS: (-) {{liquid.bonus_calculated | money}} </p>
                               <p class="error--text ">  MONTO DE SUBSISTENCIA: (-) {{global_parameters.livelihood_amount | money}} </p>
                               <p class="success--text " v-show="type_sismu"> (+) CUOTA DE REFINANCIAMIENTO SISMU: {{data_sismu.quota_sismu | money}} </p>
-                              <p style="color:teal" class="font-weight-black" >LIQUIDO PARA CALIFICACION: {{ liquid.liquid_qualification_calculated | money}}</p>
-                            </template>
+                              <p style="color:teal" class="font-weight-black" v-if="!reprogramming" >LIQUIDO PARA CALIFICACION: {{ liquid.liquid_qualification_calculated | money}}</p>
                               <p v-show="liquid_calificated[0].guarantees.length==0">GARANTIAS: {{liquid_calificated[0].guarantees.length}}</p>
-                              <p class="success--text" v-if="reprogramming" > MONTO A SER REPROGRAMADO: {{data_loan_parent_aux.balance_for_reprogramming | money}} </p>
+                              <p style="color:teal" class="font-weight-black" v-if="reprogramming" > MONTO REPROGRAMADO: {{data_loan_parent_aux.balance_for_reprogramming | money}} </p>
                               </li>
                             </ul>
                         </fieldset>
@@ -276,8 +262,11 @@ export default {
     refinancing() {
       return this.$route.params.hash == 'refinancing'
     },
+    reprogrammingx() {
+      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason == 'REPROGRAMACIÓN'
+    },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason =='REPROGRAMACIÓN'
+      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason == 'REPROGRAMACIÓN'
     },
     remake() {
       return this.$route.params.hash == 'remake'
