@@ -2313,11 +2313,6 @@ class LoanReportController extends Controller
 
     public function loan_with_penal_payment_report()
     {
-        /*$headers = [
-            "C.I.","NOMBRE COMPLETO","CATEGORIA","GRADO","NRO. DE CEL.",
-            "PTMO","FECHA DESEMBOLSO","TASA ANUAL","CUOTA MENSUAL",
-            "SALDO ACTUAL","MODALIDAD","SUB-MODALIDAD"
-        ];*/
         $headers = [
             "N° DE PTMO", "FECHA DE DESEMBOLSO", "TASA DE INTERES", "CUOTA MENSUAL", "SALDO ACTUAL",
             "CI_TIT.", "AP. PAT. TIT", "AP. MAT. TIT", "AP. ESPOSO", "1ER NOM. TIT", "2DO. NOM. TIT",
@@ -2335,6 +2330,7 @@ class LoanReportController extends Controller
                 },
                 'interest',
                 'modality.procedure_type',
+                'affiliate',
             ])
             ->get();
 
@@ -2345,6 +2341,7 @@ class LoanReportController extends Controller
 
             $categoryName = ($b && $b->category) ? $b->category->name : '';
             $degreeShort  = ($b && $b->degree)    ? $b->degree->shortened : '';
+            $affiliate = $loan->affiliate;
 
             $file1[] = [
                 $loan->code,
@@ -2363,7 +2360,7 @@ class LoanReportController extends Controller
                 $loan->loan_plan->where('estimated_date', '<=',Carbon::now())->sortByDesc('quota_number')->count() > 0 ? $loan->loan_plan->where('estimated_date', '<=',Carbon::now())->sortByDesc('quota_number')->first()->balance : $loan->balance,
                 $loan->last_payment_validated ? Carbon::parse($loan->last_payment_validated->estimated_date)->format('Y-m-d') : Carbon::parse($loan->disbursement_date)->format('Y-m-d'),
                 $categoryName,
-                $degreeShort,
+                $affiliate->degree ? $affiliate->degree->shortened : '',
                 $b->cell_phone_number ?? '',
             ];
         }
