@@ -61,6 +61,10 @@ class AddTypeAdjustToContributionAdjustsTable extends Migration
             ON role_user(user_id)
             WHERE role_active = true;
         ");
+
+        DB::statement("insert into permissions (created_at, updated_at, name, display_name)
+            values (now(), now(), 'registration-date-contract', 'Registrar fecha de firma de contrato');
+        ");
     }
 
     /**
