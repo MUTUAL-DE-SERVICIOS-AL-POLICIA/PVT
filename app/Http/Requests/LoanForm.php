@@ -84,7 +84,6 @@ class LoanForm extends FormRequest
             'loan_term' => ['integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'liquid_qualification_calculated' => ['numeric'],
-            'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
             'lenders' => ['array','min:1', new LoanIntervalMaxLender($procedure_modality)],
             'personal_references' => ['array', 'exists:personal_references,id' ],
             'lenders.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
@@ -140,10 +139,11 @@ class LoanForm extends FormRequest
             'delivery_contract_date' => ['nullable', 'date_format:"Y-m-d"'],
             'return_contract_date' => ['nullable', 'date_format:"Y-m-d"']
         ];
-        if($this->parent_reason == 'REPROGRAMACIÓN')
+        if($this->parent_reason != 'REPROGRAMACIÓN')
         {
             $rules['payment_type_id'] = ['integer','exists:payment_types,id'];
             $rules['destiny_id']      = ['integer','exists:loan_destinies,id', new LoanDestiny($procedure_modality)];
+            $rules['indebtedness_calculated'] = ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)];
         }
         switch ($this->method()) {
             case 'POST': {

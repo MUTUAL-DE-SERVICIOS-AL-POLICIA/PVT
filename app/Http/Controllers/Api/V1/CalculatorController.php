@@ -240,11 +240,12 @@ class CalculatorController extends Controller
                 'Préstamo al Sector Activo con Garantía del Beneficio del Fondo de Retiro Policial Solidario', 
                 'Préstamo Estacional para el Sector Pasivo de la Policía Boliviana'
             ];
+            $liquid_repro = 0;
             if(in_array($modality->procedure_type->name, $allowedTypes)){
                 if(count($liquid_calculated) > $modality->loan_modality_parameter->max_lenders)abort(403, 'La cantidad de titulares no corresponde a la modalidad');
                 foreach($liquid_calculated as $liquid){
                     $quota_calculated = $this->quota_calculator($modality, $request->months_term, $amount_requested);
-
+                    $liquid_repro = $quota_calculated;
                     $amount_maximum = $this->maximum_amount($modality,$request->months_term,$liquid['liquid_qualification_calculated']);
                     $debt_index_suggested = $modality->loan_modality_parameter->suggested_debt_index;
                     $affiliate_average_rf = 0;
@@ -271,15 +272,19 @@ class CalculatorController extends Controller
                     if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100) $valuate = true;  // validar Indice de endeudamiento y monto de subsistencia
                     $calculated_data->push([
                         'affiliate_id' => $liquid['affiliate_id'],
-                        'quota_calculated' => Util::round2($quota_calculated),
+                        'quota_calculated' => strpos($modality->name, 'Reprogramación') !== false ? Util::round2($liquid_repro) : Util::round2($quota_calculated),
                         'indebtedness_calculated' => Util::round2($indebtedness_calculated),
                         'payment_percentage' => 100,
                         'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
                         'is_valid' =>$valuate // debe estar en el rango de indice de endeudamiento y dentro del monto de subsistencia
                     ]);
                 }
+                if(strpos($modality->name, 'Reprogramación') !== false){
+                    $quota_calculated = $liquid_repro;
+                    $indebtedness_calculated = 100;
+                    $amount_maximum = $request->amount_requested;
+                }
                 $response = $this->header($quota_calculated,$indebtedness_calculated,$request->amount_requested,$request->months_term,$valuate,$liquid['liquid_qualification_calculated'],$amount_maximum, $amount_maximum_suggested, $debt_index_suggested,$maximum_suggested_valid,$calculated_data);
-
 
             }else{
                 if(count($liquid_calculated)>$modality->loan_modality_parameter->max_lenders)abort(403, 'La cantidad de titulares no corresponde a la modalidad');
