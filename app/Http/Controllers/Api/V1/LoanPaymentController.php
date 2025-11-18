@@ -649,25 +649,19 @@ class LoanPaymentController extends Controller
             $q->where('state_id', $statePendientePago)
               ->orWhere(function ($q2) use ($statePendienteConfirmar, $catReprogramacion) {
                   $q2->where('state_id', $statePendienteConfirmar)
-                     ->where('categorie_id', $catReprogramacion); // cambia a category_id si corresponde
+                     ->where('categorie_id', $catReprogramacion);
               });
         })
         ->orderBy('id');
-        /*$payments = $query->get();
-        return response()->json($payments);*/
         $totalAfectados = 0;
 
         LoanPayment::withoutEvents(function () use ($query, $stateAnulado, &$totalAfectados) {
             $query->select('id')->chunkById(1000, function ($payments) use ($stateAnulado, &$totalAfectados) {
                 $ids = $payments->pluck('id');
-
-                // Marcar como Anulado
                 LoanPayment::whereIn('id', $ids)->update([
                     'state_id'   => $stateAnulado,
                     'updated_at' => now(),
                 ]);
-
-                // Soft delete
                 LoanPayment::whereIn('id', $ids)->delete();
 
                 $totalAfectados += $ids->count();
