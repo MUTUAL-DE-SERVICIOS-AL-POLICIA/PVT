@@ -727,8 +727,6 @@ class LoanController extends Controller
                 $loan->fill(array_merge($request->except($exceptions)));
             }
             if (in_array('validated', $exceptions)){
-                if($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->parent_loan->last_payment_validated->state->name != 'Pagado' && $loan->currentState->name == 'Cobranzas Corte')
-                    return abort(409, 'El prestamo a reprogramar aun cuenta con pagos pendientes por validar');
                 $loan->validated = $request->validated;
             }
             if ($request->has('role_id')) {
@@ -2797,6 +2795,21 @@ class LoanController extends Controller
             'status' => $status,
             'message' => $message,
             'modality_reprogramming' => $modality_reprogramming
+        ], 200);
+    }
+
+    public function get_info_reprogramming(Loan $loan)
+    {
+        $message = '';
+        $status = false;
+        if($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->parent_loan->last_payment_validated->state->name != 'Pagado' && $loan->currentState->name == 'Cobranzas Corte')
+        {
+            $message = "La reprogramación aun cuenta con pagos pendientes por validar";
+            $status = true;
+        }
+        return response()->json([
+            'message' => $message,
+            'status' => $status
         ], 200);
     }
 }

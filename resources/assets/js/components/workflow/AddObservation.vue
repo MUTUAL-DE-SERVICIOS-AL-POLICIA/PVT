@@ -12,6 +12,18 @@
         <v-toolbar-title v-show="observation.edit">Editar Observacion</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
+      <template v-if="status">
+      <v-divider></v-divider>
+      <br>
+        <v-toolbar dense flat color="" class="py-0">
+          <v-alert
+            :color="color"
+            outlined
+            dense
+          >{{ message }}
+          </v-alert>
+        </v-toolbar>
+      </template>
       <v-divider></v-divider>
       <v-card-text class="ma-0 pb-0">
         <v-container fluid class="ma-0 pb-0">
@@ -111,11 +123,15 @@ export default {
     areas: [],
     user_id_previous: 0,
     user_name: null,
-    length_previus: 0
+    length_previus: 0,
+    message: '',
+    $status: '',
+    color: '',
   }),
   beforeMount(){
     this.getObservationType()
     this.getFlow(this.$route.params.id)
+    this.getInfo(this.$route.params.id)
   },
   mounted() {
     this.bus.$on('openDialog', (observation) => {
@@ -211,6 +227,17 @@ export default {
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+    async getInfo($id){
+      try {
+        let res = await axios.get(`get_info_reprogramming/${$id}`)
+        this.message = res.data.message
+        this.status = res.data.status
+        if(this.status)
+          this.color = 'warning'
+      } catch (e) {
+        console.log(e)
       }
     },
     async getFlow(id) {

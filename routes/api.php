@@ -301,6 +301,7 @@ Route::group([
             Route::get('my_loans', 'Api\V1\LoanController@my_loans');
             Route::post('procedure_ref_rep', 'Api\V1\LoanController@procedure_ref_rep');
             Route::post('release_loan/{loan}', 'Api\V1\LoanController@release_loan');
+            Route::get('get_info_reprogramming/{loan}', 'Api\V1\LoanController@get_info_reprogramming');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
