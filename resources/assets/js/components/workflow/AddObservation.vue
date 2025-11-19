@@ -4,6 +4,7 @@
     width="600"
   >
     <v-card>
+      <div>{{ observation.info.color }}</div>
       <v-toolbar dense flat color="">
         <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Devolver trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Anular trámite</v-toolbar-title>
@@ -12,17 +13,17 @@
         <v-toolbar-title v-show="observation.edit">Editar Observacion</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
-      <template v-if="status">
-      <v-divider></v-divider>
-      <br>
-        <v-toolbar dense flat color="" class="py-0">
-          <v-alert
-            :color="color"
-            outlined
-            dense
-          >{{ message }}
-          </v-alert>
-        </v-toolbar>
+      <template v-if="observation.info.status">
+        <v-divider></v-divider>
+        <br>
+          <v-toolbar dense flat color="" class="py-0">
+            <v-alert
+              color="warning"
+              outlined
+              dense
+            >{{ observation.info.message }}
+            </v-alert>
+          </v-toolbar>
       </template>
       <v-divider></v-divider>
       <v-card-text class="ma-0 pb-0">
@@ -116,7 +117,12 @@ export default {
   },
   data: () => ({
     dialog: false,
-    observation: {},
+    observation: {
+      info: {
+        status: false,
+        message: ''
+      }
+    },
     observation_type: [],
     flow: {},
     valArea: [],
@@ -124,18 +130,15 @@ export default {
     user_id_previous: 0,
     user_name: null,
     length_previus: 0,
-    message: '',
-    $status: '',
-    color: '',
   }),
   beforeMount(){
     this.getObservationType()
     this.getFlow(this.$route.params.id)
-    this.getInfo(this.$route.params.id)
   },
   mounted() {
     this.bus.$on('openDialog', (observation) => {
       this.observation = observation
+      console.log(this.observation)
       this.dialog = true
     })
   },
@@ -149,7 +152,12 @@ export default {
     },
     close() {
       this.dialog = false
-      this.observation = {}
+      this.observation = {
+        info: {
+          status: false,
+          message: ''
+        }
+      }
     },
     async saveObservation(id) {
       try {
@@ -231,17 +239,6 @@ export default {
         console.log(e)
       } finally {
         this.loading = false
-      }
-    },
-    async getInfo($id){
-      try {
-        let res = await axios.get(`get_info_reprogramming/${$id}`)
-        this.message = res.data.message
-        this.status = res.data.status
-        if(this.status)
-          this.color = 'warning'
-      } catch (e) {
-        console.log(e)
       }
     },
     async getFlow(id) {

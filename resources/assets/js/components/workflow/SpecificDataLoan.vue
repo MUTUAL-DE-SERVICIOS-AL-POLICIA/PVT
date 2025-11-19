@@ -207,6 +207,7 @@
                                         label="FECHA ENTREGA DE CONTRATO"
                                         hint="Día/Mes/Año"
                                         type="date"
+                                        :clearable="edit_delivery_date"
                                         :outlined="edit_delivery_date"
                                         :readonly="!edit_delivery_date"
                                       ></v-text-field>
@@ -235,6 +236,7 @@
                                         label="FECHA RECEPCION DE CONTRATO"
                                         hint="Día/Mes/Año"
                                         type="date"
+                                        :clearable="edit_return_date"
                                         :outlined="edit_return_date"
                                         :readonly="!edit_return_date"
                                       ></v-text-field>
@@ -314,7 +316,9 @@
                                           :editStyle="{ marginRight: '10px'}"
                                         />
                                     </v-col>
-                                  <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                    <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                  </v-col>
+                                  <v-col cols="12" md="3" v-show="removeAccents(loan.regional_delivery_contract_date) == 'Fecha invalida' && permissionSimpleSelected.includes('registration-delivery-return-contracts')" >
                                   </v-col>
                                   <v-col cols="12" md="3">
                                       <v-text-field

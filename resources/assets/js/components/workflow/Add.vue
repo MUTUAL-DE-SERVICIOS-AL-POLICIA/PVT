@@ -700,7 +700,8 @@ export default {
     loading_btn_plan: false,
     docsRequired: [],
     docsOptional: [],
-    val_docs: {}
+    val_docs: {},
+    info: {}
   }),
   watch: {
     search: _.debounce(function() {
@@ -760,7 +761,7 @@ export default {
     //this.getSpouse(this.$route.params.id)
     this.getObservation(this.$route.params.id)
     //this.getProceduretype(this.$route.params.id)
-
+    this.getInfo(this.$route.params.id)
     this.bus1.$on("emitGetObservation", id => {
       //escuchamos la emision de ObserverFlow
       this.getObservation(id) //y monstramos la lista de observaciones segun el id del prestamo
@@ -1016,6 +1017,7 @@ export default {
       }
     },
     validation(){
+      this.getInfo(this.$route.params.id)
       //VALIDACION FECHA ENTREGA DE CONTRATO
      if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true)
       {
@@ -1059,21 +1061,21 @@ export default {
               {
                 if(this.validate.valid_disbursement == true)
                 {
-                  this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+                  this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info, info: this.info }) 
                 }
                 else
                 {
                   this.toastr.error('Falta generar el plan de pago.')
                 }
               }else{
-                this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+                this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
               }
             }else
             {
               this.toastr.error('Faltan registar el número presupuestario.')
             }
           }else{
-            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+            this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
           }
         }else{
             this.toastr.error('Falta registar la fecha de entrega y/o la fecha de devolución del contrato.')
@@ -1087,7 +1089,7 @@ export default {
             {
               if(this.validate.valid_disbursement == true)
               {
-                this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+                this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
               }else
               {
                 this.toastr.error('Falta generar el plan de pago.')
@@ -1095,7 +1097,7 @@ export default {
             }
             else
             {
-              this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+              this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
             }
           }
           else
@@ -1108,7 +1110,7 @@ export default {
           {
             if(this.validate.valid_disbursement == true)
             {
-              this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+              this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
             }else
             {
               this.toastr.error('Falta generar el plan de pago.')
@@ -1120,7 +1122,7 @@ export default {
 
               if(this.val_docs.valid){ 
 
-                this.bus.$emit('openDialog', { edit: false, accion: 'validar' })           
+                this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })           
 
               }else{ 
                 
@@ -1128,7 +1130,7 @@ export default {
               }
             }else{
 
-              this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+              this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
             }
           }
         }
@@ -1197,6 +1199,17 @@ export default {
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+    async getInfo($id){
+      try {
+        let res = await axios.get(`get_info_reprogramming/${$id}`)
+        this.info.message = res.data.message
+        this.info.status = res.data.status
+        if(this.status)
+          this.info.color = 'warning'
+      } catch (e) {
+        console.log(e)
       }
     },
    },
