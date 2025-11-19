@@ -151,6 +151,7 @@
                             right
                             v-on="on"
                             :to="{ name: 'tracingAdd', params: { id: item.id} }"
+                            class="px-5"
                           >
                             <v-icon>mdi-eye</v-icon>
                           </v-btn>
@@ -171,6 +172,7 @@
                             bottom
                             right
                             v-on="on"
+                            class="px-5"
                             @click.stop="validateRemakeLoan(affiliate.id, item.id)"
                           >
                             <v-icon>mdi-redo-variant</v-icon>
@@ -194,6 +196,7 @@
                         bottom
                         right
                         v-on="on"
+                        class="px-5"
                         @click.stop="validateRefinancingLoan(affiliate.id, item.id)"
                       >
                       <v-icon>mdi-cash-multiple</v-icon>
@@ -218,6 +221,7 @@
                           bottom
                           right
                           v-on="on"
+                          class="px-5"
                           @click.stop="validateReprogrammingLoan(affiliate.id, item.id)"
                         >
                         <v-icon>mdi-calendar-clock</v-icon>
