@@ -50,7 +50,7 @@
                             </v-col>
                           </v-row>
                         </v-col> 
-                        <template v-if="loan_modality.id === 93 || loan_modality.id === 94">
+                        <template v-if="isRetirementFund">
                           <v-col cols="12" md="2" class="py-0 my-0 text-center">
                             <strong>FONDO DE RETIRO (Promedio Bs.)</strong><br>
                             <span v-if="affiliate.retirement_fund_average">{{ affiliate.retirement_fund_average.retirement_fund_average | money }}</span>
@@ -93,7 +93,7 @@
                   <v-col cols="12" md="7" class="py-0 my-0">
                     <v-row>
                       <v-col cols="12" md="12" class="py-0 my-0 pb-1 uppercase"> COMPROBANTE DE PAGO <b>{{contribution[i].month}}</b></v-col>
-                      <v-col cols="12" md="3" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29">
+                      <v-col cols="12" md="3" class="py-0 my-0" v-if="!isCommission && !isEstacional && !reprogramming && parent_reason !='REPROGRAMACIÓN'">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Comprobante de pago"
@@ -111,7 +111,7 @@
                           ></v-text-field>
                         </ValidationProvider>
                       </v-col>
-                      <v-col cols="12" class="py-0 my-0"  :md="lender_contribution.state_affiliate == 'Comisión' || loanTypeSelected.id == 29 ? 4 : 2">
+                      <v-col cols="12" class="py-0 my-0" :md="isCommission || isEstacional || reprogramming? 4 : 2">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Monto ajuste"
@@ -122,13 +122,14 @@
                             :error-messages="errors"
                             dense
                             v-model="contribution[i].adjustment_amount"
-                            :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' : loanTypeSelected.id == 29 ? 'Importe cotizable' :  'Monto ajuste'"
-                            :outlined = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29) ? true : false"
-                            :disabled = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29) ? false : true"
+                            :label="adjustmentLabel(contrib)"
+                            :outlined = "isAdjustment(contrib)"
+                            :disabled = "!isAdjustment(contrib)"
                           ></v-text-field>
                         </ValidationProvider>
                       </v-col>
-                      <template v-if="lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29">
+                      <!-- TOTAL Y DESCRIPCIÓN (si aplica) -->
+                      <template v-if="!isCommission && !isEstacional && !reprogramming">
                         <v-col cols="12" md="2" class="py-0 my-0" >
                           <b style="text-align: center">= {{(parseFloat(contribution[i].adjustment_amount) + parseFloat(contribution[i].payable_liquid)) | money}}</b>
                         </v-col>
@@ -145,8 +146,8 @@
                               dense
                               v-model="contribution[i].adjustment_description"
                               label="Descripción ajuste"
-                            :outlined = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión')? true : false"
-                            :disabled = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión')? false : true"
+                              :outlined = "isAdjustment(contrib)"
+                              :disabled = "!isAdjustment(contrib)"
                               rows="1"
                             ></v-textarea>
                           </ValidationProvider>
@@ -157,8 +158,8 @@
 
                   <v-col cols="12" md="5" class="py-0 my-0">
                     <v-row class="py-0 my-0">
-                      <v-col cols="12" md="12" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión' && loanTypeSelected.id != 29"> BONOS </v-col>
-                      <template v-if="lender_contribution.state_affiliate == 'Activo'">
+                      <v-col cols="12" md="12" class="py-0 my-0" v-if="!isCommission && !isEstacional && !reprogramming"> BONOS </v-col>
+                      <template v-if="isActive && !reprogramming">
                         <v-col cols="12" md="3" class="py-0 my-0">
                           <ValidationProvider
                             v-slot="{ errors }"
@@ -228,7 +229,7 @@
                           </ValidationProvider>
                         </v-col>
                      </template> 
-                      <v-col cols="12" :md="lender_contribution.state_affiliate == 'Pasivo' && loanTypeSelected.id != 29 ? 4 : 3" class="py-0 my-0" v-if="lender_contribution.state_affiliate == 'Pasivo' && loanTypeSelected.id != 29">
+                      <v-col cols="12" :md="isPassive && !isEstacional && !reprogramming ? 4 : 3" class="py-0 my-0" v-if="isPassive && !isEstacional && !reprogramming">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Renta dignidad"
@@ -276,28 +277,21 @@
   </v-flex>
 </template>
 <script>
-import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
 
 export default {
   name: "ballots",
   data: () => ({
-    fec:'2024-08-02',
-    bus: new Vue(),
     enabled: false,
     editar:true,
     monto:null,
     plazo:null,
     visible:false,
-    //hipotecario:false,
-    //window_size:4,
-    //see_field:false,
     loan_modality: {},
     data_ballots: [],
     contribution: [],
     choose_diff_month: false,
     number_diff_month: 1,
     lender_contribution: {},
-    //modality_loan: []
     submodalities: []
   }),
    props: {
@@ -316,10 +310,6 @@ export default {
     procedureLoan: {
       type: Object,
       required: true
-    },
-    contrib_codebtor: {
-      type: Array,
-      required:true
     },
     loan_detail: {
       type: Object,
@@ -357,10 +347,13 @@ export default {
       type: Boolean,
       required: true
     },
+    data_loan_parent_aux:{
+      type: Object,
+      required: true
+    },
 
   },
   components: {
-    BallotsHipotecary,
   },
   mounted() {
     //this.getModalityLoan()
@@ -380,20 +373,28 @@ export default {
       return this.$route.params.hash == 'refinancing'
     },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming'
+      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason =='REPROGRAMACIÓN'
     },
     remake() {
-      if(this.$route.params.hash == 'remake'){
-        return true
-      }else{
-        return false
-      }
+      return this.$route.params.hash === 'remake'
     },
     type_sismu() {
-      if(this.$route.query.type_sismu){
-        return true
-      }
-      return false
+      return !!this.$route.query.type_sismu
+    },
+    isRetirementFund() {
+      return this.loan_modality.id === 93 || this.loan_modality.id === 94
+    },
+    isEstacional() {
+      return this.loanTypeSelected.id == 29
+    },
+    isCommission() {
+      return this.lender_contribution && this.lender_contribution.state_affiliate == 'Comisión'
+    },
+    isActive() {
+      return this.lender_contribution && this.lender_contribution.state_affiliate == 'Activo'
+    },
+    isPassive() {
+      return this.lender_contribution && this.lender_contribution.state_affiliate == 'Pasivo'
     },
   },
   methods: {        
@@ -523,7 +524,7 @@ export default {
         this.fecha= new Date();
 
         for (let i = 0; i < this.modalidad.quantity_ballots; i++) {//colocar 1
-          if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
+          if(this.lender_contribution.valid && this.isActive){
             this.enabled = false
             this.editar=false
              //Carga los datos en los campos para ser visualizados en la interfaz
@@ -536,7 +537,7 @@ export default {
               this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
               this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
 
-          } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
+          } else if(!this.lender_contribution.valid && this.isActive){
               this.enabled = false
               this.editar=false
               this.contribution[i].contributionable_id = 0
@@ -548,7 +549,7 @@ export default {
               this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('YYYY-MM-DD')
               this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('MMMM')
 
-          } else if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo' && this.loanTypeSelected.id != 29){
+          } else if(this.lender_contribution.valid && this.isPassive && !this.isEstacional){
               this.enabled = true
               this.editar = true
               if(this.data_ballots[i]){
@@ -565,7 +566,7 @@ export default {
                 this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('MMMM')
                 }
 
-          } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo' && this.loanTypeSelected.id != 29){
+          } else if(!this.lender_contribution.valid && this.isPassive && !this.isEstacional){
               this.enabled = true
               this.editar  = true
               this.contribution[i].contributionable_id = 0
@@ -574,14 +575,14 @@ export default {
               this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('YYYY-MM-DD')
               this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('MMMM')
 
-          } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Comisión'){
+          } else if(!this.lender_contribution.valid && this.isCommission){
               this.contribution[i].contributionable_id = 0
               this.contribution[i].payable_liquid = 0
               this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('YYYY-MM-DD')
               this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('MMMM')
 
           } 
-          else if(this.lender_contribution.state_affiliate == 'Pasivo' && this.loanTypeSelected.id == 29){
+          else if(this.isPassive && this.isEstacional){
             console.log("estacional")
               this.contribution[i].contributionable_id = 0
               this.contribution[i].payable_liquid = 0
@@ -663,7 +664,22 @@ export default {
       }
       console.log(result);
       return result;
-    }
+    },
+    adjustmentLabel(contrib) {
+      if (this.isCommission) return 'Liquido pagable'
+      if (this.isEstacional) return 'Importe cotizable'
+      if (this.reprogramming) return 'Ingresos'
+      return 'Monto ajuste'
+    },
+    isAdjustment(contrib) {
+      // si el campo debe mostrarse como ajuste
+      return !(
+        parseFloat(contrib.payable_liquid) == 0 &&
+        !this.isCommission &&
+        !this.isEstacional &&
+        !this.reprogramming
+      )
+    },
   }
 }
 </script>

@@ -25,9 +25,7 @@
     <template v-slot:[`item.borrower`]="{ item }">
       {{ item.borrower[0] ? $options.filters.fullName(item.borrower[0], true) : '' }}
     </template>
-    <template v-slot:[`item.role_id`]="{ item }">
-      {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
-    </template>
+
     <template v-slot:[`item.procedure_modality_id`]="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">

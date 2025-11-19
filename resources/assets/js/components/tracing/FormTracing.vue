@@ -44,13 +44,6 @@
 
                         <v-tab>
                           <v-icon left>
-                            mdi-account-check
-                          </v-icon>
-                          PERSONA CODEUDORA
-                        </v-tab>
-
-                        <v-tab>
-                          <v-icon left>
                             mdi-book-open-page-variant
                           </v-icon>
                           DOCUMENTOS PRESENTADOS
@@ -188,57 +181,6 @@
                                       <br>
                                     </div>
                                   </v-col>
-
-                                    <v-col cols="12" md="12" v-if="loan.modality.procedure_type.name == 'Préstamo Hipotecario' || loan.modality.procedure_type.name == 'Refinanciamiento Préstamo Hipotecario'">
-                                     <p style="color:teal"><b>GARANTIA HIPOTECARIA </b></p>
-                                      <v-row>
-                                        <v-progress-linear></v-progress-linear><br>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>CIUDAD:</b> {{loan_properties.city_properties}}</p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>UBICACION:</b> {{loan_properties.location}}</p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>NUMERO DE LOTE:</b> {{loan_properties.land_lot_number}}</p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>SUPERFICIE:</b> {{loan_properties.surface}}</p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>UNIDAD DE MEDIDA:</b> {{loan_properties.measurement}}</p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>CODIGO CATASTRAL:</b> {{loan_properties.cadastral_code}}</p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>NRO MATRICULA:</b> {{loan_properties.registration_number}}</p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>NRO FOLIO REAL:</b> {{loan_properties.real_folio_number}}</p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>VNR: </b>{{ loan_properties.net_realizable_value}} </p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                           <p><b>VALOR COMERCIAL: </b>{{loan_properties.commercial_value}} </p>
-                                        </v-col>
-
-                                        <v-col cols="12" md="4">
-                                          <p><b>VALOR DE RESCATE HIPOTECARIO: </b>{{loan_properties.rescue_value}} </p>
-                                        </v-col>
-                                      </v-row>
-                                    </v-col>
                                     <v-col cols="12" md="12" v-if="loan.modality.procedure_type.second_name == 'Fondo de Retiro'">
                                       <v-row>
                                       <v-col class="my-0 py-0" cols="12" md="12">
@@ -290,14 +232,14 @@
 
                                 <v-row>
                                   <v-col cols="12" md="6" class="py-2">
-                                    <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type.name}}</p>
+                                    <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type ? loan.payment_type.name : 'Sin registro'}}</p>
                                   </v-col>
 
-                                  <v-col cols="12" md="6" class="py-2" v-show="loan.payment_type.name=='Depósito Bancario'">
+                                  <v-col cols="12" md="6" class="py-2" v-if="loan.payment_type && loan.payment_type.name=='Depósito Bancario'">
                                     <p><b>ENTIDAD FINANCIERA:</b> {{loan.payment_type.name}}</p>
                                   </v-col>
 
-                                  <v-col cols="12" md="6" class="py-2" v-show="loan.payment_type.name=='Depósito Bancario'">
+                                  <v-col cols="12" md="6" class="py-2" v-if="loan.payment_type && loan.payment_type.name=='Depósito Bancario'">
                                     <p><b>CUENTA SIGEP:</b> {{loan.borrower[0].sigep_status}}</p>
                                   </v-col>
 
@@ -355,6 +297,34 @@
                                   <p class="success--text"><b>Monto del Refinanciamiento:</b> {{loan_refinancing.refinancing_balance | money}}</p>
                                 </v-col>
                               </v-row>
+                              <template v-if="loan_reprogramming.reprogramming">                                  
+                                  <v-col cols="12" md="6" class="pb-0">
+                                    <p style="color:teal"><b>REPROGRAMACIÓN - DATOS DEL PRÉSTAMO PADRE</b></p>
+                                  </v-col>
+                                  <v-row>
+                                    <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Codigo Ptmo Padre:</b>{{' '+loan_reprogramming.code}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="3" class="py-2" >
+                                    <p><b>Monto Ptmo Padre:</b> {{loan_reprogramming.amount_approved | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Plazo Ptmo Padre:</b>{{' '+loan_reprogramming.loan_term}}</p>
+                                  </v-col>
+                                   <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Cuota Ptmo Padre:</b> {{loan_reprogramming.estimated_quota | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p><b>Fecha Desembolso Ptmo Padre:</b> {{loan_reprogramming.disbursement_date | date}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p><b>Saldo Ptmo Padre:</b> {{loan_reprogramming.balance | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p class="success--text"><b>Monto reprogramado:</b> {{loan_reprogramming.balance_for_reprogramming | money}}</p>
+                                  </v-col>
+                                  </v-row>
+                                </template>
                             </v-card-text>
                           </v-card>
                         </v-tab-item>
@@ -383,80 +353,6 @@
                               </v-data-table>
                               <p v-if="loan.personal_references.length==0"> <b>NO TIENE PERSONA DE REFERENCIA</b></p>
 
-                            </v-card-text>
-                          </v-card>
-                        </v-tab-item>
-
-                        <!-- S E C C I Ó N   C O D E U D O R -->
-                        <v-tab-item>
-                          <v-card flat>
-                            <v-card-text>
-
-                              <v-col v-if="loan.cosigners.length==0" cols="12" md="12" class="py-0" >
-                                <p style="color:teal"><b>CODEUDOR</b></p>
-                              </v-col>
-
-                             <v-progress-linear v-if="loan.cosigners.length==0"></v-progress-linear>
-
-                             <br v-if="loan.cosigners.length==0">
-
-                              <p v-if="loan.cosigners.length==0" > <b>NO TIENE CODEUDORES</b></p>
-
-                              <v-col cols="12" md="12" class="py-0">
-                                <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
-                                  <div v-if="procedure_type.name === 'Préstamo Hipotecario'">
-                                    <p style="color:teal"><b>EVALUACION DEL CODEUDOR AFILIADO</b></p>
-                                        <v-progress-linear></v-progress-linear><br>
-                                      <div v-for="(lenders,i) in loan.lenders" :key="i">
-                                        <div  v-if="(lenders,i)>0">
-                                          <v-row>
-                                             <br>
-                                            <v-col cols="12" md="4" class="py-0">
-                                              <p><b>NOMBRE: </b> {{$options.filters.fullName(loan.borrower[i], true)}} </p>
-                                            </v-col>
-
-                                            <v-col cols="12" md="4" class="py-0">
-                                              <p><b>PROMEDIO LIQUIDO PAGABLE: </b> {{loan.borrower[i].pivot.payable_liquid_calculated}} Bs.</p>
-                                            </v-col>
-
-                                            <v-col cols="12" md="4" class="py-0" >
-                                              <p><b>LIQUIDO PARA CALIFICACION: </b> {{loan.borrower[i].pivot.liquid_qualification_calculated | moneyString}} Bs.</p>
-                                            </v-col>
-
-                                            <v-col cols="12" md="4" class="py-0">
-                                              <p><b>TOTAL BONOS:</b> {{loan.borrower[i].pivot.bonus_calculated | moneyString}}</p>
-                                            </v-col>
-
-                                            <v-col cols="12" md="4" class="py-0">
-                                              <p><b>LÍMITE DE ENDEUDAMIENTO:</b> {{loan.borrower[i].pivot.indebtedness_calculated|percentage }}% </p>
-                                            </v-col>
-
-                                            <v-col cols="12" md="4" class="py-0">
-                                              <p><b>CALCULO DE CUOTA: </b> {{loan.borrower[i].pivot.quota_treat | moneyString}} Bs.</p>
-                                            </v-col>
-
-                                          </v-row>
-                                        </div>
-                                      </div>
-
-                                      <v-progress-linear></v-progress-linear>
-                                      <br>
-                                  </div>
-                                </div>
-                                <p style="color:teal" v-if="loan.cosigners.length>0"><b>CODEUDOR NO AFILIADO </b></p>
-                                <v-progress-linear v-if="loan.cosigners.length>0"></v-progress-linear>
-                                <v-card flat tile>
-                                  <v-card-text>
-                                   <v-data-table
-                                    v-if="loan.cosigners.length>0"
-                                    :headers="headers"
-                                    :items="loan.cosigners"
-                                    dense
-                                  >
-                                    </v-data-table>
-                                  </v-card-text>
-                                </v-card>
-                              </v-col>
                             </v-card-text>
                           </v-card>
                         </v-tab-item>
@@ -570,6 +466,10 @@ export default {
   name: "specific-data-loan",
   props: {
     loan_refinancing: {
+      type: Object,
+      required: true
+    },
+    loan_reprogramming: {
       type: Object,
       required: true
     },

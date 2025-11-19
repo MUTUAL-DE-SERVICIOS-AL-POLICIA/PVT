@@ -33,7 +33,7 @@ class LoanContributionAdjustForm extends FormRequest
             'adjustable_id'=>['integer'],
             'adjustable_type' => ['string'],
             'amount' =>['numeric'],
-            'type_adjust'=>['string','in:adjust,liquid,last_eco_com'],
+            'type_adjust'=>['string','in:adjust,liquid,last_eco_com,reprogramming'],
             'database_name'=>['nullable','string','in:PVT,SISMU'],
             'user_id' => ['nullable', 'integer', 'exists:users,id'],        
         ];

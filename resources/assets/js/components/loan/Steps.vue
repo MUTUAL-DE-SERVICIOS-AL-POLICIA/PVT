@@ -53,7 +53,6 @@
               :procedureLoan.sync="procedureLoan"
               :modalidad.sync="modalidad"
               :affiliate.sync="affiliate"
-              :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
               :data_loan.sync="data_loan"
               :edit_refi_repro.sync="edit_refi_repro"
@@ -63,6 +62,7 @@
               :global_parameters ="global_parameters"
               :affiliate_data.sync="affiliate_data"
               :is_loading.sync="is_loading"
+              :data_loan_parent_aux.sync="data_loan_parent_aux"
             />
             <v-container>
               <v-row>
@@ -74,7 +74,6 @@
                     Siguiente
                   </v-btn>
                 </v-col>
-                  <!--{{contrib_codebtor}}-->
               </v-row>
             </v-container>
           </v-card>
@@ -84,7 +83,6 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <v-card class="ma-3">
               <BallotsResult ref="BallotsResult"
-                v-show="modalidad.procedure_type_name != 'Préstamo Hipotecario' && modalidad.procedure_type_name != 'Refinanciamiento Préstamo Hipotecario'"
                 :data_sismu.sync="data_sismu"
                 :lenders.sync="lenders"
                 :calculator_result.sync="calculator_result"
@@ -97,17 +95,6 @@
                   <v-col cols="12">Resultado para el Préstamo</v-col>
                 </template>
               </BallotsResult>
-              <BallotsResultHipotecary
-                v-show="modalidad.procedure_type_name == 'Préstamo Hipotecario' || modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'"
-                :data_sismu.sync="data_sismu"
-                :calculator_result.sync="calculator_result"
-                :loan_detail.sync="loan_detail"
-                :data_loan_parent_aux.sync="data_loan_parent_aux"
-                :modalidad.sync="modalidad"
-                :liquid_calificated.sync="liquid_calificated"
-                :lenders.sync="lenders"
-                :lenders_aux.sync="lenders_aux"
-              />
             </v-card>
             <v-container>
               <v-row>
@@ -129,14 +116,7 @@
         <v-stepper-content :key="`${3}-content`" :step="3" >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-            <HipotecaryData ref="HipotecaryData"
-              v-show="modalidad.procedure_type_name=='Préstamo Hipotecario' || modalidad.procedure_type_name=='Refinanciamiento Préstamo Hipotecario'"
-              :loan_detail.sync="loan_detail"
-              :loan_property="loan_property"
-              :bus="bus"
-            />
             <Guarantor
-             v-show="modalidad.procedure_type_name != 'Préstamo Hipotecario' && modalidad.procedure_type_name != 'Refinanciamiento Préstamo Hipotecario'"
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
             :loan_detail.sync="loan_detail"
@@ -146,7 +126,7 @@
             :modalidad_id.sync="modalidad.id"
             :calculator_result_amount_requested.sync="calculator_result.amount_requested"
             :calculator_result.sync ="calculator_result"/>
-          <v-container v-show="modalidad.procedure_type_name!='Préstamo Hipotecario' && modalidad.procedure_type_name!='Refinanciamiento Préstamo Hipotecario'">
+          <v-container>
             <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer> <v-spacer></v-spacer>
               <v-col>
@@ -196,8 +176,8 @@
             :procedureLoan.sync="procedureLoan"
             :destino.sync="destino"
             :bus="bus"
-            :personal_codebtor="personal_codebtor"
             :modalidad_max_cosigner.sync="modalidad.max_cosigner"
+            :data_loan_parent_aux.sync="data_loan_parent_aux"
           />
         </v-card>
       </v-stepper-content>
@@ -234,10 +214,6 @@ import BallotsResult from '@/components/loan/BallotsResult'
 import PersonalInformation from '@/components/affiliate/PersonalInformation'
 import FormInformation from '@/components/loan/FormInformation'
 import Guarantor from '@/components/loan/Guarantor'
-import HipotecaryData from '@/components/loan/HipotecaryData'
-import CoDebtor from '@/components/loan/CoDebtor'
-
-import BallotsResultHipotecary from '@/components/loan/BallotsResultHipotecary'
 export default {
   name: "loan-steps",
   props: {
@@ -264,10 +240,7 @@ export default {
     PersonalInformation,
     FormInformation,
     BallotsResult,
-    BallotsResultHipotecary,
     Guarantor,
-    CoDebtor,
-    HipotecaryData
   },
   data: () => ({
     bus: new Vue(),
@@ -283,12 +256,12 @@ export default {
     modalities: [],
 
     lenders:[],
-    data_loan_parent_aux:{},
+    data_loan_parent_aux:{
+      parent_reason: null,
+    },
     data_loan_parent:[],
     modalidad:{},
     procedureLoan:{},
-    personal_codebtor:[],
-    contrib_codebtor: [],
     contributions_aux: [],
     liquid_calificated:[
       {
@@ -321,7 +294,7 @@ export default {
     contributionable_ids: [],
     modalidad_refi_repro_remake: 0,
     global_parameters: {},
-    is_loading: false
+    is_loading: false,
   }),
   computed: {
     isNew() {
@@ -331,7 +304,7 @@ export default {
       return this.$route.params.hash == 'refinancing'
     },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming'
+      return this.$route.params.hash == 'reprogramming' || this.data_loan_parent_aux.parent_reason =='REPROGRAMACIÓN'
     },
     type_sismu() {
       if(this.$route.query.type_sismu){
@@ -430,11 +403,10 @@ export default {
       try {
       this.loan_contributions_adjust_ids = []
       this.contributionable_ids = []
-      console.log(this.contributionable_ids)
 
       this.contributions.forEach(async (item, i) => {
         //Verificar si el afiliado es pasivo para introducir su contribución
-        if(this.affiliate_contribution.state_affiliate == 'Pasivo' && this.loanTypeSelected.id != 29){
+        if(this.affiliate_contribution.state_affiliate == 'Pasivo' && this.loanTypeSelected.id != 29 && !this.reprogramming){
           let res = await axios.post(`aid_contribution/updateOrCreate`,{
             affiliate_id: this.$route.query.affiliate_id,
             month_year: this.contributions[i].period,
@@ -448,14 +420,15 @@ export default {
             }
             this.contributionable_type = 'aid_contributions'
         }
-        else if(this.affiliate_contribution.state_affiliate == 'Activo') {
+        else if(this.affiliate_contribution.state_affiliate == 'Activo' && !this.reprogramming) {
           if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
             this.contributionable_ids.push(this.contributions[i].contributionable_id)
           }
           this.contributionable_type = 'contributions'
         }
         else if(this.affiliate_contribution.state_affiliate == 'Comisión' || 
-               (this.affiliate_contribution.state_affiliate == 'Pasivo' && this.loanTypeSelected.id == 29)) {
+               (this.affiliate_contribution.state_affiliate == 'Pasivo' && this.loanTypeSelected.id == 29) || 
+                this.reprogramming) {
           this.contributionable_type = 'loan_contribution_adjusts'
         }
 
@@ -464,22 +437,18 @@ export default {
           //guardar el ajuste
           let res = await axios.post(`loan_contribution_adjust/updateOrCreate`, {
             affiliate_id: this.$route.query.affiliate_id,
-            adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 ? this.contributions[i].contributionable_id : this.$route.query.affiliate_id,
-            adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 ? this.affiliate_contribution.name_table_contribution : 'affiliates',
+            adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 && !this.reprogramming ? this.contributions[i].contributionable_id : this.$route.query.affiliate_id,
+            adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 && !this.reprogramming ? this.affiliate_contribution.name_table_contribution : 'affiliates',
             type_affiliate: 'lender',
             amount: this.contributions[i].adjustment_amount,
-            type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 ? 'adjust' : this.loanTypeSelected.id != 29 ? 'liquid': 'last_eco_com',
+            type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 && !this.reprogramming ? 'adjust' : this.loanTypeSelected.id == 'Comision' ? 'liquid': this.loanTypeSelected.id == 29 ? 'last_eco_com' : this.reprogramming ? 'reprogramming' : 'adjust',
             period_date: this.contributions[i].period,
-            description: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 ? this.contributions[i].adjustment_description : this.loanTypeSelected.id != 29 ? 'Liquido pagable por Comisión' : 'Liquido pagable último Complemento Económico'
+            description: this.affiliate_contribution.state_affiliate != 'Comisión' && this.loanTypeSelected.id != 29 && !this.reprogramming ? this.contributions[i].adjustment_description : this.loanTypeSelected.id == 'Comision' ? 'Liquido pagable por Comisión' : this.loanTypeSelected.id == 29 ? 'Liquido pagable último Complemento Económico' : this.reprogramming ? 'Reprogramación de préstamo' : this.contributions[i].adjustment_description
           })
           this.contributions[i].loan_contributions_adjust_id = res.data.id
-          console.log(this.contributions[i].loan_contributions_adjust_id)
           if (this.loan_contributions_adjust_ids.indexOf(this.contributions[i].loan_contributions_adjust_id) === -1) {
             this.loan_contributions_adjust_ids.push(this.contributions[i].loan_contributions_adjust_id)
           }
-
-        }else{
-          console.log('No tiene ajuste')
         }
       })
       }
@@ -491,7 +460,6 @@ export default {
    //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
     formatContributions() {
       let array_lender = []
-      let array_codebtors = []
       let contributions_lender =[]
       //Armar contribuciones del titular
       for (let i = 0; i < this.contributions.length; i++) {
@@ -511,28 +479,7 @@ export default {
         parent_loan_id: this.data_loan_parent_aux.parent_loan_id,
         contributions: contributions_lender
       }
-      //Armar contribuciones del codeudor afiliado
-      for (let i = 0; i < this.contrib_codebtor.length; i++) {
-        let contributions_codebtor=[]
-        for (let j = 0; j < this.contrib_codebtor[i].contribution.length; j++) {
-          contributions_codebtor.push({
-            payable_liquid: parseFloat(this.contrib_codebtor[i].contribution[j].payable_liquid) + parseFloat(this.contrib_codebtor[i].contribution[j].adjustment_amount),
-            border_bonus: this.contrib_codebtor[i].contribution[j].border_bonus,
-            east_bonus: this.contrib_codebtor[i].contribution[j].east_bonus,
-            position_bonus: this.contrib_codebtor[i].contribution[j].position_bonus,
-            public_security_bonus: this.contrib_codebtor[i].contribution[j].public_security_bonus
-          })
-        }
-        array_codebtors[i] = {
-          affiliate_id: this.contrib_codebtor[i].id_affiliate,
-          sismu: this.data_sismu.type_sismu || (this.remake && this.data_loan.data_loan != null),
-          quota_sismu: this.data_sismu.quota_sismu,
-          parent_loan_id: this.data_loan_parent_aux.parent_loan_id,
-          contributions: contributions_codebtor
-        }
-      }
-      //concatenar array del titular y codeudores
-      this.contributions_aux = array_lender.concat(array_codebtors)
+      this.contributions_aux = array_lender
     },
 
     //TAB1 Obtener liquido para calificación
@@ -546,94 +493,21 @@ export default {
 
         this.liquid_calificated = res.data
 
-         if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario')
-          {
-            if(this.loan_detail.net_realizable_value<=this.modalidad.maximun_amoun)
-              {
-                this.amount_requested=this.loan_detail.net_realizable_value
-              }
-              else{
-                this.amount_requested=this.modalidad.maximun_amoun
-              }
-              let res1 = await axios.post(`simulator`, {
-              procedure_modality_id:this.modalidad.id,
-              amount_requested: this.amount_requested,
-              months_term:  this.modalidad.maximum_term,
-              guarantor: false,
-              liquid_qualification_calculated_lender: 0,
-              liquid_calculated:this.liquid_calificated
-              })
-
-              this.calculator_result = res1.data
-
-              if( this.calculator_result.amount_maximum_suggested<this.amount_requested){
-                this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
-                this.loan_detail.amount_requested=this.calculator_result.amount_maximum_suggested
-              }else{
-                this.calculator_result.montos= this.amount_requested
-                this.loan_detail.amount_requested= this.amount_requested
-              }
-
-              this.lenders=res.data
-
-              for(let i = 0; i < this.lenders.length; i++ ){
-                //Armar el nombre de los lenders
-                if(i > 0)
-                {
-                  let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
-                  this.lenders_aux.push(res4.data.full_name)
-                }
-                //obtener las contribuciones para hipotecario de contrib_codebtor, i=0 es lender de ballots
-                this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
-                this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtnes_calculated
-                this.lenders[i].quota_treat=this.calculator_result.affiliates[i].quota_calculated_estimated
-                if(i == 0){
-                this.lenders[i].contributionable_type= this.contributionable_type
-                this.lenders[i].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
-                this.lenders[i].contributionable_ids=this.contributionable_ids
-                }else{
-                this.lenders[i].contributionable_type= this.contrib_codebtor[i-1].contributionable_type
-                this.lenders[i].loan_contributions_adjust_ids=this.contrib_codebtor[i-1].loan_contributions_adjust_ids
-                this.lenders[i].contributionable_ids=this.contrib_codebtor[i-1].contributionable_ids
-                }
-
-              }
-
-              this.loan_detail.minimum_term=this.modalidad.minimum_term
-              this.loan_detail.maximum_term=this.modalidad.maximum_term
-              this.loan_detail.minimun_amoun=this.modalidad.minimun_amoun
-              this.loan_detail.maximun_amoun=this.modalidad.maximun_amoun
-
-              this.loan_detail.months_term=this.modalidad.maximum_term
-              this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
-              this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
-              this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
-              this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-              this.loan_detail.is_valid=this.calculator_result.is_valid
-              for(let j = 0; j < this.liquid_calificated.length; j++ ){
-                if(this.liquid_calificated[j].livelihood_amount==false)
-                {
-                  this.data_sismu.livelihood_amount=this.liquid_calificated[j].livelihood_amount
-                }else{
-                  this.data_sismu.livelihood_amount=true
-                }
-             }
-            }
-            else{
               this.data_sismu.livelihood_amount=this.liquid_calificated[0].livelihood_amount
 
               let res1 = await axios.post(`simulator`, {
               procedure_modality_id:this.modalidad.id,
-              amount_requested: this.modalidad.maximun_amoun,
+              amount_requested: !this.reprogramming ? this.modalidad.maximun_amoun : this.data_loan_parent_aux.balance_for_reprogramming,
               months_term:  this.modalidad.maximum_term,
               guarantor: false,
               liquid_qualification_calculated_lender: 0,
               liquid_calculated:this.liquid_calificated
               })
               this.calculator_result = res1.data
-
-              if( this.calculator_result.amount_maximum_suggested<this.modalidad.maximun_amoun){
+              if( this.calculator_result.amount_maximum_suggested<this.modalidad.maximun_amoun && !this.reprogramming){
                 this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
+              }else if (this.reprogramming){
+                this.calculator_result.amount_requested=this.data_loan_parent_aux.balance_for_reprogramming
               }else{
                 this.calculator_result.amount_requested=this.modalidad.maximun_amoun
               }
@@ -657,7 +531,7 @@ export default {
               this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
               this.loan_detail.is_valid=this.calculator_result.is_valid
               this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-          }
+          
       } catch (e) {
         console.log(e)
       } finally {
@@ -665,6 +539,8 @@ export default {
       }
     },
     //Obtener información del trámite en el caso que se refinanciamiento, reporgramación y rehacer
+    //parent_loan->prestamo padre PVT, siempre el padre 
+    //data_loan->prestamo padre sismu
     async getLoan(id) {
       try {
         let res = await axios.get(`loan/${id}`)
@@ -673,7 +549,7 @@ export default {
          this.data_loan_parent_aux.guarantors=res.data.borrowerguarantors
          this.data_loan_parent_aux.parent_reason = res.data.parent_reason
 
-        if(this.refinancing || this.reprogramming){//Casos nuevo de refi repro
+        if(this.refinancing || this.$route.params.hash == 'reprogramming' ){//Casos nuevo de refi repro
           this.data_loan_parent_aux.parent_loan_id = res.data.id
           this.data_loan_parent_aux.code= res.data.code
           this.data_loan_parent_aux.disbursement_date= this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
@@ -681,8 +557,10 @@ export default {
           this.data_loan_parent_aux.loan_term= res.data.loan_term
           this.data_loan_parent_aux.balance= res.data.balance
           this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
+          this.data_loan_parent_aux.balance_for_reprogramming = res.data.balance_for_reprogramming //solo para repro
 
         } else if(this.remake && res.data.parent_loan != null && res.data.data_loan == null){//Para PVT
+          console.log("ENTRO REMAKE PVT")
           this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
           this.data_loan_parent_aux.code = res.data.parent_loan.code
           this.data_loan_parent_aux.disbursement_date= this.$moment(res.data.parent_loan.disbursement_date).format('YYYY-MM-DD')
@@ -690,6 +568,7 @@ export default {
           this.data_loan_parent_aux.loan_term = res.data.parent_loan.loan_term
           this.data_loan_parent_aux.balance = res.data.parent_loan.balance
           this.data_loan_parent_aux.estimated_quota = res.data.parent_loan.estimated_quota
+          this.data_loan_parent_aux.balance_for_reprogramming = res.data.amount_approved //solo para repro
 
         } else if(this.remake && res.data.parent_loan == null && res.data.data_loan != null){//Para sismu
           this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
@@ -700,11 +579,12 @@ export default {
           this.data_loan_parent_aux.balance = res.data.data_loan.balance
           this.data_loan_parent_aux.estimated_quota = res.data.data_loan.estimated_quota
         }
-          //Si es PVT refinanciamiento existe un cambio en el id de modalidad
-        if(this.refinancing || this.reprogramming){
+          //Si es PVT refinanciamiento o reprogramación nuevo existe un cambio en el id de modalidad
+        if(this.refinancing || this.$route.params.hash == 'reprogramming'){
           let res3 = await axios.post(`procedure_ref_rep/`,{
             type: this.refinancing? 'REF' : 'REP',
-            loan_id: res.data.id
+            loan_id: res.data.id,
+            remake: this.remake
           })
           this.modalities = [res3.data[0].procedure_type]
           this.loanTypeSelected.id = res3.data[0].procedure_type_id
@@ -761,8 +641,8 @@ export default {
                 continuar = true
                 if(continuar == true &&
                 !(this.contributions[i].adjustment_amount > 0 &&
-                (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == '') &&
-                ((this.affiliate_contribution.state_affiliate == 'Pasivo' && this.loanTypeSelected.id != 29) || this.affiliate_contribution.state_affiliate == 'Activo' ))){
+                (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == '') && !this.reprogramming &&
+                ((this.affiliate_contribution.state_affiliate == 'Pasivo' && this.loanTypeSelected.id != 29) || this.affiliate_contribution.state_affiliate == 'Activo'))){
                     continuar = true
                 }else{
                     continuar = false
@@ -783,17 +663,8 @@ export default {
           }
           //validar otros casos
           if(continuar && !this.type_sismu){
-            if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
-              if(this.loan_detail.net_realizable_value >= this.modalidad.minimun_amoun){
-                 this.saveAdjustment()
-                this.liquidCalificated()
-                this.nextStep(1)
-              }else{
-                this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.modalidad.minimun_amoun+ " correspondiente a la modalidad")
-              }
-            }else{
                 if(this.remake){
-                  if(this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Corto Plazo' || this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Largo Plazo' ||  this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo Hipotecario'){
+                  if(this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Corto Plazo' || this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Largo Plazo'){
                     if(this.data_sismu.quota_sismu > 0 && this.data_loan.data_loan != null ){
                       this.saveAdjustment()
                       this.liquidCalificated()
@@ -818,21 +689,8 @@ export default {
                   this.liquidCalificated()
                   this.nextStep(1)
                 }
-            }
+            
           }else if(continuar && this.type_sismu){
-            if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
-              if(this.loan_detail.net_realizable_value >= this.modalidad.minimun_amoun){
-                if(this.data_sismu.quota_sismu > 0){
-                  this.saveAdjustment()
-                  this.liquidCalificated()
-                  this.nextStep(1)
-                }else{
-                  this.toastr.error("Introduzca la CUOTA del SISMU")
-                }
-              }else{
-                this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.modalidad.minimun_amoun+ " correspondiente a la modalidad")
-              }
-            }else{
                   if(this.data_sismu.quota_sismu > 0 || (this.remake && this.data_loan.data_loan != null) ){
                   this.saveAdjustment()
                   this.liquidCalificated()
@@ -841,7 +699,7 @@ export default {
                 }else{
                   this.toastr.error("Introduzca la CUOTA del SISMU")
                 }
-            }
+            
           }
         }else{
           this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
@@ -894,16 +752,16 @@ export default {
                         this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
                       }else{
                         if(this.reprogramming){
-                          if(this.data_loan_parent_aux.loan_term >= this.calculator_result.months_term )
+                          if(this.data_loan_parent_aux.loan_term > this.calculator_result.months_term )
                           {
-                            this.toastr.error("El plazo no puede ser menor o igual al plazo anterior.")
+                            this.toastr.error("El plazo no puede ser menor o igual al plazo anterior."+ this.data_loan_parent_aux.loan_term +'-'+ this.calculator_result.months_term)
                           }else{
-                            if(this.data_loan_parent_aux.balance == this.calculator_result.amount_requested)
+                            if(this.data_loan_parent_aux.balance_for_reprogramming == this.calculator_result.amount_requested)
                             {
                               this.addDataLoan()
                               this.nextStep(2)
                             }else{
-                              this.toastr.error("El Monto Solicitado debe ser igual al Saldo.")
+                              this.toastr.error("El Monto Solicitado debe ser igual al Saldo de Refinanciamineto."+this.data_loan_parent_aux.balance_for_reprogramming +'-'+this.calculator_result.amount_requested)
                             }
                           }
                         }else{
@@ -931,15 +789,6 @@ export default {
                 }
               }
               }else{
-                if(this.modalidad.procedure_type_name=='Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
-                  if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
-                  {
-                    this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
-                  }
-                  else{
-                    this.nextStep(2)
-                  }
-                }else{
                   if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum)
                   {
                     this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
@@ -947,7 +796,7 @@ export default {
                   else{
                     this.nextStep(2)
                   }
-                }
+                
             }
           }
         }

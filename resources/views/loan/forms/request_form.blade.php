@@ -36,8 +36,20 @@
                 @if ($loan->parent_reason && !$loan->parent_loan_id)
                 <td class="data-row py-5">{{ $loan->data_loan->code }}</td>
                 @endif
-                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">@if($loan->parent_reason == "REPROGRAMACIÓN") {{$loan->parent_reason}} @endif {{ $loan->modality->name }}</td>
+                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}"> {{ $loan->modality->name }}</td>
             </tr>
+            @if ($loan->parent_reason == 'REPROGRAMACIÓN')
+                <tr class="bg-grey-darker text-white">
+                    <td class="w-25">Fecha de Solicitud</td>
+                    <td class="w-25">Plazo</td>
+                    <td class="w-25">Saldo</td>
+                </tr>
+                <tr>
+                    <td class="w-25">{{ Carbon::parse($loan->request_date)->format('d/m/y') }}</td>
+                    <td class="w-25">{{ $loan->loan_term }}</td>
+                    <td class="w-25">{{ $loan->amount_approved }}</td>
+                </tr>
+            @else
             <tr class="bg-grey-darker text-white">
                 <td>Monto solicitado</td>
                 <td>Plazo</td>
@@ -72,6 +84,7 @@
                 <td colspan="2">{{ Carbon::parse($loan->request_date)->format('d/m/y')}}</td>
                 <td colspan="1">{{ $loan->destiny->name }}</td>
             </tr>
+            @endif
         </table>
     </div>
 
