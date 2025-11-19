@@ -1750,9 +1750,10 @@ class Loan extends Model
 
     public function reprogrammed_active_process_loans()
     {
-        $loan_states = LoanState::whereNotIn('name',['Anulado'])->get()->pluck('id');
+        $loan_states = LoanState::whereNotIn('name',['Anulado', 'Liquidado'])->get()->pluck('id');
         return Loan::where('parent_loan_id', $this->id)
-                    ->whereIn('state_id', $loan_states)->get();
+                    ->whereIn('state_id', $loan_states)
+                    ->where('parent_reason', 'REPROGRAMACIÓN')->get();
     }
 
     public function balance_parent_repro()

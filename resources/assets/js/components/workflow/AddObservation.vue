@@ -137,8 +137,6 @@ export default {
     this.bus.$on('openDialog', (observation) => {
       this.observation = observation
       this.dialog = true
-      console.log("resultado")
-      console.log(observation)
     })
   },
   methods: {
@@ -213,7 +211,13 @@ export default {
           }
           this.dialog = false
       } catch (e) {
-        this.toastr.error(e.response.data.message)
+        let msg = ''
+        if(e.response)
+          msg = e.response.data.message
+        else
+          msg = e.type[0]
+        console.log(msg)
+        this.toastr.error(msg)
       } finally {
         this.loading = false
       }

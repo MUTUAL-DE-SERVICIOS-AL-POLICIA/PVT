@@ -727,6 +727,8 @@ class LoanController extends Controller
                 $loan->fill(array_merge($request->except($exceptions)));
             }
             if (in_array('validated', $exceptions)){
+                if($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->currentState->name == 'Confirmación legal' && $loan->disbursement_date == null)
+                    return abort(403, 'No se puede validar el préstamo de reprogramación sin generar el nuevo plan de pagos');
                 $loan->validated = $request->validated;
             }
             if ($request->has('role_id')) {
@@ -2780,7 +2782,7 @@ class LoanController extends Controller
         elseif($loan->reprogrammed_active_process_loans()->count() > 0)
         {
             $status = false;
-            $message = 'El prestamo ya tiene una reprogramación en proceso';
+            $message = 'El prestamo tiene una tramite en proceso';
         }
         elseif(!$loan->contract_signature_date){
             $status = false;
@@ -2805,6 +2807,9 @@ class LoanController extends Controller
         if($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->parent_loan->last_payment_validated->state->name != 'Pagado' && $loan->currentState->name == 'Cobranzas Corte')
         {
             $message = "La reprogramación aun cuenta con pagos pendientes por validar";
+            $status = true;
+        }elseif ($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->currentState->name == 'Confirmación legal' && $loan->state_id == 1) {
+            $message = "Aun no se genero el nuevo plan de pagos de la reprogramación";
             $status = true;
         }
         return response()->json([
