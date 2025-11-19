@@ -129,14 +129,12 @@ class LoanReportController extends Controller
                     Util::money_format($loan->balance),//SALDO ACTUAL
                     $loan->parent_reason,
                     Util::money_format($loan->amount_approved),
-                    //$loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : '0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
-                    //$loan->parent_reason? Util::money_format($loan->refinancing_balance):Util::money_format($loan->amount_approved),// LIQUIDO DESEMBOLSADO
                     Loan::whereId($loan->id)->first()->balance_parent_refi(),
                     $loan->amount_approved - (Loan::whereId($loan->id)->first()->balance_parent_refi()),
                     $loan->loan_term,//plazo
                     $loan->state->name,//estado del prestamo
-                    $loan->destiny->name,
-                    $loan->number_payment_type
+                    $loan->parent_reason == 'REPROGRAMACIÓN' ? $loan->parent_loan->destiny_name : $loan->destiny->name,
+                    $loan->parent_reason == 'REPROGRAMACIÓN' ? $loan->parent_loan->number_payment_type : $loan->number_payment_type
                    ));
                }
             }
