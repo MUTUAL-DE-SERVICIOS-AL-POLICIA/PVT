@@ -8,7 +8,11 @@
 <body>
     @include('partials.header', $header)
 <div class="block">
+        @if ($loan->parent_reason != 'REPROGRAMACIÓN')
         <div class="font-semibold leading-tight text-center m-b-10 text-lg">FORMULARIO DE CALIFICACIÓN Y APROBACIÓN DE PRÉSTAMO</div>
+        @else
+        <div class="font-semibold leading-tight text-center m-b-10 text-lg">FORMULARIO DE CALIFICACIÓN Y APROBACIÓN DE LA REPROGRAMACIÓN</div>
+        @endif
         @php ($lender = $lenders->first())
 </div>
 @php ($n = 1)
@@ -34,8 +38,18 @@
                 @if ($loan->parent_reason && !$loan->parent_loan_id)
                 <td class="data-row py-5">{{ $loan->data_loan->code }}</td>
                 @endif
-                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">@if($loan->parent_reason == "REPROGRAMACIÓN") {{$loan->parent_reason}} @endif {{ $loan->modality->name }}</td>
+                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">{{ $loan->modality->name }}</td>
             </tr>
+            @if ($loan->parent_reason == 'REPROGRAMACIÓN')
+                <tr class="bg-grey-darker text-white">
+                    <td class="w-25" colspan="2">Monto a Reprogramar</td>
+                    <td class="w-25" colspan="2">Plazo</td>
+                </tr>
+                <tr>
+                    <td class="w-25" colspan="2">{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
+                    <td class="w-25" colspan="2">{{ $loan->loan_term }}</td>
+                </tr>
+            @else
             <tr class="bg-grey-darker text-white">
                 <td>Monto solicitado</td>
                 <td>Plazo</td>
@@ -58,6 +72,7 @@
                     @endif
                 </td>
             </tr>
+            @endif
         </table>
     </div>
     @if($Loan_type_title == "REFINANCIAMIENTO" || $Loan_type_title == "SISMU REFINANCIAMIENTO")
@@ -83,8 +98,24 @@
             <td class="w-50 text-left px-10">{{Util::money_format($loan->amount_approved)}}</td>
             </tr> 
         </table>
-        @endif
+    @elseif ($Loan_type_title == "REPROGRAMACIÓN")
+        <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
+            <tr class="bg-grey-darker text-white">
+                <td colspan="2" >REPROGRAMACIÓN DE PRÉSTAMO</td>
+            </tr>
+            <tr  class="w-100">
+            <td class="w-50 text-left px-10">FECHA DE SALDO DEUDOR </td>
+            <td class="w-50 text-left px-10">{{Carbon::parse($loan->request_date)->format('d/m/Y')}}
+            </td>
+            </tr>
+            <tr  class="w-100">
+            <td class="w-50 text-left px-10">SALDO DEUDOR A REPROGRAMAR EN Bs. </td>
+            <td class="w-50 text-left px-10">{{Util::money_format($loan->balance_parent_repro())}}</td>
+            </tr>
+        </table>
+    @endif
     <!-- Boleta o C.E. -->
+    @if($loan->parent_reason != "REPROGRAMACIÓN")
     @if($loan->modality->procedure_type_id != 29)
     <div class="block">
         <div class="font-semibold leading-tight text-left m-b-10 text-sm">{{ $n++ }}. DATOS DE BOLETA</div>
@@ -230,6 +261,7 @@
             </table>
         </div>
     @endif
+    @endif
 
     <div class="block">
         <div class="font-semibold leading-tight text-left m-b-10 text-sm">{{ $n++ }}. DATOS DE EVALUACIÓN AL PRESTATARIO</div>
@@ -267,7 +299,9 @@
             @endif
             </tr>
             <tr  class="w-100">
-            <td class="w-50 text-left px-10">MONTO DEL PRÉSTAMO AUTORIZADO</td>
+            @if($loan->parent_reason != 'REPROGRAMACIÓN')<td class="w-50 text-left px-10">MONTO DEL PRÉSTAMO AUTORIZADO</td>
+            @else <td class="w-50 text-left px-10">MONTO A REPROGRAMAR</td>
+            @endif
             <td class="w-50 text-left px-10">{{ Util::money_format($loan->amount_approved) }}</td>
             </tr>
             @if($loan->modality->procedure_type_id != 29)

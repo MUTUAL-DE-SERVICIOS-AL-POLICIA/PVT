@@ -88,8 +88,11 @@ export default {
         this.rolePermissionSelected = this.rolesPermissionsItems[0]
       }
     },*/
-		clickRole(item) {
+		async clickRole(item) {
 			this.$store.commit('setRolePermissionSelected', item)
+      let res = await axios.post(`role/select`, {
+        role_id: item.id
+      })
       if(item.id != 104)
 			  this.$router.push("dashboard")
       else

@@ -88,7 +88,6 @@
         "title": "Usuarios",
         "icon": "mdi-account-outline",
         "permission": "show-user",
-        "role": "TE-admin",
         "params": {}
       }, {
         "href": "roleIndex",

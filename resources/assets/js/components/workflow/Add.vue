@@ -71,7 +71,7 @@
             <span>Anular trámite</span>
           </v-tooltip>
 
-          <div v-if="loan.modality.procedure_type.second_name == 'Anticipo'">
+          <div >
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -270,7 +270,7 @@
                <v-tooltip top >
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    v-show="loan.modality.procedure_type.second_name == 'Anticipo' && removeAccents(loan.disbursement_date) != 'Fecha invalida' "
+                    v-show="removeAccents(loan.disbursement_date) != 'Fecha invalida' "
                     fab
                     x-small
                     color="success"
@@ -309,6 +309,29 @@
                 </div>
               </v-tooltip>
             </v-card-title>
+            <v-card-title class="pa-0" v-if="permissionSimpleSelected.includes('print-payment-plan-reprogramming')
+            && (loan.modality.shortened || '').toUpperCase().startsWith('REP')">  
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    x-small
+                    color="dark"
+                    top
+                    right
+                    absolute
+                    v-on="on"
+                    style="margin-top: 25px;"
+                    @click="imprimir($route.params.id)"
+                  >
+                    <v-icon>mdi-printer</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Generar el nuevo plan de pagos</span>
+                </div>
+              </v-tooltip>
+            </v-card-title>
 
             <v-card-title class="pa-0" v-if="permissionSimpleSelected.includes('print-qualification-form')">
               <v-tooltip top>
@@ -330,72 +353,6 @@
                 <div>
                   <span>Imprimir Formulario de calificacion</span>
                 </div>
-              </v-tooltip>
-            </v-card-title>
-
-              <v-dialog
-                v-model="dialog_minutes"
-                  width="500"
-               >
-                <v-card>
-                  <v-card-title>
-                    <span class="text-h5">Introduzca el Número de Sesión</span>
-                  </v-card-title>
-
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <ValidationProvider v-slot="{ errors }" name="numero sesion" rules="numeric|min:1" mode="aggressive">
-                            <v-text-field
-                              label="Número de sesión"
-                              :error-messages="errors"
-                              v-model="number_session"
-                            ></v-text-field> 
-                          </ValidationProvider>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="error" text @click="dialog_minutes = false">
-                      CANCELAR
-                    </v-btn>
-                    <v-btn v-if="number_session != '' && !isNaN(number_session)" color="success" text @click="printComitteeMinute($route.params.id)">
-                      IMPRIMIR
-                    </v-btn>
-                  </v-card-actions>
- 
-                </v-card>
-              </v-dialog>
-
-            <v-card-title class="pa-0" v-if="permissionSimpleSelected.includes('print-comittee-minute')"> 
-              <v-tooltip top class="pa-0">
-         
-                <template v-slot:activator="{ on, attrs }">
-                   <v-btn
-                      fab
-                      x-small
-                      color="success"
-                      top
-                      right
-                      absolute
-                      v-on="on"
-                      class="pa-0"
-                      v-bind="attrs"
-                      style="margin-right: 36px; margin-top: 48px; "
-                      @click="dialog_minutes = true; number_session = ''"
-                   >
-                    <v-icon>mdi-printer-check</v-icon>
-                  </v-btn>
-
-                </template>
-                <div>
-                  <span>Imprimir Acta de Sesión</span>
-                </div>
-
               </v-tooltip>
             </v-card-title>
 
@@ -710,7 +667,8 @@ export default {
       intereses: {},
       state: {},
       user:{},
-      guarantors:[]
+      guarantors:[],
+      modality:{}
     },
     loan_refinancing:{},
     datos: {},
@@ -742,7 +700,8 @@ export default {
     loading_btn_plan: false,
     docsRequired: [],
     docsOptional: [],
-    val_docs: {}
+    val_docs: {},
+    info: {}
   }),
   watch: {
     search: _.debounce(function() {
@@ -752,7 +711,7 @@ export default {
       if(newVal!=oldVal){
         this.getloan(this.$route.params.id)
       }
-    }
+    },
   },
   computed: {
     //permisos del selector global por rol
@@ -802,7 +761,7 @@ export default {
     //this.getSpouse(this.$route.params.id)
     this.getObservation(this.$route.params.id)
     //this.getProceduretype(this.$route.params.id)
-
+    this.getInfo(this.$route.params.id)
     this.bus1.$on("emitGetObservation", id => {
       //escuchamos la emision de ObserverFlow
       this.getObservation(id) //y monstramos la lista de observaciones segun el id del prestamo
@@ -896,7 +855,7 @@ export default {
         }
         this.setBreadcrumbs()
         this.getAddress(this.affiliate.id)
-        this.wf_state(this.loan.wf_states_id)
+        this.wfState(this.loan.wf_states_id)
         if(this.loan.user_id != null){
           this.user(this.loan.user_id)
         }
@@ -949,7 +908,7 @@ export default {
         this.observations = res.data
 
         for (this.i = 0; this.i < this.observations.length; this.i++) {
-           console.log("ww"+this.observations[this.i].user_id)
+
           let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
           )
           this.observations[this.i].user_name = res1.data.username
@@ -989,7 +948,7 @@ export default {
       try {
         if(this.removeAccents(this.loan.disbursement_date)!='Fecha invalida')
         {
-          let res = await axios.get(`loan/${item}/print/plan`)
+            let res = await axios.get(`loan/${item}/print/plan`)
             printJS({
               printable: res.data.content,
               type: res.data.type,
@@ -1002,7 +961,6 @@ export default {
         }
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
-        console.log(e)
       }
     },
      async generatePlan(item) {
@@ -1024,32 +982,14 @@ export default {
           this.dialog=false
       } catch (e) {
         this.loading_btn_plan = false
-        this.toastr.error("Ocurrió un error en la impresión.")
-        console.log(e)
+        this.toastr.error(e.type[0] || "Ocurrió un error en la impresión.")
       }
     },
     async printQualificationForm(item) {
       try {
         let res = await axios.get(`loan/${item}/print/qualification`)
-        console.log("plan " + item)
+
         printJS({
-          printable: res.data.content,
-          type: res.data.type,
-          file_name: res.data.file_name,
-          base64: true
-        })
-      } catch (e) {
-        this.toastr.error("Ocurrió un error en la impresión.")
-        console.log(e)
-      }
-    },
-    async printComitteeMinute(id_loan) {
-      try {
-        this.dialog_minutes = false
-        let res = await axios.post(`committee_session/${id_loan}`, {
-            number_session: this.number_session
-        })
-         printJS({
           printable: res.data.content,
           type: res.data.type,
           file_name: res.data.file_name,
@@ -1063,7 +1003,7 @@ export default {
     async wfState(wf_states_id){
       try {
         let res = await axios.get(`wf_state/${wf_states_id}`)
-        this.wf_state_name = res.data.name
+        this.wf_state_name = res.data
       } catch (e) {
         console.log(e)
       }
@@ -1072,12 +1012,12 @@ export default {
       try {
         let res = await axios.get(`user/${user_id}`)
         this.user_name = res.data.username
-        //console.log(this.user_name)
       } catch (e) {
         console.log(e)
       }
     },
     validation(){
+      this.getInfo(this.$route.params.id)
       //VALIDACION FECHA ENTREGA DE CONTRATO
      if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true)
       {
@@ -1121,21 +1061,21 @@ export default {
               {
                 if(this.validate.valid_disbursement == true)
                 {
-                  this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+                  this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info, info: this.info }) 
                 }
                 else
                 {
                   this.toastr.error('Falta generar el plan de pago.')
                 }
               }else{
-                this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+                this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
               }
             }else
             {
               this.toastr.error('Faltan registar el número presupuestario.')
             }
           }else{
-            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+            this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
           }
         }else{
             this.toastr.error('Falta registar la fecha de entrega y/o la fecha de devolución del contrato.')
@@ -1149,7 +1089,7 @@ export default {
             {
               if(this.validate.valid_disbursement == true)
               {
-                this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+                this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
               }else
               {
                 this.toastr.error('Falta generar el plan de pago.')
@@ -1157,7 +1097,7 @@ export default {
             }
             else
             {
-              this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+              this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
             }
           }
           else
@@ -1170,7 +1110,7 @@ export default {
           {
             if(this.validate.valid_disbursement == true)
             {
-              this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+              this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
             }else
             {
               this.toastr.error('Falta generar el plan de pago.')
@@ -1179,18 +1119,18 @@ export default {
           else
           {
             if(this.permissionSimpleSelected.includes('validate-submitted-documents')==true && this.loan.modality.procedure_type.second_name == 'Anticipo'){
-              console.log(this.val_docs.valid)
+
               if(this.val_docs.valid){ 
-                console.log("es Calific y validado"+this.val_docs.valid)
-                this.bus.$emit('openDialog', { edit: false, accion: 'validar' })           
+
+                this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })           
 
               }else{ 
-                console.log(this.val_docs.valid +"es Calific y no valido"+ this.loan.modality.procedure_type.second_name)
+                
                 this.toastr.error('Existen documentos sin validar.')
               }
             }else{
-              console.log("no es CAlific o no correponde")
-              this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+
+              this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
             }
           }
         }
@@ -1259,6 +1199,17 @@ export default {
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+    async getInfo($id){
+      try {
+        let res = await axios.get(`get_info_reprogramming/${$id}`)
+        this.info.message = res.data.message
+        this.info.status = res.data.status
+        if(this.status)
+          this.info.color = 'warning'
+      } catch (e) {
+        console.log(e)
       }
     },
    },
