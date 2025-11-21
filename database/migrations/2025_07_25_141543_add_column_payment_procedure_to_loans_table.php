@@ -19,18 +19,13 @@ class AddColumnPaymentProcedureToLoansTable extends Migration
             $table->foreign('loan_payment_procedures_id', 'loans_payment_procedures_fk')
                 ->references('id')
                 ->on('loan_payment_procedures')
-                ->onDelete('set null'); // Opcional: si se elimina el procedimiento, deja null
+                ->onDelete('set null');
         });
 
          DB::statement("
             UPDATE loans
-            SET loan_payment_procedures_id = 
-                CASE 
-                    WHEN procedure_modalities.name ilike '%Estacional%' THEN 2
-                    ELSE 1
-                END
-            FROM procedure_modalities
-            WHERE loans.procedure_modality_id = procedure_modalities.id
+            SET loan_payment_procedures_id = 2
+            WHERE loans.state_id = 3
         ");
     }
 
