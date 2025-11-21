@@ -285,6 +285,7 @@ class LoanPayment extends Model
     public function categorie()
     {
         return $this->belongsTo(LoanPaymentCategorie::class, 'categorie_id');
+    }
     public static function penal_by_paid($penal_interest, $days, $balance, $denominator)
     {
         return Util::round2(((($penal_interest/100)/$denominator)*$days*$balance),8);
