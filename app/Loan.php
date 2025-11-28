@@ -469,7 +469,7 @@ class Loan extends Model
             if ($amount >= $quota->penal_payment) {
                 $amount = $amount - $quota->penal_payment;
             } else {
-                $quota->penal_accumulated = Util::round2($quota->penal_remaining + ($quota->penal_payment - $amount));
+                $quota->penal_accumulated = Util::round2(($quota->penal_payment - $amount));
                 $quota->penal_payment = $amount;
                 $amount = 0;
             }
@@ -1786,25 +1786,45 @@ class Loan extends Model
     {
         $plan_payments = $this->loan_plan
             ->where('estimated_date', '<', Carbon::parse($date)->format('Y-m-d'))
-            ->sortBy('quota_number');
+            ->sortByDesc('quota_number');
         $payments_defaulted = [];
-        $payments = $this->payments
-            ->where('estimated_date', '<=', $date);
-        $amount = 0;
-        $accumulated_paid = 0;
+        $paid_amount = 0;
+        $days = 0;
+        $payment_balance = 0;
+        $plan_payment_date = null;
+        $balance_to_compare = $this->amount_approved;
+        $diff_amount = 0;
         foreach($plan_payments as $plan_payment)
         {
-            $plan_paid = $plan_payment->capital + $amount;
-            $amount = $plan_paid;
-            $paid_amount = $payments->where('estimated_date', '<', Carbon::parse($date))->sum('capital_payment');
-            $days = Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date));
-            $diff_amount = round($plan_paid - $paid_amount,2) - $accumulated_paid;
-            $payments_defaulted[] = (object)[
-                'days' => $days,
-                'diff_amount' => round($diff_amount,2),
-                'accumulated' => $accumulated_paid,
-            ];
-            $accumulated_paid = $diff_amount > 0 ? $diff_amount + $accumulated_paid : 0;
+            $plan_payment_date = Carbon::parse($plan_payment->estimated_date)->format('Y-m-d');
+            $payments = $this->payments->whereBetween('estimated_date',[Carbon::parse($plan_payment->estimated_date)->startOfMonth()->startOfDay(), Carbon::parse($plan_payment->estimated_date)->endOfMonth()->endOfDay()])->sortByDesc('quota_number');
+            if($payments->count() > 0)
+            {
+                $balance_to_compare = $payments->first()->previous_balance - $payments->first()->capital_payment;
+                if($balance_to_compare > $plan_payment->balance){
+                    $days = Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date));
+                    $capital_paid = $payments->sum('capital_payment');
+                    $quota_number = $plan_payment->quota_number;
+                    if($capital_paid < $plan_payment->capital){
+                        $diff_amount = round($plan_payment->capital - $capital_paid,2);
+                    $payments_defaulted[] = (object)[
+                        'quota' => $quota_number,
+                        'days' => $days,
+                        'diff_amount' => round($diff_amount,2),
+                    ];
+                    }else{
+                        continue;
+                    }
+                }else{
+                    break;
+                }
+            }else{
+                $payments_defaulted[] = (object)[
+                    'quota' => $plan_payment->quota_number,
+                    'days' => Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date)),
+                    'diff_amount' => round($plan_payment->capital,2),
+                ];
+            }
         }
         return $payments_defaulted;
     }
