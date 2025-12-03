@@ -752,17 +752,11 @@ export default {
                         this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
                       }else{
                         if(this.reprogramming){
-                          if(this.data_loan_parent_aux.loan_term > this.calculator_result.months_term )
-                          {
-                            this.toastr.error("El plazo no puede ser menor o igual al plazo anterior."+ this.data_loan_parent_aux.loan_term +'-'+ this.calculator_result.months_term)
+                          if(this.data_loan_parent_aux.balance_for_reprogramming == this.calculator_result.amount_requested){
+                            this.addDataLoan()
+                            this.nextStep(2)
                           }else{
-                            if(this.data_loan_parent_aux.balance_for_reprogramming == this.calculator_result.amount_requested)
-                            {
-                              this.addDataLoan()
-                              this.nextStep(2)
-                            }else{
-                              this.toastr.error("El Monto Solicitado debe ser igual al Saldo de Refinanciamineto."+this.data_loan_parent_aux.balance_for_reprogramming +'-'+this.calculator_result.amount_requested)
-                            }
+                            this.toastr.error("El Monto Solicitado debe ser igual al Saldo de Refinanciamineto."+this.data_loan_parent_aux.balance_for_reprogramming +'-'+this.calculator_result.amount_requested)
                           }
                         }else{
                           if(parseFloat(this.data_loan_parent_aux.balance) >= parseFloat(this.calculator_result.amount_requested))
