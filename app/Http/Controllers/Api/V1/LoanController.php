@@ -1943,19 +1943,19 @@ class LoanController extends Controller
                                                     if($loan_disbursement < $loan_global_parameter->max_loans_active){
                                                         $message['validate'] = true;
                                                     }else
-                                                        $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.'; 
+                                                        $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualmente ya tiene '. $loan_disbursement .' préstamos desembolsados.'; 
                                                 }else
                                                     $message['validate'] = 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.';
                                             }else
                                                 $message['validate'] = 'El afiliado no puede acceder a un prestamos por no tener registrado su unidad o encontrarse en comision Item 0';
-                                        }elseif($affiliate->pension_entity_id ==  null){
+                                        }elseif($affiliate->pension_entity_id == null){
                                                 $message['validate'] = 'El afiliado no tiene registrado su ente Gestor.';
                                                 }else{
                                                     if($loan_process < $loan_global_parameter->max_loans_process ){
                                                         if($loan_disbursement < $loan_global_parameter->max_loans_active){
                                                             $message['validate'] = true;
                                                             }else
-                                                        $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.';
+                                                        $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualmente ya tiene '. $loan_disbursement .' préstamos desembolsados.';
                                                     }else
                                                         $message['validate'] = 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.';
                                                 }
