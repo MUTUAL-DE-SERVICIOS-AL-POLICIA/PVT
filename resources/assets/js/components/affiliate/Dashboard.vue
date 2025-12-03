@@ -521,7 +521,7 @@ export default {
                 this.toastr.error("No tiene el 25% pagado de su préstamo para acceder a un refinanciamiento")
               }
             }else{
-              this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos vigentes. Actualemnte ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos vigentes.")
+              this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos vigentes. Actualmente ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos vigentes.")
             }
           }else{
             this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_process +" trámite en proceso. Actualmente ya tiene "+ this.loan_affiliate.process_loans+ " préstamos en proceso.")
@@ -554,7 +554,7 @@ export default {
                 this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
               }
             }else{
-              this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos vigentes. Actualemnte ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos vigentes.")
+              this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos vigentes. Actualmente ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos vigentes.")
             }
           }else{
             this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_process +" trámite en proceso. Actualmente ya tiene "+ this.loan_affiliate.process_loans+ " préstamos en proceso.")
