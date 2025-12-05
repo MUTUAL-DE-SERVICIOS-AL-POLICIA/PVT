@@ -420,7 +420,8 @@
     </div>
     <div>
         @if($modality_name == 'Corto Plazo Sector Pasivo AFP' || 
-            $modality_name == 'Corto Plazo Sector Pasivo Gestora Pública')
+            $modality_name == 'Corto Plazo Sector Pasivo Gestora Pública' ||
+            $modality_name == 'Salud Sector Pasivo Gestora Pública')
             <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) 
             el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de 
             la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta fiscal de la MUSERPOL. Caso contrario el PRESTATARIO se 
@@ -430,11 +431,14 @@
         @else
             @php
                 if($modality_name == 'Corto Plazo Sector Activo' || 
-                    $modality_name == 'Corto Plazo en Disponibilidad' ){
+                    $modality_name == 'Corto Plazo en Disponibilidad' || 
+                    $modality_name == 'Salud Sector Activo' ||
+                    $modality_name == 'Salud Sector Disponibilidad'){
                     $sexta = 'Comando General de la Policía Boliviana';
                     $type_rent='los haberes';
                 }
-                if($modality_name == 'Corto Plazo Sector Pasivo SENASIR'){
+                if($modality_name == 'Corto Plazo Sector Pasivo SENASIR' || 
+                    $modality_name == 'Salud Sector Pasivo SENASIR'){
                     $sexta = 'Servicio Nacional del Sistema de Reparto SENASIR';
                     $type_rent='las rentas';
                 }

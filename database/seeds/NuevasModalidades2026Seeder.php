@@ -40,7 +40,7 @@ class NuevasModalidades2026Seeder extends Seeder
                     'max_guarantor_active' => 3,
                     'max_guarantor_passive' => 2,
                     'date_delete_payment' => 1,
-                    'max_loans_active' => 2,
+                    'max_loans_active' => 3,
                     'max_loans_process' => 1,
                     'days_current_interest' => 31,
                     'grace_period' => 3,
@@ -62,7 +62,7 @@ class NuevasModalidades2026Seeder extends Seeder
             $procedure_hogar_digno_id = DB::table('procedure_types')->insertGetId(
                 [   //30
                     'module_id' => 6,
-                    'name' => 'Préstamos Hogar Digno',
+                    'name' => 'Préstamo Hogar Digno',
                     'created_at' => now(),
                     'updated_at' => now(),
                     'second_name' => 'Hogar Digno',
