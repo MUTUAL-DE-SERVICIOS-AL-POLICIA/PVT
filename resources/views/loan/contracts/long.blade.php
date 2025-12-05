@@ -401,7 +401,13 @@
         <div>Nº {{ $loan->code }}</div>
     </div>
 </div>
-
+@php
+    if($modality_name == 'Hogar Digno con Garantía Personal para el Sector Activo'){
+        $text_home = ', destinadas para mejorar la vivienda, cuyo Derecho Propietario del bien inmueble se encuentra debidamente registrado en las Oficinas de Derechos Reales, el mismo no registra ningun tipo de gravamen.';
+    }else{
+        $text_home = '.';
+    }
+@endphp
 <div class="block text-justify">
     <div>
         Conste en el presente contrato de préstamo de {{ ucfirst($title) }}, que al solo reconocimiento de firmas y 
@@ -432,7 +438,7 @@
         <b>SEGUNDA.- (DEL OBJETO):</b>  El objeto del presente contrato es el préstamo de dinero que la Mutual de Servicios 
         al Policía (MUSERPOL) otorga al PRESTATARIO conforme a niveles de aprobación respectivos, en la suma de 
         Bs.{{ Util::money_format($loan->amount_approved) }} (<span class="uppercase">{{ Util::money_format($loan->amount_approved, true) }} 
-        Bolivianos</span>).
+        Bolivianos</span>){{ $text_home }}
     </div>
     <div>
         <b>TERCERA.- (DEL INTERÉS):</b> El préstamo objeto del presente contrato, devengará un interés ordinario del 

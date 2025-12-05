@@ -1155,6 +1155,15 @@ class LoanController extends Controller
             case 'Reprogramación':
                 $view_type = 'reprogramming';
                 break;
+            case 'Préstamo Hogar Digno':
+                $view_type = 'long';
+                break;
+            case 'Préstamo Salud':
+                $view_type = 'short';
+                break;
+            case 'Mi Primer Préstamo':
+                $view_type = 'short';
+                break;
         }
         $information_loan= $this->get_information_loan($loan);
         $view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
