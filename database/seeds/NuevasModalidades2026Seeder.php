@@ -117,7 +117,7 @@ class NuevasModalidades2026Seeder extends Seeder
             $modality_salud_disponibilidad = DB::table('procedure_modalities')->insertGetId(
                 [   //$modality_salud_disponibilidad
                     'procedure_type_id' => $procedure_salud_id,
-                    'name' => 'Salud Sector Disponibilidad',
+                    'name' => 'Salud en Disponibilidad',
                     'shortened' => 'SAL-DIS',
                     'is_valid' => true,
                     'workflow_id' => 10,

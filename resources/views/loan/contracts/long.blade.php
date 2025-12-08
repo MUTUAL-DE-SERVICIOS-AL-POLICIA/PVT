@@ -187,7 +187,7 @@
         </ol>
     </div>
     <div>
-        <b>DECIMA.- (DE LA GARANTÍA):</b>El PRESTATARIO y {{ count($guarantors)>1 ? 'GARANTES':'GARANTE' }}, garantizan el pago
+        <b>DÉCIMA.- (DE LA GARANTÍA):</b>El PRESTATARIO y {{ count($guarantors)>1 ? 'GARANTES':'GARANTE' }}, garantizan el pago
         de lo adeudado con la generalidad de sus bienes, derechos y acciones habidos y por haber, presentes y futuros conforme
         lo determina el artículo 1335 del Código Civil,
         @if(($modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'))
@@ -243,7 +243,7 @@
             </div>
         @else
             <div>
-                <b>DECIMA PRIMERA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de fallecimiento, 
+                <b>DÉCIMA PRIMERA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de fallecimiento, 
                 retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad 
                 del beneﬁcio de  Fondo de Retiro Policial Solidario  otorgado por la MUSERPOL; por cuanto la liquidación de dicho 
                 beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la 
@@ -295,7 +295,7 @@
     <div>
         <b>DÉCIMA CUARTA.- (DOMICILIO ESPECIAL):</b> Para efectos legales, incluida la acción judicial u otra, se tendrá como 
         domicilio especial del PRESTATARIO y {{ count($guarantors)>1 ? 'GARANTES':'GARANTE'}} el señalado en la cláusula primera 
-        y decima de conformidad al artículo 29 parágrafo II del Código Civil, donde se efectuarán las citaciones y notificaciones 
+        y décima de conformidad al artículo 29 parágrafo II del Código Civil, donde se efectuarán las citaciones y notificaciones 
         judiciales o cualquier otra comunicación, con plena validez legal y sin lugar a posterior observación o recurso alguno.
     </div>
     <div>
@@ -585,7 +585,7 @@
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo SENASIR' || 
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo Gestora Pública')
             <div>
-                <b>DECIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b> El PRESTATARIO en caso de fallecimiento acepta 
+                <b>DÉCIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b> El PRESTATARIO en caso de fallecimiento acepta 
                 amortizar para el cumplimiento efectivo de la presente obligación con el beneﬁcio del Complemento 
                 Económico 
                 @if($modality_name != 'Largo Plazo con Garantía Personal Sector Pasivo AFP')
@@ -597,7 +597,7 @@
             </div>
         @else
             <div>
-                <b>DECIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de 
+                <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de 
                 fallecimiento, retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la 
                 presente obligación con la totalidad del beneficio de Fondo de Retiro Policial Solidario 
                 otorgado por la MUSERPOL; por cuanto la liquidación de dicho beneficio pasará a cubrir el 
