@@ -41,7 +41,7 @@
                 small
                 color="orange"
                 class="ml-4"
-                @click="bus.$emit('openDialog', { edit: false, accion: 'devolver'})"
+                @click="bus.$emit('openDialog', { edit: false, accion: 'devolver', info: info })"
               >
                 <v-icon>mdi-file-undo</v-icon>
               </v-btn>
@@ -62,7 +62,7 @@
                 color="error"
                 class="darken-2 ml-4"
                 @click="
-                  bus.$emit('openDialog', { edit: false, accion: 'anular' })
+                  bus.$emit('openDialog', { edit: false, accion: 'anular', info: info  })
                 "
               >
                 <v-icon>mdi-file-cancel</v-icon>
