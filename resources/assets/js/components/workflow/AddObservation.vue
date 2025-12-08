@@ -4,8 +4,8 @@
     width="600"
   >
     <v-card>
-      <div>{{ observation.info.color }}</div>
-      <v-toolbar dense flat color="">
+      <div>{{ observation }}</div>
+      <v-toolbar dense flat>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Devolver trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Anular trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='validar'">Validar trámite</v-toolbar-title>
@@ -16,7 +16,7 @@
       <template v-if="observation.info.status">
         <v-divider></v-divider>
         <br>
-          <v-toolbar dense flat color="" class="py-0">
+          <v-toolbar dense flat class="py-0">
             <v-alert
               color="warning"
               outlined
