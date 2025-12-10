@@ -71,7 +71,7 @@
             </span>
         @endforeach
         @endif
-        programados a un plazo de {{ $loan->loan_term}} meses de pago para el cumplimiento de obligación, con una 
+        programados a un plazo de {{ $loan->parent_loan->loan_term}} meses de pago para el cumplimiento de obligación, con una 
         amortización mensual de Bs. {{ Util::money_format($loan->parent_loan->estimated_quota) }} (<span class="uppercase">
         {{ Util::money_format($loan->parent_loan->estimated_quota, true) }}</span> Bolivianos). 
         <br>
