@@ -1756,7 +1756,7 @@ class AffiliateController extends Controller
         $request->refinancing ? null : [$a => 28, $b => 93],  // Préstamo Sector Activo c/ Garantía FRPS Menor
         $request->refinancing ? null : [$a => 28, $b => 94],  // Préstamo Sector Activo c/ Garantía FRPS Mayor
         $request->refinancing ? null : [$a => 30, $b => 101], // Préstamo Hogar Digno c/ Garantía Personal Sector Activo
-        //$request->refinancing ? null : [$a => 31, $b => 103], // Préstamo Salud Sector Activo
+        $request->refinancing ? null : [$a => 31, $b => 103], // Préstamo Salud Sector Activo
 
         $request->refinancing ? [$a => 10, $b => 40] : null,  // Refinanciamiento Corto Plazo Sector Activo
         $request->refinancing ? [$a => 12, $b => 82] : null,  // Refinanciamiento Largo Plazo (1 garante)
@@ -1783,7 +1783,7 @@ class AffiliateController extends Controller
         [$a => 12, $b => 65],                    // Largo Plazo (2 garantes)
         [$a => 28, $b => 93],                    // Préstamo Activo c/ Garantía FRPS Menor
         [$a => 28, $b => 94],                    // Préstamo Activo c/ Garantía FRPS Mayor
-        //[$a => 31, $b => 104],                   // Préstamo Salud en Disponibilidad
+        [$a => 31, $b => 104],                   // Préstamo Salud en Disponibilidad
         $request->refinancing   ? [$a => 10, $b => 66] : null, // Refinanciamiento Corto Plazo en Disponibilidad
         $request->reprogramming ? [$a => 10, $b => 74] : null, // Reprogramación Corto Plazo en Disponibilidad
     ])->filter();
@@ -1795,7 +1795,7 @@ class AffiliateController extends Controller
         $request->refinancing ? null : [$a => 12, $b => 45],  // Largo Plazo Sector Pasivo SENASIR
         $request->refinancing ? null : [$a => 29, $b => 96],  // Préstamo Estacional Sector Pasivo
         $request->refinancing ? null : [$a => 29, $b => 95],  // Préstamo Estacional Sector Pasivo con Cónyuge
-        //$request->refinancing ? null : [$a => 31, $b => 106], // Préstamo Salud Sector Pasivo SENASIR
+        $request->refinancing ? null : [$a => 31, $b => 106], // Préstamo Salud Sector Pasivo SENASIR
 
         $request->refinancing   ? [$a => 10, $b => 42] : null, // Refinanciamiento Corto Plazo SENASIR
         $request->refinancing   ? [$a => 12, $b => 49] : null, // Refinanciamiento Largo Plazo SENASIR
@@ -1810,7 +1810,7 @@ class AffiliateController extends Controller
         $request->refinancing ? null : [$a => 12, $b => 70],  // Largo Plazo Sector Pasivo Gestora Pública
         $request->refinancing ? null : [$a => 29, $b => 96],  // Préstamo Estacional Sector Pasivo
         $request->refinancing ? null : [$a => 29, $b => 95],  // Préstamo Estacional Sector Pasivo con Cónyuge
-        //$request->refinancing ? null : [$a => 31, $b => 105], // Préstamo Salud Sector Pasivo Gestora
+        $request->refinancing ? null : [$a => 31, $b => 105], // Préstamo Salud Sector Pasivo Gestora
 
         $request->refinancing   ? [$a => 10, $b => 69] : null, // Refinanciamiento Corto Plazo Gestora
         $request->refinancing   ? [$a => 12, $b => 71] : null, // Refinanciamiento Largo Plazo Gestora
@@ -1820,12 +1820,12 @@ class AffiliateController extends Controller
 
     //validación para "Préstamos Salud"
 
-    if ($affiliate->active_loans_query()->get()->count() == 2){
-        $sector_active->push([$a => 31, $b => 103]);                // Mi Primer Préstamo Sector Activo
+    /*if ($affiliate->active_loans_query()->get()->count() == 2){
+        $sector_active->push([$a => 31, $b => 103]);                // Prestamo Salud Sector Activo
         $sector_availability->push([$a => 31, $b => 104]);          // Préstamo Salud en Disponibilidad
         $sector_pasive_senasir->push([$a => 31, $b => 106]);        // Préstamo Salud Sector Pasivo SENASIR
         $sector_pasive_gestora->push([$a => 31, $b => 105]);        // Préstamo Salud Sector Pasivo Gestora
-    }
+    }*/
 
     $data = collect();
 
