@@ -1818,15 +1818,6 @@ class AffiliateController extends Controller
         $request->reprogramming ? [$a => 12, $b => 86] : null, // Reprogramación Largo Plazo Gestora
     ])->filter();
 
-    //validación para "Préstamos Salud"
-
-    /*if ($affiliate->active_loans_query()->get()->count() == 2){
-        $sector_active->push([$a => 31, $b => 103]);                // Prestamo Salud Sector Activo
-        $sector_availability->push([$a => 31, $b => 104]);          // Préstamo Salud en Disponibilidad
-        $sector_pasive_senasir->push([$a => 31, $b => 106]);        // Préstamo Salud Sector Pasivo SENASIR
-        $sector_pasive_gestora->push([$a => 31, $b => 105]);        // Préstamo Salud Sector Pasivo Gestora
-    }*/
-
     $data = collect();
 
     // Determinar colección según estado del afiliado

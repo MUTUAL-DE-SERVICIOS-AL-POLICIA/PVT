@@ -141,8 +141,8 @@ class NuevasModalidades2026Seeder extends Seeder
                     'workflow_id' => 10,
                 ],
             );
-            $modality_salud_primer = DB::table('procedure_modalities')->insertGetId(
-                [   //$modality_salud_primer
+            $modality_primer = DB::table('procedure_modalities')->insertGetId(
+                [
                     'procedure_type_id' => $procedure_primer_id,
                     'name' => 'Mi Primer Préstamo con Garantía Personal Sector Activo',
                     'shortened' => 'MPP-GP-ACT',
@@ -185,7 +185,7 @@ class NuevasModalidades2026Seeder extends Seeder
                     'coverage_percentage' => 1,
                     'eval_percentage' => 0.125,
                     'suggested_debt_index' => 60,
-                    'modality_refinancing_id' => null,
+                    'modality_refinancing_id' => $modality_ref_hogar_activo,
                     'modality_reprogramming_id' => null,
                 ],
                 [
@@ -196,8 +196,8 @@ class NuevasModalidades2026Seeder extends Seeder
                     'max_lenders' => 1,
                     'min_guarantor_category' => 0.35,
                     'max_guarantor_category' => 1,
-                    'min_lender_category' => 1,
-                    'max_lender_category' => 5,
+                    'min_lender_category' => 0,
+                    'max_lender_category' => 1,
                     'max_cosigner' => 0,
                     'personal_reference' => true,
                     'maximum_amount_modality' => 300000,
@@ -213,7 +213,7 @@ class NuevasModalidades2026Seeder extends Seeder
                     'coverage_percentage' => 1,
                     'eval_percentage' => 0.125,
                     'suggested_debt_index' => 60,
-                    'modality_refinancing_id' => $modality_hogar_activo,
+                    'modality_refinancing_id' => null,
                     'modality_reprogramming_id' => null,
                 ],
                 [
@@ -329,7 +329,7 @@ class NuevasModalidades2026Seeder extends Seeder
                     'modality_reprogramming_id' => null,
                 ],
                 [
-                    'procedure_modality_id' => $modality_salud_primer,
+                    'procedure_modality_id' => $modality_primer,
                     'debt_index' => 70,
                     'quantity_ballots' => 1,
                     'guarantors' => 1,
@@ -402,7 +402,7 @@ class NuevasModalidades2026Seeder extends Seeder
                     'updated_at' => now(),
                 ],
                 [
-                    'procedure_modality_id' => $modality_salud_primer,
+                    'procedure_modality_id' => $modality_primer,
                     'annual_interest' => 20,
                     'penal_interest' => 6,
                     'created_at' => now(),
@@ -480,7 +480,7 @@ class NuevasModalidades2026Seeder extends Seeder
             DB::table('procedure_requirements')->insert([
                     [
                         'procedure_modality_id' => $modality_hogar_activo,
-                        'procedure_document_id' => 419,
+                        'procedure_document_id' => 276,
                         'number' => 0,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -838,7 +838,7 @@ class NuevasModalidades2026Seeder extends Seeder
                     ],
                     [
                         'procedure_modality_id' => $modality_salud_activo,
-                        'procedure_document_id' => $vinculo,
+                        'procedure_document_id' => $respaldo,
                         'number' => 3,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -918,7 +918,7 @@ class NuevasModalidades2026Seeder extends Seeder
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_activo,
+                        'procedure_modality_id' => $modality_salud_disponibilidad,
                         'procedure_document_id' => $respaldo,
                         'number' => 3,
                         'created_at' => now(),
@@ -1014,7 +1014,7 @@ class NuevasModalidades2026Seeder extends Seeder
                     ],
                     [
                         'procedure_modality_id' => $modality_salud_gestora,
-                        'procedure_document_id' => 367,
+                        'procedure_document_id' => 373,
                         'number' => 4,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -1126,91 +1126,91 @@ class NuevasModalidades2026Seeder extends Seeder
             //mi primer prestamo
             DB::table('procedure_requirements')->insert([
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 276,
                         'number' => 0,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 419,
                         'number' => 0,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 277,
                         'number' => 0,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 421,
                         'number' => 0,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 297,
                         'number' => 1,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 298,
                         'number' => 2,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 370,
                         'number' => 2,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 293,
                         'number' => 3,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 296,
                         'number' => 4,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_primer,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 368,
                         'number' => 4,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_senasir,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 272,
                         'number' => 5,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_senasir,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 367,
                         'number' => 6,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ],
                     [
-                        'procedure_modality_id' => $modality_salud_senasir,
+                        'procedure_modality_id' => $modality_primer,
                         'procedure_document_id' => 418,
                         'number' => 7,
                         'created_at' => now(),

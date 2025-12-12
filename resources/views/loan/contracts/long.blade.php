@@ -23,7 +23,8 @@
     $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo AFP'|| 
     $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'|| 
     $modality_name == 'Refinanciamiento Largo Plazo con Pago Oportuno' || 
-    $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública'))
+    $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública' ||
+    $modality_name == 'Refinanciamiento Hogar Digno con Garantía Personal para el Sector Activo'))
 
 <div class="block">
     <div class="font-semibold leading-tight text-center m-b-10 text-base">CONTRATO DE <font style="text-transform: uppercase;">{{ $title }}</font>
@@ -77,6 +78,13 @@
             obligación contraída sujeta a cumplimiento, en función a la operación de refinanciamiento.
             </div>
         @else
+            @php
+                if($modality_name == 'Refinanciamiento Hogar Digno con Garantía Personal para el Sector Activo'){
+                    $text_home = ' destinada para mejorar la vivienda, cuyo Derecho Propietario del bien inmueble se encuentra debidamente registrado en las Oficinas de Derechos Reales, el mismo no registra ningun tipo de gravamen.';
+                }else{
+                    $text_home = ', sujeta a cumplimiento, en función a la operación de refinanciamiento.';
+                }
+            @endphp
             <div>
             <b>SEGUNDA.- (DEL ANTECEDENTE):</b>Mediante contrato de préstamo {{ $parent_loan->code }} con fecha de desembolso 
             {{ Carbon::parse($parent_loan->disbursement_date)->isoFormat('LL') }} y modalidad de  {{strtolower($parent_loan->modality->name)}}, 
@@ -93,7 +101,7 @@
             suma de Bs.{{ Util::money_format($loan->balance_parent_refi())}} (<span class="uppercase">{{ Util::money_format($loan->balance_parent_refi(), true) }} 
             Bolivianos</span>), montos que hacen un total efectivo de Bs.{{ Util::money_format($loan->amount_approved) }} 
             <span class="uppercase">({{ Util::money_format($loan->amount_approved, true) }} Bolivianos)</span>, que representa la nueva obligación 
-            contraída sujeta a cumplimiento, en función a la operación de refinanciamiento.
+            contraída sujeta a cumplimiento{{$text_home}}.
             </div>
         @endif
     </div>
