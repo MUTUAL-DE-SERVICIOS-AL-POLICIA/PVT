@@ -141,9 +141,9 @@
             al PRESTATARIO, hasta cubrir el pago total de la obligación pendiente de cumplimiento. Excluyendo a la MUSERPOL de toda responsabilidad 
             o reclamo posterior, sin perjuicio de que estos puedan iniciar las acciones legales correspondientes en contra del PRESTATARIO en sujeción 
             del artículo 17 del Reglamento de Préstamos de la MUSERPOL.
-            HTML;
+HTML;
             }
-        @endphp        
+    @endphp        
     <div>
         <b>TERCERA.- (DEL OBJETO):</b>  El objeto del presente es la suscripción de la adenda modificatoria del contrato señalado en los antecedentes 
         de la cláusula segunda, para lo cual de acuerdo a la solicitud escrita del PRESTATARIO de fecha
