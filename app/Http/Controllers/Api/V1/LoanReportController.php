@@ -2121,17 +2121,19 @@ class LoanReportController extends Controller
   }
 
   public function processed_loan_report(Request $request)
-  {//return Auth::user()->id;
+  {
     $file = "reporte de tramites procesados";
     $report_process_loan=array(
         array("N°","DEPTO.", "CODIGO PRESTAMO","CI PRESTATARIO", "NOMBRE PRESTATARIO","MODALIDAD", "MONTO", "ROL","ACCION", "FECHA DE ACCION","USUARIO")
     );
+    $initial_date = Carbon::parse($request->initial_date)->startOfDay();
+    $final_date = Carbon::parse($request->final_date)->endOfDay();
     $records = Record::where('recordable_type', 'loans')
-    ->whereBetween('created_at', [$request->initial_date, $request->final_date])
+    ->whereBetween('created_at', [$initial_date, $final_date])
     ->where('record_type_id', 3)
     ->where('user_id', Auth::user()->id)
     ->orWhere('recordable_type', 'loans')
-    ->whereBetween('created_at', [$request->initial_date, $request->final_date])
+    ->whereBetween('created_at', [$initial_date, $final_date])
     ->where('action', 'ilike', 'editó [Rol]%')
     ->where('user_id', Auth::user()->id)->get();
     $c = 1;
