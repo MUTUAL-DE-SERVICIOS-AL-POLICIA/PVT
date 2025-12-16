@@ -153,7 +153,7 @@
 
           <strong>Ubicación trámite:</strong> <br />
 
-          <v-icon x-small color="orange">mdi-folder-information</v-icon>{{role_name}} <br>
+          <v-icon x-small color="orange">mdi-folder-information</v-icon>{{wf_state_name}} <br>
           <v-icon x-small color="blue" v-if="user_name != null">mdi-file-account</v-icon> {{user_name}}</h6>
 
           </template>
@@ -179,6 +179,7 @@
       <FormTracing
           :loan.sync="loan"
           :loan_refinancing.sync="loan_refinancing"
+          :loan_reprogramming.sync="loan_reprogramming"
           :loan_properties.sync="loan_properties"
           :procedure_types.sync="procedure_types"
           :observations.sync="observations"
@@ -229,21 +230,29 @@ export default {
           city_identity_card: {}
         }
       ],
-      modality:{},
-      payment_type: {},
+      modality:{
+        procedure_type:{
+          name: null,
+          second_name: null
+        }
+      },
+      payment_type: {
+        name: null
+      },
       personal_references:[],
       cosigners:[],
       guarantors:[]
     },
     city:[],
     loan_refinancing:{},
+    loan_reprogramming: {},
     observations: [],
     observation_type: [],
     loan_properties: {},
     procedure_types: {},
     vertical: true,
     tab: "tab-1",
-    role_name: null,
+    wf_state_name: null,
     user_name: null,
     loading_print_solicitude:false,
     loading_print_contract:false,
@@ -304,7 +313,6 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.loan = res.data
-        this.loan.state.name = res.data.state.name
 
         if(this.loan.parent_reason=='REFINANCIAMIENTO')
         {
@@ -336,18 +344,26 @@ export default {
             this.loan_refinancing.balance_parent_loan_refinancing = this.loan.balance_parent_loan_refinancing
             this.loan_refinancing.amount_approved = this.loan.amount_approved
             this.loan_refinancing.refinancing_balance = this.loan.refinancing_balance
-
+        
+        if(this.loan.parent_reason == 'REPROGRAMACIÓN'){
+            this.loan_reprogramming.reprogramming = true
+            this.loan_reprogramming.code = this.loan.parent_loan.code
+            this.loan_reprogramming.amount_approved  = this.loan.parent_loan.amount_approved
+            this.loan_reprogramming.loan_term  = this.loan.parent_loan.loan_term
+            this.loan_reprogramming.balance  = this.loan.parent_loan.balance
+            this.loan_reprogramming.estimated_quota = this.loan.parent_loan.estimated_quota
+            this.loan_reprogramming.disbursement_date = this.loan.parent_loan.disbursement_date
+            this.loan_reprogramming.balance_for_reprogramming = this.loan.parent_loan.balance_for_reprogramming
+            console.log('reprogra')
+        }
         let res1 = await axios.get(`affiliate/${this.loan.affiliate_id}`)
         this.affiliate = res1.data
-        if (this.loan.property_id != null) {
-          this.getLoanproperty(this.loan.property_id)
-        }
+
         this.getProceduretype(this.loan.procedure_modality_id)
         this.borrower = this.loan.borrower[0]
         this.setBreadcrumbs()
-        //this.getAddress(this.affiliate.id)
 
-        this.role(this.loan.role_id)
+        this.wfState(this.loan.wf_states_id)
         if(this.loan.user_id != null){
           this.user(this.loan.user_id)
         }
@@ -369,32 +385,14 @@ export default {
         this.loading = false
       }
     },
-    //Metodo para sacar detalle de la propiedad
-    async getLoanproperty(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`loan_property/${id}`)
-        this.loan_properties = res.data
-        for(let i=0; i<= this.city.length ; i++ )
-        {
-          if(this.city[i].id == this.loan_properties.real_city_id)
-          {
-           this.loan_properties.city_properties = this.city[i].name
-          }
-        }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
+
     //Metodo para sacar el procedure
     async getProceduretype(id) {
       try {
         this.loading = true
         let res = await axios.get(`procedure_modality/${id}`)
         this.procedure_types = res.data
-        /*console.log(this.procedure_types)*/ } catch (e) {
+      } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
@@ -422,7 +420,6 @@ export default {
         this.observations = res.data
 
         for (this.i = 0; this.i < this.observations.length; this.i++) {
-           //console.log(this.observations[this.i].user_id)
           let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
           )
           this.observations[this.i].user_name = res1.data.username
@@ -433,10 +430,10 @@ export default {
         this.loading = false
       }
     },
-    async role(role_id){
+    async wfState(wf_states_id){
       try {
-        let res = await axios.get(`role/${role_id}`)
-        this.role_name = res.data.display_name
+        let res = await axios.get(`wf_state/${wf_states_id}`)
+        this.wf_state_name = res.data.name
       } catch (e) {
         console.log(e)
       }

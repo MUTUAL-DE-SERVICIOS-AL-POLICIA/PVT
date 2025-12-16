@@ -52,28 +52,98 @@
         @endif
     </div>
     <div>
-        <b>SEGUNDA.- (DEL ANTECEDENTE):</b> Mediante contrato de préstamo N° {{ $loan->code }} de fecha 
-        {{ Carbon::parse($loan->disbursement_date)->isoFormat('LL') }}
+        <b>SEGUNDA.- (DEL ANTECEDENTE):</b> Mediante contrato de préstamo N° {{ $loan->parent_loan->code }} de fecha 
+        {{ Carbon::parse($loan->parent_loan->contract_signature_date)->isoFormat('LL') }}
         suscrito entre MUSERPOL y el PRESTATARIO, se otorgó un préstamo por la suma de 
-        {{ Util::money_format($loan->amount_approved) }} <span class="uppercase">
-        ({{ Util::money_format($loan->amount_approved, true) }}</span> Bolivianos),
-        con la generalidad de sus bienes, derechos y acciones habidos y por haber, presentes y futuros, así como la garantía personal,
-        @foreach($guarantors as $key => $guarantor)
+        {{ Util::money_format($loan->parent_loan->amount_approved) }} <span class="uppercase">
+        ({{ Util::money_format($loan->parent_loan->amount_approved, true) }}</span> Bolivianos),
+        con la generalidad de sus bienes, derechos y acciones habidos y por haber, presentes y @if(count($guarantors)>0)futuros,@else futuros; @endif
+        @if(count($guarantors)>0) así como la garantía personal,
+        @php $c = 0; @endphp
+        @foreach($parent_loan_guarantors as $key => $guarantor)
             <span>
-            {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $guarantor->full_name }}, con C.I. {{ $guarantor->identity_card }}, 
-            {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $guarantor->city_birth->name }}, 
-            vecin{{ Util::male_female($guarantor->gender) }} de {{ $guarantor->address->cityName() }} y con domicilio especial en 
-            {{ $guarantor->address->full_address }} {{ "(garante Nº ".($key+1).")" }} ,
+                @if($c > 0) y @endif
+                @php $c++; @endphp
+            {{ $guarantor->gender == 'M' ? 'del Sr.' : 'de la Sra' }} {{ $guarantor->full_name }} {{ count($guarantors) > 1 ? " (garante Nº ".($key+1).")" : '' }},
             </span>
         @endforeach
-        programados a un plazo de {{ $loan->loan_term}} meses de pago para el cumplimiento de obligación, con una 
-        amortización mensual de Bs. {{ Util::money_format($loan->estimated_quota) }} (<span class="uppercase">
-        {{ Util::money_format($loan->estimated_quota, true) }}</span> Bolivianos). 
+        @endif
+        programados a un plazo de {{ $loan->parent_loan->loan_term}} meses de pago para el cumplimiento de obligación, con una 
+        amortización mensual de Bs. {{ Util::money_format($loan->parent_loan->estimated_quota) }} (<span class="uppercase">
+        {{ Util::money_format($loan->parent_loan->estimated_quota, true) }}</span> Bolivianos). 
         <br>
-        El mencionado préstamo mantiene un saldo deudor a reprogramar de Bs. {{ Util::money_format($loan->estimated_quota) }} (<span class="uppercase">
-        {{ Util::money_format($loan->estimated_quota, true) }}</span> Bolivianos) el cual se encuentra en el Kardex entregado por la MUSERPOL al 
+        El mencionado préstamo mantiene un saldo deudor a reprogramar de Bs. {{ Util::money_format($loan->amount_approved) }} (<span class="uppercase">
+        {{ Util::money_format($loan->amount_approved, true) }}</span> Bolivianos) el cual se encuentra en el Kardex entregado por la MUSERPOL al 
         PRESTATARIO en la presente fecha y la cual forma parte de este contrato.
     </div>
+    @php
+            $status = false;
+            // CIs de garantes del préstamo actual (0, 1 o 2)
+            $currentGuarantors = $loan->guarantors
+                ->pluck('identity_card')
+                ->values()
+                ->all();
+
+            // CIs de garantes del préstamo padre (0, 1 o 2)
+            $parentGuarantors = $loan->parent_loan->guarantors
+                ->pluck('identity_card')
+                ->values()
+                ->all();
+
+            // ordenamos ambos
+            sort($currentGuarantors);
+            sort($parentGuarantors);
+
+            // Si son distintos -> se cambió al menos un garante
+            $status = ($currentGuarantors !== $parentGuarantors);
+            $text = '';
+            $text_guarantors = '';
+            $count = 1;
+            foreach($loan->guarantors as $guarantor)
+            {
+                $title = $guarantor->gender == 'M' ? 'el Sr. ' : 'la Sra. ';
+                $vecino = $guarantor->gender == 'M' ? 'vecino' : 'vecina';
+                
+                $text_guarantors .= 
+                    $title . $guarantor->full_name .
+                    ' con C.I. ' . $guarantor->identity_card . ', ' .
+                    $guarantor->civil_status_gender . ', mayor de edad, hábil por derecho, natural de ' .
+                    $guarantor->city_birth->name . ', ' .
+                    $vecino . ' de ' . $guarantor->address->cityName() .
+                    ' y con domicilio especial en ' . $guarantor->address->full_address .
+                    ' (garante N° ' . $count . '), ';
+
+                $count++;
+            }
+            if($loan->guarantors->count() > 1){
+                $const = 'constituyen';
+                $gar = 'garantes';
+                $gar_may = 'GARANTES';
+                $pers = 'personales';
+                $plur = 's';
+            }else{
+                $const = 'constituye';
+                $gar = 'garante';
+                $gar_may = 'GARANTE';
+                $pers = 'personal';
+                $plur = '';
+            }
+            if ($status) {
+                $text = <<<HTML
+            <b>3.3.- (Cambio de garantía).-</b> 
+            Habiéndose valorado la Garantía Personal descrita en la cláusula Segunda (ANTECEDENTES), de acuerdo a lo establecido en el Reglamento de Préstamos,
+            se establece la mejora de la Garantía Personal y se {$const} como garante{$plur} {$pers}, solidario{$plur}, mancomunado{$plur} e indivisible{$plur}, 
+            {$text_guarantors} por lo que el PRESTATARIO y {$gar_may} garantizan el pago de lo adeudado con la generalidad de sus bienes, derechos y acciones habidos y por haber, presentes y futuros conforme lo determina
+            el artículo 1335 del Código Civil, además del PRESTATARIO con los beneficios otorgados por la MUSERPOL.
+
+            En caso de que el PRESTATARIO incumpla con el pago de sus obligaciones o se constituya en mora por una o más cuotas de amortización, 
+            autorizan el descuento mensual de sus haberes en calidad de {$gar_may} bajo las mismas condiciones en las que se procedería a descontar 
+            al PRESTATARIO, hasta cubrir el pago total de la obligación pendiente de cumplimiento. Excluyendo a la MUSERPOL de toda responsabilidad 
+            o reclamo posterior, sin perjuicio de que estos puedan iniciar las acciones legales correspondientes en contra del PRESTATARIO en sujeción 
+            del artículo 17 del Reglamento de Préstamos de la MUSERPOL.
+HTML;
+            }
+    @endphp        
     <div>
         <b>TERCERA.- (DEL OBJETO):</b>  El objeto del presente es la suscripción de la adenda modificatoria del contrato señalado en los antecedentes 
         de la cláusula segunda, para lo cual de acuerdo a la solicitud escrita del PRESTATARIO de fecha
@@ -82,7 +152,8 @@
         en el art. 67 y 68 del Reglamento de Préstamos, conforme a calificación, previa evaluación y autorización se procede a reprogramar el préstamo 
         descrito en la cláusula precedente bajo los siguientes términos y condiciones que se establecen en la presente Adenda.
         <br>
-        Consiguientemente el ACREEDOR y la MUSERPOL acuerdan reprogramar y modificar la obligación original de la CLÁUSULA (PLAZO Y CUOTA DE AMORTIZACIÓN), de acuerdo a lo siguiente:
+        Consiguientemente el PRESTATARIO y la MUSERPOL acuerdan reprogramar y modificar la obligación original de la CLÁUSULA (PLAZO Y CUOTA DE AMORTIZACIÓN)
+        {{$status ? 'y de la CLAUSULA (DE LA GARANTIA)':''}}, de acuerdo a lo siguiente:
         <br>
         <b>3.1.- (Plazo)</b>.- Se reprograma el plazo de vigencia del préstamo señalado en la cláusula segunda 
         por el plazo de {{ $loan->loan_term}} meses, computables a partir de la presente Adenda.
@@ -91,11 +162,14 @@
         el prestatario efectuara a partir de la fecha de la suscripción de la presente adenda es de
         Bs. {{ Util::money_format($loan->estimated_quota) }} (<span class="uppercase">{{ Util::money_format($loan->estimated_quota, true) }}</span> Bolivianos). 
     </div>
+    @if($status)
+    <div>{!! $text !!}</div>
+    @endif
     <div>
         <b>CUARTA.- (DE LAS CONDICIONES Y CLAUSULAS ACORDADAS):</b> En cuanto a las demás clausulas y condiciones establecidas en el 
         contrato de préstamos señalado en la cláusula segunda de la presente adenda, se mantienen plenamente vigentes y con pleno valor 
         legal siendo de cumplimiento obligatorio para el PRESTATARIO y la MUSERPOL, no admitiendo por tanto ningún tipo de sobre entendimiento, 
-        conclusiones e interpretaciones contrarias, constituyéndose la presente de única y exclusiva modiﬁcación de los puntos 3.1 y 3.2 
+        conclusiones e interpretaciones contrarias, constituyéndose la presente de única y exclusiva modiﬁcación de los puntos 3.1, 3.2 {{$status ? ', 3.3':''}}
         señalados en la cláusula precedente, por lo que la presente adenda forma parte integrante e indivisible del contrato antes mencionado.
     </div>
     <div>
@@ -104,25 +178,28 @@
         y por otra parte en calidad de PRESTATARIO
         <span>
             @if (count($lenders) == 1)
-                {{ $lender->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $lender->full_name }} de generales ya señaladas; asímismo en calidad de garantes personales
+                {{ $lender->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $lender->full_name }} de generales ya @if(count($guarantors)>0)señaladas; @else señaladas,  @endif
+            @endif
+            @if(count($guarantors)>0)
+                @if(count($guarantors) > 1)
+                    <span>asimismo en calidad de garantes personales</span>
+                @else
+                    <span>asimismo en calidad de garante personal</span>
+                @endif
             @endif
             @foreach($guarantors as $key => $guarantor)
                 <span>
-                    {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $guarantor->full_name }}, con C.I. 
-                    {{ $guarantor->identity_card }}, {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de 
-                    {{ $guarantor->city_birth->name }}, vecin{{ Util::male_female($guarantor->gender) }} de {{ $guarantor->address->cityName() }} y con 
-                    domicilio especial en {{ $guarantor->address->full_address }} {{ "(garante Nº ".($key+1).")" }},
+                    {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $guarantor->full_name }}, 
                 </span>
             @endforeach
-            {{count($guarantors) > 0 ? 'damos nuestra' : 'doy'}}
-            plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su ﬁel y estricto cumplimiento. 
-            En señal de lo cual suscribimos el presente contrato de préstamo de dinero en manifestación de nuestra libre y espontánea voluntad 
+            damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su ﬁel y estricto cumplimiento. 
+            En señal de lo cual suscribimos la presente adenda al contrato de préstamo de dinero en manifestación de nuestra libre y espontánea voluntad 
             y sin que medie vicio de consentimiento alguno.
         </span>
     </div><br><br>
     <div class="text-center">
         <p class="center">
-        La Paz, {{ Carbon::parse($loan->request_date)->isoFormat('LL') }}
+        La Paz, {{ Carbon::now()->isoFormat('LL') }}
         </p>
     </div>
 </div>

@@ -478,10 +478,7 @@ export default {
           is_valid: is_valid
         };
         this.documents.push(document)
-        console.log(this.documents)
       }
-
-      console.log(this.documents);
     },
     async validarDoc() {
       try {
@@ -491,13 +488,10 @@ export default {
           let res = await axios.patch(`loan/${this.$route.params.id}/documents`, {
             documents:this.documents
           });
-          console.log(this.documents)
-          console.log(res.data)
           this.toastr.success("Los documentos se validaron correctamente");
           this.editable = false
           
           this.val_docs.valid =res.data.every(doc => doc.pivot.is_valid===true)
-          console.log(this.val_docs.valid)
         }
       } catch (e) {
         console.log(e);

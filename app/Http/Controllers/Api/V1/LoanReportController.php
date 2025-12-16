@@ -47,9 +47,9 @@ class LoanReportController extends Controller
 
    public function report_loan_vigent(Request $request){
     // aumenta el tiempo máximo de ejecución de este script a 150 min:
-    ini_set('max_execution_time', 9000);
+    ini_set('max_execution_time', 900000);
     // aumentar el tamaño de memoria permitido de este script:
-    ini_set('memory_limit', '960M');
+    ini_set('memory_limit', '96000M');
 
     $order_loan = 'Desc';
     $initial_date = request('initial_date') ?? '';
@@ -129,14 +129,12 @@ class LoanReportController extends Controller
                     Util::money_format($loan->balance),//SALDO ACTUAL
                     $loan->parent_reason,
                     Util::money_format($loan->amount_approved),
-                    //$loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : '0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
-                    //$loan->parent_reason? Util::money_format($loan->refinancing_balance):Util::money_format($loan->amount_approved),// LIQUIDO DESEMBOLSADO
                     Loan::whereId($loan->id)->first()->balance_parent_refi(),
                     $loan->amount_approved - (Loan::whereId($loan->id)->first()->balance_parent_refi()),
                     $loan->loan_term,//plazo
                     $loan->state->name,//estado del prestamo
-                    $loan->destiny->name,
-                    $loan->number_payment_type
+                    $loan->parent_reason == 'REPROGRAMACIÓN' ? $loan->parent_loan->destiny_name : $loan->destiny->name,
+                    $loan->parent_reason == 'REPROGRAMACIÓN' ? $loan->parent_loan->number_payment_type : $loan->number_payment_type
                    ));
                }
             }
@@ -2315,11 +2313,6 @@ class LoanReportController extends Controller
 
     public function loan_with_penal_payment_report()
     {
-        /*$headers = [
-            "C.I.","NOMBRE COMPLETO","CATEGORIA","GRADO","NRO. DE CEL.",
-            "PTMO","FECHA DESEMBOLSO","TASA ANUAL","CUOTA MENSUAL",
-            "SALDO ACTUAL","MODALIDAD","SUB-MODALIDAD"
-        ];*/
         $headers = [
             "N° DE PTMO", "FECHA DE DESEMBOLSO", "TASA DE INTERES", "CUOTA MENSUAL", "SALDO ACTUAL",
             "CI_TIT.", "AP. PAT. TIT", "AP. MAT. TIT", "AP. ESPOSO", "1ER NOM. TIT", "2DO. NOM. TIT",
@@ -2337,6 +2330,7 @@ class LoanReportController extends Controller
                 },
                 'interest',
                 'modality.procedure_type',
+                'affiliate',
             ])
             ->get();
 
@@ -2347,6 +2341,7 @@ class LoanReportController extends Controller
 
             $categoryName = ($b && $b->category) ? $b->category->name : '';
             $degreeShort  = ($b && $b->degree)    ? $b->degree->shortened : '';
+            $affiliate = $loan->affiliate;
 
             $file1[] = [
                 $loan->code,
@@ -2365,7 +2360,7 @@ class LoanReportController extends Controller
                 $loan->loan_plan->where('estimated_date', '<=',Carbon::now())->sortByDesc('quota_number')->count() > 0 ? $loan->loan_plan->where('estimated_date', '<=',Carbon::now())->sortByDesc('quota_number')->first()->balance : $loan->balance,
                 $loan->last_payment_validated ? Carbon::parse($loan->last_payment_validated->estimated_date)->format('Y-m-d') : Carbon::parse($loan->disbursement_date)->format('Y-m-d'),
                 $categoryName,
-                $degreeShort,
+                $affiliate->degree ? $affiliate->degree->shortened : '',
                 $b->cell_phone_number ?? '',
             ];
         }

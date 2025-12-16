@@ -23,6 +23,8 @@ Route::group([
     Route::group([
         'middleware' => 'auth'
     ], function () {
+        Route::post('role/select', 'Api\V1\AuthController@setActiveRole');
+        Route::post('role/clear', 'Api\V1\AuthController@clearSelectedRole');
         Route::apiResource('user', 'Api\V1\UserController');//->only('index', 'show', 'update');
         if (!env("LDAP_AUTHENTICATION")) Route::apiResource('user', 'Api\V1\UserController')->only('update');
         Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
@@ -152,7 +154,6 @@ Route::group([
         Route::get('get_list_year', 'Api\V1\LoanPaymentPeriodController@get_list_year');//listado de meses por gestion
         Route::apiResource('periods', 'Api\V1\LoanPaymentPeriodController')->only('index', 'show', 'store', 'update', 'destroy');//cambiar a cobranzas
         //Route::post('loan/update_loan_affiliates', 'Api\V1\LoanController@update_loan_affiliates');
-        Route::post('committee_session/{loan}', 'Api\V1\LoanController@committee_session');
         Route::get('record_affiliate_history', 'Api\V1\RecordController@record_affiliate_history');
         Route::Post('loan_sismu', 'Api\V1\SismuController@getLoanSismu');
         Route::Post('update_balance_sismu', 'Api\V1\SismuController@update_balance');
@@ -300,6 +301,7 @@ Route::group([
             Route::get('my_loans', 'Api\V1\LoanController@my_loans');
             Route::post('procedure_ref_rep', 'Api\V1\LoanController@procedure_ref_rep');
             Route::post('release_loan/{loan}', 'Api\V1\LoanController@release_loan');
+            Route::get('get_info_reprogramming/{loan}', 'Api\V1\LoanController@get_info_reprogramming');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -318,6 +320,8 @@ Route::group([
             Route::post('switch_guarantor_lender', 'Api\V1\LoanController@switch_guarantor_lender');
             Route::post('update_number_payment_type', 'Api\V1\LoanController@update_number_payment_type');
             Route::post('authorize_refinancing', 'Api\V1\LoanController@authorize_refinancing');
+            // Rutas para reprogramación de préstamos
+            Route::post('validate_reprogramming/{loan}', 'Api\V1\LoanController@validate_reprogramming');
         });
         Route::group([
             'middleware' => 'permission:delete-loan'

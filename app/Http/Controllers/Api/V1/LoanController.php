@@ -59,6 +59,7 @@ use App\Jobs\ProcessNotificationSMS;
 use App\LoanGuaranteeRetirementFund;
 use App\Observation;
 use App\WfState;
+use App\LoanModalityParameter;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -70,6 +71,7 @@ class LoanController extends Controller
         $loan->indebtedness_calculated = $loan->indebtedness_calculated;
         $loan->liquid_qualification_calculated = $loan->liquid_qualification_calculated;
         $loan->balance = $loan->balance;
+        $loan->balance_for_reprogramming = $loan->balance_for_reprogramming();
         $loan->estimated_quota = $loan->estimated_quota;
         $loan->defaulted = $loan->defaulted;
         $loan->observed = $loan->observed;
@@ -90,6 +92,7 @@ class LoanController extends Controller
         if($loan->parent_loan){
             $loan->parent_loan->balance = $loan->parent_loan->balance;
             $loan->parent_loan->estimated_quota = $loan->parent_loan->estimated_quota;
+            $loan->parent_loan->balance_for_reprogramming = $loan->parent_loan->balance_for_reprogramming();
         }
         $loan->intereses=$loan->interest;
         if($loan->parent_reason=='REFINANCIAMIENTO'){
@@ -104,6 +107,11 @@ class LoanController extends Controller
         $loan->borrower = $loan->borrower;
         $loan->borrowerguarantors = $loan->borrowerguarantors;
         $loan->paid_by_guarantors = $loan->paid_by_guarantors();
+        $loan->refinancing = false;
+        $loan->reprogramming = false;
+        $loan_parameters = LoanModalityParameter::where('procedure_modality_id', $loan->procedure_modality_id)->where('loan_procedure_id', $loan->loan_procedure_id)->first();
+        if($loan_parameters->modality_refinancing_id <> null) $loan->refinancing = true;
+        if($loan_parameters->modality_reprogramming_id <> null) $loan->reprogramming = true;
         return $loan;
     }
 
@@ -223,7 +231,6 @@ class LoanController extends Controller
     * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
-    * @bodyParam property_id integer ID de bien inmueble. Example: 4
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 2
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [294,283,296,305,306,307,308,309,310,311,312,313,284,44,274]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
@@ -233,6 +240,7 @@ class LoanController extends Controller
     * @bodyParam remake_loan_id integer ID del prestamo que se esta rehaciendo. Example: 1
     * @bodyParam delivery_contract_date string Fecha de entrega del contrato al afiliado. Example: 2021-04-05
     * @bodyParam return_contract_date string Fecha de devolución del contrato del afiliado. Example: 2021-04-07
+    * @bodyParam contract_signature_date string Fecha de devolución del contrato del afiliado. Example: 2021-04-07
     * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer required ID del afiliado. Example: 47461
     * @bodyParam lenders[0].payment_percentage numeric required porcentage de pago del afiliado. Example: 50.6
@@ -282,8 +290,16 @@ class LoanController extends Controller
     public function store(LoanForm $request)
     {
         DB::beginTransaction();
-
     try {
+        if($request->parent_reason == 'REPROGRAMACIÓN')
+        {
+            if(!$request->parent_loan_id) abort(403, 'el prestamo no cuenta con un préstamo padre');
+            $loan_parent = Loan::find($request->parent_loan_id);
+            if($loan_parent->balance_for_reprogramming() == 0 || $loan_parent->balance_for_reprogramming() != $request->amount_requested)
+                abort(403, 'El saldo del préstamo padre es diferente al monto solicitado');
+            if($loan_parent->reprogrammed_active_process_loans()->count()>0 && !$request->has('remake_loan_id') && $request->remake_loan_id != $loan_parent->id)
+                abort(403, 'El préstamo padre ya tiene un préstamo de reprogramación en proceso');
+        }
         $roles = Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id');
@@ -386,7 +402,7 @@ class LoanController extends Controller
     * @responseFile responses/loan/show.200.json
     */
     public function show(Loan $loan)
-    {   
+    {
         if (Auth::user()->can('show-all-loan') || Auth::user()->can('show-loan') || Auth::user()->can('show-payment-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loan->role_id)) {
@@ -425,7 +441,6 @@ class LoanController extends Controller
     * @bodyParam num_accounting_voucher string numero de comprobante contable.Example: 107
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
-    * @bodyParam property_id integer ID de bien inmueble. Example: 4
     * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
     * @bodyParam destiny_id integer ID destino de Préstamo. Example: 1
@@ -536,6 +551,23 @@ class LoanController extends Controller
                     $authorized_disbursement = true;
                 } 
                 if($authorized_disbursement){
+                    //Validaciones para la reprogramación
+                    if($loan->parent_reason == 'REPROGRAMACIÓN')
+                    {
+                        if(!$loan->parent_loan_id) abort(403, 'el prestamo no cuenta con un préstamo padre');
+                        $loan_parent = Loan::find($loan->parent_loan_id);
+                        if($loan_parent->reprogrammed_active_process_loans()->count()>0 && $loan_parent->reprogrammed_active_process_loans()->first()->id != $loan->id)
+                            abort(403, 'El préstamo padre ya tiene un préstamo de reprogramación en proceso');
+                        if($loan->parent_loan->last_payment_validated->state->name != 'Pagado')
+                            abort(403, 'El préstamo padre aun tiene pagos pendientes por validar');
+                        if($loan->parent_loan->state->name == 'Vigente')
+                            abort(403, 'El préstamo padre aun se encuentra vigente');
+                        if(Carbon::parse($loan_parent->last_payment_validated->estimated_date)->startOfDay() < Carbon::now()->startOfDay())
+                            abort(403, 'El préstamo padre tiene el último pago validado con fecha pasada, no se puede generar el plan de pagos reprogramado');
+                        if($loan->amount_approved != $loan_parent->balance_for_reprogramming())
+                            abort(403, 'El saldo del préstamo padre es diferente al monto aprobado del préstamo de reprogramación');
+                    }
+
                     $loan['disbursement_date'] = Carbon::now();
                     $state_id = LoanState::whereName('Vigente')->first()->id;
                     $loan['state_id'] = $state_id;
@@ -656,6 +688,9 @@ class LoanController extends Controller
 
     private function save_loan(Request $request, $loan = null)
     {
+        $request->merge([
+            'loan_payment_procedures_id' => 2,
+        ]);
         $loan_copy = $loan;
         /** Verificando información de los titulares y garantes */
         if($request->lenders && $request->guarantors){
@@ -693,7 +728,11 @@ class LoanController extends Controller
             if (Auth::user()->can('update-loan')) {
                 $loan->fill(array_merge($request->except($exceptions)));
             }
-            if (in_array('validated', $exceptions)) $loan->validated = $request->validated;
+            if (in_array('validated', $exceptions)){
+                if($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->currentState->name == 'Confirmación legal' && $loan->disbursement_date == null)
+                    return abort(403, 'No se puede validar el préstamo de reprogramación sin generar el nuevo plan de pagos');
+                $loan->validated = $request->validated;
+            }
             if ($request->has('role_id')) {
                 if ($request->role_id != $loan->role_id) {
                     $loan->role()->associate(Role::find($request->role_id));
@@ -708,9 +747,19 @@ class LoanController extends Controller
             }
             else
             {
-                $correlative = Util::Correlative('loan');
-                $code = implode(['PTMO', str_pad($correlative, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
-                $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $disbursable->id,'amount_approved' => $request->amount_requested]));
+                if($request->parent_reason && $request->parent_reason == 'REPROGRAMACIÓN' && $request->parent_loan_id)
+                {
+                    $parent_loan = Loan::find($request->parent_loan_id);
+                    $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $parent_loan->affiliate_id,'amount_approved' => $request->amount_requested]));
+                    $code = "R-".$parent_loan->code;
+                    $loan->refinancing_balance = $parent_loan->balance_for_reprogramming();
+                }
+                else
+                {
+                    $correlative = Util::Correlative('loan');
+                    $code = implode(['PTMO', str_pad($correlative, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+                    $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $disbursable->id,'amount_approved' => $request->amount_requested]));
+                }
                 $loan->code = $code;
             }
             $loan_procedure = LoanProcedure::where('is_enable', true)->first()->id;
@@ -1123,9 +1172,14 @@ class LoanController extends Controller
             'parent_loan' => $parent_loan,
             'file_title' => $file_title,
         ];
+        if($loan->parent_reason == 'REPROGRAMACIÓN' && !$loan->parent_loan->contract_signature_date)
+                abort(409, 'El préstamo original no tiene fecha de firma de contrato, no se puede generar el contrato de reprogramación.');
+        if ($loan->parent_reason === 'REPROGRAMACIÓN' && optional($loan->parent_loan)->guarantors) {
+            $data['parent_loan_guarantors'] = $loan->parent_loan->guarantors;
+        }
         $file_name = implode('_', ['contrato', $procedure_modality->shortened, $loan->code]) . '.pdf';
 
-        if(str_contains($procedure_modality->procedure_type->name, 'Reprogramación')) 
+        if($loan->parent_reason == 'REPROGRAMACIÓN')
             $modality_type = 'Reprogramación';
         else
             $modality_type = $procedure_modality->procedure_type->name;
@@ -1212,11 +1266,12 @@ class LoanController extends Controller
         foreach ($lenders as $lender) 
         {
             foreach($lender->affiliate()->current_loans as $current_loans){
-                $loans->push([
-                    'code' => $current_loans->code,
-                    'balance' => $current_loans->balance,
-                    'origin' => "PVT",
-                ]);
+                if($current_loans->id != $loan->parent_loan_id && $loan->parent_reason != "REPROGRAMACIÓN")
+                    $loans->push([
+                        'code' => $current_loans->code,
+                        'balance' => $current_loans->balance,
+                        'origin' => "PVT",
+                    ]);
             }
             $loans_sismu = $this->get_balance_sismu($lender->identity_card);
             foreach($loans_sismu as $sismu){
@@ -1389,12 +1444,12 @@ class LoanController extends Controller
         $estimated=$estimated->last(); 
         $loan_type_title=" "; 
         $file_title =implode('_', ['FORM','CALIFICACION', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);    
-    if($parent_loan_id == null && !$parent_reason == null){
-        $loan_type_title = $loan->parent_reason== "REFINANCIAMIENTO" ? "SISMU"." ".$loan->parent_reason:"SISMU REFINANCIAMIENTO";
-    }
-    if(!$parent_loan_id == null && !$parent_reason == null){
-        $loan_type_title = $loan->parent_reason== "REFINANCIAMIENTO" ? "REFINANCIAMIENTO":"REPROGRAMACIÓN";
-    }
+        if($parent_loan_id == null && !$parent_reason == null){
+            $loan_type_title = $loan->parent_reason== "REFINANCIAMIENTO" ? "SISMU"." ".$loan->parent_reason:"SISMU REFINANCIAMIENTO";
+        }
+        elseif(!$parent_loan_id == null && !$parent_reason == null){
+            $loan_type_title = $loan->parent_reason == "REFINANCIAMIENTO" ? "REFINANCIAMIENTO":"REPROGRAMACIÓN";
+        }
         $lenders = [];
         $lenders = $loan->borrower;
         $guarantors = $loan->borrowerguarantors;
@@ -1451,11 +1506,8 @@ class LoanController extends Controller
     {
         $currentWfState = $loan->currentState;
         $workflow = $loan->modality->workflow;
-        // Obtener los estados anterior y siguiente desde wf_sequences
-        $previousStates = WfSequence::where('workflow_id', $workflow->id)
-            ->where('wf_state_next_id', $currentWfState->id)
-            ->pluck('wf_state_current_id')
-            ->toArray();
+        $previousStates = [];
+        $previousStates = $this->get_prev_states($currentWfState->id, $workflow->id);
 
         $nextStates = WfSequence::where('workflow_id', $workflow->id)
             ->where('wf_state_current_id', $currentWfState->id)
@@ -1465,7 +1517,8 @@ class LoanController extends Controller
         // Obtener los usuarios de los estados anteriores
         $previousUsers = [];
         foreach ($previousStates as $prev) {
-            $user = Record::whereIn('role_id', WfState::find($prev)->roles->pluck('id'))
+            $state = WfState::find($prev);
+            $user = Record::where('role_id', $state->role_id)
                 ->where('record_type_id', 3)
                 ->where('recordable_id', $loan->id)
                 ->first();
@@ -1481,6 +1534,25 @@ class LoanController extends Controller
             "next" => $nextStates,
             "next_user" => [] // Se puede implementar si es necesario
         ]);
+    }
+
+    public function get_prev_states($current, $workflow_id)
+    {
+        $seen   = [];
+        $prevs  = [];
+
+        while (true) {
+            if (isset($seen[$current])) break;
+            $seen[$current] = true;
+            $prev = WfSequence::where('workflow_id', $workflow_id)
+                ->where('wf_state_next_id', $current)
+                ->value('wf_state_current_id');
+            if (!$prev) break;
+            $prev = (int) $prev;
+            $prevs[] = $prev;
+            $current = $prev;
+        }
+        return $prevs;
     }
 
     /** @group Cobranzas
@@ -2557,66 +2629,6 @@ class LoanController extends Controller
         }
     }
 
-    /**
-    * Impresion acta de sesión de comité
-    * Imprime el acta de sesión de comite de el prestamo
-    * @urlParam loan required ID del prestamo. Example: 5012
-    * @bodyParam number_session integer required numero de la sesión. Example: 100
-    * @authenticated
-    * @responseFile responses/loan/print_form_advance.200.json
-    */
-    public function committee_session(Request $request, Loan $loan, $standalone = true)
-    {
-        $file_title = implode('_', ['FORM','COMITE','PRESTAMO', $loan->code,Carbon::now()->format('m/d')]);
-        $nf = new \NumberFormatter('es_Es', \NumberFormatter::SPELLOUT); // ::ORDINAL
-        $is_refinancing = false;
-        $previous_loan_amount_requested = 0;
-        $previous_loan_balance = 0;
-        // Numero ordinal en femenino
-        $nf->setTextAttribute(\NumberFormatter::DEFAULT_RULESET, "%spellout-ordinal-feminine");
-        $number = $nf->format($request->number_session). ' ';
-        $procedure_modality = $loan->modality;
-        if(strpos($procedure_modality->name, 'Refinanciamiento') !== false )
-            $is_refinancing = true;
-        if($loan->data_loan){
-            $previous_loan_amount_requested = $loan->data_loan->amount_approved;
-            $previous_loan_balance = $loan->data_loan->balance;
-        }
-        elseif($loan->parent_loan)
-        {
-            $previous_loan_amount_requested = $loan->parent_loan->amount_approved;
-            $previous_loan_balance = $loan->parent_loan->verify_balance();
-        }
-
-        $employees = [
-            ['position' => 'Directora de Estrategias Sociales e Inversiones','name'=>'Lic. DAEN Gabriela Jackeline Bustillos Landaeta Msc.'],
-            ['position' => 'Jefe de Unidad de Inversión en Préstamos a.i.','name'=>'Lic. Tamy Ugarte Maldonado'],
-            ['position' => 'Profesional Legal de Préstamos','name'=>'Abog. Elizabeth Sabina Villca Juchani'],
-            ['position' => 'Responsable de Registro, Control y Recuperación de Préstamos','name'=>'Ing. Nelvis Irene Alarcón Pizarroso'],
-           // ['position' => 'Profesional de Calificación de Préstamos','name'=>'Lic. Tamy Ugarte Maldonado'],
-        ];
-        $data = [
-            'header' => [
-                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
-                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
-                'table' => []
-            ],
-            'employees' => $employees,
-            'loan' => $loan,
-            'borrower' => $loan->borrower->first(),
-            'session' => $number,
-            'code' => $request->number_session,
-            'file_title' => $file_title,
-            'is_refinancing' => $is_refinancing,
-            'previous_loan_amount_requested' => $previous_loan_amount_requested,
-            'previous_loan_balance' => $previous_loan_balance,
-        ];
-        $file_name = implode('_', ['committee_session', $loan->code]) . '.pdf';
-        $view = view()->make('loan.forms.committee_session')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $loan,'letter', $request->copies ?? 1);
-        return $view;
-    }
-
     //verifica si el usuario puede realizar acciones sobre el prestamo con su rol
     public function can_user_loan_action(Loan $loan, $role_id) {
         $wf_states_roles = $loan->currentState->roles->pluck('id')->toArray();
@@ -2743,5 +2755,77 @@ class LoanController extends Controller
         }catch(\Exception $e){
             return $e;
         }
+    }
+
+    public function validate_reprogramming(Loan $loan)
+    {
+        $message = [];
+        $status = true;
+        $modality_reprogramming = null;
+        $affiliate = true;
+        if($loan->one_borrower->type == 'spouses')
+            $affiliate = false;
+        if($affiliate && $loan->affiliate->dead){
+            $status = false;
+            $message = 'El afiliado se encuentra fallecido, no se puede reprogramar';    
+        }elseif(!$affiliate && $loan->affiliate->spouses->first()->dead){
+            $status = false;
+            $message = 'El prestatario se encuentra fallecido, no se puede reprogramar';    
+        }
+        elseif($loan->defaulted)
+        {
+            $status = false;
+            $message = 'El prestamo tiene intereses adeudados, no se puede reprogramar';
+        }elseif(!$loan->modality->loan_modality_parameter->reprogramming_modality)
+        {
+            $status = false;
+            $message = 'Esta modalidad de prestamo no se puede reprogramar';
+        }elseif(($loan->amount_approved - $loan->balance) <= $loan->get_min_amount_for_refinancing())
+        {
+            $status = false;
+            $message = 'El monto aprobado del prestamo es menor al monto minimo para reprogramar';
+            
+        }elseif($loan->last_payment->penal_payment > 0 || $loan->last_payment->interest_payment > 0 || $loan->last_payment->capital_payment != $loan->verify_balance())
+        {
+            $status = false;
+            $message = 'verificar el pendiente de reprogramación';
+        }
+        elseif($loan->reprogrammed_active_process_loans()->count() > 0)
+        {
+            $status = false;
+            $message = 'El prestamo tiene una tramite en proceso';
+        }
+        elseif(!$loan->contract_signature_date){
+            $status = false;
+            $message = 'El prestamo no cuenta con una fecha de firma de contrato, no se puede reprogramar';
+        }
+        else{
+            $modality_reprogramming = $loan->modality->loan_modality_parameter->reprogramming_modality;
+            $modality_reprogramming->loan_modality_parameter = $modality_reprogramming->loan_modality_parameter;
+            $message = 'El prestamo se puede reprogramar';
+        }
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'modality_reprogramming' => $modality_reprogramming
+        ], 200);
+    }
+
+    public function get_info_reprogramming(Loan $loan)
+    {
+        $message = '';
+        $status = false;
+        if($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->parent_loan->last_payment_validated->state->name != 'Pagado' && $loan->currentState->name == 'Cobranzas Corte')
+        {
+            $message = "La reprogramación aun cuenta con pagos pendientes por validar";
+            $status = true;
+        }elseif ($loan->parent_reason == 'REPROGRAMACIÓN' && $loan->currentState->name == 'Confirmación legal' && $loan->state_id == 1) {
+            $message = "Aun no se genero el nuevo plan de pagos de la reprogramación";
+            $status = true;
+        }
+        return response()->json([
+            'message' => $message,
+            'status' => $status
+        ], 200);
     }
 }

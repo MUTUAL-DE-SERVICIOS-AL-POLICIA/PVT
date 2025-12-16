@@ -4,7 +4,8 @@
     width="600"
   >
     <v-card>
-      <v-toolbar dense flat color="">
+      <div>{{ observation }}</div>
+      <v-toolbar dense flat>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Devolver trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Anular trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='validar'">Validar trámite</v-toolbar-title>
@@ -12,6 +13,18 @@
         <v-toolbar-title v-show="observation.edit">Editar Observacion</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
+      <template v-if="observation.info.status">
+        <v-divider></v-divider>
+        <br>
+          <v-toolbar dense flat class="py-0">
+            <v-alert
+              color="warning"
+              outlined
+              dense
+            >{{ observation.info.message }}
+            </v-alert>
+          </v-toolbar>
+      </template>
       <v-divider></v-divider>
       <v-card-text class="ma-0 pb-0">
         <v-container fluid class="ma-0 pb-0">
@@ -104,14 +117,19 @@ export default {
   },
   data: () => ({
     dialog: false,
-    observation: {},
+    observation: {
+      info: {
+        status: false,
+        message: ''
+      }
+    },
     observation_type: [],
     flow: {},
     valArea: [],
     areas: [],
     user_id_previous: 0,
     user_name: null,
-    length_previus: 0
+    length_previus: 0,
   }),
   beforeMount(){
     this.getObservationType()
@@ -120,9 +138,8 @@ export default {
   mounted() {
     this.bus.$on('openDialog', (observation) => {
       this.observation = observation
+      console.log(this.observation)
       this.dialog = true
-      console.log("resultado")
-      console.log(observation)
     })
   },
   methods: {
@@ -135,7 +152,12 @@ export default {
     },
     close() {
       this.dialog = false
-      this.observation = {}
+      this.observation = {
+        info: {
+          status: false,
+          message: ''
+        }
+      }
     },
     async saveObservation(id) {
       try {
@@ -197,7 +219,13 @@ export default {
           }
           this.dialog = false
       } catch (e) {
-        console.log(e)
+        let msg = ''
+        if(e.response)
+          msg = e.response.data.message
+        else
+          msg = e.type[0]
+        console.log(msg)
+        this.toastr.error(msg)
       } finally {
         this.loading = false
       }

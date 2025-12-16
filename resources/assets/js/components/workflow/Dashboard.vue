@@ -92,26 +92,13 @@
                  mdi-bank
                 </v-icon>
                 <h5><strong><b style="color:white">MODALIDAD:</b></strong></h5>
-                <h5>{{ loan.modality.name | uppercase }}</h5>
+                <h5 class="text-uppercase">{{ loan.modality.name}}</h5>
               </v-card-text>
             </v-card>
           </v-col>
         </v-row>
       </v-col>
     </v-row>
-    <!-- <v-row>
-      <v-col>
-      <v-alert v-if="loan.state.name == 'Vigente' && loan.default_alert_state"
-        dense
-        text
-        border="left"
-        color="error"
-        icon="mdi-information"
-      >
-      <span class="red--text">El préstamo se encuentran en situación de mora.</span>
-      </v-alert>
-      </v-col>
-    </v-row> -->
   </v-container>
 </template>
 

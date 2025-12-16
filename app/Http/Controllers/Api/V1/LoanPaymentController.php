@@ -631,18 +631,49 @@ class LoanPaymentController extends Controller
         return $loanPayment;
     }
 
-    public function deleteCanceledPaymentRecord(){
-        $PendientePago = LoanPaymentState::whereName('Pendiente de Pago')->first()->id;
-        $dias = LoanProcedure::where('is_enable', true)->first()->loan_global_parameter->date_delete_payment;
-        $loanPayment = LoanPayment::where('estimated_date','<=',Carbon::now()->subDay($dias))->whereStateId($PendientePago)->get();
-        foreach ($loanPayment as $option) {
-            $payment = LoanPayment::withoutEvents(function () use ($option){
-                $payment = LoanPayment::find($option->id);
-                $payment->state_id = LoanPaymentState::whereName('Anulado')->first()->id;
-                $payment->update();
-                $payment->delete();
+    public function deleteCanceledPaymentRecord()
+    {
+        $statePendientePago      = LoanPaymentState::whereName('Pendiente de Pago')->value('id');
+        $statePendienteConfirmar = LoanPaymentState::whereName('Pendiente por confirmar')->value('id');
+        $catReprogramacion       = LoanPaymentCategorie::where('name', 'Reprogramación')->value('id');
+        $stateAnulado            = LoanPaymentState::whereName('Anulado')->value('id');
+        $dias = optional(
+            optional(LoanProcedure::where('is_enable', true)->first())->loan_global_parameter
+        )->date_delete_payment ?? 0;
+
+        $cutoff = Carbon::now()->subDays($dias)->endOfDay();
+        
+        $query = LoanPayment::query()
+        ->where('estimated_date', '<=', $cutoff)
+        ->where(function ($q) use ($statePendientePago, $statePendienteConfirmar, $catReprogramacion) {
+            $q->where('state_id', $statePendientePago)
+              ->orWhere(function ($q2) use ($statePendienteConfirmar, $catReprogramacion) {
+                  $q2->where('state_id', $statePendienteConfirmar)
+                     ->where('categorie_id', $catReprogramacion);
+              });
+        })
+        ->orderBy('id');
+        $totalAfectados = 0;
+
+        LoanPayment::withoutEvents(function () use ($query, $stateAnulado, &$totalAfectados) {
+            $query->select('id')->chunkById(1000, function ($payments) use ($stateAnulado, &$totalAfectados) {
+                $ids = $payments->pluck('id');
+                LoanPayment::whereIn('id', $ids)->update([
+                    'state_id'   => $stateAnulado,
+                    'updated_at' => now(),
+                ]);
+                LoanPayment::whereIn('id', $ids)->delete();
+
+                $totalAfectados += $ids->count();
             });
-        }
+        });
+
+        return response()->json([
+            'ok'             => true,
+            'affected_count' => $totalAfectados,
+            'cutoff'         => $cutoff->toDateTimeString(),
+            'days'           => $dias,
+        ]);
     }
 
     /**

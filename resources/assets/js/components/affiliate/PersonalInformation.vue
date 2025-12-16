@@ -195,7 +195,7 @@
         </v-container>
       </v-col>
     </v-row>
-    <AddStreet :bus="bus" :cities="cities" />
+    <AddStreet :bus="bus" :cities="cities" :affiliate="affiliate" />
     <RemoveItem :bus="bus" />
   </v-container>
 </template>
@@ -273,16 +273,12 @@ export default {
         return 0
       } else {
         let array = this.affiliate.cell_phone_number.split(",")
-        console.log("entro")
         return array
       }
     }
   },
-  beforeMount() {
-    this.getCities()
-    //this.updateCelular()
-  },
   mounted() {
+    this.getCities()
     this.bus.$on("saveAddress", address => {
       if (address.id) {
         let index = this.addresses.findIndex(o => o.id == address.id)
@@ -345,11 +341,8 @@ export default {
       try {
         if (!this.editable) {
           this.editable = true
-          console.log("entro al grabar por verdadero :)")
         } else {
-          console.log("entro al grabar por falso :)")
           // Edit affiliate
-          //await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
             await axios.patch(`affiliate/${this.affiliate.id}`, {
             phone_number: this.affiliate.phone_number,
             cell_phone_number: this.affiliate.cell_phone_number,
