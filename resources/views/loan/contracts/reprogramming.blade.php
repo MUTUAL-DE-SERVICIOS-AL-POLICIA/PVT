@@ -189,7 +189,7 @@ HTML;
             @endif
             @foreach($guarantors as $key => $guarantor)
                 <span>
-                    {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $guarantor->full_name }}, 
+                    {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $guarantor->full_name }}{{count($guarantors) > 1 ? ' y':','}}
                 </span>
             @endforeach
             damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su ﬁel y estricto cumplimiento. 
