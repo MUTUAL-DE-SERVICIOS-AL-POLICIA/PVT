@@ -1763,7 +1763,7 @@ class AffiliateController extends Controller
             $request->refinancing ? null : [$a => 28, $b => 93],  // Préstamo Sector Activo c/ Garantía FRPS Menor
             $request->refinancing ? null : [$a => 28, $b => 94],  // Préstamo Sector Activo c/ Garantía FRPS Mayor
             $request->refinancing ? null : [$a => $hogar_digno_sector_active->procedure_type->id, $b => $hogar_digno_sector_active->id], // Préstamo Hogar Digno c/ Garantía Personal Sector Activo
-            $request->refinancing ? null : [$salud_sector_active->procedure_type->id => 31, $b => $salud_sector_active->id], // Préstamo Salud Sector Activo
+            $request->refinancing ? null : [$a => $salud_sector_active->procedure_type->id, $b => $salud_sector_active->id], // Préstamo Salud Sector Activo
 
             $request->refinancing ? [$a => 10, $b => 40] : null,  // Refinanciamiento Corto Plazo Sector Activo
             $request->refinancing ? [$a => 12, $b => 82] : null,  // Refinanciamiento Largo Plazo (1 garante)
