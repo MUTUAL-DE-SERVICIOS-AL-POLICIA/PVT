@@ -1752,7 +1752,7 @@ class AffiliateController extends Controller
         $salud_sector_pasive_gestora = ProcedureModality::where('name', 'Salud Sector Pasivo Gestora Pública')->first();
         $hogar_digno_sector_active = ProcedureModality::where('name', 'Hogar Digno con Garantía Personal para el Sector Activo')->first();
         $refinanciamiento_hogar_digno = ProcedureModality::where('name', 'Refinanciamiento Hogar Digno con Garantía Personal para el Sector Activo')->first();
-        $primer_prestamo_sector_active = ProcedureModality::where('name', 'Mi Primer Préstamo Sector Activo')->first();
+        $primer_prestamo_sector_active = ProcedureModality::where('name', 'Mi Primer Préstamo con Garantía Personal Sector Activo')->first();
         // Colección de préstamos para afiliados al sector activo
         $sector_active = collect([
             $request->refinancing ? null : [$a => 9,  $b => 32],  // Anticipo Sector Activo
