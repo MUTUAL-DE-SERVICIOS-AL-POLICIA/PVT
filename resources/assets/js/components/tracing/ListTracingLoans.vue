@@ -229,7 +229,7 @@
                   </template>
                   <v-list dense class="py-0">
                     <span v-for="doc in printDocs" :key="doc.id">
-                    <v-list-item v-if="!(doc.id >= 3 && item.state_loan == 'En Proceso')" @click="imprimir(doc.id, item.id_loan)">
+                    <v-list-item v-if="!(doc.id >= 3 && item.state_loan == 'En Proceso' && doc.id != 5)" @click="imprimir(doc.id, item.id_loan)">
                         <v-list-item-icon class="ma-0 py-0 pt-2">
                           <v-icon class="ma-0 py-0" small color="light-blue accent-4">{{doc.icon}}</v-icon>
                         </v-list-item-icon>
@@ -450,8 +450,10 @@ export default {
           res = await axios.get(`loan/${item}/print/form`)
         } else if (id == 3) {
           res = await axios.get(`loan/${item}/print/plan`)
-        } else {
+        } else if (id == 4) {
           res = await axios.get(`loan/${item}/print/kardex`)
+        } else if (id == 5) {
+          res = await axios.get(`loan/${item}/print/process_form`)
         }
         printJS({
           printable: res.data.content,
@@ -470,7 +472,8 @@ export default {
           { id: 1, title: "Contrato", icon: "mdi-file-document" },
           { id: 2, title: "Solicitud", icon: "mdi-file" },
           { id: 3, title: "Plan de pagos", icon: "mdi-cash" },
-          { id: 4, title: "Kardex", icon: "mdi-view-list" }
+          { id: 4, title: "Kardex", icon: "mdi-view-list" },
+          { id: 5, title: "Hoja de Trámite", icon: "mdi-text-box-multiple-outline" }
         )
       this.printDocs = docs
     },

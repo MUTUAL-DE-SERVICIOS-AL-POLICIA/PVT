@@ -278,6 +278,8 @@ export default {
             res = await axios.get(`loan/${item.id}/print/plan`)
           else
             this.toastr.error("El préstamo no se encuentra desembolsado.")
+        }else if(id==4){
+          res = await axios.get(`loan/${item.id}/print/process_form`)
         }
         printJS({
           printable: res.data.content,
@@ -315,6 +317,8 @@ export default {
           if (this.permissionSimpleSelected.includes('print-payment-plan')) {
             docs.push({ id: 3, title: 'Plan de pagos', icon: 'mdi-cash' })
           }
+
+          docs.push({ id: 4, title: "Hoja de Trámite", icon: "mdi-text-box-multiple-outline" })
       
       this.printDocs = docs        
       } catch (e) {
