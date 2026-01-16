@@ -290,6 +290,7 @@ Route::group([
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');      
             Route::get('loan/{loan}/print/qualification', 'Api\V1\LoanController@print_qualification');
             Route::get('loan/{loan}/print/process_form', 'Api\V1\LoanController@print_process_form');
+            Route::get('loan/{loan}/print/warranty_registration_form', 'Api\V1\LoanController@print_warranty_registration_form');
             Route::apiResource('loan_contribution_adjust', 'Api\V1\LoanContributionAdjustController')->only('index','show','store', 'update', 'destroy');
             Route::post('loan_contribution_adjust/updateOrCreate', 'Api\V1\LoanContributionAdjustController@updateOrCreate');
             Route::post('loan_guarantee_register/updateOrCreateLoanGuaranteeRegister', 'Api\V1\LoanGuaranteeRegisterController@updateOrCreateLoanGuaranteeRegister');

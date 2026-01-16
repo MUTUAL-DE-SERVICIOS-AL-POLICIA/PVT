@@ -229,7 +229,7 @@
                   </template>
                   <v-list dense class="py-0">
                     <span v-for="doc in printDocs" :key="doc.id">
-                    <v-list-item v-if="!(doc.id >= 3 && item.state_loan == 'En Proceso' && doc.id != 5)" @click="imprimir(doc.id, item.id_loan)">
+                    <v-list-item v-if="!(doc.id >= 3 && item.state_loan == 'En Proceso' && doc.id != 5 && doc.id != 6)" @click="imprimir(doc.id, item.id_loan)">
                         <v-list-item-icon class="ma-0 py-0 pt-2">
                           <v-icon class="ma-0 py-0" small color="light-blue accent-4">{{doc.icon}}</v-icon>
                         </v-list-item-icon>
@@ -454,6 +454,8 @@ export default {
           res = await axios.get(`loan/${item}/print/kardex`)
         } else if (id == 5) {
           res = await axios.get(`loan/${item}/print/process_form`)
+        } else if (id == 6) {
+          res = await axios.get(`loan/${item}/print/warranty_registration_form`)
         }
         printJS({
           printable: res.data.content,
@@ -473,7 +475,8 @@ export default {
           { id: 2, title: "Solicitud", icon: "mdi-file" },
           { id: 3, title: "Plan de pagos", icon: "mdi-cash" },
           { id: 4, title: "Kardex", icon: "mdi-view-list" },
-          { id: 5, title: "Hoja de Trámite", icon: "mdi-text-box-multiple-outline" }
+          { id: 5, title: "Hoja de Trámite", icon: "mdi-text-box-multiple-outline" },
+          { id: 6, title: "Formulario de Registro de Garantía", icon: "mdi-file-certificate" }
         )
       this.printDocs = docs
     },
