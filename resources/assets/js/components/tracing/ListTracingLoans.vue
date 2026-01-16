@@ -476,7 +476,7 @@ export default {
           { id: 3, title: "Plan de pagos", icon: "mdi-cash" },
           { id: 4, title: "Kardex", icon: "mdi-view-list" },
           { id: 5, title: "Hoja de Trámite", icon: "mdi-text-box-multiple-outline" },
-          { id: 6, title: "Formulario de Registro de Garantía", icon: "mdi-file-certificate" }
+          { id: 6, title: "Ficha Garantias", icon: "mdi-file-certificate" }
         )
       this.printDocs = docs
     },

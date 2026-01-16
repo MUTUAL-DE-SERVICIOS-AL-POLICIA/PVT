@@ -8,7 +8,7 @@
 <body>
     @include('partials.header', $header)
 <div class="block">
-        <div class="font-semibold leading-tight text-center m-b-10 text-lg">FICHA DE REGISTRO DE GARANTIAS</div>
+        <div class="font-semibold leading-tight text-center m-b-10 text-lg">FICHA DE REGISTRO DE GARANTÍAS</div>
 </div>
 @php $num=1; @endphp
 <div>
@@ -33,18 +33,18 @@
             </table>
         </div>
         <br>
-        <div class="font-semibold leading-tight m-b-10 text-lg" style="padding-left: 40px;">PRESTAMOS GARANTIZADOS</div>
+        <div class="font-semibold leading-tight m-b-10 text-lg" style="padding-left: 40px;">PRÉSTAMOS GARANTIZADOS</div>
         
         @if(count($guarantor->guarantor_loans) == 0)
-            <div>Sin Garantias</div>
+            <div>Sin Garantías</div>
         @else
             <div>
                 <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
                     <tr class="bg-grey-darker text-white">
-                        <td class="w-50 text-left px-10">CODIGO</td>
+                        <td class="w-50 text-left px-10">CÓDIGO</td>
                         <td class="w-50 text-left px-10">TITULAR</td>
                         <td class="w-50 text-left px-10">CI</td>
-                        <td class="w-50 text-left px-10">MATRICULA</td>
+                        <td class="w-50 text-left px-10">MATRÍCULA</td>
                         <td class="w-50 text-left px-10">MODALIDAD</td>
                         <td class="w-50 text-left px-10">FECHA DE SOLICITUD</td>
                         <td class="w-50 text-left px-10">FECHA DE DESEMBOLSO</td>
@@ -52,7 +52,7 @@
                         <td class="w-50 text-left px-10">PLAZO</td>
                         <td class="w-50 text-left px-10">CUOTA</td>
                         <td class="w-50 text-left px-10">SALDO</td>
-                        <td class="w-50 text-left px-10">TIPO TRAMITE</td>
+                        <td class="w-50 text-left px-10">TIPO TRÁMITE</td>
                         <td class="w-50 text-left px-10">ESTADO</td>
                     </tr>
                     @foreach($guarantor->guarantor_loans as $loan)

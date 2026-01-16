@@ -322,7 +322,7 @@ export default {
           }
 
           docs.push({ id: 4, title: "Hoja de Trámite", icon: "mdi-text-box-multiple-outline" })
-          docs.push({ id: 5, title: "Ficha de Garantias", icon: "mdi-group" })
+          docs.push({ id: 5, title: "Ficha de Garantías", icon: "mdi-group" })
       
       this.printDocs = docs        
       } catch (e) {
