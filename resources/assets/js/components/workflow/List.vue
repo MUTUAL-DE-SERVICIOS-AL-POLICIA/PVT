@@ -281,6 +281,9 @@ export default {
         }else if(id==4){
           res = await axios.get(`loan/${item.id}/print/process_form`)
         }
+        else if(id==5){
+          res = await axios.get(`loan/${item.id}/print/warranty_registration_form`)
+        }
         printJS({
           printable: res.data.content,
           type: res.data.type,
@@ -319,6 +322,7 @@ export default {
           }
 
           docs.push({ id: 4, title: "Hoja de Trámite", icon: "mdi-text-box-multiple-outline" })
+          docs.push({ id: 5, title: "Ficha de Garantías", icon: "mdi-group" })
       
       this.printDocs = docs        
       } catch (e) {

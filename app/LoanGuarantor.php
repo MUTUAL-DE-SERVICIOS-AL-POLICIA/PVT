@@ -386,4 +386,9 @@ class LoanGuarantor extends Model
       }
       return $category;
     }
+
+    public function pension_entity()
+    {
+      return $this->belongsTo(PensionEntity::class);
+    }
 }
