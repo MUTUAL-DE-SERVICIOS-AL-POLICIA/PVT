@@ -378,6 +378,8 @@ class LoanController extends Controller
             }
             if($loan->modality->loan_modality_parameter->print_form_qualification_platform)
                 array_push($print_docs, $this->print_qualification(new Request([]), $loan, false));
+            //impresion de la hoja de tramite
+            array_push($print_docs, $this->print_process_form(new Request([]), $loan, false));
             $loan->attachment = Util::pdf_to_base64($print_docs, $file_name,$information_loan, 'legal', $request->copies ?? 1);
         }else{
             $loan->attachment = Util::pdf_to_base64([
@@ -2737,6 +2739,31 @@ class LoanController extends Controller
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, $affiliate,'letter', $request->copies ?? 1);
         return $view;
     }
+
+    public function print_process_form(Request $request, Loan $loan, $standalone = true){
+        $procedure_modality = $loan->modality;
+        $file_title =implode('_', ['FORM','TRAMITE', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);    
+        $data = [
+           'header' => [
+               'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+               'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+               'table' => [
+                   ['Tipo', $loan->modality->procedure_type->second_name],
+                   ['Modalidad', $loan->modality->shortened],
+                   ['Usuario', Auth::user()->username]
+               ]
+           ],
+           'loan' => $loan,
+           'file_title' => $file_title,
+       ];
+       $information_loan= $this->get_information_loan($loan);
+       $file_name = implode('_', ['hoja_de_tramite', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
+       $view = view()->make('loan.forms.process_form')->with($data)->render();
+       $portrait = true;//impresion horizontal
+       $print_date = false;//modo retrato e impresion de la fecha en el formulario de calificación
+       if ($standalone) return  Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1, $portrait, $print_date);  
+       return $view; 
+   }
 
     public function generate_plans()
     {
