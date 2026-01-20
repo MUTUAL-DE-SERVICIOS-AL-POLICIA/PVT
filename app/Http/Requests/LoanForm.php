@@ -44,11 +44,6 @@ class LoanForm extends FormRequest
                 'parent_loan_id' => null,
             ]);
         }
-        if($this->property_id==0 && $this->has('property_id')){
-            $this->merge([
-                'property_id' => null,
-            ]);
-        }
         if($this->financial_entity_id==0 && $this->has('financial_entity_id')){
             $this->merge([
                 'financial_entity_id' => null,
@@ -87,11 +82,8 @@ class LoanForm extends FormRequest
             'amount_requested' => ['numeric', 'min:0', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'city_id' => ['integer', 'exists:cities,id'],
             'loan_term' => ['integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
-            'payment_type_id' => ['integer', 'exists:payment_types,id'],
-            'destiny_id' => ['integer', 'exists:loan_destinies,id', new LoanDestiny($procedure_modality)],
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'liquid_qualification_calculated' => ['numeric'],
-            'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
             'lenders' => ['array','min:1', new LoanIntervalMaxLender($procedure_modality)],
             'personal_references' => ['array', 'exists:personal_references,id' ],
             'lenders.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
@@ -106,7 +98,6 @@ class LoanForm extends FormRequest
             'lenders.*.contributionable_ids.*' => ['integer','min:1'],
             'lenders.*.contributionable_type'  => ['string','required','in:contributions,aid_contributions,loan_contribution_adjusts'],
             'lenders.*.loan_contributions_adjust_ids'  => ['array','nullable','exists:loan_contribution_adjusts,id'],
-            'property_id' => ['nullable', $hypothecary? 'required':'nullable','exists:loan_properties,id'],
             'guarantors' => ['array',new LoanParameterGuarantor($procedure_modality)],
             'guarantors.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
             'guarantors.*.payment_percentage' => ['required', 'numeric'],
@@ -148,6 +139,12 @@ class LoanForm extends FormRequest
             'delivery_contract_date' => ['nullable', 'date_format:"Y-m-d"'],
             'return_contract_date' => ['nullable', 'date_format:"Y-m-d"']
         ];
+        if($this->parent_reason != 'REPROGRAMACIÓN')
+        {
+            $rules['payment_type_id'] = ['integer','exists:payment_types,id'];
+            $rules['destiny_id']      = ['integer','exists:loan_destinies,id', new LoanDestiny($procedure_modality)];
+            $rules['indebtedness_calculated'] = ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)];
+        }
         switch ($this->method()) {
             case 'POST': {
                 foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference? 11:10 ) as $key => $rule) {

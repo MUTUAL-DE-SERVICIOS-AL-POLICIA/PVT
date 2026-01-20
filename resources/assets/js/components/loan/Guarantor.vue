@@ -2,7 +2,6 @@
   <v-container fluid>
     <v-row
       justify="center"
-      v-show="modalidad.procedure_type_name != 'Préstamo Hipotecario'"
     >
       <!-- Vista cuando el prestamo no tiene garantes-->
       <v-col cols="12" class="py-0" v-if="modalidad_guarantors == 0">
@@ -990,7 +989,6 @@
       this.loan_contributions_adjust_ids = []
       let contributionable_ids = []
       let contributionable_type = null
-      console.log(contributionable_ids)
 
       this.contributions = this.contribution
 
@@ -1040,15 +1038,12 @@
             description: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contributions[0].adjustment_description : 'Liquido pagable por Comisión'
           })
           this.contributions[0].loan_contributions_adjust_id = res.data.id
-          console.log(this.contributions[0].loan_contributions_adjust_id)
+
           if (this.loan_contributions_adjust_ids.indexOf(this.contributions[0].loan_contributions_adjust_id) === -1) {
             this.loan_contributions_adjust_ids.push(this.contributions[0].loan_contributions_adjust_id)
           }
 
-        }else{
-          console.log('No tiene ajuste')
         }
-
 
         //fin ajuste
         this.guarantor.affiliate_id = this.affiliate_guarantor.affiliate.id,
