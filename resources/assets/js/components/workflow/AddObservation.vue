@@ -4,7 +4,6 @@
     width="600"
   >
     <v-card>
-      <div>{{ observation }}</div>
       <v-toolbar dense flat>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Devolver trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Anular trámite</v-toolbar-title>
