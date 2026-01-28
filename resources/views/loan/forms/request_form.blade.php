@@ -36,8 +36,20 @@
                 @if ($loan->parent_reason && !$loan->parent_loan_id)
                 <td class="data-row py-5">{{ $loan->data_loan->code }}</td>
                 @endif
-                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">@if($loan->parent_reason == "REPROGRAMACIÓN") {{$loan->parent_reason}} @endif {{ $loan->modality->name }}</td>
+                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}"> {{ $loan->modality->name }}</td>
             </tr>
+            @if ($loan->parent_reason == 'REPROGRAMACIÓN')
+                <tr class="bg-grey-darker text-white">
+                    <td class="w-25">Fecha de Solicitud</td>
+                    <td class="w-25">Plazo</td>
+                    <td class="w-25">Saldo</td>
+                </tr>
+                <tr>
+                    <td class="w-25">{{ Carbon::parse($loan->request_date)->format('d/m/y') }}</td>
+                    <td class="w-25">{{ $loan->loan_term }}</td>
+                    <td class="w-25">{{ $loan->amount_approved }}</td>
+                </tr>
+            @else
             <tr class="bg-grey-darker text-white">
                 <td>Monto solicitado</td>
                 <td>Plazo</td>
@@ -72,6 +84,7 @@
                 <td colspan="2">{{ Carbon::parse($loan->request_date)->format('d/m/y')}}</td>
                 <td colspan="1">{{ $loan->destiny->name }}</td>
             </tr>
+            @endif
         </table>
     </div>
 
@@ -412,7 +425,9 @@
         <br>
         <br>
         <div style="font-size:10px;" class="block  text-justify ">
-        El suscrito Asistente Administrativo, Representante Departamental y/o personal de Atención al afiliado de la MUSERPOL, certifica la verificación y validación de la documentación presentada, dando FÉ que la misma fue firmada en forma voluntaria con puño y letra de{{ $plural ? ' los' : 'l' }} interesado{{ $plural ? 's' : '' }}.
+        El suscrito Asistente Administrativo, Representante Departamental y/o personal de Atención al afiliado de la MUSERPOL, a efectos de mitigar el riesgo crediticio previamente al ingreso de la solicitud de préstamo,
+        realizo la verificación de la lista de disponibilidad y revista, lista de deudas con la institución y lista de procesos judiciales con sentencia ejecutoriada. Además, certifica la verificación y validación de la documentación 
+        presentada, dando FÉ que la misma fue firmada en forma voluntaria con puño y letra de{{ $plural ? ' los' : 'l' }} interesado{{ $plural ? 's' : '' }}.
         </div>
 </body>
 </html>

@@ -259,7 +259,6 @@ export default {
         })
         this.toastr.success("Se devolvio satisfactoriamente el trámite.")
         this.$router.push("/workflow")
-        console.log("se cambio el rol")
       } catch (e) {
         console.log(e)
       }

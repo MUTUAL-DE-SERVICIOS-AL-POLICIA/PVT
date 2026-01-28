@@ -574,7 +574,7 @@ class Affiliate extends Model
 
    public function active_loans_query()
    {
-       $loan_state_ids = LoanPaymentState::whereIn('name', ['Pagado', 'Pendiente por confirmar'])->pluck('id')->toArray();
+       $loan_state_ids = LoanPaymentState::whereIn('name', ['Pagado'])->pluck('id')->toArray();
    
        return $this->loans()
            ->whereRaw("

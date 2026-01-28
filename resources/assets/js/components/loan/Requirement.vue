@@ -260,14 +260,6 @@ export default {
         this.items = this.requirement.required;
         this.optional = this.requirement.optional;
         this.newOptional = this.requirement.optional;
-        /*console.log(this.items)
-        for(let i = 0; i < this.items.length; i++ ){
-          for(let j = 0; j < 1; j++ ){
-           this.ids_items.push(this.items[i][j].id)
-            //console.log(this.ids_items )
-          }
-        }
-         console.log(this.id_items )*/
       } catch (e) {
         console.log(e);
       } finally {
@@ -335,8 +327,6 @@ export default {
         this.itemsOpc.push(i)
          //filtrar en newOptional el item agregado y generar uno array nuevo sin el item
         this.newOptional = this.newOptional.filter(item => item.id !== i)
-        //console.log("I= " + i);
-        //console.log("selectedOpc " + this.selectedOpc);
       }
 
     },
@@ -344,11 +334,8 @@ export default {
       let itemDelete = []
       this.itemsOpc.splice(i, 1)
       this.selectedOpc = " ";
-      console.log("delete "+i)
-      console.log("delete "+idDoc)
       //obtener el item borrado desde optional
       itemDelete = this.optional.find(item => item.id === idDoc)
-      console.log(itemDelete)
       //insertarlo en newOptional
       this.newOptional.push(itemDelete)
     },
@@ -359,7 +346,6 @@ export default {
         if(!(this.otherDocuments.filter(item => item === this.newOther)).length > 0){
           //si no existe repetido insertar item
           this.otherDocuments.push(this.newOther);
-          console.log("other " + this.otherDocuments);
           this.newOther = ""
         }else{
           this.toastr.error("El documento ya existe")
@@ -370,7 +356,6 @@ export default {
     },
     deleteOtherDocument(i) {
       this.otherDocuments.splice(i, 1);
-      console.log("other " + this.otherDocuments);
     }
   }
 };

@@ -47,9 +47,9 @@ class LoanReportController extends Controller
 
    public function report_loan_vigent(Request $request){
     // aumenta el tiempo máximo de ejecución de este script a 150 min:
-    ini_set('max_execution_time', 9000);
+    ini_set('max_execution_time', 900000);
     // aumentar el tamaño de memoria permitido de este script:
-    ini_set('memory_limit', '960M');
+    ini_set('memory_limit', '96000M');
 
     $order_loan = 'Desc';
     $initial_date = request('initial_date') ?? '';
@@ -129,14 +129,12 @@ class LoanReportController extends Controller
                     Util::money_format($loan->balance),//SALDO ACTUAL
                     $loan->parent_reason,
                     Util::money_format($loan->amount_approved),
-                    //$loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : '0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
-                    //$loan->parent_reason? Util::money_format($loan->refinancing_balance):Util::money_format($loan->amount_approved),// LIQUIDO DESEMBOLSADO
                     Loan::whereId($loan->id)->first()->balance_parent_refi(),
                     $loan->amount_approved - (Loan::whereId($loan->id)->first()->balance_parent_refi()),
                     $loan->loan_term,//plazo
                     $loan->state->name,//estado del prestamo
-                    $loan->destiny->name,
-                    $loan->number_payment_type
+                    $loan->parent_reason == 'REPROGRAMACIÓN' ? $loan->parent_loan->destiny_name : $loan->destiny->name,
+                    $loan->parent_reason == 'REPROGRAMACIÓN' ? $loan->parent_loan->number_payment_type : $loan->number_payment_type
                    ));
                }
             }
@@ -2123,17 +2121,19 @@ class LoanReportController extends Controller
   }
 
   public function processed_loan_report(Request $request)
-  {//return Auth::user()->id;
+  {
     $file = "reporte de tramites procesados";
     $report_process_loan=array(
         array("N°","DEPTO.", "CODIGO PRESTAMO","CI PRESTATARIO", "NOMBRE PRESTATARIO","MODALIDAD", "MONTO", "ROL","ACCION", "FECHA DE ACCION","USUARIO")
     );
+    $initial_date = Carbon::parse($request->initial_date)->startOfDay();
+    $final_date = Carbon::parse($request->final_date)->endOfDay();
     $records = Record::where('recordable_type', 'loans')
-    ->whereBetween('created_at', [$request->initial_date, $request->final_date])
+    ->whereBetween('created_at', [$initial_date, $final_date])
     ->where('record_type_id', 3)
     ->where('user_id', Auth::user()->id)
     ->orWhere('recordable_type', 'loans')
-    ->whereBetween('created_at', [$request->initial_date, $request->final_date])
+    ->whereBetween('created_at', [$initial_date, $final_date])
     ->where('action', 'ilike', 'editó [Rol]%')
     ->where('user_id', Auth::user()->id)->get();
     $c = 1;
