@@ -59,6 +59,7 @@ use App\Jobs\ProcessNotificationSMS;
 use App\LoanGuaranteeRetirementFund;
 use App\Observation;
 use App\WfState;
+use App\ObservationForModule;
 use App\LoanModalityParameter;
 
 /** @group Préstamos
@@ -2003,19 +2004,14 @@ class LoanController extends Controller
         $message['validate'] = false;
         $affiliate = Affiliate::findOrFail($affiliate_id);
         $module_id = Module::where('name', 'prestamos')->first()->id;
-        $observations = Observation::select('observables.*')
-                        ->join('observation_types as ot', 'ot.id', '=', 'observables.observation_type_id')
-                        ->where('ot.module_id', '=', $module_id)
-                        ->where('observable_type', '=', 'affiliates')
-                        ->where('observable_id', '=', $affiliate_id)
-                        ->whereIn('id', [2,60])
-                        ->get();
+        $observations = $affiliate->observations->pluck('observation_type_id')->toArray();
+        $observations_for_denied = ObservationForModule::where('module_id', $module_id)->pluck('observation_type_id')->toArray();
         $loan_global_parameter = LoanProcedure::where('is_enable', true)->first()->loan_global_parameter;
         $loan_disbursement = count($affiliate->disbursement_loans);
         if($request->refinancing)
             $loan_disbursement = $loan_disbursement - 1;
         $loan_process = count($affiliate->process_loans);
-        if($observations->count() == 0)
+        if(collect($observations)->intersect($observations_for_denied)->isEmpty())
         {
             if ($affiliate->affiliate_state){
                 if($affiliate->affiliate_state->affiliate_state_type->name != "Baja" && $affiliate->affiliate_state->affiliate_state_type->name != ""){
