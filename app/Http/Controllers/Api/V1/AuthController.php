@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Ldap;
+use Illuminate\Http\Request;
 
 /** @group Autenticación
 * Abre el acceso a la aplicación mediante llaves JSON WebToken de tipo Bearer
@@ -76,6 +77,13 @@ class AuthController extends Controller
                 }
             }
         }
+        $allowed_user = Auth::user();
+        if ($allowed_user) {
+            $allowed_user->roles()->updateExistingPivot(
+                $allowed_user->roles()->pluck('roles.id')->toArray(),
+                ['role_active' => false]
+            );
+        }
         if ($token) {
             \Log::channel('access')->info("Usuario ".Auth::user()->username." autenticado desde la dirección ".request()->ip());
             //return $token;
@@ -121,5 +129,42 @@ class AuthController extends Controller
     public function guard()
     {
         return Auth::Guard('api');
+    }
+
+    public function setActiveRole(Request $request)
+    {
+        $request->validate([
+            'role_id' => 'required|exists:roles,id',
+        ]);
+
+        $user = Auth::user();
+        $user->roles()->updateExistingPivot(
+            $user->roles()->pluck('roles.id')->toArray(),
+            ['role_active' => false]
+        );
+        $user->roles()->updateExistingPivot(
+            $request->role_id,
+            ['role_active' => true]
+        );
+
+        return response()->json([
+            'message' => 'Rol activo actualizado',
+        ]);
+    }
+
+    public function clearSelectedRole()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'No autenticado'], 401);
+        }
+        $user->roles()->updateExistingPivot(
+            $user->roles()->pluck('roles.id')->toArray(),
+            ['role_active' => false]
+        );
+
+        return response()->json([
+            'message' => 'Rol activo eliminado correctamente.',
+        ]);
     }
 }

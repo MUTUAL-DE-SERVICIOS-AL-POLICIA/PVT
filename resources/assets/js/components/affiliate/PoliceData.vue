@@ -348,22 +348,11 @@ export default {
       }
     },
     Onchange(){
-      /*for(let i=0; i< this.affiliateState.length; i++){
-        if(this.affiliate.affiliate_state_id == this.affiliateState[i].id){
-          if(this.affiliateState[i].name == 'Fallecido'){
-              this.visible =true
-            }else{
-              this.visible =false
-          }
-        }
-        this.estado.id=this.affiliate.affiliate_state_id
-      }*/
       if(this.affiliate.affiliate_state_id  == 4){
           this.visible = true
         }else{
           this.visible = false
       }
-      console.log(this.affiliate.affiliate_state_id)
     },
   async getUnit() {
     try {

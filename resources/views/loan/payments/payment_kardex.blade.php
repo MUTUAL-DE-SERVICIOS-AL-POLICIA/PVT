@@ -76,27 +76,27 @@
     <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-xxs text-white">
-                <td class="w-15">Código Tŕamite</td>
+                <td class="w-20">Código Tŕamite</td>
                 @if ($loan->parent_loan)
-                <td class="w-35">Trámite origen</td>
+                <td class="w-20">Trámite origen</td>
                 @endif
-                <td class="{{ $loan->parent_loan ? 'w-50' : 'w-50' }}" colspan="{{ $loan->parent_loan ? 1 : 2 }}">Modalidad de trámite</td>
-                <td class="w-15">Tasa Anual(%)</td>
-                <td class="w-25">Cuota Fija</td>
+                <td class="{{ $loan->parent_loan ? 'w-30' : 'w-40' }}" colspan="{{ $loan->parent_loan ? 1 : 2 }}">Modalidad de trámite</td>
+                <td class="{{ $loan->parent_loan ? 'w-15' : 'w-20' }}">Tasa Anual(%)</td>
+                <td class="{{ $loan->parent_loan ? 'w-15' : 'w-20' }}">Cuota Fija</td>
             </tr>
             <tr>
-                <td class="data-row py-5 m-b-10 text-xs">{{ $loan->code }}</td>
+                <td >{{ $loan->code }}</td>
                 @if ($loan->parent_loan)
-                <td class="data-row py-5 m-b-10 text-xs">{{ $loan->parent_loan->code }}</td>
+                <td >{{ $loan->parent_loan->code }}</td>
                 @endif
                 <td class="data-row py-5 m-b-10 text-xs" colspan="{{ $loan->parent_loan ? 1 : 2 }}">{{ $loan->modality->name }}</td>
-                <td class="m-b-10 text-xs">{{ Util::money_format($loan->interest->annual_interest)}}</td>
-                <td class="m-b-10 text-xs" colspan="2">{{Util::money_format($loan->estimated_quota)}}</td>
+                <td>{{ Util::money_format($loan->interest->annual_interest)}}</td>
+                <td colspan="2">{{Util::money_format($loan->estimated_quota)}}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
-                <td class="w-25">Plazo</td>
-                <td class="w-25">Tipo de Desembolso</td>
-                <td class="w-25">Fecha de Desembolso</td>
+                <td class="w-20">Plazo</td>
+                <td class="w-20">Tipo de Desembolso</td>
+                <td class="w-30">Fecha de Desembolso</td>
                 <td colspan="2">Monto Desembolsado</td>
             </tr>
             <tr>          
@@ -105,16 +105,18 @@
                 @else
                     @php ($term_text = $loan->loan_term == 1 ? 'semestre' : 'semestres')
                 @endif
-                <td class="data-row py-5 m-b-10 text-xs">{{ $loan->loan_term }} <span class="capitalize">{{ $term_text }}</span></td>
+                <td>{{ $loan->loan_term }} <span class="capitalize">{{ $term_text }}</span></td>
                 <td class="data-row py-5 m-b-10 text-xs">
-                    @if($loan->payment_type->name=='Deposito Bancario')
+                    @if($loan->parent_reason == "REPROGRAMACIÓN")
+                        {{ $loan->parent_loan->payment_type->name}}
+                    @elseif($loan->payment_type->name=='Deposito Bancario')
                         <div class="font-bold">Cuenta Banco Union</div>
                         <div>{{ $loan->number_payment_type }}</div>
                     @else
                         {{ $loan->payment_type->name}}
                     @endif
                 </td>
-                <td class="data-row py-5 m-b-10 text-xs" >{{Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s')}}</td>
+                <td>{{Carbon::parse($loan->disbursement_date)->format('d/m/Y')}}</td>
                 @if($loan->parent_loan && $loan->parent_reason == "REPROGRAMACIÓN")
                 <td colspan="2">{{ Util::money_format($loan->parent_loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
                 @else
@@ -122,19 +124,38 @@
                 @endif
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
-                <td class="w-25">Certificacion Presupuestaria Contable</td>
-                <td colspan="2">Intereses Corrientes Pendientes</td> 
-                <td colspan="2">Intereses Penales Pendientes</td>       
+                <td class="w-20">Certificacion Presupuestaria Contable</td>
+                @if($loan->parent_loan && $loan->parent_reason == "REPROGRAMACIÓN")
+                    <td class="w-20">Intereses Corrientes Pendientes</td> 
+                    <td class="w-20">Intereses Penales Pendientes</td>
+                    <td class="w-15">Monto Reprogramado</td>
+                    <td class="w-15">Fecha de Reprogramación</td>
+                @else
+                    <td colspan="2">Intereses Corrientes Pendientes</td> 
+                    <td colspan="2">Intereses Penales Pendientes</td>
+                @endif
             </tr>
             <tr>
             @if($loan->paymentsKardex->first() != null)
-                <td class="data-row py-5 m-b-10 text-xs">{{$loan->num_accounting_voucher}}</td>
-                <td colspan="2">{{ Util::money_format($loan->paymentsKardex->first()->interest_accumulated)}}</td>
-                <td colspan="2">{{ Util::money_format($loan->paymentsKardex->first()->penal_accumulated)}}</td>
-                @else
+                <td>{{$loan->num_accounting_voucher}}</td>
+                <td {!! $loan->parent_loan ? 'class="w-20"' : 'colspan="2"' !!}>
+                    {{ Util::money_format(optional($loan->paymentsKardex->first())->interest_accumulated ?? 0) }}
+                </td>
+                <td {!! $loan->parent_loan ? 'class="w-20"' : 'colspan="2"' !!}>
+                    {{ Util::money_format($loan->paymentsKardex->first()->penal_accumulated)}}
+                </td>
+                @if($loan->parent_loan && $loan->parent_reason == "REPROGRAMACIÓN")
+                    <td class="w-15">{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
+                    <td class="w-15">{{ Carbon::parse($loan->disbursement_date)->format('d/m/Y ') }}</td>
+                @endif
+            @else
                 <td class="data-row py-5 m-b-10 text-xs">0</td>
-                <td colspan="2">0</td>
-                <td colspan="2">0</td>
+                <td {!! $loan->parent_loan ? 'class="w-20"' : 'colspan="2"' !!}>0</td>
+                <td {!! $loan->parent_loan ? 'class="w-20"' : 'colspan="2"' !!}>0</td>
+                @if($loan->parent_loan && $loan->parent_reason == "REPROGRAMACIÓN")
+                    <td class="w-15">{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
+                    <td class="w-15">{{ Carbon::parse($loan->disbursement_date)->format('d/m/Y') }}</td>
+                @endif
             @endif
             </tr>
         </table>
