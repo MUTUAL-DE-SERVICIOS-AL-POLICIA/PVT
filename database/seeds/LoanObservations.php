@@ -22,7 +22,6 @@ class LoanObservations extends Seeder
             ['module_id' => 6, 'observation_type_id' => 26],
             ['module_id' => 6, 'observation_type_id' => 31],
             ['module_id' => 6, 'observation_type_id' => 46],
-            ['module_id' => 6, 'observation_type_id' => 60],
         ];
         DB::table('observation_for_modules')->insert($loan_observations);
     }
