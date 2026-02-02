@@ -419,7 +419,8 @@
     </div>
     <div>
         @if($modality_name == 'Corto Plazo Sector Pasivo AFP' || 
-            $modality_name == 'Corto Plazo Sector Pasivo Gestora Pública')
+            $modality_name == 'Corto Plazo Sector Pasivo Gestora Pública' ||
+            $modality_name == 'Salud Sector Pasivo Gestora Pública')
             <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) 
             el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de 
             la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta fiscal de la MUSERPOL. Caso contrario el PRESTATARIO se 
@@ -429,13 +430,23 @@
         @else
             @php
                 if($modality_name == 'Corto Plazo Sector Activo' || 
-                    $modality_name == 'Corto Plazo en Disponibilidad' ){
+                    $modality_name == 'Corto Plazo en Disponibilidad' || 
+                    $modality_name == 'Salud Sector Activo' ||
+                    $modality_name == 'Salud en Disponibilidad' ||
+                    $modality_name == 'Mi Primer Préstamo con Garantía Personal Sector Activo'){
                     $sexta = 'Comando General de la Policía Boliviana';
                     $type_rent='los haberes';
                 }
-                if($modality_name == 'Corto Plazo Sector Pasivo SENASIR'){
+                if($modality_name == 'Corto Plazo Sector Pasivo SENASIR' || 
+                    $modality_name == 'Salud Sector Pasivo SENASIR'){
                     $sexta = 'Servicio Nacional del Sistema de Reparto SENASIR';
                     $type_rent='las rentas';
+                }
+                $text = '';
+                $text2 = '';
+                if($modality_name == 'Mi Primer Préstamo con Garantía Personal Sector Activo'){
+                    $text = 'Caso contrario se procedera con el descuento del garante personal incluido los intereses penales una vez transcurrido dos cuotas impagas, sin necesidad de previo aviso.'; 
+                    $text2 = 'Asi mismo en caso de que el monto de sus beneficios del PRESTATARIO, no alcanzare a cubrir el total del monto adeudado, se continuara con el descuento al GARANTE el saldo deudor que quedare pendiente.';
                 }
             @endphp
             <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación 
@@ -449,7 +460,7 @@
             </div>
             <div>
                 Asimismo, el PRESTATARIO se compromete hacer conocer oportunamente a la MUSERPOL sobre la omisión del descuento 
-                mensual que se hubiera dado, sin perjuicio que realice el depósito directo del mes omitido, de acuerdo a lo estipulado en el párrafo precedente.
+                mensual que se hubiera dado, sin perjuicio que realice el depósito directo del mes omitido, de acuerdo a lo estipulado en el párrafo precedente. {{$text}}
             </div>
         @endif
     </div>
@@ -488,7 +499,8 @@
     </div>
     <div>
         @if($modality_name == 'Corto Plazo Sector Pasivo AFP' || 
-            $modality_name == 'Corto Plazo Sector Pasivo Gestora Pública')
+            $modality_name == 'Corto Plazo Sector Pasivo Gestora Pública0' ||
+            $modality_name == 'Salud Sector Pasivo Gestora Pública')
             <b>NOVENA.- (DE LA GARANTÍA):</b>El PRESTATARIO y GARANTE, garantizan el pago de lo adeudado con la generalidad sus 
             bienes, derechos y acciones habidos y por haber presentes y futuros conforme lo determina el Art. 1335 del Código Civil, 
             asimismo el PRESTATARIO con los beneﬁcios otorgados por la MUSERPOL.
@@ -511,11 +523,15 @@
                 </span>
             @endif
         @elseif($modality_name == 'Corto Plazo Sector Activo' || 
-                $modality_name == 'Corto Plazo en Disponibilidad')
+                $modality_name == 'Corto Plazo en Disponibilidad' ||
+                $modality_name =='Salud Sector Activo' ||
+                $modality_name == 'Salud en Disponibilidad' ||
+                $modality_name == 'Mi Primer Préstamo con Garantía Personal Sector Activo')
                 <b>NOVENA.- (DE LA GARANTÍA):</b> El PRESTATARIO, garantiza el pago de lo adeudado con la generalidad de sus bienes, 
                 derechos y acciones habidos y por haber, presentes y futuros conforme determina el Art. 1335 del Código Civil asimismo 
                 con los beneficios otorgados por la MUSERPOL.
-        @elseif($modality_name == 'Corto Plazo Sector Pasivo SENASIR')
+        @elseif($modality_name == 'Corto Plazo Sector Pasivo SENASIR' ||
+                $modality_name == 'Salud Sector Pasivo SENASIR')
                 <b>NOVENA.- (DE LA GARANTÍA):</b> El PRESTATARIO, garantiza el pago de lo adeudado con la generalidad de sus bienes, 
                 derechos y acciones habidos y por haber presentes y futuros conforme determina el Art. 1335 del Código Civil y así 
                 como también con su renta de vejez en curso de pago, asimismo este acepta amortizar la deuda con su Complemento Económico.
@@ -523,7 +539,8 @@
     </div>
     <div>
     @if($modality_name == 'Corto Plazo Sector Pasivo AFP' || 
-        $modality_name == 'Corto Plazo Sector Pasivo Gestora Pública')
+        $modality_name == 'Corto Plazo Sector Pasivo Gestora Pública' ||
+        $modality_name == 'Salud Sector Pasivo Gestora Pública')
         <div>
             <b>DÉCIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b>El  PRESTATARIO  en  caso  de  fallecimiento  acepta amortizar para el 
             cumplimiento efectivo de la presente obligación con el beneficio del Complemento Económico en caso de corresponderle; por 
@@ -531,7 +548,10 @@
             devengados a la fecha, cobrados a los derechohabientes, previas las formalidades de ley.
         </div>
     @elseif($modality_name == 'Corto Plazo Sector Activo' || 
-            $modality_name == 'Corto Plazo en Disponibilidad')
+            $modality_name == 'Corto Plazo en Disponibilidad' ||
+            $modality_name == 'Salud Sector Activo' ||
+            $modality_name == 'Salud en Disponibilidad' ||
+            $modality_name == 'Mi Primer Préstamo con Garantía Personal Sector Activo')
         <div>
             <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, retiro 
             voluntario o retiro forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad del beneficio 
@@ -543,7 +563,8 @@
             teniendo un saldo deudor respecto del préstamo obtenido, acepta amortizar la deuda con su Complemento Económico, 
             en caso de corresponderle.
         </div>
-    @elseif($modality_name == 'Corto Plazo Sector Pasivo SENASIR')
+        <div>{{ $text2 }}</div>
+    @elseif($modality_name == 'Corto Plazo Sector Pasivo SENASIR' || $modality_name == 'Salud Sector Pasivo SENASIR')
         <div>
             <b>DÉCIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b>El  PRESTATARIO  en  caso  de  fallecimiento  acepta amortizar 
             para el cumplimiento efectivo de la presente obligación con el beneficio del Complemento Económico en caso de corresponderle; 

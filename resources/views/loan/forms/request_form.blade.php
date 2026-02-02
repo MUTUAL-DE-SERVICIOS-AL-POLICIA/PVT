@@ -425,7 +425,9 @@
         <br>
         <br>
         <div style="font-size:10px;" class="block  text-justify ">
-        El suscrito Asistente Administrativo, Representante Departamental y/o personal de Atención al afiliado de la MUSERPOL, certifica la verificación y validación de la documentación presentada, dando FÉ que la misma fue firmada en forma voluntaria con puño y letra de{{ $plural ? ' los' : 'l' }} interesado{{ $plural ? 's' : '' }}.
+        El suscrito Asistente Administrativo, Representante Departamental y/o personal de Atención al afiliado de la MUSERPOL, a efectos de mitigar el riesgo crediticio previamente al ingreso de la solicitud de préstamo,
+        realizo la verificación de la lista de disponibilidad y revista, lista de deudas con la institución y lista de procesos judiciales con sentencia ejecutoriada. Además, certifica la verificación y validación de la documentación 
+        presentada, dando FÉ que la misma fue firmada en forma voluntaria con puño y letra de{{ $plural ? ' los' : 'l' }} interesado{{ $plural ? 's' : '' }}.
         </div>
 </body>
 </html>

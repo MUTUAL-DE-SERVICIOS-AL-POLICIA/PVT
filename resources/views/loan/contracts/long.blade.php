@@ -23,7 +23,8 @@
     $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo AFP'|| 
     $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'|| 
     $modality_name == 'Refinanciamiento Largo Plazo con Pago Oportuno' || 
-    $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública'))
+    $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública' ||
+    $modality_name == 'Refinanciamiento Hogar Digno con Garantía Personal para el Sector Activo'))
 
 <div class="block">
     <div class="font-semibold leading-tight text-center m-b-10 text-base">CONTRATO DE <font style="text-transform: uppercase;">{{ $title }}</font>
@@ -77,6 +78,13 @@
             obligación contraída sujeta a cumplimiento, en función a la operación de refinanciamiento.
             </div>
         @else
+            @php
+                if($modality_name == 'Refinanciamiento Hogar Digno con Garantía Personal para el Sector Activo'){
+                    $text_home = ' destinada para mejorar la vivienda, cuyo Derecho Propietario del bien inmueble se encuentra debidamente registrado en las Oficinas de Derechos Reales, el mismo no registra ningun tipo de gravamen.';
+                }else{
+                    $text_home = ', sujeta a cumplimiento, en función a la operación de refinanciamiento.';
+                }
+            @endphp
             <div>
             <b>SEGUNDA.- (DEL ANTECEDENTE):</b>Mediante contrato de préstamo {{ $parent_loan->code }} con fecha de desembolso 
             {{ Carbon::parse($parent_loan->disbursement_date)->isoFormat('LL') }} y modalidad de  {{strtolower($parent_loan->modality->name)}}, 
@@ -93,7 +101,7 @@
             suma de Bs.{{ Util::money_format($loan->balance_parent_refi())}} (<span class="uppercase">{{ Util::money_format($loan->balance_parent_refi(), true) }} 
             Bolivianos</span>), montos que hacen un total efectivo de Bs.{{ Util::money_format($loan->amount_approved) }} 
             <span class="uppercase">({{ Util::money_format($loan->amount_approved, true) }} Bolivianos)</span>, que representa la nueva obligación 
-            contraída sujeta a cumplimiento, en función a la operación de refinanciamiento.
+            contraída sujeta a cumplimiento{{$text_home}}.
             </div>
         @endif
     </div>
@@ -187,7 +195,7 @@
         </ol>
     </div>
     <div>
-        <b>DECIMA.- (DE LA GARANTÍA):</b>El PRESTATARIO y {{ count($guarantors)>1 ? 'GARANTES':'GARANTE' }}, garantizan el pago
+        <b>DÉCIMA.- (DE LA GARANTÍA):</b>El PRESTATARIO y {{ count($guarantors)>1 ? 'GARANTES':'GARANTE' }}, garantizan el pago
         de lo adeudado con la generalidad de sus bienes, derechos y acciones habidos y por haber, presentes y futuros conforme
         lo determina el artículo 1335 del Código Civil,
         @if(($modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'))
@@ -243,7 +251,7 @@
             </div>
         @else
             <div>
-                <b>DECIMA PRIMERA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de fallecimiento, 
+                <b>DÉCIMA PRIMERA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de fallecimiento, 
                 retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad 
                 del beneﬁcio de  Fondo de Retiro Policial Solidario  otorgado por la MUSERPOL; por cuanto la liquidación de dicho 
                 beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la 
@@ -295,7 +303,7 @@
     <div>
         <b>DÉCIMA CUARTA.- (DOMICILIO ESPECIAL):</b> Para efectos legales, incluida la acción judicial u otra, se tendrá como 
         domicilio especial del PRESTATARIO y {{ count($guarantors)>1 ? 'GARANTES':'GARANTE'}} el señalado en la cláusula primera 
-        y decima de conformidad al artículo 29 parágrafo II del Código Civil, donde se efectuarán las citaciones y notificaciones 
+        y décima de conformidad al artículo 29 parágrafo II del Código Civil, donde se efectuarán las citaciones y notificaciones 
         judiciales o cualquier otra comunicación, con plena validez legal y sin lugar a posterior observación o recurso alguno.
     </div>
     <div>
@@ -402,7 +410,13 @@
         <div>Nº {{ $loan->code }}</div>
     </div>
 </div>
-
+@php
+    if($modality_name == 'Hogar Digno con Garantía Personal para el Sector Activo'){
+        $text_home = ', destinadas para mejorar la vivienda, cuyo Derecho Propietario del bien inmueble se encuentra debidamente registrado en las Oficinas de Derechos Reales, el mismo no registra ningun tipo de gravamen.';
+    }else{
+        $text_home = '.';
+    }
+@endphp
 <div class="block text-justify">
     <div>
         Conste en el presente contrato de préstamo de {{ ucfirst($title) }}, que al solo reconocimiento de firmas y 
@@ -433,7 +447,7 @@
         <b>SEGUNDA.- (DEL OBJETO):</b>  El objeto del presente contrato es el préstamo de dinero que la Mutual de Servicios 
         al Policía (MUSERPOL) otorga al PRESTATARIO conforme a niveles de aprobación respectivos, en la suma de 
         Bs.{{ Util::money_format($loan->amount_approved) }} (<span class="uppercase">{{ Util::money_format($loan->amount_approved, true) }} 
-        Bolivianos</span>).
+        Bolivianos</span>){{ $text_home }}
     </div>
     <div>
         <b>TERCERA.- (DEL INTERÉS):</b> El préstamo objeto del presente contrato, devengará un interés ordinario del 
@@ -580,7 +594,7 @@
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo SENASIR' || 
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo Gestora Pública')
             <div>
-                <b>DECIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b> El PRESTATARIO en caso de fallecimiento acepta 
+                <b>DÉCIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b> El PRESTATARIO en caso de fallecimiento acepta 
                 amortizar para el cumplimiento efectivo de la presente obligación con el beneﬁcio del Complemento 
                 Económico 
                 @if($modality_name != 'Largo Plazo con Garantía Personal Sector Pasivo AFP')
@@ -592,7 +606,7 @@
             </div>
         @else
             <div>
-                <b>DECIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de 
+                <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de 
                 fallecimiento, retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la 
                 presente obligación con la totalidad del beneficio de Fondo de Retiro Policial Solidario 
                 otorgado por la MUSERPOL; por cuanto la liquidación de dicho beneficio pasará a cubrir el 

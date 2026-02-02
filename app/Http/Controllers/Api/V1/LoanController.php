@@ -291,7 +291,6 @@ class LoanController extends Controller
     public function store(LoanForm $request)
     {
         DB::beginTransaction();
-
     try {
         if($request->parent_reason == 'REPROGRAMACIÓN')
         {
@@ -695,6 +694,9 @@ class LoanController extends Controller
 
     private function save_loan(Request $request, $loan = null)
     {
+        $request->merge([
+            'loan_payment_procedures_id' => 2,
+        ]);
         $loan_copy = $loan;
         /** Verificando información de los titulares y garantes */
         if($request->lenders && $request->guarantors){
@@ -1212,6 +1214,15 @@ class LoanController extends Controller
                 break;
             case 'Reprogramación':
                 $view_type = 'reprogramming';
+                break;
+            case 'Préstamo Hogar Digno':
+                $view_type = 'long';
+                break;
+            case 'Préstamo Salud':
+                $view_type = 'short';
+                break;
+            case 'Mi Primer Préstamo':
+                $view_type = 'short';
                 break;
         }
         $information_loan= $this->get_information_loan($loan);
@@ -2014,19 +2025,19 @@ class LoanController extends Controller
                                                     if($loan_disbursement < $loan_global_parameter->max_loans_active){
                                                         $message['validate'] = true;
                                                     }else
-                                                        $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.'; 
+                                                        $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualmente ya tiene '. $loan_disbursement .' préstamos desembolsados.'; 
                                                 }else
                                                     $message['validate'] = 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.';
                                             }else
                                                 $message['validate'] = 'El afiliado no puede acceder a un prestamos por no tener registrado su unidad o encontrarse en comision Item 0';
-                                        }elseif($affiliate->pension_entity_id ==  null){
+                                        }elseif($affiliate->pension_entity_id == null){
                                                 $message['validate'] = 'El afiliado no tiene registrado su ente Gestor.';
                                                 }else{
                                                     if($loan_process < $loan_global_parameter->max_loans_process ){
                                                         if($loan_disbursement < $loan_global_parameter->max_loans_active){
                                                             $message['validate'] = true;
                                                             }else
-                                                        $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.';
+                                                        $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualmente ya tiene '. $loan_disbursement .' préstamos desembolsados.';
                                                     }else
                                                         $message['validate'] = 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.';
                                                 }
