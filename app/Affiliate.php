@@ -585,5 +585,17 @@ class Affiliate extends Model
                      AND loan_payments.state_id IN (" . implode(',', $loan_state_ids) . ")
                ) > 0.001
            ");
-   }   
+   }
+   
+   public function get_loan_sismu($loan_id){
+      $query = "SELECT p.IdPrestamo, p.PresNumero, concat(trim(pad.PadPaterno), ' ', trim(pad.PadMaterno), ' ', trim(pad.PadNombres)) as full_name,
+                p.IdPadron, p.PresCuotaMensual, p.PresEstPtmo, p.PresMeses, p.PresFechaDesembolso, p.PresFechaPrestamo, p.PresSaldoAct, p.PresMntDesembolso, 
+                p2.PrdDsc, pad.PadCedulaIdentidad, pad.PadMatriculaTit
+        FROM Prestamos p
+        join Producto p2 on p2.PrdCod = p.PrdCod
+        join Padron pad on pad.IdPadron = p.IdPadron
+        where p.IdPrestamo = '$loan_id'";
+      $loan = DB::connection('sqlsrv')->select($query);
+    return $loan;
+   }
 }

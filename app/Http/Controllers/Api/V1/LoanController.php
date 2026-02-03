@@ -59,6 +59,7 @@ use App\Jobs\ProcessNotificationSMS;
 use App\LoanGuaranteeRetirementFund;
 use App\Observation;
 use App\WfState;
+use App\ObservationForModule;
 use App\LoanModalityParameter;
 
 /** @group Préstamos
@@ -379,6 +380,11 @@ class LoanController extends Controller
             }
             if($loan->modality->loan_modality_parameter->print_form_qualification_platform)
                 array_push($print_docs, $this->print_qualification(new Request([]), $loan, false));
+            //impresion de la hoja de tramite
+            array_push($print_docs, $this->print_process_form(new Request([]), $loan, false));
+            //impresión de la ficha de registros de garantias
+            if($loan->guarantors->count()>0)
+                array_push($print_docs, $this->print_warranty_registration_form(new Request([]), $loan, false));
             $loan->attachment = Util::pdf_to_base64($print_docs, $file_name,$information_loan, 'legal', $request->copies ?? 1);
         }else{
             $loan->attachment = Util::pdf_to_base64([
@@ -1987,19 +1993,14 @@ class LoanController extends Controller
         $message['validate'] = false;
         $affiliate = Affiliate::findOrFail($affiliate_id);
         $module_id = Module::where('name', 'prestamos')->first()->id;
-        $observations = Observation::select('observables.*')
-                        ->join('observation_types as ot', 'ot.id', '=', 'observables.observation_type_id')
-                        ->where('ot.module_id', '=', $module_id)
-                        ->where('observable_type', '=', 'affiliates')
-                        ->where('observable_id', '=', $affiliate_id)
-                        ->whereIn('id', [2,60])
-                        ->get();
+        $observations = $affiliate->observations->pluck('observation_type_id')->toArray();
+        $observations_for_denied = ObservationForModule::where('module_id', $module_id)->pluck('observation_type_id')->toArray();
         $loan_global_parameter = LoanProcedure::where('is_enable', true)->first()->loan_global_parameter;
         $loan_disbursement = count($affiliate->disbursement_loans);
         if($request->refinancing)
             $loan_disbursement = $loan_disbursement - 1;
         $loan_process = count($affiliate->process_loans);
-        if($observations->count() == 0)
+        if(collect($observations)->intersect($observations_for_denied)->isEmpty())
         {
             if ($affiliate->affiliate_state){
                 if($affiliate->affiliate_state->affiliate_state_type->name != "Baja" && $affiliate->affiliate_state->affiliate_state_type->name != ""){
@@ -2726,6 +2727,129 @@ class LoanController extends Controller
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, $affiliate,'letter', $request->copies ?? 1);
         return $view;
     }
+
+    public function print_process_form(Request $request, Loan $loan, $standalone = true){
+        $procedure_modality = $loan->modality;
+        $file_title =implode('_', ['FORM','TRAMITE', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);    
+        $data = [
+           'header' => [
+               'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+               'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+               'table' => [
+                   ['Tipo', $loan->modality->procedure_type->second_name],
+                   ['Modalidad', $loan->modality->shortened],
+                   ['Usuario', Auth::user()->username]
+               ]
+           ],
+           'loan' => $loan,
+           'file_title' => $file_title,
+       ];
+       $information_loan= $this->get_information_loan($loan);
+       $file_name = implode('_', ['hoja_de_tramite', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
+       $view = view()->make('loan.forms.process_form')->with($data)->render();
+       $portrait = true;//impresion horizontal
+       $print_date = false;//modo retrato e impresion de la fecha en el formulario de calificación
+       if ($standalone) return  Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1, $portrait, $print_date);  
+       return $view; 
+   }
+
+   public function print_warranty_registration_form(Request $request, Loan $loan, $standalone = true){
+    if($loan->guarantors->count() == 0)
+        abort(409, 'El préstamo no cuenta con garantes registrados');
+        $procedure_modality = $loan->modality;
+        $file_title =implode('_', ['FORM','TRAMITE', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);
+        $data_loan_guarantor = collect();
+        $titular_guarantors = LoanGuarantor::where('loan_id', $loan->id)->get();
+        foreach($titular_guarantors as $titular_guarantor)
+        {
+            if($titular_guarantor->type != 'affiliates'){
+                $titular_guarantor->state_pasive = 'PASIVO';
+                $titular_guarantor->category_pasive = $titular_guarantor->pension_entity->name;
+            }
+            $guarantees = LoanGuaranteeRegister::where('loan_id', $loan->id)
+                            ->where('affiliate_id', $titular_guarantor->affiliate_id)
+                            ->get();
+            $guarantor_loans = collect();
+            foreach($guarantees as $guarantee)
+            {
+                if($guarantee->guarantable_type == 'loans')
+                    $loan_guarantee = Loan::find($guarantee->guarantable_id);
+                else{
+                    $affiliate = Affiliate::find($titular_guarantor->affiliate_id);
+                    $loan_guarantee = $affiliate->get_loan_sismu($guarantee->guarantable_id)[0];
+                    switch($loan_guarantee->PresEstPtmo)
+                    {
+                        case 'V':
+                            $loan_guarantee->PresEstPtmo = 'Vigente';
+                            break;
+                        case 'A':
+                            $loan_guarantee->PresEstPtmo = 'Aperturado';
+                            break;
+                        case 'E':
+                            $loan_guarantee->PresEstPtmo = 'Pendiente';
+                            break;
+                        case 'N':
+                            $loan_guarantee->PresEstPtmo = 'Anulado';
+                            break;
+                        case 'C':
+                            $loan_guarantee->PresEstPtmo = 'Condonado';
+                            break;
+                        case 'X':
+                            $loan_guarantee->PresEstPtmo = 'Cancelado';
+                            break;
+                        default:
+                            $loan_guarantee->PresEstPtmo = 'Desconocido';
+                            break;
+                    }
+                }
+
+                $guarantor_loans->push((object)[
+                    'code' => $guarantee->guarantable_type == 'loans' ? $loan_guarantee->code : $loan_guarantee->PresNumero,
+                    'lender_full_name' => $guarantee->guarantable_type == 'loans' ? $loan_guarantee->borrower->first()->full_name : $loan_guarantee->full_name,
+                    'lender_identity_card' => $guarantee->guarantable_type == 'loans' ? $loan_guarantee->borrower->first()->identity_card : $loan_guarantee->PadCedulaIdentidad,
+                    'lender_registration' => $guarantee->guarantable_type == 'loans' ? $loan_guarantee->borrower->first()->registration : $loan_guarantee->PadMatriculaTit,
+                    'modality' => $guarantee->guarantable_type == 'loans' ? $loan_guarantee->modality->shortened : $loan_guarantee->PrdDsc,
+                    'request_date' => $guarantee->guarantable_type == 'loans' ? Carbon::parse($loan_guarantee->created_at)->format('d/m/Y') : Carbon::parse($loan_guarantee->PresFechaPrestamo)->format('d/m/Y'),
+                    'disbursement_date' => $guarantee->guarantable_type == 'loans' ? Carbon::parse($loan_guarantee->disbursement_date)->format('d/m/Y') : Carbon::parse($loan_guarantee->PresFechaDesembolso)->format('d/m/Y'),
+                    'amount_approved' => number_format($guarantee->guarantable_type == 'loans' ? $loan_guarantee->amount_approved : $loan_guarantee->PresMntDesembolso, 2, '.', ','),
+                    'term' => $guarantee->guarantable_type == 'loans' ? $loan_guarantee->loan_term : $loan_guarantee->PresMeses,
+                    'estimated_quota' => number_format($guarantee->guarantable_type == 'loans' ? $loan_guarantee->estimated_quota : $loan_guarantee->PresCuotaMensual, 2, '.', ','),
+                    'balance' => number_format($guarantee->guarantable_type == 'loans' ? $loan_guarantee->verify_balance() : $loan_guarantee->PresSaldoAct, 2, '.', ','),
+                    'type' => ($guarantee->guarantable_type == 'loans') ? 'PVT' : 'SISMU',
+                    'state' => $guarantee->guarantable_type == 'loans' ? $loan_guarantee->state->name : $loan_guarantee->PresEstPtmo,
+                ]);
+            }
+            $data_loan_guarantor->push((object)[
+                'full_name' => $titular_guarantor->full_name,
+                'identity_card' => $titular_guarantor->identity_card,
+                'category' => $titular_guarantor->type == 'affiliates' ? $titular_guarantor->category->name : $titular_guarantor->category_pasive,
+                'state' => $titular_guarantor->type == 'affiliates' ? $titular_guarantor->affiliate_state->name : $titular_guarantor->state_pasive,
+                'guarantor_loans' => $guarantor_loans,
+            ]);
+        }
+        $data = [
+            'header' => [
+               'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+               'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+               'table' => [
+                   ['Tipo', $loan->modality->procedure_type->second_name],
+                   ['Modalidad', $loan->modality->shortened],
+                   ['Usuario', Auth::user()->username]
+               ]
+            ],
+            'loan' => $loan,
+            'file_title' => $file_title,
+            'data_loan_guarantors' => $data_loan_guarantor,
+       ];
+       $data['data_loan_guarantors'] = $data_loan_guarantor;
+       $information_loan= $this->get_information_loan($loan);
+       $file_name = implode('_', ['hoja_de_tramite', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
+       $view = view()->make('loan.forms.warranty_registration_form')->with($data)->render();
+       $portrait = true;//impresion horizontal
+       $print_date = false;//modo retrato e impresion de la fecha en el formulario de calificación
+       if ($standalone) return  Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1, $portrait, $print_date);  
+       return $view; 
+   }
 
     public function generate_plans()
     {
