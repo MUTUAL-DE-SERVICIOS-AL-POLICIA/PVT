@@ -273,6 +273,19 @@
               </v-col>
             </v-row>
             <!-- Panel del las boletas-->
+            <template v-if="loadingBallots">
+              <div class="d-flex">
+                <v-skeleton-loader
+                  v-for="i in 5"
+                  :key="i"
+                  type="image"
+                  width="20%"
+                  height="20"
+                  class="mr-2"
+                />
+              </div>
+            </template>
+            <template v-else>
             <v-row v-for="(contrib,i) in contribution" :key="i" class="py-0 my-0">
               <v-col cols="12" md="7" class="py-0 my-0">
                 <v-row>
@@ -436,11 +449,14 @@
                 class="py-0 text-center"
                 color="info"
                 rounded small
+                :disabled="loadingBallots"
+                :loading="loadingBallots"
                 @click.stop="validateContributions()"
                   >Evaluar Garante
                 </v-btn>
               </v-col>
             </v-row>
+            </template>
           </v-card>
         </v-col>
         <!-- Respuesta evaluación de garante -->
@@ -628,7 +644,8 @@
     affiliate_contribution: {},
     loan_guarantee_register_ids: [],
     guarantor: {},
-    valid_contrib: false
+    valid_contrib: false,
+    loadingBallots: false
 
   }),
  watch:{
@@ -681,6 +698,7 @@
         type: null
       },
         this.data_ballots = [],
+        this.contribution = [],
     this.selectedGuaranteedLoans = [],
     this.evaluate_garantor ={}
     },
@@ -688,6 +706,7 @@
     async searchGuarantor()
     {
       try {
+
       this.choose_diff_month = false
       this.number_diff_month = 1
         if(this.guarantor_ci != this.affiliate.identity_card){
@@ -753,12 +772,16 @@
         console.log(e)
       } finally {
         this.loading = false
+
       }
     },
 
     async getBallots(id) {
       try {
         this.data_ballots=[]
+        this.lender_contribution = {}
+        this.contribution = []
+        this.loadingBallots=true
         let res = await axios.get(`affiliate/${id}/contribution`, {
            params:{
              city_id: this.$store.getters.cityId,
@@ -843,6 +866,7 @@
         console.log(e)
       } finally {
         this.loading = false
+        this.loadingBallots=false
       }
     },
     generateContributions () {
