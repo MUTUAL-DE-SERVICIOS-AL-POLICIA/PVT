@@ -25,9 +25,7 @@
     <template v-slot:[`item.borrower`]="{ item }">
       {{ item.borrower[0] ? $options.filters.fullName(item.borrower[0], true) : '' }}
     </template>
-    <template v-slot:[`item.role_id`]="{ item }">
-      {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
-    </template>
+
     <template v-slot:[`item.procedure_modality_id`]="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
@@ -278,6 +276,11 @@ export default {
             res = await axios.get(`loan/${item.id}/print/plan`)
           else
             this.toastr.error("El préstamo no se encuentra desembolsado.")
+        }else if(id==4){
+          res = await axios.get(`loan/${item.id}/print/process_form`)
+        }
+        else if(id==5){
+          res = await axios.get(`loan/${item.id}/print/warranty_registration_form`)
         }
         printJS({
           printable: res.data.content,
@@ -315,6 +318,9 @@ export default {
           if (this.permissionSimpleSelected.includes('print-payment-plan')) {
             docs.push({ id: 3, title: 'Plan de pagos', icon: 'mdi-cash' })
           }
+
+          docs.push({ id: 4, title: "Hoja de Trámite", icon: "mdi-text-box-multiple-outline" })
+          docs.push({ id: 5, title: "Ficha de Garantías", icon: "mdi-group" })
       
       this.printDocs = docs        
       } catch (e) {
