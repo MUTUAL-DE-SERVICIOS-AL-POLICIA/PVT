@@ -369,6 +369,14 @@ class LoanController extends Controller
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
             $print_docs = [];
+            //impresion de la hoja de tramite
+            array_push($print_docs, $this->print_process_form(new Request([]), $loan, false));
+            //impresión de la ficha de registros de garantias
+            if($loan->guarantors->count()>0)
+            {
+                array_push($print_docs, $this->print_warranty_registration_form(new Request([]), $loan, false));
+                array_push($print_docs, '');
+            }
             array_push($print_docs, $this->print_form(new Request([]), $loan, false));
             if($loan->modality->loan_modality_parameter->print_contract_platform)
             {
@@ -380,11 +388,6 @@ class LoanController extends Controller
             }
             if($loan->modality->loan_modality_parameter->print_form_qualification_platform)
                 array_push($print_docs, $this->print_qualification(new Request([]), $loan, false));
-            //impresion de la hoja de tramite
-            array_push($print_docs, $this->print_process_form(new Request([]), $loan, false));
-            //impresión de la ficha de registros de garantias
-            if($loan->guarantors->count()>0)
-                array_push($print_docs, $this->print_warranty_registration_form(new Request([]), $loan, false));
             $loan->attachment = Util::pdf_to_base64($print_docs, $file_name,$information_loan, 'legal', $request->copies ?? 1);
         }else{
             $loan->attachment = Util::pdf_to_base64([
