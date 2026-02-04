@@ -1263,29 +1263,12 @@ class LoanController extends Controller
         $loans = collect([]);
         foreach ($lenders as $lender) 
         {
-            foreach($lender->affiliate()->current_loans as $current_loans){
-                if($current_loans->id != $loan->parent_loan_id && $loan->parent_reason != "REPROGRAMACIÓN")
-                    $loans->push([
-                        'code' => $current_loans->code,
-                        'balance' => $current_loans->balance,
-                        'origin' => "PVT",
-                    ]);
-            }
-            $loans_sismu = $this->get_balance_sismu($lender->identity_card);
-            foreach($loans_sismu as $sismu){
-                $loans->push([
-                    'code' => $sismu->PresNumero,
-                    'balance' => $sismu->PresSaldoAct,
-                    'origin' => "SISMU"
-                ]);
-            }
             $persons->push([
                 'id' => $lender->id,
                 'full_name' => implode(' ', [$lender->title && $lender->type=="affiliates" ? $lender->title : '', $lender->full_name]),
                 'identity_card' => $lender->identity_card,
                 'position' => 'SOLICITANTE',
             ]);
-            $lender->loans_balance = $loans;
         }
         // préstamos estacionales con cónyuge
         if($loan->modality->shortened == "EST-PAS-CON"){
