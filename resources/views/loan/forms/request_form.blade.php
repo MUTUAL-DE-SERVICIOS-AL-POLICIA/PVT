@@ -151,30 +151,14 @@
                     <td colspan="1" class="data-row py-5">{{ $lender->pension_entity ? $lender->pension_entity->name : $lender->affiliate->pension_entity->name}}</td>
                 @endif
             </tr>   
-                @if(count($lender->loans_balance)>0)
-                <tr class="bg-grey-darker text-white">
-                    <td>Codigo de Préstamo</td>
-                    <td>Saldo</td>
-                    <td>origen</td>
-                </tr>
-                        @foreach ($lender->loans_balance as $loans_balance)
-                        <tr>
-                            <td>{{$loans_balance['code']}}</td>
-                            <td>{{Util::money_format($loans_balance['balance'])}}</td>
-                            <td>{{$loans_balance['origin']}}</td>
-                        </tr>
-                        @endforeach
-                </tr>
-                @endif
-
-                @if($lender->affiliate_state->name == 'Disponibilidad')
+            @if($lender->affiliate_state->name == 'Disponibilidad')
                 <tr class="bg-grey-darker text-white">
                     <td     colspan="3">Información de Disponibilidad</td>
                 </tr>
                 <tr>
                     <td colspan="3">{{ $lender->availability_info }}</td>
                 </tr>
-                @endif
+            @endif
         </table>
         @endforeach
     </div>
