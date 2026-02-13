@@ -368,6 +368,14 @@ class LoanController extends Controller
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
             $print_docs = [];
+            //impresion de la hoja de tramite
+            array_push($print_docs, $this->print_process_form(new Request([]), $loan, false));
+            //impresión de la ficha de registros de garantias
+            if($loan->guarantors->count()>0)
+            {
+                array_push($print_docs, $this->print_warranty_registration_form(new Request([]), $loan, false));
+                array_push($print_docs, '');
+            }
             array_push($print_docs, $this->print_form(new Request([]), $loan, false));
             if($loan->modality->loan_modality_parameter->print_contract_platform)
             {
@@ -379,11 +387,6 @@ class LoanController extends Controller
             }
             if($loan->modality->loan_modality_parameter->print_form_qualification_platform)
                 array_push($print_docs, $this->print_qualification(new Request([]), $loan, false));
-            //impresion de la hoja de tramite
-            array_push($print_docs, $this->print_process_form(new Request([]), $loan, false));
-            //impresión de la ficha de registros de garantias
-            if($loan->guarantors->count()>0)
-                array_push($print_docs, $this->print_warranty_registration_form(new Request([]), $loan, false));
             $loan->attachment = Util::pdf_to_base64($print_docs, $file_name,$information_loan, 'legal', $request->copies ?? 1);
         }else{
             $loan->attachment = Util::pdf_to_base64([
@@ -1271,29 +1274,12 @@ class LoanController extends Controller
         $loans = collect([]);
         foreach ($lenders as $lender) 
         {
-            foreach($lender->affiliate()->current_loans as $current_loans){
-                if($current_loans->id != $loan->parent_loan_id && $loan->parent_reason != "REPROGRAMACIÓN")
-                    $loans->push([
-                        'code' => $current_loans->code,
-                        'balance' => $current_loans->balance,
-                        'origin' => "PVT",
-                    ]);
-            }
-            $loans_sismu = $this->get_balance_sismu($lender->identity_card);
-            foreach($loans_sismu as $sismu){
-                $loans->push([
-                    'code' => $sismu->PresNumero,
-                    'balance' => $sismu->PresSaldoAct,
-                    'origin' => "SISMU"
-                ]);
-            }
             $persons->push([
                 'id' => $lender->id,
                 'full_name' => implode(' ', [$lender->title && $lender->type=="affiliates" ? $lender->title : '', $lender->full_name]),
                 'identity_card' => $lender->identity_card,
                 'position' => 'SOLICITANTE',
             ]);
-            $lender->loans_balance = $loans;
         }
         // préstamos estacionales con cónyuge
         if($loan->modality->shortened == "EST-PAS-CON"){
