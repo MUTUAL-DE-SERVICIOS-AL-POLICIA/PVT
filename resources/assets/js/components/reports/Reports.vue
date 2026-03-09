@@ -303,7 +303,7 @@ export default {
         tab: 0,
         criterios: ["initial_date","final_date"],
         service: "/disbursements_fund_rotatory_outputs_report",
-        type: "pdf",
+        type: "xls",
         permissions: 'show-report-treasury'
       },
       {

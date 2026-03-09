@@ -35,4 +35,8 @@ class LoanGuaranteeRegister extends Model
     {
         return $this->belongsTo(Role::class);
     }
+    public function affiliate()
+    {
+        return $this->belongsTo(Affiliate::class);
+    }
 }

@@ -107,11 +107,13 @@
                 @endif
                 <td>{{ $loan->loan_term }} <span class="capitalize">{{ $term_text }}</span></td>
                 <td class="data-row py-5 m-b-10 text-xs">
-                    @if($loan->payment_type->name=='Deposito Bancario')
+                    @if($loan->parent_reason == "REPROGRAMACIÓN")
+                        {{ $loan->parent_loan->payment_type->name}}
+                    @elseif($loan->payment_type->name == 'Deposito Bancario')
                         <div class="font-bold">Cuenta Banco Union</div>
                         <div>{{ $loan->number_payment_type }}</div>
                     @else
-                        {{ $loan->payment_type->name}}
+                        {{ $loan->payment_type->name }}
                     @endif
                 </td>
                 <td>{{Carbon::parse($loan->disbursement_date)->format('d/m/Y')}}</td>

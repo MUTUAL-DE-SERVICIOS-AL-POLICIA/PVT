@@ -15,6 +15,8 @@ use Carbon\CarbonImmutable;
 use Carbon;
 use App\Loan;
 use App\LoanPlanPayment;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ArchivoPrimarioExport;
 
 /** @group Movimientos
 * Datos de los movimientos de fondo rotatorio
@@ -286,50 +288,25 @@ class MovementFundRotatoryController extends Controller
             }
         }
             $loans_array = collect([]);
+            $data_income=array(
+                array("Nro","Nro RECIBO","FECHA DESEMBOLSO", "COD. PRÉSTAMO", "CI DEL PRESTATARIO", "NOMBRE Y APELLIDOS", "IMPORTE (SALIDA)", "REGIONAL")
+            );
+            $c=0;
             foreach ($loans as $loan) {
-                $loans_array->push([
-                "code" => $loan->movement_concept_code,
-                "disbursement_date_loan" => $loan->disbursement_date_loan,
-                "code_loan" => $loan->code_loan,
-                "full_name_borrower" => $loan->full_name_borrower,
-                "amount_approved_loan" => $loan->output_amount,
-                ]);
+                array_push($data_income, array(
+                    $c++,
+                    $loan->movement_concept_code,
+                    Carbon::parse($loan->disbursement_date_loan)->format('d-m-Y'),
+                    $loan->code_loan,
+                    $loan->identity_card_borrower,
+                    $loan->full_name_borrower,
+                    number_format($loan->output_amount,2,'.',','),
+                    $loan->city_loan
+                ));
             }
-            if(sizeof($loans_array) == 0){
-                if($initial_date!= '')
-                    $initial = $initial_date;
-                else
-                    $initial = Carbon::now()->format('d-m-Y');
-            }else{
-                if($initial_date!= '')
-                    $initial = $initial_date;
-                else{
-                    $initial = $loans_array->first()['disbursement_date_loan'];
-                    $initial = Carbon::parse($initial)->format('d-m-Y');
-                }
-            }
-            $data = [
-            'header' => [
-                'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
-                'unity' => '',
-                'table' => [
-                    ['Fecha', Carbon::now()->format('d-m-Y')],
-                    ['Hora', Carbon::now()->format('H:i:s')],
-                    ['Usuario', Auth::user()->username]
-                ]
-            ],
-            'title' => 'REPORTE DE DESEMBOLSOS',
-            'initial_date' => $initial,
-            'final_date' => $final_date,
-            'loans' => $loans_array,
-            'file_title' => 'reporte de desembolsos',
-        ];
-            $file_name = 'Reporte salidas fondo rotatorio.pdf';
-            $view = view()->make('loan.reports_tesoreria.output_report')->with($data)->render();
-            if ($standalone) {
-                return Util::pdf_to_treasury_receipt([$view],'letter', $request->copies ?? 1);
-            }
-            return $view;
+            $export = new ArchivoPrimarioExport($data_income);
+            $File="Salidas de Fondo Rotatorio";
+            return Excel::download($export, $File.'.xlsx');
         }catch (\Exception $e){
             DB::rollback();
             return $e;
