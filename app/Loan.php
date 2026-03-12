@@ -462,8 +462,8 @@ class Loan extends Model
             if($quota->estimated_days['penal'] >= $grace_period)
                 $quota->penal_payment = LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator);
         }else{
-            $penal_payment = 0;
-            return $quota->penal_payment = $this->get_penal_payment($estimated_date);
+            $penal_payment = $this->get_penal_payment($estimated_date);
+            $quota->penal_payment = $penal_payment;
         }
         if ($quota->penal_payment >= 0) {
             if ($amount >= $quota->penal_payment) {
@@ -629,8 +629,20 @@ class Loan extends Model
         $total_interests += $quota->interest_remaining;
 
         // Interés penal 
-        $penal_payment = 0;
-        $quota->penal_payment = $this->get_penal_payment($estimated_date);
+        $penal_payment = $this->get_penal_payment($estimated_date);
+        $quota->penal_payment = $penal_payment;
+        if ($quota->penal_payment >= 0) {
+            if ($amount >= $quota->penal_payment) {
+                $amount = $amount - $quota->penal_payment;
+            } else {
+                $quota->penal_accumulated = Util::round2(($quota->penal_payment - $amount));
+                $quota->penal_payment = $amount;
+                $amount = 0;
+            }
+        } else {
+            $quota->penal_payment = 0;
+        }
+        $total_interests += $quota->penal_payment;
 
         // Interés corriente
         $quota->interest_payment = $interest_generated;
@@ -1782,84 +1794,36 @@ class Loan extends Model
             return false;
     }
 
-    /*public function payments_defaulted_by_quota($date)
-    {
-        $plan_payments = $this->loan_plan
-            ->where('estimated_date', '<', Carbon::parse($date)->format('Y-m-d'))
-            ->sortByDesc('quota_number');
-        $payments_defaulted = [];
-        $paid_amount = 0;
-        $days = 0;
-        $payment_balance = 0;
-        $plan_payment_date = null;
-        $balance_to_compare = $this->amount_approved;
-        $diff_amount = 0;
-        foreach($plan_payments as $plan_payment)
-        {
-            $plan_payment_date = Carbon::parse($plan_payment->estimated_date)->format('Y-m-d');
-            $payments = $this->payments->whereBetween('estimated_date',[Carbon::parse($plan_payment->estimated_date)->startOfMonth()->startOfDay(), Carbon::parse($plan_payment->estimated_date)->endOfMonth()->endOfDay()])->sortByDesc('quota_number');
-            if($payments->count() > 0)
-            {
-                $balance_to_compare = $payments->first()->previous_balance - $payments->first()->capital_payment;
-                if($balance_to_compare > $plan_payment->balance){
-                    $days = Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date));
-                    $capital_paid = $payments->sum('capital_payment');
-                    $quota_number = $plan_payment->quota_number;
-                    if($capital_paid < $plan_payment->capital){
-                        $diff_amount = round($plan_payment->capital - $capital_paid,2);
-                    $payments_defaulted[] = (object)[
-                        'quota' => $quota_number,
-                        'days' => $days,
-                        'diff_amount' => round($diff_amount,2),
-                    ];
-                    }else{
-                        continue;
-                    }
-                }else{
-                    break;
-                }
-            }else{
-                $payments_defaulted[] = (object)[
-                    'quota' => $plan_payment->quota_number,
-                    'days' => Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date)),
-                    'diff_amount' => round($plan_payment->capital,2),
-                ];
-            }
-        }
-        return $payments_defaulted;
-    }*/
-
     public function payments_defaulted_by_quota($date)
     {
         $plan_payments = $this->loan_plan
             ->where('estimated_date', '<', Carbon::parse($date)->format('Y-m-d'))
             ->sortBy('quota_number');
-        $payments_defaulted = [];
-        $capital_paid = $this->capital_paid();
-        $amount = 0;
+        $capital_paid = $this->capital_paid($date);
+        $capital_not_paid = 0;
         foreach($plan_payments as $plan_payment)
         {
-            $amount = $capital_paid - $plan_payment->capital;
-            if($amount < 0)
-            {
-                $diff_amount = $plan_payment->capital - $capital_paid;
-                $days = Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date));
-                $payments_defaulted[] = (object)[
-                    'quota' => $plan_payment->quota_number,
-                    'days' => $days,
-                    'diff_amount' => round($diff_amount,2),
-                ];
-                $capital_paid = 0;
+            if(($capital_paid - $plan_payment->capital) >= 0){
+                $capital_not_paid = 0;
+                $capital_paid = round($capital_paid - $plan_payment->capital,2);
             }else{
-                $capital_paid -= $plan_payment->capital;
+                $capital_not_paid = round($plan_payment->capital - $capital_paid,2);
+                $capital_paid = 0;
             }
+            $days = Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date));
+            $payments_defaulted[] = (object)[
+                'quota' => $plan_payment->quota_number,
+                'days' => $days,
+                'diff_amount' => round($capital_not_paid,2),
+            ];
+            $capital_not_paid = 0;
         }
         return $payments_defaulted;
     }
 
     public function get_penal_payment($date)
     {
-        return $payments_defaulted = $this->payments_defaulted_by_quota($date);
+        $payments_defaulted = $this->payments_defaulted_by_quota($date);
         $penal_payment = 0;
         $denominator = $this->loan_procedure->loan_global_parameter->denominator;
         if(count($payments_defaulted) > 0)
