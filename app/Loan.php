@@ -1796,6 +1796,7 @@ class Loan extends Model
 
     public function payments_defaulted_by_quota($date)
     {
+        $payments_defaulted = [];
         $plan_payments = $this->loan_plan
             ->where('estimated_date', '<', Carbon::parse($date)->format('Y-m-d'))
             ->sortBy('quota_number');
