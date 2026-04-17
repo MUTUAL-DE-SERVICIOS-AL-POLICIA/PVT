@@ -24,8 +24,7 @@
     "rap2hpoutre/laravel-log-viewer": "^1.4",
     "santigarcor/laratrust": "^5.2",
     "simplesoftwareio/simple-qrcode": "^4.1",
-    "tymon/jwt-auth": "^1.0.1",
-    "waavi/sanitizer": "^1.0"
+    "tymon/jwt-auth": "^1.0.1"
   },
   "require-dev": {
     "mpociot/laravel-apidoc-generator": "^4.5.1"

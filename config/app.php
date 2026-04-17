@@ -177,8 +177,6 @@ return [
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         // Barcode
         Milon\Barcode\BarcodeServiceProvider::class,
-        // Sanitizer
-        Waavi\Sanitizer\Laravel\SanitizerServiceProvider::class,
         // ApiDoc Generator
         Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class,
         // Excel
@@ -247,8 +245,6 @@ return [
         // Barcode
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
         'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
-        // Sanitizer
-        'Sanitizer' => Waavi\Sanitizer\Laravel\Facade::class,
          // Excel
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,

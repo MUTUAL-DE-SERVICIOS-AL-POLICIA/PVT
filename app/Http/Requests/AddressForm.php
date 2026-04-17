@@ -2,12 +2,11 @@
 
 namespace App\Http\Requests;
 
-use Waavi\Sanitizer\Laravel\SanitizesInput;
+
 use Illuminate\Foundation\Http\FormRequest;
 
 class AddressForm extends FormRequest
 {
-    use SanitizesInput;
 
     /**
      * Determine if the user is authorized to make this request.

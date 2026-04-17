@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Waavi\Sanitizer\Laravel\SanitizesInput;
 use App\Rules\LoanIntervalAmount;
 use App\Rules\LoanIntervalTerm;
 use App\Rules\LoanDestiny;
@@ -19,7 +18,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class LoanForm extends FormRequest
 {
-    use SanitizesInput;
 
     /**
      * Determine if the user is authorized to make this request.
