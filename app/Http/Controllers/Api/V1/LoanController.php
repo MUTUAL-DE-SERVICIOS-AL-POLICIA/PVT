@@ -2759,7 +2759,7 @@ class LoanController extends Controller
             foreach($guarantees as $guarantee)
             {
                 if($guarantee->guarantable_type == 'loans')
-                    $loan_guarantee = Loan::find($guarantee->guarantable_id);
+                    $loan_guarantee = Loan::whereCode($guarantee->loan_code_guarantee)->first();
                 else{
                     $affiliate = Affiliate::find($titular_guarantor->affiliate_id);
                     $loan_guarantee = $affiliate->get_loan_sismu($guarantee->guarantable_id)[0];
