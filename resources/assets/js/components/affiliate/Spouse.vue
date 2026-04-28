@@ -231,32 +231,6 @@
               <v-col cols="12">
                 <v-toolbar-title>INFORMACIÓN SERECI</v-toolbar-title>
               </v-col>
-              <!-- <v-col cols="12" md="12" >
-              <ValidationProvider v-slot="{ errors }" vid="official" name="oficialía" rules="min:1|max:250">
-              <v-text-field
-                :error-messages="errors"
-                dense
-                v-model="spouse.official"
-                label="Oficialia"
-                class="purple-input"
-                :readonly="state_id != 4"
-                :outlined="state_id == 4"
-              ></v-text-field>
-              </ValidationProvider>
-            </v-col>
-            <v-col cols="12" md="12" >
-              <ValidationProvider v-slot="{ errors }" vid="book" name="libro" rules="min:1|max:250">
-              <v-text-field
-                :error-messages="errors"
-                dense
-                v-model="spouse.book"
-                label="Libro"
-                class="purple-input"
-                :readonly="state_id != 4"
-                :outlined="state_id == 4"
-              ></v-text-field>
-              </ValidationProvider>
-            </v-col> -->
             <v-col cols="12" md="12">
               <ValidationProvider v-slot="{ errors }" vid="departure" name="partida" rules="integer">
               <v-text-field
@@ -388,7 +362,7 @@ export default {
         formatted: null,
         picker: false,
       },
-      marriageDate: {
+      marriageIssueDate: {
         formatted: null,
         picker: false,
       },
@@ -405,8 +379,8 @@ export default {
       this.formatDate("dueDate", this.spouse.due_date),
       this.formatDate("birthDate", this.spouse.birth_date),
       this.formatDate("dateDeath", this.spouse.date_death),
-      this.formatDate("marriageDate", this.spouse.marriage_date),
       this.formatDate("marriageIssueDate", this.spouse.marriage_issue_date)
+      this.getCelular();
     }
   },
   watch: {
@@ -418,9 +392,6 @@ export default {
     },
     "spouse.date_death": function (date) {
       this.formatDate("dateDeath", date);
-    },
-    "spouse.marriage_date": function (date) {
-      this.formatDate("marriageDate", date);
     },
     "spouse.marriage_issue_date": function (date) {
       this.formatDate("marriageIssueDate", date);
@@ -452,6 +423,15 @@ export default {
         this.visible = true;
       } else {
         this.visible = false;
+      }
+    },
+    getCelular() {
+      let part = [];
+      if (this.spouse.cell_phone_number !== null) {
+        part = this.spouse.cell_phone_number.split(",");
+        console.log(this.cel)
+        this.cel[0] = part[0];
+        this.cel[1] = part[1];
       }
     },
     updateCelular() {
