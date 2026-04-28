@@ -84,7 +84,7 @@
                 color="warning"
                 class="darken-2 ml-4"
                 @click="
-                  bus.$emit('openDialog', { edit: false, accion: 'anular_anticipo' })
+                  bus.$emit('openDialog', { edit: false, accion: 'anular_anticipo', info: info  })
                 "
               >
                 <v-icon>mdi-file-cancel</v-icon>
