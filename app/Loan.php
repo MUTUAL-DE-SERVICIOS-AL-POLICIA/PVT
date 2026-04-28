@@ -79,7 +79,8 @@ class Loan extends Model
         'loan_procedure_id',
         'authorize_refinancing',
         'wf_states_id',
-        'contract_signature_date'
+        'contract_signature_date',
+        'loan_payment_procedures_id'
     ];
 
     function __construct(array $attributes = [])
@@ -107,6 +108,11 @@ class Loan extends Model
     public function affiliate()
     {
         return $this->belongsTo(Affiliate::class, 'affiliate_id', 'id');
+    }
+
+    public function loan_payment_procedure()
+    {
+        return $this->belongsTo(LoanPaymentProcedure::class, 'loan_payment_procedures_id', 'id');
     }
 
     public function loan_plan()
@@ -402,7 +408,8 @@ class Loan extends Model
             'current_generated' => $interest_generated,
             'interest_accumulated' => $latest_quota ? $latest_quota->interest_accumulated : 0,
             'penal' => $penal_days,
-            'penal_generated' => LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator),
+            //'penal_generated' => LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator),
+            'penal_generated' => $this->get_penal_payment($estimated_date),
             'penal_accumulated' => $latest_quota ? $latest_quota->penal_accumulated : 0,
         ];
         $quota->estimated_days = $estimated_days;
@@ -451,24 +458,26 @@ class Loan extends Model
         $total_interests += $quota->interest_remaining;
 
         // Interés penal 
-
-        if ($quota->estimated_days['penal'] >= $grace_period) {
-            $quota->penal_payment = LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator);
-            if ($quota->penal_payment >= 0) {
-                if ($amount >= $quota->penal_payment) {
-                    $amount = $amount - $quota->penal_payment;
-                } else {
-                    $quota->penal_accumulated = Util::round2($quota->penal_remaining + ($quota->penal_payment - $amount));
-                    //$quota->penal_remaining = $quota->penal_remaining + ($quota->penal_payment - $amount);
-                    $quota->penal_payment = $amount;
-                    $amount = 0;
-                }
-            } else {
-                $quota->penal_payment = 0;
-            }
-            $total_interests += $quota->penal_payment;
+        
+        if ($this->loan_payment_procedure->penal_payment == 1){
+            if($quota->estimated_days['penal'] >= $grace_period)
+                $quota->penal_payment = LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator);
+        }else{
+            $penal_payment = $this->get_penal_payment($estimated_date);
+            $quota->penal_payment = $penal_payment;
         }
-
+        if ($quota->penal_payment >= 0) {
+            if ($amount >= $quota->penal_payment) {
+                $amount = $amount - $quota->penal_payment;
+            } else {
+                $quota->penal_accumulated = Util::round2(($quota->penal_payment - $amount));
+                $quota->penal_payment = $amount;
+                $amount = 0;
+            }
+        } else {
+            $quota->penal_payment = 0;
+        }
+        $total_interests += $quota->penal_payment;
 
         // Interés corriente
         $quota->interest_payment = $interest_generated;
@@ -548,7 +557,7 @@ class Loan extends Model
             {
                 $date_ini = Carbon::parse($this->disbursement_date)->startOfYear()->startOfDay()->addMonth($period);
                 $date_fin = $date ? $date : Carbon::parse($date_ini)->addMonth($period)->endOfDay();
-                $days = $date_ini->diffInDays($date_fin);
+                $days = $date_ini->diffInDays($date_fin) + 1;
                 $extra_days = $date_ini->diffInDays($this->disbursement_date);
             }
             elseif(Carbon::parse($this->disbursement_date)->quarter == 3)// desembolso en el tercer trimestre
@@ -576,7 +585,8 @@ class Loan extends Model
             'current_generated' => $interest_generated,
             'interest_accumulated' => $latest_quota ? $latest_quota->interest_accumulated : 0,
             'penal' => 0,
-            'penal_generated' => LoanPayment::interest_by_days(0, $this->interest->penal_interest, $this->balance, $denominator),
+            //'penal_generated' => LoanPayment::interest_by_days(0, $this->interest->penal_interest, $this->balance, $denominator),
+            'penal_generated' => $this->get_penal_payment($estimated_date),
             'penal_accumulated' => $latest_quota ? $latest_quota->penal_accumulated : 0,
         ];
         $quota->estimated_days = $estimated_days;
@@ -621,24 +631,20 @@ class Loan extends Model
         $total_interests += $quota->interest_remaining;
 
         // Interés penal 
-
-        if ($quota->estimated_days['penal'] >= $grace_period) {
-            $quota->penal_payment = LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator);
-            if ($quota->penal_payment >= 0) {
-                if ($amount >= $quota->penal_payment) {
-                    $amount = $amount - $quota->penal_payment;
-                } else {
-                    $quota->penal_accumulated = Util::round2($quota->penal_remaining + ($quota->penal_payment - $amount));
-                    //$quota->penal_remaining = $quota->penal_remaining + ($quota->penal_payment - $amount);
-                    $quota->penal_payment = $amount;
-                    $amount = 0;
-                }
+        $penal_payment = $this->get_penal_payment($estimated_date);
+        $quota->penal_payment = $penal_payment;
+        if ($quota->penal_payment >= 0) {
+            if ($amount >= $quota->penal_payment) {
+                $amount = $amount - $quota->penal_payment;
             } else {
-                $quota->penal_payment = 0;
+                $quota->penal_accumulated = Util::round2(($quota->penal_payment - $amount));
+                $quota->penal_payment = $amount;
+                $amount = 0;
             }
-            $total_interests += $quota->penal_payment;
+        } else {
+            $quota->penal_payment = 0;
         }
-
+        $total_interests += $quota->penal_payment;
 
         // Interés corriente
         $quota->interest_payment = $interest_generated;
@@ -1399,8 +1405,7 @@ class Loan extends Model
                 $remaining = $this->last_payment_validated->interest_accumulated + $this->last_payment_validated->penal_accumulated;
             }
             $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance, $denominator);
-            if ($days > $this->loan_procedure->loan_global_parameter->days_current_interest + $this->loan_procedure->loan_global_parameter->grace_period && strpos($this->modality->name , 'Estacional') === false)
-                $penal_interest = LoanPayment::interest_by_days($days - $this->loan_procedure->loan_global_parameter->days_current_interest, $this->interest->penal_interest, $this->balance, $denominator);
+            $penal_interest = $this->get_penal_payment($loan_payment_date);
             $suggested_amount = $this->balance + $interest_by_days + $penal_interest + $remaining;
         } 
         else 
@@ -1759,5 +1764,84 @@ class Loan extends Model
     public function balance_parent_repro()
     {
         return $this->parent_loan_id ? $this->parent_loan->balance_for_reprogramming() : 0;
+    }
+    
+    public function first_payment_date()
+    {
+        return Carbon::parse($this->loan_plan->sortBy('quota_number')->first()->estimated_date)->format('Y-m-d');
+    } 
+
+    public function verify_balance_in_date($date)
+    {
+        if($date > $this->first_payment_date())
+        {
+            $month_term = $this->modality->loan_modality_parameter->loan_month_term;
+            if($month_term == 1)
+            {
+                $date_to_compare = Carbon::parse($date)->startOfDay()->startOfMonth()->subMonth()->endOfMonth()->endOfDay();
+                $pay_to_compare = $this->loan_plan->where('estimated_date', '<=', Carbon::parse($date_to_compare)->format('Y-m-d'))->sortByDesc('quota_number')->first();
+            }
+            elseif($month_term == 6){
+                if(Carbon::parse($date)->month <= $month_term)
+                    $date_to_compare = Carbon::parse($date)->subYear()->endOfYear()->endOfDay();
+                else
+                    $date_to_compare = Carbon::parse($date)->startOfDay()->startOfYear()->addmonth($month_term - 1)->endOfMonth()->endOfDay();
+                $pay_to_compare = $this->loan_plan->where('estimated_date', '<=', Carbon::parse($date_to_compare)->format('Y-m-d'))->sortByDesc('quota_number')->first();
+            }
+            if($this->balance > $pay_to_compare->balance)
+                return true;
+            else
+                return false;
+        }else
+            return false;
+    }
+
+    public function payments_defaulted_by_quota($date)
+    {
+        $payments_defaulted = [];
+        $plan_payments = $this->loan_plan
+            ->where('estimated_date', '<', Carbon::parse($date)->format('Y-m-d'))
+            ->sortBy('quota_number');
+        $capital_paid = $this->capital_paid($date);
+        $capital_not_paid = 0;
+        foreach($plan_payments as $plan_payment)
+        {
+            if(($capital_paid - $plan_payment->capital) >= 0){
+                $capital_not_paid = 0;
+                $capital_paid = round($capital_paid - $plan_payment->capital,2);
+            }else{
+                $capital_not_paid = round($plan_payment->capital - $capital_paid,2);
+                $capital_paid = 0;
+            }
+            $days = Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date));
+            $payments_defaulted[] = (object)[
+                'quota' => $plan_payment->quota_number,
+                'days' => $days,
+                'diff_amount' => round($capital_not_paid,2),
+            ];
+            $capital_not_paid = 0;
+        }
+        return $payments_defaulted;
+    }
+
+    public function get_penal_payment($date)
+    {
+        $payments_defaulted = $this->payments_defaulted_by_quota($date);
+        $penal_payment = 0;
+        $denominator = $this->loan_procedure->loan_global_parameter->denominator;
+        if(count($payments_defaulted) > 0)
+        {
+            foreach($payments_defaulted as $payment_defaulted)
+            {
+                if($payment_defaulted->diff_amount  > 0)
+                    $penal_payment += LoanPayment::penal_by_paid($this->interest->penal_interest, $payment_defaulted->days, $payment_defaulted->diff_amount, $denominator);
+            }
+        }
+        return $penal_payment;
+    }
+
+    public function capital_paid()
+    {
+        return $this->payments->where('state_id', LoanPaymentState::where('name', 'Pagado')->first()->id)->sum('capital_payment');
     }
 }
