@@ -408,7 +408,8 @@ class Loan extends Model
             'current_generated' => $interest_generated,
             'interest_accumulated' => $latest_quota ? $latest_quota->interest_accumulated : 0,
             'penal' => $penal_days,
-            'penal_generated' => LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator),
+            //'penal_generated' => LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator),
+            'penal_generated' => $this->get_penal_payment($estimated_date),
             'penal_accumulated' => $latest_quota ? $latest_quota->penal_accumulated : 0,
         ];
         $quota->estimated_days = $estimated_days;
@@ -584,7 +585,8 @@ class Loan extends Model
             'current_generated' => $interest_generated,
             'interest_accumulated' => $latest_quota ? $latest_quota->interest_accumulated : 0,
             'penal' => 0,
-            'penal_generated' => LoanPayment::interest_by_days(0, $this->interest->penal_interest, $this->balance, $denominator),
+            //'penal_generated' => LoanPayment::interest_by_days(0, $this->interest->penal_interest, $this->balance, $denominator),
+            'penal_generated' => $this->get_penal_payment($estimated_date),
             'penal_accumulated' => $latest_quota ? $latest_quota->penal_accumulated : 0,
         ];
         $quota->estimated_days = $estimated_days;
