@@ -16,8 +16,7 @@
                         <template>
                           <v-row>
                             <v-col cols="12" md="6">
-                              <label><b>Interes Penal de Días:</b></label>
-                              {{payment_detail.estimated_days.penal +' Total'}}
+                              <label><b>Interes Penal Generado:</b></label>
                               {{payment_detail.estimated_days.penal_generated | moneyString}}
                               <br>
                             </v-col>
@@ -86,8 +85,7 @@
                                 {{ payment_detail.now_date | date}}
                             </v-col>
                             <v-col cols="6" class="ma-0 py-2">
-                              <label><b>Interes Penal de Días:</b></label>
-                              {{payment_detail.estimated_days.penal +' Total'}}
+                              <label><b>Interes Penal Generado:</b></label>
                               {{payment_detail.estimated_days.penal_generated | moneyString}}
                             </v-col>
                               <v-col cols="6" class="ma-0 py-2">
