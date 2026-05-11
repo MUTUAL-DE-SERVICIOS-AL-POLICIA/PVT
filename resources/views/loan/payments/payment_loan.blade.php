@@ -71,7 +71,7 @@
                 
             </tr>
             <tr class="">
-                <td class="w-40 font-semibold ">Intereses Penales por {{ $estimated_days['penal']}} dias a ({{ $loan->interest->penal_interest}} % anual)</td>
+                <td class="w-40 font-semibold ">Intereses Penales a ({{ $loan->interest->penal_interest}} % anual)</td>
                 <td class="leading-tight w-10 text-right">{{ Util::money_format($loan_payment->penal_payment) }}</td>
                 <td class="w-40 font-semibold ">Fecha de Trans.</td>
                 <td class="text-right w-10">{{$loan_payment->loan_payment_date? Carbon::parse($loan_payment->loan_payment_date)->format('d/m/Y'):Carbon::parse($loan_payment->created_at)->format('d/m/Y')}}</td> 
