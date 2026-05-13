@@ -320,15 +320,15 @@ class Loan extends Model
 
     public function getLastPaymentValidatedAttribute()
     {
-        $loan_states = LoanPaymentState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
-        $payment = $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->first()->id)->orWhere('state_id', $loan_states->last()->id)->whereLoanId($this->id)->latest()->first();
+        $loan_state_ids = LoanPaymentState::whereIn('name', ['Pagado', 'Pendiente por confirmar'])->pluck('id');
+        $payment = $this->payments()->whereIn('state_id', $loan_state_ids)->latest()->first();
         return $payment;
     }
 
     public function last_payment_date($date_final)
     {
         $loan_states = LoanPaymentState::where('name', 'Pagado')->first();
-        return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->id)->Where('estimated_date', '<=', $date_final)->orderBy('estimated_date', 'asc')->limit(1)->first();
+        return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->id)->Where('estimated_date', '<=', $date_final)->orderBy('estimated_date', 'asc')->limit(1)->first();    
     }
 
     public function getObservedAttribute()
@@ -1842,6 +1842,7 @@ class Loan extends Model
 
     public function capital_paid()
     {
-        return $this->payments->where('state_id', LoanPaymentState::where('name', 'Pagado')->first()->id)->sum('capital_payment');
+        $state_ids = LoanPaymentState::whereIn('name', ['Pagado', 'Pendiente por confirmar'])->pluck('id');
+        return $this->payments->whereIn('state_id', $state_ids)->sum('capital_payment');
     }
 }
