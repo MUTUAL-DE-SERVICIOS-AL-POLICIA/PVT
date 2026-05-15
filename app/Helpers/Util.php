@@ -89,6 +89,11 @@ class Util
         return round($value, 2, PHP_ROUND_HALF_EVEN);
     }
 
+    public static function round8($value)
+    {
+        return round($value, 8, PHP_ROUND_HALF_EVEN);
+    }
+
     public static function money_format($value, $literal = false)
     {
         if (!is_numeric($value)) {
