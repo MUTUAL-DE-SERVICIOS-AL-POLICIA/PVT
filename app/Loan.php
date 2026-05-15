@@ -484,7 +484,7 @@ class Loan extends Model
         if ($amount >= $quota->interest_payment) {
             $amount = $amount - $quota->interest_payment;
         } else {
-            $quota->interest_accumulated = $quota->interests_remaining + ($quota->interest_payment - $amount);
+            $quota->interest_accumulated = $quota->interest_remaining + ($quota->interest_payment - $amount);
             $quota->interest_payment = $amount;
             $amount = 0;
         }
@@ -651,7 +651,7 @@ class Loan extends Model
         if ($amount >= $quota->interest_payment) {
             $amount = $amount - $quota->interest_payment;
         } else {
-            $quota->interest_accumulated = $quota->interests_remaining + ($quota->interest_payment - $amount);
+            $quota->interest_accumulated = $quota->interest_remaining + ($quota->interest_payment - $amount);
             $quota->interest_payment = $amount;
             $amount = 0;
         }
