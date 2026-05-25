@@ -166,7 +166,7 @@ class Loan extends Model
     {
         return $this->belongsToMany(ProcedureDocument::class, 'loan_submitted_documents', 'loan_id')->withPivot('reception_date', 'comment', 'is_valid');
     }
-    //Lista requisitos de un prestamos
+    //Lista requisitos de un prestamos (documentos presentados)
     public function documents_modality()
     {
         $submitted_documents =  "SELECT l.id, lsd.procedure_document_id, pr.number, pd.name FROM loans l
@@ -307,7 +307,7 @@ class Loan extends Model
             $balance -= $this->payments()->where('state_id', $loan_states->first()->id)->sum('capital_payment');
             $balance -= $this->payments()->where('state_id', $loan_states->last()->id)->sum('capital_payment');
         }
-        return Util::round($balance);
+        return Util::round8($balance);
 
         /*$balance = DB::select('select balance_loan('.$this->id.')');
         return Util::round($balance[0]->balance_loan);*/
@@ -365,7 +365,39 @@ class Loan extends Model
         $loan_month_term = LoanModalityParameter::where('procedure_modality_id',$this->procedure_modality_id)->first()->loan_month_term;
         $monthly_interest = $this->interest->monthly_current_interest($parameter, $loan_month_term);
         unset($this->interest);
-        return Util::round2($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
+
+        $monthly_interest = Util::round8($monthly_interest);
+        return Util::round8($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
+    }
+
+    private function has_previous_non_regular_payment()
+    {
+        $fixed_quota_2 = Util::round2($this->estimated_quota);
+
+        foreach ($this->paymentsKardex as $payment) {
+            if (Util::round2($payment->estimated_quota) != $fixed_quota_2) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private function amount_for_kardex_calculation($estimated_quota, $liquidate = false)
+    {
+        if ($estimated_quota === null || $estimated_quota === '') {
+            return Util::round8($this->estimated_quota);
+        }
+        if (is_string($estimated_quota)) {
+            $estimated_quota = str_replace(',', '.', $estimated_quota);
+        }
+        $input_amount = (float) $estimated_quota;
+        $fixed_quota_8 = Util::round8($this->estimated_quota);
+        if (!$liquidate && abs(Util::round2($input_amount) - Util::round2($fixed_quota_8)) < 0.000001 && !$this->has_previous_non_regular_payment())
+        {
+            return $fixed_quota_8;
+        }
+        return Util::round8($input_amount);
     }
 
     public function next_payment2($affiliate_id, $estimated_date, $paid_by, $procedure_modality_id, $estimated_quota, $liquidate = false)
@@ -423,7 +455,10 @@ class Loan extends Model
         $total_interests = 0;
         $partial_amount = 0;
         $interest = $this->interest;
-        $amount = $estimated_quota;
+        // $amount = $estimated_quota;
+        $amount = $this->amount_for_kardex_calculation($estimated_quota, $liquidate);
+        $amount_original = $amount;
+
 
         // Calcular intereses
 
@@ -461,10 +496,11 @@ class Loan extends Model
         
         if ($this->loan_payment_procedure->penal_payment == 1){
             if($quota->estimated_days['penal'] >= $grace_period)
-                $quota->penal_payment = LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator);
+                $quota->penal_payment = Util::round8(LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance, $denominator));
         }else{
             $penal_payment = $this->get_penal_payment($estimated_date);
             $quota->penal_payment = $penal_payment;
+            $quota->penal_payment = Util::round8($quota->penal_payment);
         }
         if ($quota->penal_payment >= 0) {
             if ($amount >= $quota->penal_payment) {
@@ -480,25 +516,26 @@ class Loan extends Model
         $total_interests += $quota->penal_payment;
 
         // Interés corriente
-        $quota->interest_payment = $interest_generated;
+        $quota->interest_payment = Util::round2($interest_generated);
         if ($amount >= $quota->interest_payment) {
             $amount = $amount - $quota->interest_payment;
         } else {
-            $quota->interest_accumulated = $quota->interests_remaining + ($quota->interest_payment - $amount);
+            $quota->interest_accumulated = $quota->interest_remaining + ($quota->interest_payment - $amount);
             $quota->interest_payment = $amount;
             $amount = 0;
         }
 
-        $total_interests += Util::round2($quota->interest_payment);
+        $total_interests += $quota->interest_payment;
 
         // Calcular amortización de capital        
         if ($liquidate) {
-            $quota->capital_payment = $quota->balance;
+            $quota->capital_payment = Util::round8($quota->balance);
         } else {
-            if ($amount >= $this->balance) {
-                $quota->capital_payment = Util::round2($this->balance);
-            } else
-                $quota->capital_payment = Util::round2($amount);
+            if ($amount >= $quota->balance) {
+                $quota->capital_payment = Util::round8($quota->balance);
+            } else {
+                $quota->capital_payment = Util::round8($amount);
+            }
         }
         //calculo de la ultima cuota, solo si fue regular en los pagos
 
@@ -510,7 +547,9 @@ class Loan extends Model
             $quota->next_balance = Util::round2($this->balance - $quota->capital_payment);
         }
         $quota->estimated_quota = Util::round2($quota->capital_payment + $total_interests);
-        $quota->next_balance = Util::round2($quota->balance - $quota->capital_payment);
+        $total_due_raw = Util::round8($quota->balance + $total_interests);
+        $quota->estimated_quota = Util::round8(min($amount_original, $total_due_raw));
+        $quota->next_balance = Util::round8($quota->balance - $quota->capital_payment);
 
 
         //calculo de los nuevos montos restantes
@@ -529,7 +568,7 @@ class Loan extends Model
 
         return $quota;
     }
-
+    
     public function next_payment_season($affiliate_id, $estimated_date, $paid_by, $procedure_modality_id, $estimated_quota, $liquidate = false)
     {
         $latest_quota = $this->last_payment_validated;
@@ -600,7 +639,9 @@ class Loan extends Model
         $total_interests = 0;
         $partial_amount = 0;
         $interest = $this->interest;
-        $amount = $estimated_quota;
+        // $amount = $estimated_quota;
+        $amount = $this->amount_for_kardex_calculation($estimated_quota, $liquidate);
+        $amount_original = $amount;
         ///
         if ($quota->penal_remaining > 0) {
             if ($amount >= $quota->penal_remaining) {
@@ -633,6 +674,7 @@ class Loan extends Model
         // Interés penal 
         $penal_payment = $this->get_penal_payment($estimated_date);
         $quota->penal_payment = $penal_payment;
+        $quota->penal_payment = Util::round8($quota->penal_payment);
         if ($quota->penal_payment >= 0) {
             if ($amount >= $quota->penal_payment) {
                 $amount = $amount - $quota->penal_payment;
@@ -647,25 +689,26 @@ class Loan extends Model
         $total_interests += $quota->penal_payment;
 
         // Interés corriente
-        $quota->interest_payment = $interest_generated;
+        $quota->interest_payment = Util::round2($interest_generated);
         if ($amount >= $quota->interest_payment) {
             $amount = $amount - $quota->interest_payment;
         } else {
-            $quota->interest_accumulated = $quota->interests_remaining + ($quota->interest_payment - $amount);
+            $quota->interest_accumulated = $quota->interest_remaining + ($quota->interest_payment - $amount);
             $quota->interest_payment = $amount;
             $amount = 0;
         }
 
-        $total_interests += Util::round2($quota->interest_payment);
+        $total_interests += $quota->interest_payment;
 
         // Calcular amortización de capital        
         if ($liquidate) {
-            $quota->capital_payment = $quota->balance;
+            $quota->capital_payment = Util::round8($quota->balance);
         } else {
-            if ($amount >= $this->balance) {
-                $quota->capital_payment = Util::round2($this->balance);
-            } else
-                $quota->capital_payment = Util::round2($amount);
+            if ($amount >= $quota->balance) {
+                $quota->capital_payment = Util::round8($quota->balance);
+            } else {
+                $quota->capital_payment = Util::round8($amount);
+            }
         }
         //calculo de la ultima cuota, solo si fue regular en los pagos
 
@@ -676,8 +719,10 @@ class Loan extends Model
         } else {
             $quota->next_balance = Util::round2($this->balance - $quota->capital_payment);
         }
-        $quota->estimated_quota = Util::round2($quota->capital_payment + $total_interests);
-        $quota->next_balance = Util::round2($quota->balance - $quota->capital_payment);
+        $quota->estimated_quota = Util::round8($quota->capital_payment + $total_interests);
+        $total_due_raw = Util::round8($quota->balance + $total_interests);
+        $quota->estimated_quota = Util::round8(min($amount_original, $total_due_raw));
+        $quota->next_balance = Util::round8($quota->balance - $quota->capital_payment);
 
 
         //calculo de los nuevos montos restantes
@@ -762,7 +807,7 @@ class Loan extends Model
             }
             //}
             // Calcular monto total de la cuota
-            $quota->estimated_quota = Util::round2($quota->capital_payment + $total_interests);
+            $quota->estimated_quota = Util::round8($quota->capital_payment + $total_interests);
             $quota->next_balance = Util::round2($quota->balance - $quota->capital_payment);
 
             if ($liquidate) {
@@ -800,7 +845,7 @@ class Loan extends Model
                         if ($affiliate_state == "Servicio" || $affiliate_state == "Comisión") {
                             $modality = ProcedureModality::whereShortened("ANT-ACT")->first(); //Anticipo activo
                         } else {
-                            $modality = ProcedureModality::whereShortened("ANT-DIS")->first(); // Anicipo dismponibilidad
+                            $modality = ProcedureModality::whereShortened("ANT-DIS")->first(); // Anticipo dismponibilidad
                         }
                     }
                     if ($affiliate_state_type == "Pasivo") {
@@ -1488,7 +1533,7 @@ class Loan extends Model
                 $suggested_amount = $this->BorrowerGuarantors->first()->quota_treat;
             }
         }
-        return  round($suggested_amount, 2);
+        return Util::round2($suggested_amount);
     }
 
     public function getBorrowerAttribute()
