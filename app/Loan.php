@@ -307,7 +307,7 @@ class Loan extends Model
             $balance -= $this->payments()->where('state_id', $loan_states->first()->id)->sum('capital_payment');
             $balance -= $this->payments()->where('state_id', $loan_states->last()->id)->sum('capital_payment');
         }
-        return Util::round8($balance);
+        return Util::round($balance);
 
         /*$balance = DB::select('select balance_loan('.$this->id.')');
         return Util::round($balance[0]->balance_loan);*/
