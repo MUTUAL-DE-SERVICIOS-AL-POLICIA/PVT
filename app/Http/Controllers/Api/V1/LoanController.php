@@ -2526,7 +2526,7 @@ class LoanController extends Controller
                         $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                         $loan_payment->days = $days + $days_aux;
                         $loan_payment->capital = $capital;
-                        $loan_payment->interest = $interest;
+                        $loan_payment->interest = Util::round2($interest);
                         $loan_payment->total_amount = $payment;
                         $loan_payment->balance = $balance;
                         $loan_payment->save();
@@ -2541,7 +2541,7 @@ class LoanController extends Controller
                             $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                             $loan_payment->days = $days;
                             $loan_payment->capital = $capital + $balance;
-                            $loan_payment->interest = $interest;
+                            $loan_payment->interest = Util::round2($interest);
                             $loan_payment->total_amount = $balance + $payment;
                             $loan_payment->balance = 0;
                             $loan_payment->save();
@@ -2555,7 +2555,7 @@ class LoanController extends Controller
                             $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                             $loan_payment->days = $days;
                             $loan_payment->capital = $capital;
-                            $loan_payment->interest = $interest;
+                            $loan_payment->interest = Util::round2($interest);
                             $loan_payment->total_amount = $payment;
                             $loan_payment->balance = $balance;
                             $loan_payment->save();
