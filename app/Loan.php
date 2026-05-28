@@ -313,6 +313,17 @@ class Loan extends Model
         return Util::round($balance[0]->balance_loan);*/
     }
 
+    public function balanceForPreviousPayment()
+    {
+        $balance = $this->amount_approved;
+
+        $loan_state_ids = LoanPaymentState::whereIn('name', ['Pagado', 'Pendiente por confirmar'])->pluck('id');
+        if ($this->payments()->count() > 0) {
+            $balance -= $this->payments()->whereIn('state_id', $loan_state_ids)->sum('capital_payment');
+        }
+        return Util::round8($balance);
+    }
+
     public function getLastPaymentAttribute()
     {
         return $this->payments()->latest()->first();
@@ -409,7 +420,7 @@ class Loan extends Model
         $sw = false;
         $latest_quota = $this->last_payment_validated;
         $quota->estimated_date = $estimated_date;
-        $quota->previous_balance = $this->balance;
+        $quota->previous_balance = $this->balanceForPreviousPayment();
         $quota->previous_payment_date = $latest_quota ? Carbon::parse($latest_quota->estimated_date)->endOfDay() : Carbon::parse($this->disbursement_date)->endOfDay();
         $quota->quota_number = $this->paymentsKardex->count() + 1;
         $date_ini = CarbonImmutable::parse($this->disbursement_date);
@@ -575,7 +586,7 @@ class Loan extends Model
         $quota = new LoanPayment();
         $quota->transaction_date = Carbon::now()->format('Y-m-d H:i:s');
         $quota->estimated_date = $estimated_date;
-        $quota->previous_balance = $this->balance;
+        $quota->previous_balance = $this->balanceForPreviousPayment();
         $quota->previous_payment_date = $latest_quota ? Carbon::parse($latest_quota->estimated_date)->endOfDay() : Carbon::parse($this->disbursement_date)->endOfDay();;
         $quota->quota_number = $this->paymentsKardex->count() + 1;
         $period = $this->modality->loan_modality_parameter->loan_month_term;
@@ -1853,16 +1864,16 @@ class Loan extends Model
         {
             if(($capital_paid - $plan_payment->capital) >= 0){
                 $capital_not_paid = 0;
-                $capital_paid = round($capital_paid - $plan_payment->capital,2);
+                $capital_paid = Util::round8($capital_paid - $plan_payment->capital);
             }else{
-                $capital_not_paid = round($plan_payment->capital - $capital_paid,2);
+                $capital_not_paid = Util::round8($plan_payment->capital - $capital_paid);
                 $capital_paid = 0;
             }
             $days = Carbon::parse($plan_payment->estimated_date)->diffInDays(Carbon::parse($date));
             $payments_defaulted[] = (object)[
                 'quota' => $plan_payment->quota_number,
                 'days' => $days,
-                'diff_amount' => round($capital_not_paid,2),
+                'diff_amount' => Util::round8($capital_not_paid),
             ];
             $capital_not_paid = 0;
         }
