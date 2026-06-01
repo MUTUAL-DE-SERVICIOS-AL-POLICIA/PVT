@@ -25,7 +25,7 @@ class SMSController extends Controller
     public function send_sms_for_contract(Request $request) {
         $loan_id = $request->loan_id;
         $user_id = $request->user_id;
-        $message = "SE SOLICITA SE APERSONE POR NUESTRAS OFICINAS DE LA MUSERPOL A OBJETO DEL RECOJO Y/O FIRMA DEL CONTRATO DE SU PRÉSTAMO.";
+        $message = "SE SOLICITA SE APERSONE POR NUESTRAS OFICINAS DE LA MUSERPOL EN EL HORARIO 8:30 A 16:30, A OBJETO DEL RECOJO Y/O FIRMA DEL CONTRATO DE SU PRESTAMO";
         $notification_type = 5; // tipo de notificación: Contrato de préstamo
 
         $cell_phone_number = Loan::find($loan_id)->borrower->first()->cell_phone_number;
