@@ -580,7 +580,7 @@
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo SENASIR' || 
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo Gestora Pública')
             <div>
-                <b>DECIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b> El PRESTATARIO en caso de fallecimiento acepta 
+                <b>DÉCIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b> El PRESTATARIO en caso de fallecimiento acepta 
                 amortizar para el cumplimiento efectivo de la presente obligación con el beneﬁcio del Complemento 
                 Económico 
                 @if($modality_name != 'Largo Plazo con Garantía Personal Sector Pasivo AFP')
@@ -592,18 +592,22 @@
             </div>
         @else
             <div>
-                <b>DECIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de 
+                <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de 
                 fallecimiento, retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la 
                 presente obligación con la totalidad del beneficio de Fondo de Retiro Policial Solidario 
                 otorgado por la MUSERPOL; por cuanto la liquidación de dicho beneficio pasará a cubrir el 
                 monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, 
                 previas las formalidades de ley.
                 <br>
-                En caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector 
-                pasivo de la Policía Boliviana teniendo un saldo deudor respecto del préstamo obtenido, acepta 
+                Para el fin del pago de la obligación, el PRESTATARIO de manera expresa autoriza a la MUSERPOL para que inicie el trámite del 
+                Beneficio de Fondo de Retiro Policial Solidario, por cuanto se encuentra plenamente facultada a presentar la solicitud formal y
+                realizar las gestiones necesarias para la obtención de la documentación requerida para la otorgación de este Beneficio. 
+                <br>
+                Asímismo, en caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector 
+                pasivo de la Policía Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, acepta 
                 amortizar la deuda con su Complemento Económico, en caso de corresponderle.
                 <br>
-                Asimismo, en caso de que el monto de sus beneficios del PRESTATARIO, no alcanzare a cubrir el 
+                De la misma forma, en caso de que el monto de sus beneficios del PRESTATARIO, no alcanzare a cubrir el 
                 total del monto adeudado, se continuara con el descuento
                 {{ count($guarantors) > 1 ? 'a los GARANTES':'al GARANTE' }} el saldo deudor que quedare pendiente.
             </div>
