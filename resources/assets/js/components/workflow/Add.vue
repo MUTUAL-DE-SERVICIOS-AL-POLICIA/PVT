@@ -93,6 +93,29 @@
             <span>Anular trámite de anticipo</span>
           </v-tooltip>
           </div>
+
+          <!-- Botón Imprimir Contrato -->
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                top
+                v-on="on"
+                icon
+                outlined
+                small
+                color="primary"
+                class="darken-2 ml-4"
+                :loading="loading_print_contract"
+                @click="printContract($route.params.id)"
+              >
+                <v-icon>mdi-file</v-icon>
+              </v-btn>
+            </template>
+            <div>
+              <span>Imprimir contrato</span>
+            </div>
+          </v-tooltip>
+
           <v-tooltip top v-if="permissionSimpleSelected.includes('send-notification-contract')">
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -108,7 +131,7 @@
                 </v-btn>
               </template>
               <div>
-                <span>Enviar noticación</span>
+                <span>Enviar notificación</span>
               </div>
             </v-tooltip>
             <v-dialog
@@ -698,6 +721,7 @@ export default {
     dialog_notification: false,
     loading_notify: false,
     loading_btn_plan: false,
+    loading_print_contract: false,
     docsRequired: [],
     docsOptional: [],
     val_docs: {},
@@ -1210,6 +1234,24 @@ export default {
           this.info.color = 'warning'
       } catch (e) {
         console.log(e)
+      }
+    },
+    async printContract(item) {
+      try {
+        let res = await axios.get(`loan/${item}/print/contract`)
+        this.loading_print_contract = true
+        printJS({
+          printable: res.data.content,
+          type: res.data.type,
+          documentTitle: res.data.file_name,
+          base64: true
+        })
+
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión del contrato.")
+        console.log(e)
+      } finally {
+        this.loading_print_contract = false
       }
     },
    },
