@@ -226,18 +226,22 @@
                 $modality_name == 'Refinanciamiento de Préstamo a Corto Plazo en Disponibilidad')
             <div>
                 <b>DÉCIMA PRIMERA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, 
-                retiro voluntario o retiro forzoso garantizan el cumplimiento efectivo de la presente obligación con la totalidad 
+                retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad 
                 del beneficio de Fondo de Retiro Policial Solidario otorgados por la MUSERPOL, por cuanto la liquidación de dicho 
                 beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la 
-                fecha, previas las formalidades de  ley.
+                fecha, previas las formalidades de ley.
+            </div>
+            <div>
                 Para el fin del pago de la obligación, el PRESTATARIO de manera expresa autoriza a la MUSERPOL para que inicie el trámite del 
                 Beneficio de Fondo de Retiro Policial Solidario, por cuanto se encuentra plenamente facultada a presentar la solicitud formal y
                 realizar las gestiones necesarias para la obtención de la documentación requerida para la otorgación de este Beneficio. 
-            <div>
+            </div>
             <div>
                 Asímismo, en caso de que se haya modiﬁcado la situación del PRESTATARIO del sector activo al sector pasivo de la Policía 
                 Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, acepta amortizar la deuda con su Complemento 
                 Económico, en caso de corresponderle.
+            </div>
+            <div>
                 De la misma forma, en caso de que el monto de sus beneficios del PRESTATARIO, no alcanzare a cubrir el total del monto adeudado, 
                 se continuará con el descuento al GARANTE el saldo deudor que quedare pendiente. 
             </div>
@@ -245,7 +249,7 @@
             <div>
                 <b>DÉCIMA PRIMERA.- (CONTINGENCIAS POR FALLECIMIENTO):</b>El PRESTATARIO en caso de fallecimiento acepta a amortizar 
                 el cumplimiento efectivo de la presente obligación con el beneficio del Complemento Económico en caso de corresponderle; 
-                por cuanto la liquidación de dicho beneficio pasara a cubrir el monto total de la obligación que resulte adeudada, más 
+                por cuanto la liquidación de dicho beneficio pasará a cubrir el monto total de la obligación que resulte adeudada, más 
                 los intereses devengados a la fecha, cobrados a los derechohabientes, previas las formalidades de ley. 
             </div>
             @endif
@@ -542,11 +546,20 @@
             voluntario o retiro forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad del beneficio 
             de Fondo de Retiro Policial Solidario otorgado por la MUSERPOL, por cuanto la liquidación de dicho beneficio pasará a 
             cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
+        </div>
         <div>
+            Para el fin del pago de la obligación, el PRESTATARIO de manera expresa autoriza a la MUSERPOL para que inicie el trámite del 
+            Beneficio de Fondo de Retiro Policial Solidario, por cuanto se encuentra plenamente facultada a presentar la solicitud formal y
+            realizar las gestiones necesarias para la obtención de la documentación requerida para la otorgación de este Beneficio. 
+        </div>
         <div>
-            En caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector pasivo de la Policía Boliviana, 
+            Asímismo, en caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector pasivo de la Policía Boliviana, 
             teniendo un saldo deudor respecto del préstamo obtenido, acepta amortizar la deuda con su Complemento Económico, 
             en caso de corresponderle.
+        </div>
+        <div>
+            De la misma forma, en caso de que el monto de sus beneficios del PRESTATARIO, no alcanzare a cubrir el total del monto adeudado, 
+            se continuará con el descuento al GARANTE el saldo deudor que quedare pendiente. 
         </div>
     @elseif($modality_name == 'Corto Plazo Sector Pasivo SENASIR')
         <div>
