@@ -105,15 +105,15 @@
         presentes y futuros conforme determina el art. 1335 del Código Civil.
     </div>
     <div>
-        <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO,   en caso de fallecimiento, jubilación, retiro voluntario o retiro forzoso garantiza el 
+        <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, jubilación, retiro voluntario o retiro forzoso garantiza el 
         cumplimiento efectivo de la presente obligación con la totalidad del Beneﬁcio de Fondo de Retiro Policial Solidario otorgado por la MUSERPOL; por cuanto la liquidación
-        de dicho beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, consiguientemente, EL PRESTATARIO 
-        confiere a la MUSERPOL las facultades correspondientes y necesarias para iniciar el trámite para la cancelación del préstamo a través del Beneﬁcio de Fondo de Retiro 
-        Policial Solidario. <br>
-        El PRESTATARIO ante el incumplimiento de una cuota de amortización o intereses, autoriza a la MUSERPOL proceda al descuento de su Beneﬁcio de Fondo de Retiro Policial 
-        Solidario hasta cubrir el pago total de la obligación, toda vez que el mismo se constituye en la primera fuente de repago, sin perjuicio que el titular asuma de 
-        manera voluntaria y directa la liquidación total del préstamo.
-        
+        de dicho beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, toda vez que el mismo se constituye 
+        en la primera fuente de repago, sin perjuicio que el titular asuma de manera voluntaria y directa la liquidación total del préstamo.
+    </div>
+    <div>
+        Para el fin del pago de la obligación, el PRESTATARIO de manera expresa autoriza a la MUSERPOL para que inicie el trámite del Beneficio de Fondo de Retiro Policial 
+        Solidario, por cuanto se encuentra plenamente facultada a presentar la solicitud formal y realizar las gestiones necesarias para la obtención de la documentación 
+        requerida para la otorgación de este Beneficio.
     </div>
     <div>
         <b>DÉCIMA PRIMERA.- (DE LA MORA):</b> El PRESTATARIO se constituirá en mora automática sin intimación o requerimiento alguno, de acuerdo a lo establecido por el 
