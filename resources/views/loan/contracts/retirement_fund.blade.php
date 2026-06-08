@@ -54,7 +54,7 @@
     <div>
         <b>QUINTA.- (DEL DESEMBOLSO):</b> El desembolso del préstamo de dinero en la moneda pactada se acredita mediante comprobante escrito en el que conste el 
         abono efectuado a favor del PRESTATARIO, a través de una cuenta bancaria señalada por el mismo, reconociendo ambas partes que al amparo de este procedimiento 
-        se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio.</span>
+        se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio.
     </div>
     <div>
         <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza 
@@ -101,13 +101,13 @@
     <div>
         <b>NOVENA.- (DE LA GARANTÍA):</b>El PRESTATARIO, en pleno uso de sus facultades de forma libre y espontánea, sin que medie presión, dolo o culpa en manifestación de su voluntad, 
         garantiza el préstamo con su Beneficio del Fondo de Retiro Policial Solidario que le corresponda. <br>
-        De la misma forma, él PRESTATARIO, garantiza el pago de lo adeudado con la generalidad de sus bienes, derechos y acciones habidos y por haber, 
+        De la misma forma, el PRESTATARIO, garantiza el pago de lo adeudado con la generalidad de sus bienes, derechos y acciones habidos y por haber, 
         presentes y futuros conforme determina el art. 1335 del Código Civil.
     </div>
     <div>
         <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, jubilación, retiro voluntario o retiro forzoso garantiza el 
-        cumplimiento efectivo de la presente obligación con la totalidad del Beneﬁcio de Fondo de Retiro Policial Solidario otorgado por la MUSERPOL; por cuanto la liquidación
-        de dicho beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, toda vez que el mismo se constituye 
+        cumplimiento efectivo de la presente obligación con la totalidad del Beneficio de Fondo de Retiro Policial Solidario otorgado por la MUSERPOL; por cuanto la liquidación
+        de dicho beneficio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, toda vez que el mismo se constituye 
         en la primera fuente de repago, sin perjuicio que el titular asuma de manera voluntaria y directa la liquidación total del préstamo.
     </div>
     <div>
