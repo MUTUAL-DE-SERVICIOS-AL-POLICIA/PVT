@@ -95,7 +95,7 @@
           </div>
 
           <!-- Botón Imprimir Contrato -->
-          <v-tooltip top>
+          <!-- <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
                 top
@@ -114,7 +114,7 @@
             <div>
               <span>Imprimir contrato</span>
             </div>
-          </v-tooltip>
+          </v-tooltip> -->
 
           <v-tooltip top v-if="permissionSimpleSelected.includes('send-notification-contract')">
               <template v-slot:activator="{ on }">
@@ -721,7 +721,7 @@ export default {
     dialog_notification: false,
     loading_notify: false,
     loading_btn_plan: false,
-    loading_print_contract: false,
+    // loading_print_contract: false,
     docsRequired: [],
     docsOptional: [],
     val_docs: {},
@@ -1236,24 +1236,24 @@ export default {
         console.log(e)
       }
     },
-    async printContract(item) {
-      try {
-        let res = await axios.get(`loan/${item}/print/contract`)
-        this.loading_print_contract = true
-        printJS({
-          printable: res.data.content,
-          type: res.data.type,
-          documentTitle: res.data.file_name,
-          base64: true
-        })
+    // async printContract(item) {
+    //   try {
+    //     let res = await axios.get(`loan/${item}/print/contract`)
+    //     this.loading_print_contract = true
+    //     printJS({
+    //       printable: res.data.content,
+    //       type: res.data.type,
+    //       documentTitle: res.data.file_name,
+    //       base64: true
+    //     })
 
-      } catch (e) {
-        this.toastr.error("Ocurrió un error en la impresión del contrato.")
-        console.log(e)
-      } finally {
-        this.loading_print_contract = false
-      }
-    },
+    //   } catch (e) {
+    //     this.toastr.error("Ocurrió un error en la impresión del contrato.")
+    //     console.log(e)
+    //   } finally {
+    //     this.loading_print_contract = false
+    //   }
+    // },
    },
   }
 
