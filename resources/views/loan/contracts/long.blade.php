@@ -64,7 +64,7 @@
             {{$loan->data_loan->disbursement_date? Carbon::parse($loan->data_loan->disbursement_date)->isoFormat('LL'):'_________________'}}, 
             se ha suscrito entre la MUSERPOL y el PRESTATARIO un préstamo por la suma de Bs.{{ Util::money_format($loan->data_loan->amount_approved) }} 
             (<span class="uppercase">{{ Util::money_format($loan->data_loan->amount_approved, true) }} Bolivianos</span>), con garantía de rentas 
-            o haberes y garantía personal segun corresponda.
+            o haberes y garantía personal según corresponda.
             <div>
             <b>TERCERA.- (DEL OBJETO):</b>  El objeto del presente contrato es el refinanciamiento del préstamo de dinero que la MUSERPOL 
             otorga al PRESTATARIO conforme a calificación, previa evaluación y autorización, de conformidad a los niveles de aprobación 
@@ -82,7 +82,7 @@
             {{ Carbon::parse($parent_loan->disbursement_date)->isoFormat('LL') }} y modalidad de  {{strtolower($parent_loan->modality->name)}}, 
             se ha suscrito entre la MUSERPOL y el PRESTATARIO un préstamo por la suma de Bs.{{ Util::money_format($parent_loan->amount_approved) }} 
             <span class="uppercase">({{ Util::money_format($parent_loan->amount_approved, true) }} Bolivianos)</span>, con garantía de rentas o 
-            haberes y garantía personal segun corresponda.
+            haberes y garantía personal según corresponda.
             </div>
             <div>
             <b>TERCERA.- (DEL OBJETO):</b>  El objeto del presente contrato es el refinanciamiento del préstamo de dinero que la MUSERPOL 
@@ -122,11 +122,11 @@
         
         @if(($modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo AFP' || 
             $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública'))
-            <b>SEPTIMA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) 
+            <b>SÉPTIMA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) 
             el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de 
             la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta fiscal de la MUSERPOL. Caso contrario el PRESTATARIO se hará 
             pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída y consecuentemente se 
-            procedera al descuento del garante personal incluidos los intereses penales una vez transcurrido dos cuotas impagas, sin necesidad de previo aviso.
+            procederá al descuento del garante personal incluidos los intereses penales una vez transcurrido dos cuotas impagas, sin necesidad de previo aviso.
         @else
             @php
                 if($modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'){
@@ -137,9 +137,9 @@
                     $renta = 'de los haberes';
                 }
             @endphp
-            <b>SEPTIMA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) 
+            <b>SÉPTIMA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) 
             el PRESTATARIO, autoriza expresamente a la MUSERPOL practicar los descuentos respectivos {{$renta}} 
-            que percibe en forma mensual a través del {{ $septima }} conforme al Reglamento de Prestamos.
+            que percibe en forma mensual a través del {{ $septima }} conforme al Reglamento de Préstamos.
             <div>
             Si por cualquier motivo la MUSERPOL estuviera imposibilitada de realizar el descuento por el medio señalado, el PRESTATARIO se obliga a 
             cumplir con la cuota de amortización mediante pago directo en la Oficina Central de la MUSERPOL de la ciudad de La Paz o efectuar el 
@@ -149,7 +149,7 @@
             <div>
                 Asimismo, el PRESTATARIO se compromete a hacer conocer oportunamente a la MUSERPOL sobre la omisión del descuento mensual que 
                 se hubiera dado, sin perjuicio que realice el depósito directo del mes omitido de acuerdo a lo estipulado en el párrafo 
-                precedente. Caso contrario se procedera al descuento 
+                precedente. Caso contrario se procederá al descuento 
                 {{count($guarantors)>1 ? 'a los garantes personales':'del garante personal'}} incluido los intereses penales una vez 
                 transcurrido dos cuotas impagas sin necesidad de previo aviso.
             </div>
@@ -191,7 +191,7 @@
         de lo adeudado con la generalidad de sus bienes, derechos y acciones habidos y por haber, presentes y futuros conforme
         lo determina el artículo 1335 del Código Civil,
         @if(($modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR'))
-            así como también con su renta de vejez en curso de pago, ademas este acepta amortizar la deuda con su 
+            así como también con su renta de vejez en curso de pago, además este acepta amortizar la deuda con su 
             Complemento Económico.
         @else
             además el PRESTATARIO con los beneficios otorgados por la MUSERPOL.
@@ -234,31 +234,31 @@
             $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública')
             <div>
                 <b>DÉCIMA PRIMERA.- (CONTINGENCIAS POR FALLECIMIENTO):</b>El PRESTATARIO en caso de fallecimiento acepta amortizar para el 
-                cumplimiento efectivo de la presente obligación con el beneﬁcio del Complemento Económico
+                cumplimiento efectivo de la presente obligación con el beneficio del Complemento Económico
                 @if($modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR')
                     en caso de corresponderle
                 @endif
-                por cuanto la liquidación de dicho beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los 
+                por cuanto la liquidación de dicho beneficio pasará a cubrir el monto total de la obligación que resulte adeudada, más los 
                 intereses devengados a la fecha, cobrados a los derechohabientes, previas las formalidades de ley.
             </div>
         @else
             <div>
                 <b>DÉCIMA PRIMERA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de fallecimiento, 
                 retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad 
-                del beneﬁcio de  Fondo de Retiro Policial Solidario  otorgado por la MUSERPOL; por cuanto la liquidación de dicho 
-                beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la 
+                del beneficio de  Fondo de Retiro Policial Solidario  otorgado por la MUSERPOL; por cuanto la liquidación de dicho 
+                beneficio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la 
                 fecha, previas las formalidades de ley.
                 <br>
                 Para el fin del pago de la obligación, el PRESTATARIO de manera expresa autoriza a la MUSERPOL para que inicie el trámite del 
                 Beneficio de Fondo de Retiro Policial Solidario, por cuanto se encuentra plenamente facultada a presentar la solicitud formal y
                 realizar las gestiones necesarias para la obtención de la documentación requerida para la otorgación de este Beneficio.
                 <br>
-                Asímismo, en caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector pasivo de la Policía 
+                Asimismo, en caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector pasivo de la Policía 
                 Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, acepta amortizar la deuda con su Complemento 
                 Económico, en caso de corresponderle.
                 <br>
                 De la misma forma, en caso de que el monto de sus beneficios del PRESTATARIO, no alcanzare a cubrir el total del monto 
-                adeudado, se continuara con el descuento {{ count($guarantors) > 1 ? 'a los GARANTES':'al GARANTE' }} el saldo 
+                adeudado, se continuará con el descuento {{ count($guarantors) > 1 ? 'a los GARANTES':'al GARANTE' }} el saldo 
                 deudor que quedare pendiente.
             </div>
         @endif
@@ -286,9 +286,9 @@
             $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo SENASIR' || 
             $modality_name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo Gestora Pública'))
             <div>
-            {{ count($guarantors) > 1 ? 'Los GARANTES están facultados' : 'El GARANTE esta facultado' }} a realizar el 
+            {{ count($guarantors) > 1 ? 'Los GARANTES están facultados' : 'El GARANTE está facultado' }} a realizar el 
             trámite de recuperación de los montos que se le hubieran sido descontados en función a la obligación objeto 
-            del presente contrato pudiendo recaer sobre él Beneficio de Fondo de Retiro Policial Solidario otorgado por 
+            del presente contrato pudiendo recaer sobre el Beneficio de Fondo de Retiro Policial Solidario otorgado por 
             la MUSERPOL y reconocidos al PRESTATARIO, conforme al artículo 70 del Reglamento de Préstamos.
             </div>
         @endif
@@ -299,7 +299,7 @@
     <div>
         <b>DÉCIMA CUARTA.- (DOMICILIO ESPECIAL):</b> Para efectos legales, incluida la acción judicial u otra, se tendrá como 
         domicilio especial del PRESTATARIO y {{ count($guarantors)>1 ? 'GARANTES':'GARANTE'}} el señalado en la cláusula primera 
-        y decima de conformidad al artículo 29 parágrafo II del Código Civil, donde se efectuarán las citaciones y notificaciones 
+        y décima de conformidad al artículo 29 parágrafo II del Código Civil, donde se efectuarán las citaciones y notificaciones 
         judiciales o cualquier otra comunicación, con plena validez legal y sin lugar a posterior observación o recurso alguno.
     </div>
     <div>
@@ -317,8 +317,8 @@
                 </span>
             @endforeach
             damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándonos a su fiel y estricto 
-            cumplimiento. En señal de lo cual suscribimos el presente contrato de refinancimiento de préstamo de dinero con 
-            garantia personal en manifestación de nuestra libre y espontánea voluntad y sin que medie vicio de consentimiento alguno.
+            cumplimiento. En señal de lo cual suscribimos el presente contrato de refinanciamiento de préstamo de dinero con 
+            garantía personal en manifestación de nuestra libre y espontánea voluntad y sin que medie vicio de consentimiento alguno.
             </span>
         @endif
     </div>
@@ -494,7 +494,7 @@
             <div>
                 Asimismo, el PRESTATARIO se compromete hacer conocer oportunamente a la MUSERPOL sobre la omisión del descuento 
                 mensual que se hubiera dado, sin perjuicio que realice el depósito directo del mes omitido, de acuerdo a lo estipulado en el párrafo precedente. 
-                Caso contrario se procedera al descuento {{ count($guarantors) > 1 ? 'de los garantes personales' : 'del garante personal' }} 
+                Caso contrario se procederá al descuento {{ count($guarantors) > 1 ? 'de los garantes personales' : 'del garante personal' }} 
                 incluido los intereses penales una vez transcurrido dos cuotas impagas, sin necesidad de previo aviso.
             </div>   
         @endif
@@ -585,12 +585,12 @@
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo Gestora Pública')
             <div>
                 <b>DÉCIMA.- (CONTINGENCIAS POR FALLECIMIENTO):</b> El PRESTATARIO en caso de fallecimiento acepta 
-                amortizar para el cumplimiento efectivo de la presente obligación con el beneﬁcio del Complemento 
+                amortizar para el cumplimiento efectivo de la presente obligación con el beneficio del Complemento 
                 Económico 
                 @if($modality_name != 'Largo Plazo con Garantía Personal Sector Pasivo AFP')
                     en caso de corresponderle
                 @endif
-                ; por cuanto la liquidación de dicho beneﬁcio pasará a 
+                ; por cuanto la liquidación de dicho beneficio pasará a 
                 cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, 
                 cobrados a los derechohabientes, previas las formalidades de ley.
             </div>
@@ -607,12 +607,12 @@
                 Beneficio de Fondo de Retiro Policial Solidario, por cuanto se encuentra plenamente facultada a presentar la solicitud formal y
                 realizar las gestiones necesarias para la obtención de la documentación requerida para la otorgación de este Beneficio. 
                 <br>
-                Asímismo, en caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector 
+                Asimismo, en caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector 
                 pasivo de la Policía Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, acepta 
                 amortizar la deuda con su Complemento Económico, en caso de corresponderle.
                 <br>
                 De la misma forma, en caso de que el monto de sus beneficios del PRESTATARIO, no alcanzare a cubrir el 
-                total del monto adeudado, se continuara con el descuento
+                total del monto adeudado, se continuará con el descuento
                 {{ count($guarantors) > 1 ? 'a los GARANTES':'al GARANTE' }} el saldo deudor que quedare pendiente.
             </div>
         @endif
@@ -642,9 +642,9 @@
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo SENASIR' || 
             $modality_name == 'Largo Plazo con Garantía Personal Sector Pasivo Gestora Pública'))
             <div>
-                {{ count($guarantors) > 1 ? 'Los GARANTES están facultados' : 'El GARANTE esta facultado' }} a 
+                {{ count($guarantors) > 1 ? 'Los GARANTES están facultados' : 'El GARANTE está facultado' }} a 
                 realizar el trámite de recuperación de los montos que se le hubieran sido descontados en función 
-                a la obligación objeto del presente contrato pudiendo recaer sobre él Beneficio de Fondo de Retiro 
+                a la obligación objeto del presente contrato pudiendo recaer sobre el Beneficio de Fondo de Retiro 
                 Policial Solidario otorgado por la MUSERPOL y reconocidos al PRESTATARIO, conforme al artículo 70 
                 del Reglamento de Préstamos.
             </div>

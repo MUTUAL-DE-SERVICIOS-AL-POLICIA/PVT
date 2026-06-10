@@ -80,17 +80,17 @@
         Bs.{{ Util::money_format($loan->estimated_quota) }} (<span class="uppercase">{{ Util::money_format($loan->estimated_quota, true) }} Bolivianos).</span>
         <br>
         Los intereses generados entre la fecha del desembolso del préstamo y la fecha del primer pago (seis meses) serán cobrados con el pago del Beneficio del 
-        Complemento Económico conforme establece el Reglamento de Préstamo.
+        Complemento Económico conforme establece el Reglamento de Préstamos.
     </div>
     <div>
         <b>QUINTA.- (DEL DESEMBOLSO):</b> El desembolso del préstamo de dinero en la moneda pactada se acredita mediante comprobante escrito en el que conste el 
         abono efectuado a favor del PRESTATARIO, a través de una cuenta bancaria señalada por el mismo, reconociendo ambas partes que al amparo de este procedimiento 
-        se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio.</span>
+        se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio.
     </div>
     <div>
         <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza 
         expresamente a la MUSERPOL practicar el descuento del Beneficio de Complemento Económico a través de la Dirección de Beneficios Económicos, por lo que el 
-        PRESTATARIO, se compromete de forma plena y expresa a realizar su trámite del Benefició del Complemento Económico en tiempo oportuno según las formalidades 
+        PRESTATARIO, se compromete de forma plena y expresa a realizar su trámite del Beneficio del Complemento Económico en tiempo oportuno según las formalidades 
         establecidas; por cuanto la liquidación de dicho beneficio pasará a cubrir el monto de la cuota semestral de la obligación.
         <br>
         Si por cualquier motivo la MUSERPOL estuviera imposibilitada de realizar el descuento por el medio precedentemente señalado, el PRESTATARIO se obliga a 
@@ -186,7 +186,7 @@
         <span>
             PRESTATARI{{ $lender->gender == 'M' ? 'O' : 'A' }} {{ $lender->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $lender->full_name }} de generales ya señaladas;
             @if(str_contains($title,'con Cónyuge'))
-                y por otra en calidad de CONYUGE ANUENTE
+                y por otra en calidad de CÓNYUGE ANUENTE
                 @if (count($spouses) == 1)
                     @php $male_female_spouse = Util::male_female($spouse_gender); @endphp
                     <span>

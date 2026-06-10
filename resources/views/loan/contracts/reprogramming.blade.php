@@ -153,27 +153,27 @@ HTML;
         descrito en la cláusula precedente bajo los siguientes términos y condiciones que se establecen en la presente Adenda.
         <br>
         Consiguientemente el PRESTATARIO y la MUSERPOL acuerdan reprogramar y modificar la obligación original de la CLÁUSULA (PLAZO Y CUOTA DE AMORTIZACIÓN)
-        {{$status ? 'y de la CLAUSULA (DE LA GARANTIA)':''}}, de acuerdo a lo siguiente:
+        {{$status ? 'y de la CLÁUSULA (DE LA GARANTÍA)':''}}, de acuerdo a lo siguiente:
         <br>
         <b>3.1.- (Plazo)</b>.- Se reprograma el plazo de vigencia del préstamo señalado en la cláusula segunda 
         por el plazo de {{ $loan->loan_term}} meses, computables a partir de la presente Adenda.
         <br>
         <b>3.2.- (Cuota de Amortización)</b>.-  La amortización del pago a capital e intereses mensual y constantes que 
-        el prestatario efectuara a partir de la fecha de la suscripción de la presente adenda es de
+        el prestatario efectuará a partir de la fecha de la suscripción de la presente adenda es de
         Bs. {{ Util::money_format($loan->estimated_quota) }} (<span class="uppercase">{{ Util::money_format($loan->estimated_quota, true) }}</span> Bolivianos). 
     </div>
     @if($status)
     <div>{!! $text !!}</div>
     @endif
     <div>
-        <b>CUARTA.- (DE LAS CONDICIONES Y CLAUSULAS ACORDADAS):</b> En cuanto a las demás clausulas y condiciones establecidas en el 
-        contrato de préstamos señalado en la cláusula segunda de la presente adenda, se mantienen plenamente vigentes y con pleno valor 
-        legal siendo de cumplimiento obligatorio para el PRESTATARIO y la MUSERPOL, no admitiendo por tanto ningún tipo de sobre entendimiento, 
-        conclusiones e interpretaciones contrarias, constituyéndose la presente de única y exclusiva modiﬁcación de los puntos 3.1, 3.2 {{$status ? ', 3.3':''}}
+        <b>CUARTA.- (DE LAS CONDICIONES Y CLÁUSULAS ACORDADAS):</b> En cuanto a las demás cláusulas y condiciones establecidas en el 
+        contrato de préstamo señalado en la cláusula segunda de la presente adenda, se mantienen plenamente vigentes y con pleno valor 
+        legal siendo de cumplimiento obligatorio para el PRESTATARIO y la MUSERPOL, no admitiendo por tanto ningún tipo de sobreentendimiento, 
+        conclusiones e interpretaciones contrarias, constituyéndose la presente de única y exclusiva modificación de los puntos 3.1, 3.2 {{$status ? ', 3.3':''}}
         señalados en la cláusula precedente, por lo que la presente adenda forma parte integrante e indivisible del contrato antes mencionado.
     </div>
     <div>
-        <b>QUINTA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de ACREEDOR la Mutual de Servicios al Policia MUSERPOL, representada por su 
+        <b>QUINTA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de ACREEDOR la Mutual de Servicios al Policía MUSERPOL, representada por su 
         {{ $employees[0]['position'] }} {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} {{ $employees[1]['name'] }} 
         y por otra parte en calidad de PRESTATARIO
         <span>
@@ -192,7 +192,7 @@ HTML;
                     {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra.' }} {{ $guarantor->full_name }}{{count($guarantors) > 1 ? ' y':','}}
                 </span>
             @endforeach
-            damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su ﬁel y estricto cumplimiento. 
+            damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su fiel y estricto cumplimiento. 
             En señal de lo cual suscribimos la presente adenda al contrato de préstamo de dinero en manifestación de nuestra libre y espontánea voluntad 
             y sin que medie vicio de consentimiento alguno.
         </span>

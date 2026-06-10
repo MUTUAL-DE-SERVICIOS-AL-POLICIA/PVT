@@ -54,7 +54,7 @@
     <div>
         <b>QUINTA.- (DEL DESEMBOLSO):</b> El desembolso del préstamo de dinero en la moneda pactada se acredita mediante comprobante escrito en el que conste el 
         abono efectuado a favor del PRESTATARIO, a través de una cuenta bancaria señalada por el mismo, reconociendo ambas partes que al amparo de este procedimiento 
-        se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio.</span>
+        se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio.
     </div>
     <div>
         <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza 
@@ -101,19 +101,19 @@
     <div>
         <b>NOVENA.- (DE LA GARANTÍA):</b>El PRESTATARIO, en pleno uso de sus facultades de forma libre y espontánea, sin que medie presión, dolo o culpa en manifestación de su voluntad, 
         garantiza el préstamo con su Beneficio del Fondo de Retiro Policial Solidario que le corresponda. <br>
-        De la misma forma, él PRESTATARIO, garantiza el pago de lo adeudado con la generalidad de sus bienes, derechos y acciones habidos y por haber, 
+        De la misma forma, el PRESTATARIO, garantiza el pago de lo adeudado con la generalidad de sus bienes, derechos y acciones habidos y por haber, 
         presentes y futuros conforme determina el art. 1335 del Código Civil.
     </div>
     <div>
-        <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO,   en caso de fallecimiento, jubilación, retiro voluntario o retiro forzoso garantiza el 
-        cumplimiento efectivo de la presente obligación con la totalidad del Beneﬁcio de Fondo de Retiro Policial Solidario otorgado por la MUSERPOL; por cuanto la liquidación
-        de dicho beneﬁcio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, consiguientemente, EL PRESTATARIO 
-        confiere a la MUSERPOL las facultades correspondientes y necesarias para iniciar el trámite para la cancelación del préstamo a través del Beneﬁcio de Fondo de Retiro 
-        Policial Solidario. <br>
-        El PRESTATARIO ante el incumplimiento de una cuota de amortización o intereses, autoriza a la MUSERPOL proceda al descuento de su Beneﬁcio de Fondo de Retiro Policial 
-        Solidario hasta cubrir el pago total de la obligación, toda vez que el mismo se constituye en la primera fuente de repago, sin perjuicio que el titular asuma de 
-        manera voluntaria y directa la liquidación total del préstamo.
-        
+        <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, jubilación, retiro voluntario o retiro forzoso garantiza el 
+        cumplimiento efectivo de la presente obligación con la totalidad del Beneficio de Fondo de Retiro Policial Solidario otorgado por la MUSERPOL; por cuanto la liquidación
+        de dicho beneficio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, toda vez que el mismo se constituye 
+        en la primera fuente de repago, sin perjuicio que el titular asuma de manera voluntaria y directa la liquidación total del préstamo.
+    </div>
+    <div>
+        Para el fin del pago de la obligación, el PRESTATARIO de manera expresa autoriza a la MUSERPOL para que inicie el trámite del Beneficio de Fondo de Retiro Policial 
+        Solidario, por cuanto se encuentra plenamente facultada a presentar la solicitud formal y realizar las gestiones necesarias para la obtención de la documentación 
+        requerida para la otorgación de este Beneficio.
     </div>
     <div>
         <b>DÉCIMA PRIMERA.- (DE LA MORA):</b> El PRESTATARIO se constituirá en mora automática sin intimación o requerimiento alguno, de acuerdo a lo establecido por el 

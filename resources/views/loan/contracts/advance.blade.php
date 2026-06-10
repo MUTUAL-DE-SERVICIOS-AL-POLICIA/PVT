@@ -76,7 +76,7 @@
             el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oﬁcina central de la 
             MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta fiscal de la MUSERPOL. Caso contrario el PRESTATARIO se hará 
             pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída. Consecuentemente se 
-            procecerá al descuento al garante personal incluido los intereses penales una vez transcurrido las dos cuotas impagas, sin 
+            procederá al descuento al garante personal incluido los intereses penales una vez transcurrido las dos cuotas impagas, sin 
             necesidad de previo aviso.
         @else
             @php
@@ -136,7 +136,7 @@
         @if($modality_name == 'Anticipo Sector Pasivo AFP' || 
             $modality_name == 'Anticipo Sector Pasivo Gestora Pública')
             <b>NOVENA.- (DE LA GARANTÍA):</b>El PRESTATARIO y GARANTE, garantizan el pago de lo adeudado con la generalidad de sus bienes, 
-            derechos y acciones habidos y por haber presentes y futuros conforme lo determina el Art. 1335 del Código Civil, ademas el PRESTATARIO, 
+            derechos y acciones habidos y por haber presentes y futuros conforme lo determina el Art. 1335 del Código Civil, además el PRESTATARIO, 
             con los beneficios otorgados por la MUSERPOL.
             <br>
             Asimismo, se constituye como garante personal, solidario, mancomunado e indivisible:
@@ -179,7 +179,7 @@
         </div>
         @else
             <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, retiro voluntario o retiro 
-            forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad del beneﬁcio de Fondo de Retiro Policial 
+            forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad del beneficio de Fondo de Retiro Policial 
             Solidario otorgado por la MUSERPOL; por cuanto la liquidación de dicho beneficio pasará a cubrir el monto total de la obligación 
             que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
             <div>
@@ -188,7 +188,7 @@
                 realizar las gestiones necesarias para la obtención de la documentación requerida para la otorgación de este Beneficio. 
             </div>
             <div>
-                Asímismo, en caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector pasivo de la Policía Boliviana, 
+                Asimismo, en caso de que se haya modificado la situación del PRESTATARIO del sector activo al sector pasivo de la Policía Boliviana, 
                 teniendo un saldo deudor respecto del préstamo obtenido, acepta amortizar la deuda con su Complemento Económico, en caso de 
                 corresponderle.
             </div>
