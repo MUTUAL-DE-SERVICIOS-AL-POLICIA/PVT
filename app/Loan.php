@@ -1880,8 +1880,24 @@ class Loan extends Model
         return $payments_defaulted;
     }
 
+    public function last_kardex_payment()
+    {
+        $state_ids = LoanPaymentState::whereIn('name', ['Pagado', 'Pendiente por confirmar'])->pluck('id');
+        $query = LoanPayment::where('loan_id', $this->id)->whereIn('state_id', $state_ids);
+        return $query->orderByDesc('estimated_date')->orderByDesc('id')->first();
+    }
+
+    public function has_kardex_payment_same_estimated_date($date)
+    {
+        $last_payment = $this->last_kardex_payment($date);
+        return $last_payment && Carbon::parse($last_payment->estimated_date)->isSameDay(Carbon::parse($date));
+    }
+
     public function get_penal_payment($date)
     {
+        if ($this->has_kardex_payment_same_estimated_date($date)) {
+            return 0;
+        }
         $payments_defaulted = $this->payments_defaulted_by_quota($date);
         $penal_payment = 0;
         $denominator = $this->loan_procedure->loan_global_parameter->denominator;
@@ -1899,6 +1915,6 @@ class Loan extends Model
     public function capital_paid()
     {
         $state_ids = LoanPaymentState::whereIn('name', ['Pagado', 'Pendiente por confirmar'])->pluck('id');
-        return $this->payments->whereIn('state_id', $state_ids)->sum('capital_payment');
+        return LoanPayment::where('loan_id', $this->id)->whereIn('state_id', $state_ids)->sum('capital_payment');
     }
 }
