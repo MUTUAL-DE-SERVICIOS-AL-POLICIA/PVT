@@ -222,7 +222,7 @@ class LoanPayment extends Model
     }
 
     public static function interest_by_days($days, $annual_interest, $balance, $denominator){
-            return Util::round2((($annual_interest/100)/$denominator)*$days*$balance);
+            return Util::round8((($annual_interest/100)/$denominator)*$days*$balance);
     }
 
     public function user()
