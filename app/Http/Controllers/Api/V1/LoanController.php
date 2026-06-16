@@ -2469,7 +2469,7 @@ class LoanController extends Controller
                             if(Carbon::parse($date_ini)->format('d') <= $loan_global_parameter->offset_interest_day){
                                 $date_fin = Carbon::parse($date_ini)->endOfMonth();
                                 $days = $date_fin->diffInDays($date_ini);
-                                $interest = Util::round2(LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $balance, $loan->loan_procedure->loan_global_parameter->denominator));
+                                $interest = Util::round8(LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $balance, $loan->loan_procedure->loan_global_parameter->denominator));
                                 if($loan->loan_term == 1)
                                 {
                                     $capital = $balance;
@@ -2503,7 +2503,7 @@ class LoanController extends Controller
                         {
                             $date_fin = Carbon::parse($date_ini)->addMonth($month_term - 1)->endOfMonth()->endOfDay();
                             $days = $date_fin->diffInDays($date_ini) + 1;
-                            $interest = Util::round2(LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $balance, $loan->loan_procedure->loan_global_parameter->denominator));
+                            $interest = Util::round8(LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $balance, $loan->loan_procedure->loan_global_parameter->denominator));
                             $capital = $estimated_quota - $interest;
                             $payment = $estimated_quota;
                         }
@@ -2511,7 +2511,7 @@ class LoanController extends Controller
                         {
                             $date_fin = Carbon::parse($date_ini)->endOfMonth();
                             $days = $date_fin->diffInDays($date_ini)+1;
-                            $interest = Util::round2(LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $balance, $loan->loan_procedure->loan_global_parameter->denominator));
+                            $interest = Util::round8(LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $balance, $loan->loan_procedure->loan_global_parameter->denominator));
                             $capital = $estimated_quota - $interest;
                             $payment = $estimated_quota;
                         }
@@ -2526,7 +2526,7 @@ class LoanController extends Controller
                         $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                         $loan_payment->days = $days + $days_aux;
                         $loan_payment->capital = $capital;
-                        $loan_payment->interest = Util::round2($interest);
+                        $loan_payment->interest = $interest;
                         $loan_payment->total_amount = $payment;
                         $loan_payment->balance = $balance;
                         $loan_payment->save();
@@ -2541,7 +2541,7 @@ class LoanController extends Controller
                             $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                             $loan_payment->days = $days;
                             $loan_payment->capital = $capital + $balance;
-                            $loan_payment->interest = Util::round2($interest);
+                            $loan_payment->interest = $interest;
                             $loan_payment->total_amount = $balance + $payment;
                             $loan_payment->balance = 0;
                             $loan_payment->save();
@@ -2555,7 +2555,7 @@ class LoanController extends Controller
                             $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                             $loan_payment->days = $days;
                             $loan_payment->capital = $capital;
-                            $loan_payment->interest = Util::round2($interest);
+                            $loan_payment->interest = $interest;
                             $loan_payment->total_amount = $payment;
                             $loan_payment->balance = $balance;
                             $loan_payment->save();

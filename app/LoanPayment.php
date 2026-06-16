@@ -222,7 +222,7 @@ class LoanPayment extends Model
     }
 
     public static function interest_by_days($days, $annual_interest, $balance, $denominator){
-            return Util::round2((($annual_interest/100)/$denominator)*$days*$balance);
+            return Util::round8((($annual_interest/100)/$denominator)*$days*$balance);
     }
 
     public function user()
@@ -261,10 +261,10 @@ class LoanPayment extends Model
             return (object)$interest;}
         $diff_days = $estimated_date->diffInDays($payment_date);//correcto
         $interest['current'] = $diff_days;
-        $interest['current_generated'] = Util::round2(self::interest_by_days($diff_days,$loan->interest->annual_interest, $loan->balance, $loan->loan_procedure->loan_global_parameter->denominator));
+        $interest['current_generated'] = Util::round8(self::interest_by_days($diff_days,$loan->interest->annual_interest, $loan->balance, $loan->loan_procedure->loan_global_parameter->denominator));
         if ($interest['current'] > 31) {
             $interest['penal'] = $interest['current']-31;
-            $interest['penal_generated'] = Util::round2(self::interest_by_days($diff_days-31,$loan->interest->penal_interest, $loan->balance, $loan->loan_procedure->loan_global_parameter->denominator));
+            $interest['penal_generated'] = Util::round8(self::interest_by_days($diff_days-31,$loan->interest->penal_interest, $loan->balance, $loan->loan_procedure->loan_global_parameter->denominator));
         }
         return (object)$interest;
     }
