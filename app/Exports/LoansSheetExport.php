@@ -68,17 +68,17 @@ class LoansSheetExport implements
     {
         return [
             "NRO DE PRÉSTAMO","FECHA DE SOLICITUD","FECHA DESEMBOLSO","FECHA DE VENCIMIENTO",
-            "SECTOR","PRODUCTO","PLAZO DEL PRÉSTAMO","TASA ANUAL DE INTERES","CUOTA","CIUDAD",
+            "SECTOR","PRODUCTO","PLAZO DEL PRÉSTAMO","TASA ANUAL DE INTERÉS","CUOTA","CIUDAD",
             "USUARIO DE PLATAFORMA","USUARIO DE CALIFICACIÓN","***",
-            "CI PRESTATARO","MATRICULA PRESTATARIO","AP. PATERNO PRESTATARIO","AP. MATERNO PRESTATARIO","AP. CASADA PRESTATARIO",
-            "1er NOMPRE PRESTATARIO","2DO NOMBRE PRESTATARIO","GRADO PRESTATARIO","Nro CELULAR","FECHA DE NACIMIENTO","FECHA DE INGRESO",
-            "CATEGORIA","UNIDAD","FECHA DE DESVINCULACIÓN","FECHA DE FALLECIMIENTO","CAUSA DE FALLECIMIENTO","***",
-            "CI GAR 1","MATRICULA GAR 1","APELLIDO PATERNO GAR 1","APELLIDO MATERNO GAR 1","APE. CASADA GAR 1","1er NOMPRE GAR 1","2DO NOMBRE GAR 1","GRADO GAR 1",
-            "Nro CELULAR GAR 1","CATEGORIA GAR 1","UNIDAD GAR 1","FECHA DE DESVINCULACIÓN GAR 1","FECHA DE FALLECIMIENTO GAR 1","***",
-            "CI GAR 2","MATRICULA GAR 2","APELLIDO PATERNO GAR 2","APELLIDO MATERNO GAR 2","APE. CASADA GAR 2","1er NOMPRE GAR 2","2DO NOMBRE GAR 2","GRADO GAR 2",
-            "Nro CELULAR GAR 2","CATEGORIA GAR 2","UNIDAD GAR 2","FECHA DE DESVINCULACIÓN GAR 2","FECHA DE FALLECIMIENTO GAR 2","***",
-            "MONTO DESEMBOLSADO","SALDO REFINANCIADO","REFINANCIAMIENTO","LIQUIDO DESEMBOLSADO","REPROGRAMACIÓN","SALDO REPROGRAMADO","SALDO A LA FECHA DE CORTE",
-            "SALDO SEGÚN PLAN DE PAGOS","CAPITAL PAGADO A FECHA DE CORTE","ESTADO PTMO","FECHA ULTIMO PAGO DE INTERES","INDICE DE ENDEUDAMIENTO",
+            "CI PRESTATARIO","MATRÍCULA PRESTATARIO","AP. PATERNO PRESTATARIO","AP. MATERNO PRESTATARIO","AP. CASADA PRESTATARIO",
+            "1er NOMBRE PRESTATARIO","2DO NOMBRE PRESTATARIO","GRADO PRESTATARIO","Nro CELULAR","FECHA DE NACIMIENTO","FECHA DE INGRESO",
+            "CATEGORÍA","UNIDAD","FECHA DE DESVINCULACIÓN","FECHA DE FALLECIMIENTO","CAUSA DE FALLECIMIENTO","***",
+            "CI GAR 1","MATRÍCULA GAR 1","APELLIDO PATERNO GAR 1","APELLIDO MATERNO GAR 1","APE. CASADA GAR 1","1er NOMBRE GAR 1","2DO NOMBRE GAR 1","GRADO GAR 1",
+            "Nro CELULAR GAR 1","CATEGORÍA GAR 1","UNIDAD GAR 1","FECHA DE DESVINCULACIÓN GAR 1","FECHA DE FALLECIMIENTO GAR 1","***",
+            "CI GAR 2","MATRÍCULA GAR 2","APELLIDO PATERNO GAR 2","APELLIDO MATERNO GAR 2","APE. CASADA GAR 2","1er NOMBRE GAR 2","2DO NOMBRE GAR 2","GRADO GAR 2",
+            "Nro CELULAR GAR 2","CATEGORÍA GAR 2","UNIDAD GAR 2","FECHA DE DESVINCULACIÓN GAR 2","FECHA DE FALLECIMIENTO GAR 2","***",
+            "MONTO DESEMBOLSADO","SALDO REFINANCIADO","REFINANCIAMIENTO","LÍQUIDO DESEMBOLSADO","REPROGRAMACIÓN","SALDO REPROGRAMADO","SALDO A LA FECHA DE CORTE",
+            "SALDO SEGÚN PLAN DE PAGOS","CAPITAL PAGADO A FECHA DE CORTE","ESTADO PTMO","FECHA ÚLTIMO PAGO DE INTERÉS","ÍNDICE DE ENDEUDAMIENTO",
             "NRO. CBTE. CONTABLE","NRO CUENTA SIGEP","FECHA DE CORTE"
         ];
     }
@@ -103,6 +103,7 @@ class LoansSheetExport implements
                   ->select('estimated_date')
                   ->whereColumn('loan_payments.loan_id','loans.id')
                   ->where('estimated_date','<=',$fd)
+                  ->whereNull('loan_payments.deleted_at')
                   ->orderBy('estimated_date','desc')
                   ->orderBy('id','desc')
                   ->limit(1);
@@ -112,6 +113,7 @@ class LoansSheetExport implements
                   ->select('previous_balance')
                   ->whereColumn('loan_payments.loan_id','loans.id')
                   ->where('estimated_date','<=',$fd)
+                  ->whereNull('loan_payments.deleted_at')
                   ->orderBy('estimated_date','desc')
                   ->orderBy('id','desc')
                   ->limit(1);
@@ -121,6 +123,7 @@ class LoansSheetExport implements
                   ->select('capital_payment')
                   ->whereColumn('loan_payments.loan_id','loans.id')
                   ->where('estimated_date','<=',$fd)
+                  ->whereNull('loan_payments.deleted_at')
                   ->orderBy('estimated_date','desc')
                   ->orderBy('id','desc')
                   ->limit(1);
@@ -130,6 +133,7 @@ class LoansSheetExport implements
                   ->select('loan_payment_date')
                   ->whereColumn('loan_payments.loan_id','loans.id')
                   ->where('estimated_date','<=',$fd)
+                  ->whereNull('loan_payments.deleted_at')
                   ->orderBy('estimated_date','desc')
                   ->orderBy('id','desc')
                   ->limit(1);
