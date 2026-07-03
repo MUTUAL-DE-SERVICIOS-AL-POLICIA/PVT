@@ -28,7 +28,7 @@
                 <td class="w-15">Matricula</td>
                 <td class="w-20">Sector</td>
             </tr>
-            <tr>
+            <tr class="text-xs">
                 <td class="data-row py-5">
                 @if(!$is_dead)
                 {{ $lender->title }}
@@ -58,7 +58,7 @@
                 <td class="w-15">CI</td>
                 <td class="w-15">Estado</td>
             </tr>
-            <tr>
+            <tr class="text-xs">
                 <td class="data-row py-5">{{ $guarantor->title }} {{ $guarantor->full_name }}</td>
                 <td class="data-row py-5">{{ $guarantor->identity_card_ext }}</td>
                 <td class="data-row py-5">{{ $guarantor->affiliate_state->affiliate_state_type->name }}</td>
@@ -84,7 +84,7 @@
                 <td class="{{ $loan->parent_loan ? 'w-15' : 'w-20' }}">Tasa Anual(%)</td>
                 <td class="{{ $loan->parent_loan ? 'w-15' : 'w-20' }}">Cuota Fija</td>
             </tr>
-            <tr>
+            <tr class="text-xs">
                 <td >{{ $loan->code }}</td>
                 @if ($loan->parent_loan)
                 <td >{{ $loan->parent_loan->code }}</td>
@@ -99,7 +99,7 @@
                 <td class="w-30">Fecha de Desembolso</td>
                 <td colspan="2">Monto Desembolsado</td>
             </tr>
-            <tr>          
+            <tr class="text-xs">          
                 @if ($loan->modality->procedure_type_id != 29)
                     @php ($term_text = $loan->loan_term == 1 ? 'mes' : 'meses')
                 @else
@@ -135,7 +135,7 @@
                     <td colspan="2">Intereses Penales Pendientes</td>
                 @endif
             </tr>
-            <tr>
+            <tr class="text-xs">
             @if($loan->paymentsKardex->first() != null)
                 <td>{{$loan->num_accounting_voucher}}</td>
                 <td {!! $loan->parent_loan ? 'class="w-20"' : 'colspan="2"' !!}>
@@ -200,7 +200,7 @@
                 @php ($capital = $loan->parent_loan->amount_approved)
                 @foreach ($loan->parent_loan->paymentsKardex->sortBy('quota_number') as $parent_loan_payment)
                 @php ($res_saldo_capital = $capital-$parent_loan_payment->capital_payment)
-                <tr>
+                <tr class="text-xs">
                     <td class="w-5">{{ $parent_loan_payment->quota_number }}</td>
                     <td class="w-9">{{ Carbon::parse($parent_loan_payment->estimated_date)->format('d/m/Y') }}</td>
                     <td class="w-9">{{ Carbon::parse($parent_loan_payment->loan_payment_date)->format('d/m/Y') }}</td>
@@ -248,7 +248,7 @@
                 @php ($capital = $loan->amount_approved)
                 @foreach ($loan->paymentsKardex->sortBy('quota_number') as $payment)
                 @php ($res_saldo_capital = $capital-$payment->capital_payment)
-                <tr>
+                <tr class="text-xs">
                     <td class="w-5">{{ $payment->quota_number }}</td>
                     <td class="w-9">{{ Carbon::parse($payment->estimated_date)->format('d/m/Y') }}</td>
                     <td class="w-9">{{ Carbon::parse($payment->loan_payment_date)->format('d/m/Y') }}</td>
@@ -273,7 +273,7 @@
                 @php ($sum_estimated_quota += $payment->estimated_quota)
                 @php ($capital = $res_saldo_capital)
                 @endforeach
-                <tr>
+                <tr class="text-xs">
                     <td colspan="3" class="data-row py-2 font-semibold leading-tight text-xs">TOTALES</td>
                     <td class="w-9 text-right">{{ Util::money_format($sum_capital_payment) }}</td>
                     <td class="w-9 text-right">{{ Util::money_format($sum_interest_payment) }}</td>
