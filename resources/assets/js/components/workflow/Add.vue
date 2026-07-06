@@ -709,8 +709,8 @@ export default {
     tab: "tab-1",
     validate: {
       valid_disbursement: false,
-      valid_date_contract : false,
-      valid_date_contract_return: false,
+      // valid_date_contract : false,
+      // valid_date_contract_return: false,
       valid_certificate : false
 
     },
@@ -831,8 +831,8 @@ export default {
 
 
         this.loan.disbursement_date=this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
-        this.loan.delivery_contract_date=this.$moment(res.data.delivery_contract_date).format('YYYY-MM-DD')
-        this.loan.return_contract_date=this.$moment(res.data.return_contract_date).format('YYYY-MM-DD')
+        // this.loan.delivery_contract_date=this.$moment(res.data.delivery_contract_date).format('YYYY-MM-DD')
+        // this.loan.return_contract_date=this.$moment(res.data.return_contract_date).format('YYYY-MM-DD')
         this.loan.regional_delivery_contract_date=this.$moment(res.data.regional_delivery_contract_date).format('YYYY-MM-DD')
         this.loan.regional_return_contract_date=this.$moment(res.data.regional_return_contract_date).format('YYYY-MM-DD')
 
@@ -1043,21 +1043,15 @@ export default {
     validation(){
       this.getInfo(this.$route.params.id)
       //VALIDACION FECHA ENTREGA DE CONTRATO
-     if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true)
+     /*if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true)
       {
         if(this.removeAccents(this.loan.delivery_contract_date) != 'Fecha invalida'){
          this.validate.valid_date_contract = true
         }else{
            this.validate.valid_date_contract = false
         }
-
-        if(this.removeAccents(this.loan.return_contract_date) != 'Fecha invalida'){
-          this.validate.valid_date_contract_return = true
-        }else{
-          this.validate.valid_date_contract_return = false
-        }
-
-      }else if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
+      }*/
+     if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
       {
         if(this.removeAccents(this.loan.disbursement_date) != 'Fecha invalida'){
           this.validate.valid_disbursement = true
@@ -1073,38 +1067,41 @@ export default {
         }
       }
 
-      if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true )
-      {
-        if(this.validate.valid_date_contract == true && this.validate.valid_date_contract_return == true)
-        {
-          if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
-          {
-            if(this.validate.valid_certificate == true)
-            {
-              if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
-              {
-                if(this.validate.valid_disbursement == true)
-                {
-                  this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info, info: this.info }) 
-                }
-                else
-                {
-                  this.toastr.error('Falta generar el plan de pago.')
-                }
-              }else{
-                this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
-              }
-            }else
-            {
-              this.toastr.error('Faltan registar el número presupuestario.')
-            }
-          }else{
-            this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
-          }
-        }else{
-            this.toastr.error('Falta registar la fecha de entrega y/o la fecha de devolución del contrato.')
-        }
-      }else{
+      // if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true )
+      // {
+        // if(this.validate.valid_date_contract == true && this.validate.valid_date_contract_return == true)
+        // {
+          // if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
+          // {
+          //   if(this.validate.valid_certificate == true)
+          //   {
+          //     if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
+          //     {
+          //       if(this.validate.valid_disbursement == true)
+          //       {
+          //         this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info}) 
+          //       }
+          //       else
+          //       {
+          //         this.toastr.error('Falta generar el plan de pago.')
+          //       }
+          //     }else{
+          //       this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
+          //     }
+          //   }else
+          //   {
+          //     this.toastr.error('Faltan registar el número presupuestario.')
+          //   }
+          // }else{
+          //   this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
+          // }
+        // }
+        // else{
+        //     // this.toastr.error('Falta registrar la fecha de entrega y/o la fecha de devolución del contrato.')
+        //     this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
+        // }
+      // }
+      // else{
         if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
         {
           if(this.validate.valid_certificate == true)
@@ -1158,7 +1155,7 @@ export default {
             }
           }
         }
-      }
+      // }
     },
 
     async getAddress(id) {
