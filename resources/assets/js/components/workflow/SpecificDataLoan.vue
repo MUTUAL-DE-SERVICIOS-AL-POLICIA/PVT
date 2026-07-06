@@ -200,6 +200,7 @@
                                     <p style="color:teal"><b>DATOS DEL CONTRATO</b></p>
                                   </v-col>
                                   <v-progress-linear color="blue-grey lighten-3"></v-progress-linear>
+                                    <!--
                                     <v-col cols="12" md="3">
                                       <v-text-field
                                         dense
@@ -227,7 +228,9 @@
                                         :editStyle="{ marginRight: '10px'}"
                                       />
                                     </v-col>
-                                     <v-col cols="12" md="3"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                    -->
+                                    <!--
+                                    <v-col cols="12" md="3"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                     </v-col>
                                     <v-col cols="12" md="3">
                                       <v-text-field
@@ -256,6 +259,7 @@
                                         :editStyle="{ marginRight: '10px'}"
                                       />
                                   </v-col>
+                                  -->
                                   <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                   </v-col>
                                   <v-col cols="12" md="3" v-show="removeAccents(loan.delivery_contract_date) == 'Fecha invalida' && permissionSimpleSelected.includes('registration-delivery-return-contracts')" >
