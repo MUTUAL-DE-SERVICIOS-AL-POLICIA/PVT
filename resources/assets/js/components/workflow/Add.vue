@@ -95,7 +95,7 @@
           </div>
 
           <!-- Botón Imprimir Contrato -->
-          <!-- <v-tooltip top>
+          <v-tooltip top v-if="permissionSimpleSelected.includes('send-notification-contract')">
             <template v-slot:activator="{ on }">
               <v-btn
                 top
@@ -114,7 +114,7 @@
             <div>
               <span>Imprimir contrato</span>
             </div>
-          </v-tooltip> -->
+          </v-tooltip>
 
           <v-tooltip top v-if="permissionSimpleSelected.includes('send-notification-contract')">
               <template v-slot:activator="{ on }">
@@ -721,7 +721,7 @@ export default {
     dialog_notification: false,
     loading_notify: false,
     loading_btn_plan: false,
-    // loading_print_contract: false,
+    loading_print_contract: false,
     docsRequired: [],
     docsOptional: [],
     val_docs: {},
@@ -831,8 +831,8 @@ export default {
 
 
         this.loan.disbursement_date=this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
-        this.loan.delivery_contract_date=this.$moment(res.data.delivery_contract_date).format('YYYY-MM-DD')
-        this.loan.return_contract_date=this.$moment(res.data.return_contract_date).format('YYYY-MM-DD')
+        // this.loan.delivery_contract_date=this.$moment(res.data.delivery_contract_date).format('YYYY-MM-DD')
+        // this.loan.return_contract_date=this.$moment(res.data.return_contract_date).format('YYYY-MM-DD')
         this.loan.regional_delivery_contract_date=this.$moment(res.data.regional_delivery_contract_date).format('YYYY-MM-DD')
         this.loan.regional_return_contract_date=this.$moment(res.data.regional_return_contract_date).format('YYYY-MM-DD')
 
@@ -1043,28 +1043,21 @@ export default {
     validation(){
       this.getInfo(this.$route.params.id)
       //VALIDACION FECHA ENTREGA DE CONTRATO
-     if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true)
-      {
-        if(this.removeAccents(this.loan.delivery_contract_date) != 'Fecha invalida'){
-         this.validate.valid_date_contract = true
-        }else{
-           this.validate.valid_date_contract = false
-        }
+      // if(this.permissionSimpleSelected.includes('registration-delivery-return-contracts') == true)
+      // {
+        this.validate.valid_date_contract = true
+        this.validate.valid_date_contract_return = true
 
-        if(this.removeAccents(this.loan.return_contract_date) != 'Fecha invalida'){
-          this.validate.valid_date_contract_return = true
-        }else{
-          this.validate.valid_date_contract_return = false
-        }
-
-      }else if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
+      // }
+      if(this.permissionSimpleSelected.includes('disbursement-loan')==true)
       {
         if(this.removeAccents(this.loan.disbursement_date) != 'Fecha invalida'){
           this.validate.valid_disbursement = true
         }else{
           this.validate.valid_disbursement = false
         }
-      }else if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
+      }
+      if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
       {
         if((this.loan.num_accounting_voucher != null ) ){
           this.validate.valid_certificate = true
@@ -1102,7 +1095,7 @@ export default {
             this.bus.$emit('openDialog', { edit: false, accion: 'validar', info: this.info })
           }
         }else{
-            this.toastr.error('Falta registar la fecha de entrega y/o la fecha de devolución del contrato.')
+            this.toastr.error('No se pudo validar el trámite. Verifique los datos requeridos.')
         }
       }else{
         if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
@@ -1236,24 +1229,24 @@ export default {
         console.log(e)
       }
     },
-    // async printContract(item) {
-    //   try {
-    //     let res = await axios.get(`loan/${item}/print/contract`)
-    //     this.loading_print_contract = true
-    //     printJS({
-    //       printable: res.data.content,
-    //       type: res.data.type,
-    //       documentTitle: res.data.file_name,
-    //       base64: true
-    //     })
+        async printContract(item) {
+      try {
+        let res = await axios.get(`loan/${item}/print/contract`)
+        this.loading_print_contract = true
+        printJS({
+          printable: res.data.content,
+          type: res.data.type,
+          documentTitle: res.data.file_name,
+          base64: true
+        })
 
-    //   } catch (e) {
-    //     this.toastr.error("Ocurrió un error en la impresión del contrato.")
-    //     console.log(e)
-    //   } finally {
-    //     this.loading_print_contract = false
-    //   }
-    // },
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión del contrato.")
+        console.log(e)
+      } finally {
+        this.loading_print_contract = false
+      }
+    },
    },
   }
 
