@@ -51,7 +51,9 @@ class Address extends Model
             $this->number_address,
             $this->housing_unit,
         ])
-        ->map(fn($item) => Util::trim_spaces($item))
+        ->map(function ($item) {
+            return Util::trim_spaces($item);
+        })
             ->filter()
             ->implode(' ');
 
