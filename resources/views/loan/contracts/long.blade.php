@@ -243,7 +243,7 @@
             </div>
         @else
             <div>
-                <b>DÉCIMA PRIMERA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de fallecimiento, 
+                <b>DÉCIMA PRIMERA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de fallecimiento, jubilación,  
                 retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la presente obligación con la totalidad 
                 del beneficio de  Fondo de Retiro Policial Solidario  otorgado por la MUSERPOL; por cuanto la liquidación de dicho 
                 beneficio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la 
@@ -596,8 +596,8 @@
             </div>
         @else
             <div>
-                <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de 
-                fallecimiento, retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la 
+                <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO en caso de
+                fallecimiento, jubilación, retiro voluntario o retiro forzoso garantiza el cumplimiento efectivo de la 
                 presente obligación con la totalidad del beneficio de Fondo de Retiro Policial Solidario 
                 otorgado por la MUSERPOL; por cuanto la liquidación de dicho beneficio pasará a cubrir el 
                 monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, 

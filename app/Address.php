@@ -33,7 +33,7 @@ class Address extends Model
         // }
         //return Util::trim_spaces(implode(' ', [$this->description]));
 
-        if($this->zone || $this->street || $this->housing_unit || $this->number_address){
+        /*if($this->zone || $this->street || $this->housing_unit || $this->number_address){
             $zone = Util::trim_spaces($this->zone) ? :'';
             $street = Util::trim_spaces($this->street) ? : '';
             $number_address = Util::trim_spaces($this->number_address) ? : '';
@@ -44,7 +44,20 @@ class Address extends Model
             return Util::trim_spaces($this->description);
         } else {
             return 'SIN REGISTRO    ';
-        }
+        }*/
+        $address = collect([
+            $this->zone,
+            $this->street,
+            $this->number_address,
+            $this->housing_unit,
+        ])
+        ->map(fn($item) => Util::trim_spaces($item))
+            ->filter()
+            ->implode(' ');
+
+        return $address ?: ($this->description
+            ? Util::trim_spaces($this->description)
+            : 'SIN REGISTRO');
     }
 
     public function affiliate()
