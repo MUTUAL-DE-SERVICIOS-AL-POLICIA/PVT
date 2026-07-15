@@ -107,13 +107,17 @@
     <div>
         <b>DÉCIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, jubilación, retiro voluntario o retiro forzoso garantiza el 
         cumplimiento efectivo de la presente obligación con la totalidad del Beneficio de Fondo de Retiro Policial Solidario otorgado por la MUSERPOL; por cuanto la liquidación
-        de dicho beneficio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, toda vez que el mismo se constituye 
-        en la primera fuente de repago, sin perjuicio que el titular asuma de manera voluntaria y directa la liquidación total del préstamo.
+        de dicho beneficio pasará a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
     </div>
     <div>
         Para el fin del pago de la obligación, el PRESTATARIO de manera expresa autoriza a la MUSERPOL para que inicie el trámite del Beneficio de Fondo de Retiro Policial 
         Solidario, por cuanto se encuentra plenamente facultada a presentar la solicitud formal y realizar las gestiones necesarias para la obtención de la documentación 
         requerida para la otorgación de este Beneficio.
+    </div>
+    <div>
+        Asimismo, en caso de que se haya modiﬁcado la situación del PRESTATARIO del sector activo al sector pasivo de la Policía 
+        Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, acepta amortizar la deuda con su Complemento 
+        Económico, en caso de corresponderle.
     </div>
     <div>
         <b>DÉCIMA PRIMERA.- (DE LA MORA):</b> El PRESTATARIO se constituirá en mora automática sin intimación o requerimiento alguno, de acuerdo a lo establecido por el 
