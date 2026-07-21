@@ -199,7 +199,8 @@
                                   <v-col cols="12" md="12" class="pb-0" >
                                     <p style="color:teal"><b>DATOS DEL CONTRATO</b></p>
                                   </v-col>
-                                  <v-progress-linear color="blue-grey lighten-3"></v-progress-linear>
+                                  <v-progress-linear color="blue-grey lighten-3"></v-progress-linear>                                    
+                                    <!--  
                                     <v-col cols="12" md="3">
                                       <v-text-field
                                         dense
@@ -260,6 +261,7 @@
                                   </v-col>
                                   <v-col cols="12" md="3" v-show="removeAccents(loan.delivery_contract_date) == 'Fecha invalida' && permissionSimpleSelected.includes('registration-delivery-return-contracts')" >
                                   </v-col>
+                                  -->
                                    <v-col cols="12" md="3">
                                       <v-text-field
                                         dense
@@ -897,8 +899,8 @@ export default {
       qualification_edit:false,
       collection_edit:false,
       collection_edit_sismu:false,
-      edit_return_date : false,
-      edit_delivery_date : false,
+      //edit_return_date : false,
+      //edit_delivery_date : false,
       edit_return_date_regional : false,
       edit_delivery_date_regional : false,
       edit_date_contract: false,
@@ -1078,8 +1080,8 @@ created(){
       this.edit_update_loan_affiliates = false
       this.collection_edit=false
       this.collection_edit_sismu=false
-      this.edit_return_date = false
-      this.edit_delivery_date = false
+      // this.edit_return_date = false
+      // this.edit_delivery_date = false
       this.edit_return_date_regional = false
       this.edit_delivery_date_regional = false
       this.edit_date_contract = false
@@ -1136,6 +1138,7 @@ created(){
       }
     },
     //Metodo para editar fecha de entrega de contrato
+    /*
     async editDateDelivery(){
     try {
       if (!this.edit_delivery_date) {
@@ -1154,7 +1157,9 @@ created(){
         this.loading = false
       }
     },
+    */
     //Metodo para editar fecha de retorno de contrato
+    /*
     async editDateReturn(){
       try {
         if (!this.edit_return_date) {
@@ -1173,6 +1178,7 @@ created(){
         this.loading = false
       }
     },
+    */
     //Metodo para editar fecha de entrega de contrato regional
     async editDateDeliveryRegional(){
       try {
