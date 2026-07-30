@@ -280,7 +280,7 @@ class AffiliateController extends Controller
                         $request->has('pension_entity_id') ? ($borrower->pension_entity_id = $request['pension_entity_id']) : '';
                         $request->has('availability_info') ? ($borrower->availability_info = $request['availability_info']) : '';
                     }
-                    $loan->number_payment_type = $request['account_number'];
+                    $request->has('account_number') ? $loan->number_payment_type = $request['account_number'] : '';
                     $loan->save();
                     $borrower->phone_number = $request['phone_number'];
                     $borrower->cell_phone_number = $request['cell_phone_number'];
