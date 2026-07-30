@@ -260,25 +260,25 @@ class AffiliateController extends Controller
                     $borrower = LoanBorrower::find($loan->borrower[0]->id);
                     if ($borrower->type == 'affiliates')
                     {
-                        $borrower->degree_id = $request['degree_id'];
-                        $borrower->unit_id = $request['unit_id'];
-                        $borrower->category_id = $request['category_id'];
-                        $borrower->type_affiliate = $request['type'];
-                        $borrower->unit_police_description = $request['unit_police_description'];
+                        $request->has('degree_id') ? $borrower->degree_id = $request['degree_id'] : '';
+                        $request->has('unit_id') ? ($borrower->unit_id = $request['unit_id']) : '';
+                        $request->has('category_id') ? ($borrower->category_id = $request['category_id']) : '';
+                        $request->has('type') ? ($borrower->type_affiliate = $request['type']) : '';
+                        $request->has('unit_police_description') ? ($borrower->unit_police_description = $request['unit_police_description']) : '';
                         $request->has('affiliate_state_id') ? $borrower->affiliate_state_id = $request['affiliate_state_id']:'';
-                        $borrower->identity_card = $request['identity_card'];
-                        $borrower->city_identity_card_id = $request['city_identity_card_id'];
-                        $borrower->city_birth_id = $request['city_birth_id'];
-                        $borrower->registration = $request['registration'];
-                        $borrower->last_name = $request['last_name'];
+                        $request->has('identity_card') ? ($borrower->identity_card = $request['identity_card']) : '';
+                        $request->has('city_identity_card_id') ? ($borrower->city_identity_card_id = $request['city_identity_card_id']) : '';
+                        $request->has('city_birth_id') ? ($borrower->city_birth_id = $request['city_birth_id']) : '';
+                        $request->has('registration') ? ($borrower->registration = $request['registration']) : '';
+                        $request->has('last_name') ? ($borrower->last_name = $request['last_name']) : '';
                         $request->has('first_name') ? $borrower->first_name = $request['first_name']:'';
-                        $borrower->second_name = $request['second_name'];
-                        $borrower->mothers_last_name = $request['mothers_last_name'];
-                        $borrower->surname_husband = $request['surname_husband'];
+                        $request->has('second_name') ? ($borrower->second_name = $request['second_name']) : '';
+                        $request->has('mothers_last_name') ? ($borrower->mothers_last_name = $request['mothers_last_name']) : '';
+                        $request->has('surname_husband') ? ($borrower->surname_husband = $request['surname_husband']) : '';
                         $request->has('gender') ? $borrower->gender = $request['gender']:'';
-                        $borrower->civil_status = $request['civil_status'];
-                        $borrower->pension_entity_id = $request['pension_entity_id'];
-                        $borrower->availability_info = $request['availability_info'];
+                        $request->has('civil_status') ? ($borrower->civil_status = $request['civil_status']) : '';
+                        $request->has('pension_entity_id') ? ($borrower->pension_entity_id = $request['pension_entity_id']) : '';
+                        $request->has('availability_info') ? ($borrower->availability_info = $request['availability_info']) : '';
                     }
                     $loan->number_payment_type = $request['account_number'];
                     $loan->save();
@@ -322,7 +322,7 @@ class AffiliateController extends Controller
             return  $affiliate;
             $affiliate->sigep_status = $sigep_old;
             $affiliate->update();            
-        }catch(Exception $e){
+        }catch(\Throwable $e){
             DB::rollback();
             return response()->json(['error' => $e->getMessage()], 500);
         }
