@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class AddRulesPaymentTypeAndDestinyColumnsToLoansTable extends Migration
 {
@@ -19,21 +20,21 @@ public function up()
 
         // Agregar CHECKs
         // Permitir NULL solo si parent_reason indica reprogramación (con y sin tilde)
-        DB::statement(<<<'SQL'
+        DB::statement("
             ALTER TABLE loans
             ADD CONSTRAINT loans_payment_type_id_null_repro
             CHECK (
                 parent_reason IN ('REPROGRAMACION','REPROGRAMACIÓN') OR payment_type_id IS NOT NULL
             )
-        SQL);
+        ");
 
-        DB::statement(<<<'SQL'
+        DB::statement("
             ALTER TABLE loans
             ADD CONSTRAINT loans_destiny_id_null_repro
             CHECK (
                 parent_reason IN ('REPROGRAMACION','REPROGRAMACIÓN') OR destiny_id IS NOT NULL
             )
-        SQL);
+        ");
 
         DB::statement("
             CREATE UNIQUE INDEX ux_loans_code_nonrepro
