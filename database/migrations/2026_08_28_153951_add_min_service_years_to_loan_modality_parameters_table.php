@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddMinimumYearsServiceToLoanModalityParametersTable extends Migration
+class AddMinServiceYearsToLoanModalityParametersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddMinimumYearsServiceToLoanModalityParametersTable extends Migration
     public function up()
     {
         Schema::table('loan_modality_parameters', function (Blueprint $table) {
-            $table->unsignedInteger('minimum_years_service')->default(1);
+            $table->unsignedInteger('min_service_years')->default(1);
         });
     }
 
@@ -26,7 +26,7 @@ class AddMinimumYearsServiceToLoanModalityParametersTable extends Migration
     public function down()
     {
         Schema::table('loan_modality_parameters', function (Blueprint $table) {
-            $table->dropColumn('minimum_years_service');
+            $table->dropColumn('min_service_years');
         });
     }
 }
