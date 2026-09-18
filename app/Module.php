@@ -10,7 +10,12 @@ class Module extends Model
 
     public $timestamps = false;
     public $guarded = ['id'];
-    protected $fillable = ['name', 'display_name'];
+    protected $fillable = [
+        'display_name',
+        'description',
+        'name',
+        'shortened'
+    ];
 
     public function roles()
     {

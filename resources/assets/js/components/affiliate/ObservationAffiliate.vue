@@ -307,7 +307,7 @@ export default {
     async getTrackingTypes() {
       try {
         this.observation_types_loading = true;
-        let res = await axios.get(`module/${6}/observation_type_affiliate/${this.$route.params.id}`);
+        let res = await axios.get(`module/observation_type_affiliate/${this.$route.params.id}`);
         this.observation_type = res.data;
         console.log(this.observation_type);
         this.observation_types_loading = false;
