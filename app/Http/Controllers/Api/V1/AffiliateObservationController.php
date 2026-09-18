@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\ObservationForm;
 use App\Affiliate;
-use App\Module;
 use App\AffiliateRecordPVT;
 use App\ObservationType;
+use App\Role;
 use Carbon;
 use Illuminate\Support\Facades\Auth;
 use Util;
@@ -151,15 +151,23 @@ class AffiliateObservationController extends Controller
     /**
     * Tipos de observaciones asociados al módulo y afiliado
     * Devuelve la lista de tipos de observaciones asociados a un módulo y afiliado
-    * @urlParam module required ID del módulo. Example: 6
     * @urlParam affiliate required ID del Afiliado. Example: 3
     * @authenticated
     * @responseFile responses/module/get_observation_types.200.json
     */
-    public function get_observation_types_affiliate(Module $module,Affiliate $affiliate)
+    public function get_observation_types_affiliate(Affiliate $affiliate)
     {
+        $user = Auth::user();
+        $role_id = $user->getSelectedRoleId();
+
+        $module_id = Role::where('id', $role_id)->value('module_id');
+
+        if (!$module_id) {
+            abort(403, 'El rol activo no tiene un módulo asociado.');
+        }
+       
         $observations = $affiliate->observations()->get();
-        $observation_types_all= ObservationType::where('module_id',$module->id)->where('type','like','A%')->get();
+        $observation_types_all= ObservationType::where('module_id', $module_id)->where('type','like','A%')->get();
         $observation_types= collect([]);
         foreach($observation_types_all as $observation_type){
             $is = false;
