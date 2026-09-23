@@ -21,7 +21,7 @@ class ModulesSeeder extends Seeder
         ]);
 
         // Registrar el rol de Dirección DAJAYDI 
-        $roleId = DB::table('roles')->insertGetId([
+        DB::table('roles')->insertGetId([
             'module_id' => $moduleId,
             'display_name' => 'Dirección DAJAYDI',
             'action' => 'Observador',
@@ -32,6 +32,22 @@ class ModulesSeeder extends Seeder
             'sequence_number' => null,
             'description' => null,
             'wf_states_id' => null,
+        ]);
+         
+        // Registrar observación en la tabla observation_types
+        $observationTypeId = DB::table('observation_types')->insertGetId([
+            'module_id' => $moduleId,
+            'name' => 'Excluido - Tiene sentencias condenatorias ejecutoriadas por delitos cometidos contra la MUSERPOL o MUSEPOL.',
+            'description' => 'Denegado',
+            'type' => 'A',
+            'shortened' => 'Sentencias condenatorias ejecutoriadas',
+            'active' => true
+        ]);
+
+        // Registrar observación en la tabla observation_for_modules
+        DB::table('observation_for_modules')->insert([
+            'module_id' => 6,
+            'observation_type_id' => $observationTypeId
         ]);
     }
 }
