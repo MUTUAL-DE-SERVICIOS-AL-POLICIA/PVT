@@ -66,6 +66,7 @@
           color="info"
           v-if="
             !trashed &&
+            item.can_update_or_delete &&
             permissionSimpleSelected.includes('update-observation-affiliate')
           "
           @click="editItem(item)"
@@ -77,6 +78,7 @@
           color="error"
           v-if="
             !trashed &&
+            item.can_update_or_delete &&
             permissionSimpleSelected.includes('delete-observation-affiliate')
           "
           @click="deleteItem(item)"
