@@ -28,9 +28,11 @@ class AffiliateObservationController extends Controller
         $query = $affiliate->observations();
         if ($request->boolean('trashed')) $query = $query->onlyTrashed();
         $observations = $query->get();
+        $module_id = $this->get_current_module_id();
         foreach ($observations as $observation){
             $observation->observation_type = ObservationType::find($observation->observation_type_id);
             $observation->user;
+            $observation->can_update_or_delete = $observation->observation_type && $observation->observation_type->module_id === $module_id;
         }
         return $observations;
     }
@@ -85,6 +87,16 @@ class AffiliateObservationController extends Controller
             $observation = $observation->where($key, $value);
         }
         if ($observation->count() === 1) {
+            $this->authorize_observation_type(
+                $request->original['observation_type_id']
+            );
+
+            if (isset($request->update['observation_type_id'])) {
+                $this->authorize_observation_type(
+                    $request->update['observation_type_id']
+                );
+            }
+
             $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
 
             /*************records*************/
@@ -133,6 +145,9 @@ class AffiliateObservationController extends Controller
             $observation = $observation->where($key, $value);
         }
         if($observation->count() == 1) {
+            $this->authorize_observation_type(
+                $request->observation_type_id
+            );    
             $observation->delete();
             /*************records*************/
             $observation_type = ObservationType::find($request->observation_type_id);
@@ -179,5 +194,33 @@ class AffiliateObservationController extends Controller
             $observation_types->push($observation_type);
         }
         return  $observation_types;
+    }
+
+    /**
+    * Obtiene el módulo correspondiente al rol activo del usuario
+    */
+    public function get_current_module_id()
+    {
+        $user = Auth::user();
+        $roleId = $user->getSelectedRoleId();
+        $moduleId = Role::where('id', $roleId)->value('module_id');
+        if (!$moduleId) {
+            abort(403, 'El rol activo no tiene un módulo asociado');
+        }
+        return $moduleId;
+    }
+
+    /**
+    * Verifica que un tipo de observación pertenezca al módulo del usuario autenticado
+    */
+    public function authorize_observation_type($observationTypeId)
+    {
+        $moduleId = $this->get_current_module_id();
+        $observationType = ObservationType::find($observationTypeId);
+
+        if ($observationType->module_id !== $moduleId) {
+            abort(403, 'No tiene permisos para modificar observaciones de este módulo');
+        }
+        return $observationType;
     }
 }
