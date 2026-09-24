@@ -66,6 +66,7 @@
           color="info"
           v-if="
             !trashed &&
+            item.can_update_or_delete &&
             permissionSimpleSelected.includes('update-observation-affiliate')
           "
           @click="editItem(item)"
@@ -77,6 +78,7 @@
           color="error"
           v-if="
             !trashed &&
+            item.can_update_or_delete &&
             permissionSimpleSelected.includes('delete-observation-affiliate')
           "
           @click="deleteItem(item)"
@@ -307,7 +309,7 @@ export default {
     async getTrackingTypes() {
       try {
         this.observation_types_loading = true;
-        let res = await axios.get(`module/${6}/observation_type_affiliate/${this.$route.params.id}`);
+        let res = await axios.get(`module/observation_type_affiliate/${this.$route.params.id}`);
         this.observation_type = res.data;
         console.log(this.observation_type);
         this.observation_types_loading = false;
