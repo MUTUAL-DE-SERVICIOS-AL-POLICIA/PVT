@@ -26,16 +26,14 @@ class UpdateNewReglament2026 extends Seeder
             ]);
 
             // CREACIÓN DEL NUEVO REGLAMENTO EN TABLA loan_procedures Y PONIENDOLO ACTIVO
-            DB::table('loan_procedures')->insert([
-                [
-                    'description' => 'Reglamento de Préstamos 2026',
-                    'is_enable' => true,
-                    'start_production_date' => now(),
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]
+            $loanProcedureId = DB::table('loan_procedures')->insertGetId([
+                'description' => 'Reglamento de Préstamos 2026',
+                'is_enable' => true,
+                'start_production_date' => now(),
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
-            
+                        
             // CREACIÓN DE PARÁMETROS GLOBALES DEL NUEVO REGLAMENTO TABLA loan_global_parameters
             DB::table('loan_global_parameters')->insert([
                 [
@@ -57,7 +55,7 @@ class UpdateNewReglament2026 extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                     'min_amount_fund_rotary' => 100000,
-                    'loan_procedure_id' => 4,       //ID DEL NUEVO REGLAMENTO
+                    'loan_procedure_id' => $loanProcedureId,
                     'days_year_calculated' => 1,      
                     'days_for_import' => 20,            
                     'numerator' => 365.25,
@@ -66,58 +64,57 @@ class UpdateNewReglament2026 extends Seeder
             ]);
             
             // CREACIÓN DE MODALIDADES EN LA TABLA procedure_types
-            DB::table('procedure_types')->insert([
-                [
+            // Mi Primer Préstamo
+            $miPrimerPrestamoId = DB::table('procedure_types')->insertGetId([
                     'module_id' => 6,
                     'name' => 'Mi Primer Préstamo con Garantía Personal Sector Activo',
                     'created_at' => now(),
                     'updated_at' => now(),
                     'second_name' => 'Mi Primer Préstamo',
-                ],
-                [
+            ]);
+            // Préstamo Fidelidad
+            $prestamoFidelidadId = DB::table('procedure_types')->insertGetId([
                     'module_id' => 6,
                     'name' => 'Préstamo Fidelidad para el Sector Activo',
                     'created_at' => now(),
                     'updated_at' => now(),
                     'second_name' => 'Fidelidad',
-                ],
+            ]);
+            
+            // EDICIÓN DEL CAMPO name - TABLA worflows
+            DB::table('workflows')->where('id', '10')->update([
+                'name' => 'Corto Plazo, Largo Plazo, Estacional, Fondo de Retiro, Mi Primer Préstamo, Fidelidad ',
+                'shortened' => 'PRES-CP-LP-PE-GFR-MPP-FID',
+                'updated_at' => now(),
             ]);
 
             // CREACIÓN DE SUBMODALIDADES EN LA TABLA procedure_modalities
-            /* procedure_modalities id
-                id = 30 --> Mi Primer Préstamo con Garantía Personal Sector Activo      //NUEVO
-                id = 31 --> Préstamo Fidelidad para el Sector Activo                    //NUEVO
-            */
-            DB::table('procedure_modalities')->insert([
-                // id = 30 --> Mi Primer Préstamo con Garantía Personal Sector Activo    //NUEVO
-                [
-                    'procedure_type_id' => 30,
+            $miPrimerPrestamoModalityId = DB::table('procedure_modalities')->insertGetId([
+                    'procedure_type_id' => $miPrimerPrestamoId,
                     'name' => 'Mi Primer Préstamo con Garantía Personal Sector Activo',
                     'shortened' => 'PRI-ACT',
                     'is_valid' => true,
                     'workflow_id' => 10,
-                ],
-                // id = 31 --> Préstamo Fidelidad para el Sector Activo     //NUEVO
-                [
-                    'procedure_type_id' => 31,
+            ]);
+            $prestamoFidelidadModalityId = DB::table('procedure_modalities')->insertGetId([
+                    'procedure_type_id' => $prestamoFidelidadId,
                     'name' => 'Préstamo Fidelidad para el Sector Activo',
                     'shortened' => 'FID-ACT',
                     'is_valid' => true,
                     'workflow_id' => 10,
-                ],
-                [
-                    'procedure_type_id' => 31,
+            ]);
+            $refinanciamientoFidelidadModalityId = DB::table('procedure_modalities')->insertGetId([
+                    'procedure_type_id' => $prestamoFidelidadId,
                     'name' => 'Refinanciamiento Fidelidad para el Sector Activo',
                     'shortened' => 'REF-FID-ACT',
                     'is_valid' => true,
                     'workflow_id' => 11,
-                ]
             ]);
 
             DB::table('loan_modality_parameters')->insert([
                 // Mi Primer Préstamo con Garantía Personal Sector Activo
                 [
-                    'procedure_modality_id' => 106,
+                    'procedure_modality_id' => $miPrimerPrestamoModalityId,
                     'debt_index' => 70,
                     'quantity_ballots' => 1,
                     'guarantors' => 1,
@@ -135,7 +132,7 @@ class UpdateNewReglament2026 extends Seeder
                     'print_contract_platform' => false,
                     'print_receipt_fund_rotary' => false,
                     'print_form_qualification_platform' => false,
-                    'loan_procedure_id' => 4,
+                    'loan_procedure_id' => $loanProcedureId,
                     'max_approved_amount' => null,
                     'guarantor_debt_index' => null,
                     'loan_month_term' => 1,
@@ -148,7 +145,7 @@ class UpdateNewReglament2026 extends Seeder
                 ],
                 // Préstamo Fidelidad para el Sector Activo 
                 [
-                    'procedure_modality_id' => 107,
+                    'procedure_modality_id' => $prestamoFidelidadModalityId,
                     'debt_index' => 70,
                     'quantity_ballots' => 1,
                     'guarantors' => 1,
@@ -166,7 +163,7 @@ class UpdateNewReglament2026 extends Seeder
                     'print_contract_platform' => false,
                     'print_receipt_fund_rotary' => false,
                     'print_form_qualification_platform' => false,
-                    'loan_procedure_id' => 4,
+                    'loan_procedure_id' => $loanProcedureId,
                     'max_approved_amount' => 80001,
                     'guarantor_debt_index' => null,
                     'loan_month_term' => 1,
@@ -179,7 +176,7 @@ class UpdateNewReglament2026 extends Seeder
                 ],
                 // Refinanciamiento Préstamo Fidelidad para el Sector Activo
                 [
-                    'procedure_modality_id' => 108,
+                    'procedure_modality_id' => $refinanciamientoFidelidadModalityId,
                     'debt_index' => 70,  
                     'quantity_ballots' => 1,
                     'guarantors' => 1,
@@ -197,7 +194,7 @@ class UpdateNewReglament2026 extends Seeder
                     'print_contract_platform' => false,
                     'print_receipt_fund_rotary' => false,
                     'print_form_qualification_platform' => false,
-                    'loan_procedure_id' => 4,
+                    'loan_procedure_id' => $loanProcedureId,
                     'max_approved_amount' => 80001,
                     'guarantor_debt_index' => null,
                     'loan_month_term' => 1,
@@ -213,7 +210,7 @@ class UpdateNewReglament2026 extends Seeder
             // Mi Primer Préstamo con Garantía Personal Sector Activo
             DB::table('loan_interests')->insert([
                 [
-                    'procedure_modality_id' => 106,
+                    'procedure_modality_id' => $miPrimerPrestamoModalityId,
                     'annual_interest' => 20,
                     'penal_interest' => 6,
                     'created_at' => now(),
@@ -223,7 +220,7 @@ class UpdateNewReglament2026 extends Seeder
             // Préstamo Fidelidad para el Sector Activo 
             DB::table('loan_interests')->insert([
                 [
-                    'procedure_modality_id' => 107,
+                    'procedure_modality_id' => $prestamoFidelidadModalityId,
                     'annual_interest' => 13.2,
                     'penal_interest' => 6,
                     'created_at' => now(),
@@ -233,7 +230,7 @@ class UpdateNewReglament2026 extends Seeder
             // Refinanciamiento Préstamo Fidelidad para el Sector Activo
             DB::table('loan_interests')->insert([
                 [
-                    'procedure_modality_id' => 108,
+                    'procedure_modality_id' => $refinanciamientoFidelidadModalityId,
                     'annual_interest' => 13.2,
                     'penal_interest' => 6,
                     'created_at' => now(),
