@@ -19,10 +19,11 @@ class UpdateNewReglament2026 extends Seeder
             DB::statement('SELECT setval(\'procedure_types_id_seq\', (SELECT COALESCE(MAX(id), 0) FROM procedure_types))');
             DB::statement('SELECT setval(\'procedure_modalities_id_seq\', (SELECT COALESCE(MAX(id), 0) FROM procedure_modalities))');
             DB::statement('SELECT setval(\'loan_interests_id_seq\', (SELECT COALESCE(MAX(id), 0) FROM loan_interests))');
-
+            
             // INHABILITACIÓN DEL ANTIGUO REGLAMENTO - TABLA loan_procedures
-            DB::table('loan_procedures')->where('id', '3')->update([
+            DB::table('loan_procedures')->where('is_enable', true)->update([
                 'is_enable' => false,
+                'updated_at' => now(),
             ]);
 
             // CREACIÓN DEL NUEVO REGLAMENTO EN TABLA loan_procedures Y PONIENDOLO ACTIVO
@@ -201,7 +202,7 @@ class UpdateNewReglament2026 extends Seeder
                     'coverage_percentage' => 1,
                     'eval_percentage' => 0.25,
                     'suggested_debt_index' => 50,
-                    'modality_refinancing_id' => 107,
+                    'modality_refinancing_id' => $prestamoFidelidadModalityId,
                     'modality_reprogramming_id' => null,
                     'min_service_years' => 1,
                 ],
@@ -237,6 +238,45 @@ class UpdateNewReglament2026 extends Seeder
                     'updated_at' => now()
                 ]
             ]);
+
+            // ASIGNACIÓN DE DESTINOS DE LAS NUEVAS MODALIDADES
+            DB::table('loan_destiny_procedure_type')->insert([
+                // Mi Primer Préstamo
+                [
+                    'procedure_type_id' => $miPrimerPrestamoId,
+                    'loan_destiny_id' => 1,
+                ],
+                [
+                    'procedure_type_id' => $miPrimerPrestamoId,
+                    'loan_destiny_id' => 2,
+                ],
+                [
+                    'procedure_type_id' => $miPrimerPrestamoId,
+                    'loan_destiny_id' => 3,
+                ],
+                [
+                    'procedure_type_id' => $miPrimerPrestamoId,
+                    'loan_destiny_id' => 7,
+                ],
+                // Préstamo Fidelidad
+                [
+                    'procedure_type_id' => $prestamoFidelidadId,
+                    'loan_destiny_id' => 1,
+                ],
+                [
+                    'procedure_type_id' => $prestamoFidelidadId,
+                    'loan_destiny_id' => 2,
+                ],
+                [
+                    'procedure_type_id' => $prestamoFidelidadId,
+                    'loan_destiny_id' => 3,
+                ],
+                [
+                    'procedure_type_id' => $prestamoFidelidadId,
+                    'loan_destiny_id' => 7,
+                ]
+            ]);
+            
             DB::commit();
         } catch (\Exception $e) {
             // Revertir todas las operaciones en caso de error
