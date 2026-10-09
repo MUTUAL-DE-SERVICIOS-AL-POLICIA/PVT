@@ -21,7 +21,7 @@ class ModulesSeeder extends Seeder
         ]);
 
         // Registrar el rol de Dirección DAJAYDI 
-        DB::table('roles')->insertGetId([
+        $roleId = DB::table('roles')->insertGetId([
             'module_id' => $moduleId,
             'display_name' => 'Dirección DAJAYDI',
             'action' => 'Observador',
@@ -33,7 +33,7 @@ class ModulesSeeder extends Seeder
             'description' => null,
             'wf_states_id' => null,
         ]);
-         
+
         // Registrar observación en la tabla observation_types
         $observationTypeId = DB::table('observation_types')->insertGetId([
             'module_id' => $moduleId,
@@ -48,6 +48,38 @@ class ModulesSeeder extends Seeder
         DB::table('observation_for_modules')->insert([
             'module_id' => 6,
             'observation_type_id' => $observationTypeId
+        ]);
+
+        // Permisos
+        DB::table('role_permissions')->insert([
+            'role_id' => $roleId,
+            'permission_id' => 585,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('role_permissions')->insert([
+            'role_id' => $roleId,
+            'permission_id' => 694,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('role_permissions')->insert([
+            'role_id' => $roleId,
+            'permission_id' => 695,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('role_permissions')->insert([
+            'role_id' => $roleId,
+            'permission_id' => 696,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('role_permissions')->insert([
+            'role_id' => $roleId,
+            'permission_id' => 697,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
     }
 }
