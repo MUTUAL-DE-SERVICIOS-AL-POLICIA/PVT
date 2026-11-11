@@ -1161,7 +1161,7 @@ class LoanController extends Controller
         $spouses = $loan->affiliate->spouses;
         $lenders = $loan->borrower;
         $employees = [
-            ['position' => 'Director General Ejecutivo','name'=>'CNL. MSc. CAD. LUCIO ENRIQUE RENÉ JIMÉNEZ VARGAS','identity_card'=>'3475563'],
+            ['position' => 'Director General Ejecutivo','name'=>'CNL. DESP. CAD. ENZO EDUARDO GARECA LA FUENTE','identity_card'=>'4152978'],
             ['position' => 'Director de Asuntos Administrativos','name'=>'LIC. FRANZ LAZO CHAVEZ','identity_card'=>'3367169 LP']
         ];
         $data = [
