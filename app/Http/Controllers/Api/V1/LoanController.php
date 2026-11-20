@@ -1162,7 +1162,7 @@ class LoanController extends Controller
         $lenders = $loan->borrower;
         $employees = [
             ['position' => 'Director General Ejecutivo','name'=>'CNL. MSc. CAD. ENZO EDUARDO GARECA LA FUENTE','identity_card'=>'4152978'],
-            ['position' => 'Director de Asuntos Administrativos','name'=>'LIC. GUSTAVO EDYSON CALLE CALSINA','identity_card'=>'3397163']
+            ['position' => 'Director de Asuntos Administrativos a.i.','name'=>'LIC. GUSTAVO EDYSON CALLE CALSINA','identity_card'=>'3397163 LP']
         ];
         $data = [
             'header' => [
